@@ -95,6 +95,85 @@ const art = {
   ),
 };
 
+
+const cube = (x, y, top, left, right) => (
+  <g transform={`translate(${x} ${y})`}>
+    <path d="M0 18L30 0l30 18-30 18z" fill={top} /><path d="M0 18l30 18v32L0 50z" fill={left} /><path d="M60 18L30 36v32l30-18z" fill={right} />
+  </g>
+);
+
+const more = {
+  grocery: (
+    <>
+      <rect x="92" y="14" width="76" height="152" rx="14" fill={W} />
+      <rect x="98" y="26" width="64" height="128" rx="6" fill="#F3F6FB" />
+      <rect x="104" y="32" width="52" height="12" rx="6" fill={C} />
+      {[0, 1].flatMap((r) => [0, 1].map((c) => <rect key={`${r}${c}`} x={104 + c * 28} y={52 + r * 34} width="24" height="30" rx="6" fill={[Y, R, C, '#D5DDEA'][r * 2 + c]} />))}
+      <rect x="104" y="124" width="52" height="20" rx="10" fill="#26101C" />
+      <g transform="translate(18 78)">
+        <path d="M30 0c-12 4-20 18-20 30" fill="none" stroke={W} strokeWidth="5" strokeLinecap="round" /><path d="M30 0c12 4 20 18 20 30" fill="none" stroke={W} strokeWidth="5" strokeLinecap="round" />
+        <path d="M0 30h60l-8 44H8z" fill={W} />
+        <rect x="14" y="40" width="5" height="26" rx="2.5" fill="#D5DDEA" /><rect x="28" y="40" width="5" height="26" rx="2.5" fill="#D5DDEA" /><rect x="42" y="40" width="5" height="26" rx="2.5" fill="#D5DDEA" />
+        <circle cx="18" cy="22" r="11" fill={R} /><circle cx="42" cy="20" r="9" fill={Y} />
+      </g>
+      <g transform="translate(168 112)"><rect width="56" height="30" rx="15" fill={Y} /><text x="28" y="20" textAnchor="middle" fontFamily="Arial" fontWeight="700" fontSize="13" fill="#26101C">30 min</text></g>
+    </>
+  ),
+  education: (
+    <>
+      <path d="M120 100c-22-12-52-12-78-4v50c26-8 56-8 78 4z" fill={W} /><path d="M120 100c22-12 52-12 78-4v50c-26-8-56-8-78 4z" fill="#E3E9F3" />
+      {[0, 1, 2].map((n) => <g key={n}><rect x={54} y={108 + n * 10} width="50" height="4" rx="2" fill="#B8C3D6" /><rect x={136} y={108 + n * 10} width="50" height="4" rx="2" fill="#B8C3D6" /></g>)}
+      <path d="M120 22l66 26-66 26-66-26z" fill="#26101C" /><path d="M86 62v22c0 8 15 14 34 14s34-6 34-14V62l-34 12z" fill="#3a1a29" />
+      <path d="M186 48v34" stroke={Y} strokeWidth="4" strokeLinecap="round" /><circle cx="186" cy="86" r="6" fill={Y} />
+      <g transform="translate(18 38)"><circle cx="22" cy="22" r="22" fill={Y} /><text x="22" y="29" textAnchor="middle" fontFamily="Arial" fontWeight="800" fontSize="19" fill="#26101C">A+</text></g>
+      <path d="M200 118l10-10 8 8-10 10-12 4z" fill={C} />
+    </>
+  ),
+  business: (
+    <>
+      <rect x="26" y="24" width="188" height="132" rx="12" fill={W} />
+      {[0, 1, 2].map((n) => <rect key={n} x={40 + n * 60} y="38" width="52" height="30" rx="8" fill={['#FDE7EA', '#DDF5F7', '#FFF1CC'][n]} />)}
+      <rect x="48" y="46" width="22" height="5" rx="2.5" fill="#B8C3D6" /><rect x="48" y="56" width="34" height="7" rx="3" fill={R} />
+      <rect x="108" y="46" width="22" height="5" rx="2.5" fill="#B8C3D6" /><rect x="108" y="56" width="34" height="7" rx="3" fill={C} />
+      <rect x="168" y="46" width="22" height="5" rx="2.5" fill="#B8C3D6" /><rect x="168" y="56" width="34" height="7" rx="3" fill={Y} />
+      {[0, 1, 2, 3, 4].map((n) => <rect key={n} x={44} y={82 + n * 14} width={[90, 70, 100, 60, 80][n]} height="7" rx="3.5" fill="#E3E9F3" />)}
+      <circle cx="172" cy="118" r="26" fill="#F3F6FB" /><path d="M172 118V92a26 26 0 0 1 24 16z" fill={R} /><path d="M172 118l24-10a26 26 0 0 1-10 26z" fill={Y} /><path d="M172 118l14 16a26 26 0 0 1-38-6z" fill={C} />
+    </>
+  ),
+  healthcare: (
+    <>
+      <rect x="30" y="40" width="180" height="100" rx="14" fill={W} />
+      <path d="M44 100h30l10-26 14 50 14-40 8 16h72" fill="none" stroke={R} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+      <g transform="translate(150 12)"><rect width="52" height="52" rx="14" fill={R} /><path d="M26 14v24M14 26h24" stroke={W} strokeWidth="9" strokeLinecap="round" /></g>
+      <g transform="translate(24 120)"><rect width="64" height="38" rx="10" fill={C} /><rect x="10" y="10" width="44" height="6" rx="3" fill={W} /><rect x="10" y="22" width="28" height="6" rx="3" fill={W} opacity=".7" /></g>
+      <g transform="translate(168 118)"><circle cx="22" cy="22" r="22" fill={Y} /><path d="M22 33s-12-7-12-15a6.5 6.5 0 0 1 12-3 6.5 6.5 0 0 1 12 3c0 8-12 15-12 15z" fill="#26101C" /></g>
+    </>
+  ),
+  transport: (
+    <>
+      <path d="M0 150h240" stroke={W} strokeWidth="4" opacity=".35" /><path d="M10 164h30M60 164h30M110 164h30M160 164h30M210 164h24" stroke={W} strokeWidth="4" strokeLinecap="round" opacity=".6" />
+      <rect x="28" y="70" width="118" height="68" rx="8" fill={W} /><rect x="40" y="82" width="94" height="8" rx="4" fill={R} /><rect x="40" y="98" width="60" height="8" rx="4" fill="#D5DDEA" />
+      <path d="M150 88h32l22 26v24h-54z" fill={Y} /><path d="M160 96h18l14 18h-32z" fill="#DDF5F7" />
+      <circle cx="62" cy="140" r="15" fill="#26101C" /><circle cx="62" cy="140" r="6" fill={W} /><circle cx="176" cy="140" r="15" fill="#26101C" /><circle cx="176" cy="140" r="6" fill={W} />
+      <g transform="translate(92 8)"><path d="M28 0a28 28 0 0 1 28 28c0 22-28 44-28 44S0 50 0 28A28 28 0 0 1 28 0z" fill={R} /><circle cx="28" cy="28" r="10" fill={W} /></g>
+    </>
+  ),
+  'product-1': (
+    <>
+      {cube(90, 20, W, '#D5DDEA', '#B8C3D6')}
+      {cube(36, 78, Y, '#E0A91F', '#C7931A')}
+      {cube(144, 78, C, '#1D9BA6', '#168089')}
+    </>
+  ),
+  'product-3': (
+    <>
+      {[0, 1, 2].map((n) => <path key={n} d="M30 0l90 38-90 38L-60 38z" transform={`translate(90 ${28 + n * 32})`} fill={[R, Y, C][n]} stroke={W} strokeWidth="4" strokeLinejoin="round" />)}
+    </>
+  ),
+};
+Object.assign(art, more);
+art['product-2'] = art['web-application-development'];
+
 export default function SlideArt({ slug }) {
   const body = art[slug];
   if (!body) return null;

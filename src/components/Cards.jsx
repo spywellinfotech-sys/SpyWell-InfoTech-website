@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, ImageOff } from 'lucide-react';
 import Icon from './Icon';
+import SlideArt, { hasArt } from './SlideArt';
 import { StatusBadge } from './Section';
 import { useLang } from '../i18n/LanguageContext';
 
@@ -23,9 +24,20 @@ export function ServiceCard({ service }) {
   );
 }
 
-function Shot({ image, alt, label, icon }) {
+const shotBg = ['from-electric-500 to-electric-600', 'from-brand-teal to-navy-500', 'from-navy-700 to-navy-900', 'from-electric-400 to-navy-700', 'from-navy-500 to-electric-600'];
+
+const toneOf = { grocery: 0, education: 1, business: 2, healthcare: 3, transport: 4 };
+
+function Shot({ image, alt, label, icon, art, tone = 0 }) {
   if (image) {
     return <img src={image} alt={alt} loading="lazy" decoding="async" width="640" height="400" className="h-44 w-full object-cover" />;
+  }
+  if (art && hasArt(art)) {
+    return (
+      <div role="img" aria-label={alt} className={`relative h-48 w-full overflow-hidden bg-gradient-to-br ${shotBg[tone % shotBg.length]} p-3`}>
+        <SlideArt slug={art} />
+      </div>
+    );
   }
   return (
     <div className="flex h-44 w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-navy-800 to-navy-600 text-navy-200">
@@ -39,7 +51,7 @@ export function ProductCard({ product }) {
   const { t, tr } = useLang();
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-sm transition hover:shadow-xl">
-      <Shot image={product.image} alt={tr(product.name)} label={t('products.screenshot')} icon={product.icon} />
+      <Shot image={product.image} alt={tr(product.name)} label={t('products.screenshot')} icon={product.icon} art={product.id} tone={Number(product.id.slice(-1)) || 0} />
       <div className="flex flex-1 flex-col p-6">
         <StatusBadge status={product.status} label={t(`common.${product.status}`)} />
         <h3 className="mt-3 font-display text-lg font-semibold text-navy-800">{tr(product.name)}</h3>
@@ -58,7 +70,7 @@ export function PortfolioCard({ item }) {
   const { t, tr } = useLang();
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-sm transition hover:shadow-xl">
-      <Shot image={item.image} alt={tr(item.title)} label={t('portfolio.screenshot')} icon={item.icon} />
+      <Shot image={item.image} alt={tr(item.title)} label={t('portfolio.screenshot')} icon={item.icon} art={item.id} tone={toneOf[item.id] ?? 0} />
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-electric-600">{tr(item.category)}</span>
