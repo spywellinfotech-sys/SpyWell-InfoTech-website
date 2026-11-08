@@ -17,35 +17,38 @@ export default function Home() {
       <Seo page="home" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-navy-900 text-white">
-        <div className="pointer-events-none absolute -left-20 top-10 h-72 w-72 animate-floaty rounded-full bg-electric-500/25 blur-3xl" />
-        <div className="pointer-events-none absolute -right-16 bottom-0 h-80 w-80 animate-floaty rounded-full bg-electric-400/20 blur-3xl [animation-delay:2s]" />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.07]"
-          style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '44px 44px' }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-32">
-          <p className="inline-flex animate-fade-up items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-electric-300">
-            {t('home.badge')}
-          </p>
-          <h1 className="mt-6 max-w-4xl animate-fade-up font-display text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            {t('home.title')}
-          </h1>
-          <p className="mt-6 max-w-2xl animate-fade-up text-lg leading-relaxed text-navy-200">{t('home.subtitle')}</p>
-          <p className="mt-3 animate-fade-up font-medium text-electric-300">{t('brand.tagline')}</p>
-          <div className="mt-9 flex animate-fade-up flex-wrap gap-4">
-            <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-electric-500 px-7 py-3.5 font-semibold text-white shadow-lg shadow-electric-500/30 transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-900">
-              {t('common.consult')} <ArrowRight size={18} aria-hidden="true" />
-            </Link>
-            <a href={whatsappLink(t('contact.waGreeting'))} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-7 py-3.5 font-semibold text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
-              <MessageCircle size={18} aria-hidden="true" /> {t('common.whatsapp')}
-            </a>
+      <section className="overflow-hidden bg-gradient-to-b from-navy-50 to-white">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_.85fr] lg:px-8 lg:py-24">
+          <div>
+            <p className="inline-flex rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-electric-600 ring-1 ring-electric-500/25">
+              {t('home.badge')}
+            </p>
+            <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-navy-800 sm:text-5xl lg:text-6xl">
+              {t('home.title')}
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy-500">{t('home.subtitle')}</p>
+            <p className="mt-3 font-display text-lg font-bold text-electric-500">{t('brand.tagline')}</p>
+            <div className="mt-9 flex flex-wrap gap-4">
+              <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-electric-500 px-7 py-3.5 font-semibold text-white shadow-lg shadow-electric-500/30 transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500 focus-visible:ring-offset-2">
+                {t('common.consult')} <ArrowRight size={18} aria-hidden="true" />
+              </Link>
+              <a href={whatsappLink(t('contact.waGreeting'))} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border-2 border-navy-800 px-7 py-3 font-semibold text-navy-800 transition hover:bg-navy-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-800">
+                <MessageCircle size={18} aria-hidden="true" /> {t('common.whatsapp')}
+              </a>
+            </div>
+          </div>
+          {/* Signal rings echo the arcs in the SpyWell logo */}
+          <div className="relative mx-auto flex aspect-square w-full max-w-sm items-center justify-center" aria-hidden="true">
+            <span className="absolute inset-0 animate-ring rounded-full border-2 border-electric-500" />
+            <span className="absolute inset-0 animate-ring rounded-full border-2 border-brand-teal [animation-delay:1.5s]" />
+            <span className="absolute inset-0 animate-ring rounded-full border-2 border-electric-400 [animation-delay:3s]" />
+            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" width="256" height="256" className="relative h-3/5 w-3/5 rounded-full shadow-2xl shadow-electric-500/25" />
           </div>
         </div>
       </section>
 
       {/* Services */}
-      <Section className="bg-slate-50">
+      <Section className="bg-navy-50/60">
         <SectionHeading title={t('home.servicesTitle')} subtitle={t('home.servicesSub')} />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((s, i) => (
@@ -60,8 +63,8 @@ export default function Home() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {whyUs.map((w, i) => (
             <Reveal key={w.icon + i} delay={i * 80}>
-              <div className="text-center">
-                <span className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-navy-800 text-electric-300">
+              <div>
+                <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-electric-500 text-white">
                   <Icon name={w.icon} size={26} />
                 </span>
                 <h3 className="mt-4 font-display text-lg font-semibold text-navy-800">{tr(w.title)}</h3>
@@ -73,14 +76,14 @@ export default function Home() {
       </Section>
 
       {/* Products */}
-      <Section className="bg-slate-50">
+      <Section className="bg-navy-50/60">
         <SectionHeading title={t('home.productsTitle')} subtitle={t('home.productsSub')} />
         <div className="grid gap-6 md:grid-cols-3">
           {products.map((p, i) => (
             <Reveal key={p.id} delay={i * 80}><ProductCard product={p} /></Reveal>
           ))}
         </div>
-        <div className="mt-8 text-center">
+        <div className="mt-8">
           <Link to="/products" className="font-semibold text-electric-600 hover:underline">{t('common.viewAll')} →</Link>
         </div>
       </Section>
@@ -93,7 +96,7 @@ export default function Home() {
             <Reveal key={p.id} delay={i * 80}><PortfolioCard item={p} /></Reveal>
           ))}
         </div>
-        <div className="mt-8 text-center">
+        <div className="mt-8">
           <Link to="/portfolio" className="font-semibold text-electric-600 hover:underline">{t('common.viewAll')} →</Link>
         </div>
       </Section>
@@ -104,13 +107,13 @@ export default function Home() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {industries.map((ind, i) => (
             <Reveal key={ind.icon + i} delay={(i % 3) * 80}>
-              <div className="flex h-full items-start gap-4 rounded-xl border border-white/10 bg-white/5 p-5">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-electric-500/20 text-electric-300">
+              <div className="flex h-full items-start gap-4 rounded-xl border border-navy-100 bg-white p-5 shadow-sm">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-electric-500/10 text-electric-600">
                   <Icon name={ind.icon} size={22} />
                 </span>
                 <div>
-                  <h3 className="font-display font-semibold">{tr(ind.title)}</h3>
-                  <p className="mt-1 text-sm text-navy-200">{tr(ind.text)}</p>
+                  <h3 className="font-display font-semibold text-navy-800">{tr(ind.title)}</h3>
+                  <p className="mt-1 text-sm text-slate-600">{tr(ind.text)}</p>
                 </div>
               </div>
             </Reveal>
@@ -140,13 +143,13 @@ export default function Home() {
       </Section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-r from-navy-800 to-electric-600 py-16 text-white">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <section className="bg-electric-500 py-16 text-white">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <Reveal>
             <h2 className="font-display text-3xl font-bold sm:text-4xl">{t('home.ctaTitle')}</h2>
-            <p className="mx-auto mt-3 max-w-xl text-lg text-white/85">{t('home.ctaText')}</p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link to="/contact" className="rounded-full bg-white px-7 py-3.5 font-semibold text-navy-800 transition hover:bg-navy-50">
+            <p className="mt-3 max-w-xl text-lg text-white/90">{t('home.ctaText')}</p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link to="/contact" className="rounded-full bg-white px-7 py-3.5 font-semibold text-electric-600 transition hover:bg-navy-50">
                 {t('common.consult')}
               </Link>
               <a href={whatsappLink(t('contact.waGreeting'))} target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/60 px-7 py-3.5 font-semibold text-white transition hover:bg-white/10">

@@ -58,7 +58,7 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <LanguageSwitcher />
-          <Link to="/contact" className="rounded-full bg-navy-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500 focus-visible:ring-offset-2">
+          <Link to="/contact" className="rounded-full bg-electric-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500 focus-visible:ring-offset-2">
             {t('nav.cta')}
           </Link>
         </div>

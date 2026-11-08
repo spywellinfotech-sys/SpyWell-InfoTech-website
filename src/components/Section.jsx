@@ -4,31 +4,30 @@ export function Section({ children, className = '', dark = false, id }) {
   return (
     <section
       id={id}
-      className={`py-16 sm:py-20 ${dark ? 'bg-navy-900 text-white' : ''} ${className}`}
+      className={`py-16 sm:py-20 ${dark ? 'bg-navy-50' : ''} ${className}`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
     </section>
   );
 }
 
-export function SectionHeading({ title, subtitle, dark = false, center = true }) {
+export function SectionHeading({ title, subtitle, dark = false, center = false }) {
   return (
     <Reveal className={`mb-10 max-w-2xl ${center ? 'mx-auto text-center' : ''}`}>
-      <h2 className={`font-display text-3xl font-bold tracking-tight sm:text-4xl ${dark ? 'text-white' : 'text-navy-800'}`}>
+      <h2 className={`font-display text-3xl font-bold tracking-tight sm:text-4xl text-navy-800`}>
         {title}
       </h2>
-      {subtitle && <p className={`mt-3 text-base sm:text-lg ${dark ? 'text-navy-200' : 'text-slate-600'}`}>{subtitle}</p>}
+      {subtitle && <p className={`mt-3 text-base sm:text-lg text-slate-600`}>{subtitle}</p>}
     </Reveal>
   );
 }
 
 export function PageHero({ title, subtitle }) {
   return (
-    <div className="relative overflow-hidden bg-navy-900 text-white">
-      <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-electric-500/20 blur-3xl" />
+    <div className="border-b-4 border-electric-500 bg-navy-50 text-navy-800">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-        <h1 className="animate-fade-up font-display text-4xl font-bold tracking-tight sm:text-5xl">{title}</h1>
-        {subtitle && <p className="mt-4 max-w-2xl animate-fade-up text-lg text-navy-200">{subtitle}</p>}
+        <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">{title}</h1>
+        {subtitle && <p className="mt-4 max-w-2xl text-lg text-navy-500">{subtitle}</p>}
       </div>
     </div>
   );

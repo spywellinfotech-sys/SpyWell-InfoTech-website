@@ -27,12 +27,16 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'Noto Sans Devanagari', 'system-ui', 'sans-serif'],
-        display: ['Plus Jakarta Sans', 'Noto Sans Devanagari', 'Inter', 'sans-serif'],
+        display: ['Bricolage Grotesque', 'Noto Sans Devanagari', 'Inter', 'sans-serif'],
       },
       keyframes: {
         fadeUp: {
           '0%': { opacity: '0', transform: 'translateY(18px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        ring: {
+          '0%': { transform: 'scale(.62)', opacity: '.55' },
+          '100%': { transform: 'scale(1.18)', opacity: '0' },
         },
         floaty: {
           '0%,100%': { transform: 'translateY(0)' },
@@ -42,6 +46,7 @@ export default {
       animation: {
         'fade-up': 'fadeUp .7s ease-out both',
         floaty: 'floaty 6s ease-in-out infinite',
+        ring: 'ring 4.5s ease-out infinite',
       },
     },
   },
