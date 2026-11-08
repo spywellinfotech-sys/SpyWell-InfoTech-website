@@ -1,48 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Building2, Contact, LayoutGrid, Landmark } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import Icon from './Icon';
 import { useLang } from '../i18n/LanguageContext';
+import { services } from '../data/content';
 
-// Showcase slides for the home hero. Edit text here (en + hi).
-const slides = [
-  {
-    id: 'padhai-pro',
-    image: 'apps/padhai-pro.jpg',
-    name: { en: 'Padhai Pro', hi: 'पढ़ाई प्रो' },
-    text: { en: 'Learn, practice and grow: KG to Class 5 lessons and mock tests.', hi: 'सीखो, अभ्यास करो, आगे बढ़ो: KG से कक्षा 5 तक पाठ और मॉक टेस्ट।' },
-    bg: 'from-navy-50 to-white',
-  },
-  {
-    id: 'propdeal',
-    Icon: Building2,
-    name: { en: 'PropDeal', hi: 'प्रॉपडील' },
-    text: { en: 'Property dealers manage listings and clients, and network with other dealers.', hi: 'प्रॉपर्टी डीलर लिस्टिंग और क्लाइंट संभालें और दूसरे डीलरों से जुड़ें।' },
-    bg: 'from-electric-500 to-electric-600',
-  },
-  {
-    id: 'followup',
-    Icon: Contact,
-    name: { en: 'FollowUp', hi: 'फॉलोअप' },
-    text: { en: 'Your contact list with groups, one-tap call and WhatsApp, and follow-up reminders.', hi: 'ग्रुप, एक टैप में कॉल और व्हाट्सऐप, और फॉलो-अप रिमाइंडर वाली कॉन्टैक्ट लिस्ट।' },
-    bg: 'from-brand-teal to-navy-500',
-  },
-  {
-    id: 'iui',
-    Icon: LayoutGrid,
-    name: { en: 'iUi Launcher', hi: 'iUi लॉन्चर' },
-    text: { en: 'A clean iOS-style home screen for Android with icon grid, dock and search.', hi: 'एंड्रॉइड के लिए साफ़ iOS जैसा होम स्क्रीन: आइकन ग्रिड, डॉक और सर्च।' },
-    bg: 'from-navy-700 to-navy-900',
-  },
-  {
-    id: 'smart-village',
-    Icon: Landmark,
-    name: { en: 'Smart Village', hi: 'मेरा गाँव' },
-    text: { en: 'Villagers file complaints and read notices, while the panchayat stays connected.', hi: 'ग्रामवासी शिकायत दर्ज करें और सूचनाएँ पढ़ें, पंचायत जुड़ी रहे।' },
-    bg: 'from-emerald-500 to-emerald-700',
-  },
+// Hero slideshow: one slide per service (edit the services in src/data/content.js).
+const palette = [
+  'from-electric-500 to-electric-600',
+  'from-navy-700 to-navy-900',
+  'from-brand-teal to-navy-500',
+  'from-electric-400 to-navy-700',
+  'from-navy-500 to-electric-600',
+  'from-brand-teal to-electric-600',
 ];
+const slides = services.slice(0, 6).map((s, n) => ({ ...s, id: s.slug, bg: palette[n % palette.length] }));
 
 export default function HeroSlideshow() {
-  const { tr, lang } = useLang();
+  const { t, tr, lang } = useLang();
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchX = useRef(null);
@@ -61,7 +36,7 @@ export default function HeroSlideshow() {
       className="relative mx-auto w-full max-w-sm"
       role="group"
       aria-roledescription="carousel"
-      aria-label={lang === 'hi' ? 'हमारे ऐप' : 'Our apps'}
+      aria-label={lang === 'hi' ? 'हमारी सेवाएँ' : 'Our services'}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -87,17 +62,16 @@ export default function HeroSlideshow() {
               className={`absolute inset-0 flex flex-col bg-gradient-to-br ${s.bg} transition-opacity duration-700 ${active ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
             >
               <div className="flex flex-1 items-center justify-center p-8">
-                {s.image ? (
-                  <img src={`${import.meta.env.BASE_URL}${s.image}`} alt={tr(s.name)} width="256" height="256" className="h-48 w-48 rounded-[2rem] shadow-xl" />
-                ) : (
-                  <span className="inline-flex h-40 w-40 items-center justify-center rounded-[2rem] bg-white/15 text-white ring-1 ring-white/30">
-                    <s.Icon size={76} strokeWidth={1.5} aria-hidden="true" />
-                  </span>
-                )}
+                <span className="inline-flex h-36 w-36 items-center justify-center rounded-[2rem] bg-white/15 text-white ring-1 ring-white/30">
+                  <Icon name={s.icon} size={72} strokeWidth={1.5} />
+                </span>
               </div>
-              <div className={`px-6 pb-14 ${s.image ? 'text-navy-800' : 'text-white'}`}>
-                <h2 className="font-display text-2xl font-extrabold">{tr(s.name)}</h2>
-                <p className={`mt-2 text-sm leading-relaxed ${s.image ? 'text-navy-500' : 'text-white/90'}`}>{tr(s.text)}</p>
+              <div className="px-6 pb-14 text-white">
+                <h2 className="font-display text-2xl font-extrabold">{tr(s.title)}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-white/90">{tr(s.short)}</p>
+                <Link to={`/services#${s.slug}`} tabIndex={active ? 0 : -1} className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-navy-800 transition hover:bg-navy-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
+                  {t('common.learnMore')} <ArrowRight size={16} aria-hidden="true" />
+                </Link>
               </div>
             </div>
           );
@@ -109,9 +83,9 @@ export default function HeroSlideshow() {
               key={s.id}
               type="button"
               onClick={() => go(n)}
-              aria-label={`${tr(s.name)} (${n + 1}/${slides.length})`}
+              aria-label={`${tr(s.title)} (${n + 1}/${slides.length})`}
               aria-current={n === i}
-              className={`h-2.5 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${n === i ? 'w-7 bg-electric-500' : 'w-2.5 bg-navy-800/30'}`}
+              className={`h-2.5 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${n === i ? 'w-7 bg-white' : 'w-2.5 bg-white/50'}`}
             />
           ))}
         </div>
