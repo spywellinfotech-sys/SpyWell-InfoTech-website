@@ -13,7 +13,7 @@ export const SITE = {
   // Set VITE_SITE_URL in .env (or Vercel) once you have a domain.
   url: (import.meta.env.VITE_SITE_URL || 'https://your-domain.example').replace(/\/$/, ''),
   // Optional form service endpoint (e.g. Formspree). Leave empty until configured.
-  formEndpoint: import.meta.env.VITE_FORM_ENDPOINT || 'https://formsubmit.co/ajax/spywellinfotech@gmail.com',
+  formEndpoint: import.meta.env.VITE_FORM_ENDPOINT || 'https://formsubmit.co/ajax/b52cf02d0e3bc6c11ccc828e9505b717',
   // Add real links here when they exist, e.g. { label: 'LinkedIn', href: 'https://...' }
   social: [],
 };
