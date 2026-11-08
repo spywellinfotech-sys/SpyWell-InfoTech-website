@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MessageCircle } from 'lucide-react';
 import Seo from '../components/Seo';
 import Reveal from '../components/Reveal';
+import HeroSlideshow from '../components/HeroSlideshow';
 import Icon from '../components/Icon';
 import { Section, SectionHeading } from '../components/Section';
 import { ServiceCard, ProductCard, PortfolioCard } from '../components/Cards';
@@ -37,13 +38,7 @@ export default function Home() {
               </a>
             </div>
           </div>
-          {/* Signal rings echo the arcs in the SpyWell logo */}
-          <div className="relative mx-auto flex aspect-square w-full max-w-sm items-center justify-center" aria-hidden="true">
-            <span className="absolute inset-0 animate-ring rounded-full border-2 border-electric-500" />
-            <span className="absolute inset-0 animate-ring rounded-full border-2 border-brand-teal [animation-delay:1.5s]" />
-            <span className="absolute inset-0 animate-ring rounded-full border-2 border-electric-400 [animation-delay:3s]" />
-            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" width="256" height="256" className="relative h-3/5 w-3/5 rounded-full shadow-2xl shadow-electric-500/25" />
-          </div>
+          <HeroSlideshow />
         </div>
       </section>
 
