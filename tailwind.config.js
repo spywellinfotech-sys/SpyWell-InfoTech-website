@@ -26,8 +26,8 @@ export default {
         brand: { teal: '#2ac4d0' },
       },
       fontFamily: {
-        sans: ['Inter', 'Noto Sans Devanagari', 'system-ui', 'sans-serif'],
-        display: ['Bricolage Grotesque', 'Noto Sans Devanagari', 'Inter', 'sans-serif'],
+        sans: ['Poppins', 'Noto Sans Devanagari', 'system-ui', 'sans-serif'],
+        display: ['Baloo 2', 'Noto Sans Devanagari', 'Poppins', 'sans-serif'],
       },
       keyframes: {
         fadeUp: {

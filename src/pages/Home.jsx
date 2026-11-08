@@ -24,7 +24,7 @@ export default function Home() {
             <p className="inline-flex rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-electric-600 ring-1 ring-electric-500/25">
               {t('home.badge')}
             </p>
-            <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-navy-800 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.1] tracking-tight text-navy-800 sm:text-5xl lg:text-6xl">
               {t('home.title')}
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy-500">{t('home.subtitle')}</p>
