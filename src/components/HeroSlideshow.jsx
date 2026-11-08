@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Icon from './Icon';
+import SlideArt, { hasArt } from './SlideArt';
 import { useLang } from '../i18n/LanguageContext';
 import { services } from '../data/content';
 
@@ -61,10 +62,16 @@ export default function HeroSlideshow() {
               aria-hidden={!active}
               className={`absolute inset-0 flex flex-col bg-gradient-to-br ${s.bg} transition-opacity duration-700 ${active ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
             >
-              <div className="flex flex-1 items-center justify-center p-8">
-                <span className="inline-flex h-36 w-36 items-center justify-center rounded-[2rem] bg-white/15 text-white ring-1 ring-white/30">
-                  <Icon name={s.icon} size={72} strokeWidth={1.5} />
-                </span>
+              <div className="relative flex flex-1 items-center justify-center overflow-hidden px-6 pt-6">
+                <span className="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/10" />
+                <span className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-white/10" />
+                {hasArt(s.slug) ? (
+                  <div className={`relative h-full max-h-60 w-full ${active ? 'animate-floaty' : ''}`}><SlideArt slug={s.slug} /></div>
+                ) : (
+                  <span className="relative inline-flex h-36 w-36 items-center justify-center rounded-[2rem] bg-white/15 text-white ring-1 ring-white/30">
+                    <Icon name={s.icon} size={72} strokeWidth={1.5} />
+                  </span>
+                )}
               </div>
               <div className="px-6 pb-14 text-white">
                 <h2 className="font-display text-2xl font-extrabold">{tr(s.title)}</h2>
