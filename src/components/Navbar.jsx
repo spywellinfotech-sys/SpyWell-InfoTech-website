@@ -78,17 +78,17 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <div id="mobile-menu" className={`lg:hidden ${open ? 'block' : 'hidden'} border-t border-navy-50 bg-white`}>
+      <div id="mobile-menu" className={`lg:hidden ${open ? 'block' : 'hidden'} border-t border-white/20 bg-electric-600`}>
         <ul className="mx-auto max-w-7xl space-y-1 px-4 py-3 sm:px-6">
           {links.map(([to, key]) => (
             <li key={to}>
-              <NavLink to={to} end={to === '/'} className={({ isActive }) => `block rounded-md px-3 py-3 text-base font-medium ${isActive ? 'bg-navy-50 text-electric-600' : 'text-navy-700 hover:bg-navy-50'}`}>
+              <NavLink to={to} end={to === '/'} className={({ isActive }) => `block rounded-md px-3 py-3 text-base font-medium ${isActive ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10'}`}>
                 {t(key)}
               </NavLink>
             </li>
           ))}
           <li className="pt-2">
-            <Link to="/contact" className="block rounded-full bg-electric-500 px-5 py-3 text-center font-semibold text-white">
+            <Link to="/contact" className="block rounded-full bg-white px-5 py-3 text-center font-bold text-electric-600">
               {t('nav.cta')}
             </Link>
           </li>
