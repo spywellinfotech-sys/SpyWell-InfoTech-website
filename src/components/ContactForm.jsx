@@ -75,7 +75,7 @@ export default function ContactForm() {
       const res = await fetch(SITE.formEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ ...values, service: serviceName(), language: lang }),
+        body: JSON.stringify({ _subject: 'New enquiry from SpyWell InfoTech website', _captcha: 'false', ...values, service: serviceName(), language: lang }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setStatus('success');
