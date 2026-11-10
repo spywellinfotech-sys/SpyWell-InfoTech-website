@@ -214,7 +214,7 @@ export const portfolio = [
       hi: 'सीखो, अभ्यास करो, आगे बढ़ो: KG से कक्षा 5 तक गणित, अंग्रेज़ी और EVS के CBSE पाठ और रोज़ के मॉक टेस्ट।',
     },
     version: 'Android app (APK)',
-    download: 'https://github.com/spywellinfotech-sys/spywell-release/releases/tag/v4.41.1',
+    download: 'https://github.com/spywellinfotech-sys/spywell-release/releases/download/v4.42.2/PadhaiPro-v4.42.2.apk',
     link: '',
   },
   {
