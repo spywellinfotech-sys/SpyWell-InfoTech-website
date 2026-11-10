@@ -25,5 +25,5 @@ export const whatsappLink = (text = '') =>
 export const mailLink = (subject = '') =>
   `mailto:${SITE.email}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
 
-// Set to true on launch day to show the APK download buttons in the portfolio.
+// Set to true once the apps are on Google Play, and put each Play Store link in portfolio[].download.
 export const APPS_LAUNCHED = false;
