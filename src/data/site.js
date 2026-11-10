@@ -3,7 +3,7 @@
 // ============================================================
 export const SITE = {
   name: 'SpyWell InfoTech',
-  email: 'spywellinfotech@gmail.com',
+  email: 'info@spywell.in',
   whatsapp: '919837900303', // digits only, used for wa.me links
   whatsappDisplay: '+919837900303',
   location: {
