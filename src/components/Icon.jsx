@@ -2,7 +2,7 @@ import {
   Smartphone, Apple, Globe, AppWindow, Briefcase, Network, GraduationCap, Bot, Cloud,
   Boxes, LayoutDashboard, Layers, ShoppingBasket, BookOpen, BarChart3, HeartPulse, Truck,
   ShoppingCart, Factory, Rocket, MessageSquare, PenTool, Code2, ShieldCheck, Eye, Gem,
-  Handshake, Lightbulb, Target, Languages, MessagesSquare, Zap, HelpCircle,
+  Handshake, Lightbulb, Target, Languages, MessagesSquare, Zap, Compass, Mic, Trash2, BatteryCharging, FileText, Users, MapPin, Hammer, Stethoscope, Gauge, Car, Landmark, Contact, HelpCircle,
 } from 'lucide-react';
 
 // Only icons listed here are bundled (keeps the site fast). Add new ones here
@@ -11,7 +11,7 @@ const icons = {
   Smartphone, Apple, Globe, AppWindow, Briefcase, Network, GraduationCap, Bot, Cloud,
   Boxes, LayoutDashboard, Layers, ShoppingBasket, BookOpen, BarChart3, HeartPulse, Truck,
   ShoppingCart, Factory, Rocket, MessageSquare, PenTool, Code2, ShieldCheck, Eye, Gem,
-  Handshake, Lightbulb, Target, Languages, MessagesSquare, Zap,
+  Handshake, Lightbulb, Target, Languages, MessagesSquare, Zap, Compass, Mic, Trash2, BatteryCharging, FileText, Users, MapPin, Hammer, Stethoscope, Gauge, Car, Landmark, Contact,
 };
 
 export default function Icon({ name, ...props }) {

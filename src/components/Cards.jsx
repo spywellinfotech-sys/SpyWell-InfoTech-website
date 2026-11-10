@@ -79,13 +79,13 @@ export function PortfolioCard({ item }) {
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-electric-600">{tr(item.category)}</span>
-          <StatusBadge status={item.status} label={item.status === 'demo' ? t('common.demo') : t('common.available')} />
+          <StatusBadge status={item.status} label={item.status === 'demo' ? t('common.demo') : t('common.verified')} />
         </div>
         <h3 className="mt-3 font-display text-lg font-semibold text-navy-800">{tr(item.title)}</h3>
         <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{tr(item.description)}</p>
         <div className="mt-4 flex flex-wrap items-center gap-4">
-          {item.download && (
-            APPS_LAUNCHED ? (
+          {item.status !== 'demo' && (
+            APPS_LAUNCHED && item.download ? (
               <a href={item.download} rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-electric-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500 focus-visible:ring-offset-2">
                 <Download size={16} aria-hidden="true" /> {t('common.download')}
               </a>
