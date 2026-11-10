@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Download, ImageOff } from 'lucide-react';
+import { ArrowRight, ImageOff, MessageCircle } from 'lucide-react';
 import Icon from './Icon';
 import SlideArt, { hasArt } from './SlideArt';
 import { StatusBadge } from './Section';
 import { useLang } from '../i18n/LanguageContext';
+import { whatsappLink } from '../data/site';
 
 export function ServiceCard({ service }) {
   const { t, tr } = useLang();
@@ -71,7 +72,7 @@ export function ProductCard({ product }) {
 }
 
 export function PortfolioCard({ item }) {
-  const { t, tr } = useLang();
+  const { t, tr, lang } = useLang();
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-sm transition hover:shadow-xl">
       <Shot image={item.image} alt={tr(item.title)} label={t('portfolio.screenshot')} icon={item.icon} art={item.id} tone={toneOf[item.id] ?? 0} />
@@ -82,11 +83,11 @@ export function PortfolioCard({ item }) {
         </div>
         <h3 className="mt-3 font-display text-lg font-semibold text-navy-800">{tr(item.title)}</h3>
         <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{tr(item.description)}</p>
-        {item.version && <p className="mt-3 text-xs text-slate-500">{item.version}</p>}
+        {item.version && }
         <div className="mt-4 flex flex-wrap items-center gap-4">
           {item.download && (
-            <a href={item.download} rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-electric-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500 focus-visible:ring-offset-2">
-              <Download size={16} aria-hidden="true" /> {t('common.download')}
+            <a href={whatsappLink(`${lang === 'hi' ? 'नमस्ते, मुझे यह ऐप चाहिए:' : 'Hello, I am interested in the app:'} ${tr(item.title)}`)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-electric-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500 focus-visible:ring-offset-2">
+              <MessageCircle size={16} aria-hidden="true" /> {t('common.getApp')}
             </a>
           )}
           {item.link && (
