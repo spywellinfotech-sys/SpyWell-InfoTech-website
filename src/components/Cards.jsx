@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, ImageOff } from 'lucide-react';
+import { ArrowRight, Download, ImageOff } from 'lucide-react';
 import Icon from './Icon';
 import SlideArt, { hasArt } from './SlideArt';
 import { StatusBadge } from './Section';
@@ -26,11 +26,15 @@ export function ServiceCard({ service }) {
 
 const shotBg = ['from-electric-500 to-electric-600', 'from-brand-teal to-navy-500', 'from-navy-700 to-navy-900', 'from-electric-400 to-navy-700', 'from-navy-500 to-electric-600'];
 
-const toneOf = { grocery: 0, education: 1, business: 2, healthcare: 3, transport: 4 };
+const toneOf = { 'cctv-promate': 2, 'promate-tech': 1, propdeal: 0, grocery: 0, education: 1, business: 2, healthcare: 3, transport: 4 };
 
 function Shot({ image, alt, label, icon, art, tone = 0 }) {
   if (image) {
-    return <img src={image} alt={alt} loading="lazy" decoding="async" width="640" height="400" className="h-44 w-full object-cover" />;
+    return (
+      <div className="flex h-48 w-full items-center justify-center bg-gradient-to-br from-navy-50 to-white">
+        <img src={image} alt={alt} loading="lazy" decoding="async" width="160" height="160" className="h-36 w-36 rounded-[1.75rem] shadow-xl ring-1 ring-navy-100" />
+      </div>
+    );
   }
   if (art && hasArt(art)) {
     return (
@@ -74,15 +78,23 @@ export function PortfolioCard({ item }) {
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-electric-600">{tr(item.category)}</span>
-          <StatusBadge status={item.status} label={item.status === 'demo' ? t('common.demo') : t('common.verified')} />
+          <StatusBadge status={item.status} label={item.status === 'demo' ? t('common.demo') : t('common.available')} />
         </div>
         <h3 className="mt-3 font-display text-lg font-semibold text-navy-800">{tr(item.title)}</h3>
         <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{tr(item.description)}</p>
-        {item.link && (
-          <a href={item.link} target="_blank" rel="noopener noreferrer" className="mt-4 text-sm font-semibold text-electric-600 hover:underline">
-            {t('common.visit')}
-          </a>
-        )}
+        {item.version && <p className="mt-3 text-xs text-slate-500">{item.version}</p>}
+        <div className="mt-4 flex flex-wrap items-center gap-4">
+          {item.download && (
+            <a href={item.download} rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-electric-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500 focus-visible:ring-offset-2">
+              <Download size={16} aria-hidden="true" /> {t('common.download')}
+            </a>
+          )}
+          {item.link && (
+            <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-electric-600 hover:underline">
+              {t('common.visit')}
+            </a>
+          )}
+        </div>
       </div>
     </article>
   );

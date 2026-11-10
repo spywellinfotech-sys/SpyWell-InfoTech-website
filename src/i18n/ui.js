@@ -12,7 +12,7 @@ export const ui = {
       learnMore: 'Learn more', viewAll: 'View all', viewServices: 'View our services',
       consult: 'Get a Free Consultation', whatsapp: 'Chat on WhatsApp', email: 'Email us',
       demo: 'DEMO', development: 'Under development', planned: 'Planned', live: 'Live',
-      verified: 'Verified project', visit: 'Visit', placeholderNote: 'Placeholder content: replace before publishing.',
+      verified: 'Verified project', available: 'Available now', download: 'Download APK', visit: 'Visit', placeholderNote: 'Placeholder content: replace before publishing.',
       backHome: 'Back to home', talk: 'Discuss this service',
     },
     home: {
@@ -114,7 +114,7 @@ export const ui = {
       learnMore: 'और जानें', viewAll: 'सभी देखें', viewServices: 'हमारी सेवाएँ देखें',
       consult: 'मुफ़्त परामर्श लें', whatsapp: 'व्हाट्सऐप पर चैट करें', email: 'हमें ईमेल करें',
       demo: 'डेमो', development: 'विकास जारी', planned: 'योजनाबद्ध', live: 'लाइव',
-      verified: 'सत्यापित प्रोजेक्ट', visit: 'देखें', placeholderNote: 'प्लेसहोल्डर सामग्री: प्रकाशित करने से पहले बदलें।',
+      verified: 'सत्यापित प्रोजेक्ट', available: 'अभी उपलब्ध', download: 'APK डाउनलोड करें', visit: 'देखें', placeholderNote: 'प्लेसहोल्डर सामग्री: प्रकाशित करने से पहले बदलें।',
       backHome: 'होम पर वापस जाएँ', talk: 'इस सेवा पर बात करें',
     },
     home: {

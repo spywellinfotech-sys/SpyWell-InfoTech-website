@@ -174,6 +174,42 @@ const more = {
 Object.assign(art, more);
 art['product-2'] = art['web-application-development'];
 
+
+Object.assign(art, {
+  'cctv-promate': (
+    <>
+      <rect x="40" y="28" width="150" height="46" rx="14" fill={W} />
+      <circle cx="152" cy="51" r="17" fill="#26101C" /><circle cx="152" cy="51" r="9" fill={C} /><circle cx="148" cy="47" r="3" fill={W} />
+      <rect x="54" y="43" width="52" height="8" rx="4" fill="#D5DDEA" /><rect x="54" y="57" width="34" height="6" rx="3" fill="#E3E9F3" />
+      <path d="M115 74v22l-30 14" fill="none" stroke={W} strokeWidth="6" strokeLinecap="round" />
+      <rect x="150" y="96" width="62" height="76" rx="10" fill={W} />
+      <rect x="158" y="106" width="46" height="10" rx="4" fill={R} />
+      {[0, 1, 2].map((n) => <rect key={n} x="158" y={124 + n * 14} width={[46, 36, 40][n]} height="6" rx="3" fill="#D5DDEA" />)}
+      <g transform="translate(24 104)"><rect width="84" height="56" rx="10" fill="#26101C" /><rect x="8" y="8" width="68" height="40" rx="6" fill="#3a1a29" /><circle cx="22" cy="22" r="5" fill={R} /><path d="M12 44l18-14 14 8 14-12 14 10v8H12z" fill={C} opacity=".8" /></g>
+    </>
+  ),
+  'promate-tech': (
+    <>
+      <rect x="82" y="14" width="76" height="152" rx="14" fill={W} />
+      <rect x="88" y="26" width="64" height="128" rx="6" fill="#F3F6FB" />
+      <rect x="94" y="32" width="52" height="12" rx="6" fill={R} />
+      {[0, 1, 2, 3].map((n) => <g key={n}><rect x="94" y={52 + n * 20} width="12" height="12" rx="3" fill={n < 3 ? C : '#D5DDEA'} />{n < 3 && <path d={`M97 ${58 + n * 20}l2 2 4-4`} fill="none" stroke={W} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />}<rect x="112" y={55 + n * 20} width="34" height="6" rx="3" fill="#D5DDEA" /></g>)}
+      <g transform="translate(16 46)"><circle cx="24" cy="24" r="24" fill={Y} /><path d="M24 12a8 8 0 0 0-8 8c0 7 8 16 8 16s8-9 8-16a8 8 0 0 0-8-8z" fill="#26101C" /><circle cx="24" cy="20" r="3" fill={Y} /></g>
+      <g transform="translate(170 100)"><rect width="56" height="40" rx="10" fill={C} /><path d="M10 28c6-14 12 4 18-8s12 4 18-4" fill="none" stroke={W} strokeWidth="4" strokeLinecap="round" /></g>
+    </>
+  ),
+  propdeal: (
+    <>
+      <rect x="36" y="70" width="84" height="92" rx="6" fill={W} /><rect x="120" y="42" width="84" height="120" rx="6" fill="#E3E9F3" />
+      {[0, 1, 2].flatMap((r) => [0, 1].map((c) => <rect key={`a${r}${c}`} x={48 + c * 36} y={82 + r * 26} width="22" height="16" rx="3" fill={r === 1 && c === 0 ? Y : C} />))}
+      {[0, 1, 2, 3].flatMap((r) => [0, 1].map((c) => <rect key={`b${r}${c}`} x={132 + c * 36} y={54 + r * 26} width="22" height="16" rx="3" fill="#B8C3D6" />))}
+      <rect x="64" y="132" width="28" height="30" rx="4" fill={R} />
+      <g transform="translate(164 8)"><path d="M0 0h50a8 8 0 0 1 8 8v24a8 8 0 0 1-8 8H18l-12 10V40a6 6 0 0 1-6-6z" fill={Y} /><text x="29" y="26" textAnchor="middle" fontFamily="Arial" fontWeight="700" fontSize="13" fill="#26101C">SOLD</text></g>
+      <path d="M20 164h200" stroke={W} strokeWidth="4" strokeLinecap="round" opacity=".6" />
+    </>
+  ),
+});
+
 export default function SlideArt({ slug }) {
   const body = art[slug];
   if (!body) return null;
