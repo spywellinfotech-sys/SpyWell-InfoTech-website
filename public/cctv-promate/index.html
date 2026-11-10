@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="CCTV ProMate: CCTV installers ke liye quotation, installation job, final bill, technician aur profit ka free Android app. Download Free App.">
+<meta property="og:title" content="CCTV ProMate - Your Complete CCTV Business Partner">
+<meta property="og:description" content="Quotation, jobs, bills, technician app aur profit report. Free Android app, ab download karein.">
+<meta property="og:type" content="website">
+<link rel="icon" href="../favicon.png">
+<title>CCTV ProMate</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: dark navy hero with phone mock beside copy, then feature grid, how-it-works, plans, final download band */
+:root{--bg:#f4f6fa;--fg:#0f1b2d;--mut:#55627a;--card:#fff;--line:#dbe2ee;--navy:#0b2a4a;--red:#d62828;--red-fg:#fff;--teal:#0e8f86;--orange:#e8710a;--hero:#0b2a4a;--hero-fg:#fff;--hero-mut:#b7c6dc;--chip:#e8eef7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a121e;--fg:#e8eef8;--mut:#9aa9c0;--card:#111c2c;--line:#22324a;--navy:#8fb4e8;--teal:#3cc5b8;--orange:#f59a3c;--hero:#0d2038;--chip:#17263b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a121e;--fg:#e8eef8;--mut:#9aa9c0;--card:#111c2c;--line:#22324a;--navy:#8fb4e8;--teal:#3cc5b8;--orange:#f59a3c;--hero:#0d2038;--chip:#17263b;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:Inter,"Noto Sans Devanagari",system-ui,sans-serif;font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:"Space Grotesk","Noto Sans Devanagari",Inter,sans-serif;text-wrap:balance;margin:0;line-height:1.12}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band{padding-block:56px}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--red);color:var(--red-fg);font-weight:600;text-decoration:none;padding:16px 26px;border-radius:14px;font-size:17px;min-height:56px}
+.btn:focus-visible,a:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.btn.alt{background:transparent;color:inherit;border:1.5px solid currentColor}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--teal)}
+/* hero */
+.hero{background:var(--hero);color:var(--hero-fg)}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;padding-block:48px 56px}
+.hero h1{font-size:clamp(34px,6vw,56px);font-weight:700}
+.hero h1 em{font-style:normal;color:#ff6b6b}
+.hero p{color:var(--hero-mut);max-width:48ch;margin:16px 0 26px;font-size:18px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.note{font-size:13px;color:var(--hero-mut);margin-top:14px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:28px;font-family:"Space Grotesk";font-weight:700;font-size:20px}
+.logo{width:38px;height:38px;border-radius:10px;background:var(--red);display:grid;place-items:center}
+.logo svg{width:24px;height:24px}
+/* phone */
+.phone{justify-self:center;width:min(280px,100%);background:#06101c;border-radius:34px;padding:12px;box-shadow:0 20px 50px rgba(0,0,0,.35);border:1px solid #1f3552}
+.screen{background:#f4f6fa;border-radius:24px;padding:14px 12px 16px;color:#0f1b2d}
+.screen .top{display:flex;justify-content:space-between;font-family:"Space Grotesk";font-weight:700;font-size:14px;margin-bottom:10px}
+.screen .top span:last-child{color:#d62828}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border-radius:12px;padding:10px 9px;color:#fff;min-width:0}
+.tile b{display:block;font-size:12px;line-height:1.2}
+.tile i{display:block;font-style:normal;font-size:10px;opacity:.85;margin-top:2px}
+.t1{background:#0e8f86}.t2{background:#0b2a4a}.t3{background:#e8710a}.t4{background:#0e8f86}.t5{background:#0b2a4a}.t6{background:#6d4c41}.t7{background:#0e8f86}.t8{background:#d9534f}
+/* features */
+.head{max-width:60ch;margin-bottom:28px}
+.head h2{font-size:clamp(26px,4vw,38px);margin-top:8px}
+.head p{color:var(--mut);margin:12px 0 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.f{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.f h3{font-size:18px;margin-bottom:6px}
+.f p{margin:0;color:var(--mut);font-size:15px}
+.f .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--chip);color:var(--navy);margin-bottom:10px}
+/* flow */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.step b{font-family:"Space Grotesk";font-size:16px;display:block}
+.step span{color:var(--mut);font-size:14px}
+.arrow{color:var(--teal);font-weight:700}
+/* plans */
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.plan.hot{border:2px solid var(--red)}
+.plan h3{font-size:22px}
+.price{font-family:"Space Grotesk";font-size:34px;font-weight:700}
+.price small{font-size:14px;color:var(--mut);font-weight:500}
+.plan ul{margin:0;padding-left:18px;color:var(--mut);font-size:15px}
+.plan li{margin-bottom:4px}
+/* final */
+.final{background:var(--hero);color:var(--hero-fg);text-align:center}
+.final .wrap{padding-block:56px}
+.final h2{font-size:clamp(28px,5vw,42px)}
+.final p{color:var(--hero-mut);margin:12px auto 24px;max-width:50ch}
+.final .cta{justify-content:center}
+footer{padding-block:26px;font-size:13px;color:var(--mut);text-align:center}
+footer a{color:inherit}
+.hi{display:none}
+:root[lang="hi"] .en{display:none}:root[lang="hi"] .hi{display:inline}
+.lang{margin-left:auto;display:inline-flex;border:1.5px solid var(--hero-mut);border-radius:999px;overflow:hidden}
+.lang button{all:unset;cursor:pointer;padding:6px 14px;font-size:14px;font-weight:600;color:var(--hero-fg)}
+.lang button[aria-pressed="true"]{background:#fff;color:#0b2a4a}
+.lang button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+@media (max-width:760px){.hero .wrap{grid-template-columns:1fr}.band{padding-block:40px}.btn{width:100%;justify-content:center}}
+@media (prefers-reduced-motion:no-preference){.btn{transition:transform .15s}.btn:hover{transform:translateY(-2px)}}
+</style>
+
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <div>
+    <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h13a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3z"/><path d="M18 11l3-2v6l-3-2"/><path d="M7 19h6"/></svg></span>CCTV ProMate<span class="lang" role="group" aria-label="Language"><button id="b-hi" aria-pressed="true">हिंदी</button><button id="b-en" aria-pressed="false">English</button></span></div>
+    <h1><span class="en">Your whole CCTV business, <em>in one app.</em></span><span class="hi">CCTV का पूरा बिज़नेस, <em>एक ही ऐप में।</em></span></h1>
+    <p><span class="en">Make quotations, run installation jobs, send final bills and PDFs, and keep technician accounts. Type the camera count and the material list builds itself.</span><span class="hi">कोटेशन बनाएं, इंस्टॉलेशन जॉब चलाएं, फ़ाइनल बिल और PDF भेजें, टेक्नीशियन का हिसाब रखें। कैमरा संख्या लिखें, मटेरियल लिस्ट अपने आप बन जाती है।</span></p>
+    <div class="cta">
+      <a class="btn" href="https://tinyurl.com/Cctv-promate-app" rel="noopener">⬇ <span class="en">Download Free App</span><span class="hi">फ्री ऐप डाउनलोड करें</span></a>
+      <a class="btn alt" href="#plans"><span class="en">See plans</span><span class="hi">प्लान देखें</span></a>
+    </div>
+    <div class="note"><span class="en">Android APK · 10 quotations on the Free plan · Start with Google login</span><span class="hi">Android APK · फ्री प्लान में 10 कोटेशन · Google लॉगिन से शुरू</span></div>
+  </div>
+  <div class="phone" aria-label="App home screen"><div class="screen">
+    <div class="top"><span>CCTV ProMate</span><span>● Free</span></div>
+    <div class="tiles">
+      <div class="tile t1"><b>Material Master</b><i>Items and rates</i></div>
+      <div class="tile t2"><b>Installation Jobs</b><i>3 open</i></div>
+      <div class="tile t3"><b>Purchase Orders</b><i>5 approved</i></div>
+      <div class="tile t4"><b>Profit &amp; Loss</b><i>Monthly, yearly</i></div>
+      <div class="tile t5"><b>Technicians</b><i>4 in team</i></div>
+      <div class="tile t6"><b>Material Issue</b><i>Issue and return</i></div>
+      <div class="tile t7"><b>Final Bills</b><i>PDF + WhatsApp</i></div>
+      <div class="tile t8"><b>Payment History</b><i>Balance track</i></div>
+    </div>
+  </div></div>
+</div></header>
+
+<section class="band"><div class="wrap">
+  <div class="head"><div class="eyebrow"><span class="en">Features</span><span class="hi">फ़ीचर्स</span></div><h2><span class="en">For every job an installer does</span><span class="hi">इंस्टॉलर के हर काम के लिए</span></h2><p><span class="en">From site visit to payment, everything on your phone. Quotations and bills work even without internet.</span><span class="hi">साइट विज़िट से लेकर पेमेंट तक, सब कुछ फ़ोन पर। इंटरनेट न हो तब भी कोटेशन और बिल बनते हैं।</span></p></div>
+  <div class="grid">
+    <div class="f"><span class="tag"><span class="en">Quotation</span><span class="hi">कोटेशन</span></span><h3><span class="en">1 to 50 cameras, one click</span><span class="hi">1 से 50 कैमरे, एक क्लिक</span></h3><p><span class="en">Enter indoor and outdoor camera counts. The recorder (4/8/16/32/64 channel), power supply, cable and HDD list builds itself. Choose Analog, IP or Hybrid.</span><span class="hi">इनडोर और आउटडोर कैमरे लिखें। रिकॉर्डर (4/8/16/32/64 चैनल), पावर सप्लाई, केबल और HDD की लिस्ट खुद बन जाती है। एनालॉग, IP या हाइब्रिड चुनें।</span></p></div>
+    <div class="f"><span class="tag">PDF</span><h3><span class="en">Professional PDF and WhatsApp</span><span class="hi">प्रोफ़ेशनल PDF और WhatsApp</span></h3><p><span class="en">Quotation, bill and certificate PDFs with your firm name, signature and details. Send straight to the customer on WhatsApp.</span><span class="hi">आपकी फ़र्म का नाम, सिग्नेचर और डिटेल के साथ कोटेशन, बिल और सर्टिफ़िकेट PDF। सीधे कस्टमर को WhatsApp पर भेजें।</span></p></div>
+    <div class="f"><span class="tag"><span class="en">Jobs</span><span class="hi">जॉब</span></span><h3><span class="en">Installation jobs and material issue</span><span class="hi">इंस्टॉलेशन जॉब और मटेरियल इश्यू</span></h3><p><span class="en">Create a job from an approved quotation, record material issue and return, and bill on the actual cable length.</span><span class="hi">अप्रूव्ड कोटेशन से जॉब बनाएं, मटेरियल इश्यू और रिटर्न लिखें, असली केबल लंबाई के हिसाब से फ़ाइनल बिल।</span></p></div>
+    <div class="f"><span class="tag"><span class="en">Billing</span><span class="hi">बिलिंग</span></span><h3><span class="en">Final bill, payments, balance</span><span class="hi">फ़ाइनल बिल, पेमेंट, बैलेंस</span></h3><p><span class="en">Record advance and payments and see the balance at a glance. A separate bill for service and repair visits too.</span><span class="hi">एडवांस और पेमेंट दर्ज करें, कितना बाकी है एक नज़र में देखें। सर्विस / रिपेयर विज़िट का अलग बिल भी।</span></p></div>
+    <div class="f"><span class="tag"><span class="en">Warranty</span><span class="hi">वारंटी</span></span><h3><span class="en">Serial numbers and warranty</span><span class="hi">सीरियल नंबर और वारंटी</span></h3><p><span class="en">Scan DVR, camera and HDD serial numbers by barcode. Warranty is set in months and prints on the bill.</span><span class="hi">DVR, कैमरा और HDD के सीरियल बारकोड से स्कैन करें। वारंटी महीनों में तय होती है और बिल पर छपती है।</span></p></div>
+    <div class="f"><span class="tag"><span class="en">Security</span><span class="hi">सुरक्षा</span></span><h3><span class="en">Site login vault</span><span class="hi">साइट लॉगिन वॉल्ट</span></h3><p><span class="en">DVR, camera and router usernames and passwords are stored encrypted with your PIN.</span><span class="hi">DVR, कैमरा और राउटर के यूज़र-पासवर्ड आपके PIN से एन्क्रिप्ट होकर रखे जाते हैं।</span></p></div>
+    <div class="f"><span class="tag"><span class="en">Technician</span><span class="hi">टेक्नीशियन</span></span><h3><span class="en">ProMate Tech app</span><span class="hi">ProMate Tech ऐप</span></h3><p><span class="en">Give the technician an ID and password. They see the job, take photos with GPS and time, run the ATP and complete the job with a customer OTP.</span><span class="hi">टेक्नीशियन को ID-पासवर्ड दें। वह जॉब देखे, GPS और समय वाली फ़ोटो ले, ATP करे और कस्टमर OTP से जॉब पूरा करे।</span></p></div>
+    <div class="f"><span class="tag"><span class="en">Tools</span><span class="hi">टूल्स</span></span><h3><span class="en">Networking tools</span><span class="hi">नेटवर्किंग टूल्स</span></h3><p><span class="en">IP Scanner, Ping, PoE and Bandwidth calculator, RTSP link builder and Live Camera View. Handy during setup on site.</span><span class="hi">IP स्कैनर, पिंग, PoE और बैंडविड्थ कैलकुलेटर, RTSP लिंक बिल्डर और लाइव कैमरा व्यू। साइट पर सेटअप के समय काम आते हैं।</span></p></div>
+    <div class="f"><span class="tag"><span class="en">Reports</span><span class="hi">रिपोर्ट</span></span><h3><span class="en">Profit &amp; Loss</span><span class="hi">प्रॉफ़िट एंड लॉस</span></h3><p><span class="en">Monthly, quarterly and yearly reports. Real profit after material cost, labour and transport are taken off the bill.</span><span class="hi">मासिक, तिमाही और सालाना रिपोर्ट। बिल में से मटेरियल लागत, लेबर और ट्रांसपोर्ट घटाकर असली मुनाफ़ा।</span></p></div>
+  </div>
+</div></section>
+
+<section class="band" style="padding-top:0"><div class="wrap">
+  <div class="head"><div class="eyebrow"><span class="en">Workflow</span><span class="hi">काम का फ़्लो</span></div><h2><span class="en">From quotation to payment</span><span class="hi">कोटेशन से पेमेंट तक</span></h2></div>
+  <div class="flow">
+    <div class="step"><b><span class="en">Quotation</span><span class="hi">कोटेशन</span></b><span><span class="en">Material list from camera count</span><span class="hi">कैमरा संख्या से मटेरियल लिस्ट</span></span></div>
+    <div class="step"><b><span class="en">Approve</span><span class="hi">अप्रूव</span></b><span><span class="en">Customer says yes, advance</span><span class="hi">कस्टमर की हाँ, एडवांस</span></span></div>
+    <div class="step"><b><span class="en">Job</span><span class="hi">जॉब</span></b><span><span class="en">Assign a technician</span><span class="hi">टेक्नीशियन को असाइन</span></span></div>
+    <div class="step"><b><span class="en">Install</span><span class="hi">इंस्टॉल</span></b><span><span class="en">Photos, serial, ATP, OTP</span><span class="hi">फ़ोटो, सीरियल, ATP, OTP</span></span></div>
+    <div class="step"><b><span class="en">Final bill</span><span class="hi">फ़ाइनल बिल</span></b><span><span class="en">PDF and WhatsApp</span><span class="hi">PDF और WhatsApp</span></span></div>
+    <div class="step"><b><span class="en">Payment</span><span class="hi">पेमेंट</span></b><span><span class="en">Balance and profit</span><span class="hi">बैलेंस और मुनाफ़ा</span></span></div>
+  </div>
+</div></section>
+
+<section class="band" id="plans" style="padding-top:0"><div class="wrap">
+  <div class="head"><div class="eyebrow"><span class="en">Plans</span><span class="hi">प्लान</span></div><h2><span class="en">Start free</span><span class="hi">फ्री से शुरू करें</span></h2><p><span class="en">Plans run for 1 year. Pay by UPI; once the admin confirms, the plan starts on your Gmail.</span><span class="hi">प्लान 1 साल का है। UPI से पेमेंट करें, एडमिन कन्फ़र्म करे तो प्लान आपके Gmail पर चालू।</span></p></div>
+  <div class="plans">
+    <div class="plan"><h3>Free</h3><div class="price">₹0</div><ul><li><span class="en">10 quotations (one time)</span><span class="hi">10 कोटेशन (एक बार)</span></li><li><span class="en">Material list, PDF, WhatsApp</span><span class="hi">मटेरियल लिस्ट, PDF, WhatsApp</span></li><li><span class="en">Jobs, bills, payments</span><span class="hi">जॉब, बिल, पेमेंट</span></li><li><span class="en">Watermark on PDF, banner ads</span><span class="hi">PDF पर वॉटरमार्क, बैनर विज्ञापन</span></li></ul></div>
+    <div class="plan hot"><h3>Pro</h3><div class="price">₹500 <small><span class="en">/ year</span><span class="hi">/ साल</span></small></div><ul><li><span class="en">Unlimited quotations</span><span class="hi">अनलिमिटेड कोटेशन</span></li><li><span class="en">No ads, no watermark</span><span class="hi">कोई विज्ञापन या वॉटरमार्क नहीं</span></li><li><span class="en">IP Scanner, Ping, PoE / Bandwidth</span><span class="hi">IP स्कैनर, पिंग, PoE / बैंडविड्थ</span></li><li><span class="en">RTSP builder, Live Camera View</span><span class="hi">RTSP बिल्डर, लाइव कैमरा व्यू</span></li></ul></div>
+    <div class="plan"><h3>Prime</h3><div class="price">₹1,200 <small>/ saal</small></div><ul><li><span class="en">Everything in Pro</span><span class="hi">Pro के सभी फ़ीचर</span></li><li><span class="en">Profit &amp; Loss, Storage calculator</span><span class="hi">प्रॉफ़िट एंड लॉस, स्टोरेज कैलकुलेटर</span></li><li><span class="en">Cloud Backup</span><span class="hi">क्लाउड बैकअप</span></li><li><span class="en">Technician app and team</span><span class="hi">टेक्नीशियन ऐप और टीम</span></li><li><span class="en">Upgrade from Pro to Prime for only ₹700</span><span class="hi">Pro से Prime अपग्रेड सिर्फ़ ₹700</span></li></ul></div>
+  </div>
+  <p style="color:var(--mut);font-size:14px;margin-top:16px"><span class="en">Refer friends: if 20 friends buy Pro you get 1 year of Pro free; if 12 buy Prime you get 1 year of Prime free.</span><span class="hi">दोस्तों को रेफ़र करें: 20 दोस्त Pro लें तो 1 साल Pro फ्री, 12 दोस्त Prime लें तो 1 साल Prime फ्री।</span></p>
+</div></section>
+
+<section class="final"><div class="wrap">
+  <h2><span class="en">Make your first quotation today</span><span class="hi">आज ही अपना पहला कोटेशन बनाएं</span></h2>
+  <p><span class="en">The app is free. Download it, sign in with Google and make 10 quotations without paying anything.</span><span class="hi">ऐप फ्री है। डाउनलोड करें, Google से लॉगिन करें और 10 कोटेशन बिना किसी पेमेंट के बनाएं।</span></p>
+  <div class="cta">
+    <a class="btn" href="https://tinyurl.com/Cctv-promate-app" rel="noopener">⬇ <span class="en">Download Free App</span><span class="hi">फ्री ऐप डाउनलोड करें</span></a>
+    <a class="btn alt" href="https://wa.me/919837900303?text=Namaste%2C%20mujhe%20CCTV%20ProMate%20ke%20baare%20me%20jaankari%20chahiye." rel="noopener">WhatsApp: 98379 00303</a>
+  </div>
+  <p style="font-size:13px;margin-top:18px"><span class="en">If Android asks for the "Unknown source" permission while installing, tap Allow.</span><span class="hi">इंस्टॉल के समय Android "Unknown source" की अनुमति माँगे तो Allow करें।</span></p>
+</div></section>
+
+<footer><div class="wrap">© SpyWell InfoTech · spywellinfotech@gmail.com · <a href="https://spywellinfotech.blogspot.com/p/cctv-promate-privacy-policy.html" rel="noopener"><span class="en">Privacy Policy</span><span class="hi">प्राइवेसी पॉलिसी</span></a></div></footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  function set(l){root.setAttribute("lang",l);document.getElementById("b-hi").setAttribute("aria-pressed",l==="hi");document.getElementById("b-en").setAttribute("aria-pressed",l==="en");try{localStorage.setItem("lp-lang",l)}catch(e){}}
+  var l="hi";try{l=localStorage.getItem("lp-lang")||"hi"}catch(e){}
+  set(l);
+  document.getElementById("b-hi").onclick=function(){set("hi")};
+  document.getElementById("b-en").onclick=function(){set("en")};
+})();
+</script>
+
+</body>
+</html>
