@@ -24,3 +24,6 @@ export const whatsappLink = (text = '') =>
 
 export const mailLink = (subject = '') =>
   `mailto:${SITE.email}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
+
+// Set to true on launch day to show the APK download buttons in the portfolio.
+export const APPS_LAUNCHED = false;

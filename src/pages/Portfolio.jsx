@@ -14,7 +14,7 @@ export default function Portfolio() {
       <Seo page="portfolio" />
       <PageHero title={t('portfolio.title')} subtitle={t('portfolio.sub')} />
       <Section>
-        <h2 className="mb-6 font-display text-2xl font-extrabold text-navy-800">{lang === 'hi' ? 'हमारे तैयार ऐप' : 'Our ready apps'}</h2>
+        <h2 className="mb-6 font-display text-2xl font-extrabold text-navy-800">{lang === 'hi' ? 'हमारे ऐप' : 'Our apps'}</h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {apps.map((p, i) => (
             <Reveal key={p.id} delay={(i % 3) * 80}><PortfolioCard item={p} /></Reveal>
