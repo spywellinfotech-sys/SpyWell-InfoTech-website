@@ -6,7 +6,7 @@ import { useLang } from '../i18n/LanguageContext';
 import { SITE, mailLink, whatsappLink } from '../data/site';
 
 export default function Contact() {
-  const { t, tr } = useLang();
+  const { t, tr, lang } = useLang();
   const row = 'flex items-start gap-4 rounded-xl border border-navy-100 bg-white p-5 shadow-sm';
   const ico = 'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-electric-500/10 text-electric-600';
   return (
@@ -38,6 +38,7 @@ export default function Contact() {
               <div>
                 <p className="text-sm text-slate-500">{t('contact.locationLabel')}</p>
                 <p className="font-semibold text-navy-800">{tr(SITE.location)}</p>
+                <a href={SITE.mapUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-electric-600 hover:underline">{lang === 'hi' ? 'Google Maps पर देखें' : 'View on Google Maps'}</a>
               </div>
             </div>
             <a

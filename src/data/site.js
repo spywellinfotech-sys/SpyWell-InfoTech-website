@@ -7,9 +7,10 @@ export const SITE = {
   whatsapp: '919837900303', // digits only, used for wa.me links
   whatsappDisplay: '+919837900303',
   location: {
-    en: 'Saharanpur, Uttar Pradesh, India',
-    hi: 'सहारनपुर, उत्तर प्रदेश, भारत',
+    en: 'Ashwani Provision Store, Meerpur Gandevar, Saharanpur, Uttar Pradesh 247121, India',
+    hi: 'अश्विनी प्रोविज़न स्टोर, मीरपुर गंडेवर, सहारनपुर, उत्तर प्रदेश 247121, भारत',
   },
+  mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('6J32+P9C Meerpur Gandevar, Uttar Pradesh 247121'),
   // Set VITE_SITE_URL in .env (or Vercel) once you have a domain.
   url: (import.meta.env.VITE_SITE_URL || 'https://your-domain.example').replace(/\/$/, ''),
   // Optional form service endpoint (e.g. Formspree). Leave empty until configured.
