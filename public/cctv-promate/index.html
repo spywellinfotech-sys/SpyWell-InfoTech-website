@@ -175,5 +175,18 @@ footer a{color:inherit}
 })();
 </script>
 
+<script>
+/* anonymous counter: random browser id, language, referrer site name. No personal data. */
+(function(){
+  var URL="https://rxhanrtoaplwphmwpgqg.supabase.co/functions/v1/promate-web";
+  var vid="";try{vid=localStorage.getItem("lp-vid")||""}catch(e){}
+  if(!vid){vid="v"+Math.random().toString(36).slice(2,12)+Date.now().toString(36);try{localStorage.setItem("lp-vid",vid)}catch(e){}}
+  var ref="";try{ref=document.referrer?new URL(document.referrer).hostname:""}catch(e){}
+  if(ref===location.hostname)ref="";
+  function send(t){try{fetch(URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({t:t,vid:vid,lang:document.documentElement.getAttribute("lang")==="en"?"en":"hi",ref:ref}),keepalive:true}).catch(function(){})}catch(e){}}
+  send("view");
+  document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href*="tinyurl.com"]');if(a)send("click")});
+})();
+</script>
 </body>
 </html>
