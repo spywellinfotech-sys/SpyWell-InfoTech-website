@@ -1,10 +1,6 @@
-export default function Logo({ light = false, onRed = false }) {
-  return (
-    <span className="inline-flex items-center gap-2">
-      <img src={`${import.meta.env.BASE_URL}logo.png`} alt="SpyWell" width="44" height="44" className={`h-11 w-11 rounded-full ${onRed ? 'ring-2 ring-white' : ''}`} />
-      <span className={`font-display text-lg font-bold leading-none tracking-tight ${light ? 'text-white' : 'text-navy-800'}`}>
-        SpyWell <span className={onRed ? 'font-semibold text-white/85' : 'text-electric-500'}>InfoTech</span>
-      </span>
-    </span>
+export default function Logo({ light = false }) {
+  const img = (
+    <img src={`${import.meta.env.BASE_URL}logo-full.png`} alt="SpyWell InfoTech" width="180" height="73" className="h-12 w-auto sm:h-14" />
   );
+  return light ? <span className="inline-block rounded-xl bg-white px-3 py-2">{img}</span> : img;
 }

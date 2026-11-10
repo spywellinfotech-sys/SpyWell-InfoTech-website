@@ -11,7 +11,7 @@
     @apply bg-white font-sans text-slate-800 antialiased;
   }
   :focus-visible {
-    outline-color: #e4172b;
+    outline-color: #e85d04;
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
