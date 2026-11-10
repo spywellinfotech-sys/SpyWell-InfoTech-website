@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LokaLLo - Local Store, Fresh Life</title>
+<meta name="description" content="LokaLLo: apni gali ki kirana dukaan se ghar baithe saman mangao. Order from your local grocery shop. Android app.">
+<link rel="icon" href="../favicon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#FFFDF5;--surface:#FFF;--soft:#E6F4E8;--sun:#FFF6D1;--fg:#17301C;--muted:#4F6653;--line:#D8E6D6;--brand:#1B7A2E;--brand-d:#0F5A1F;--on-brand:#FFF;--yellow:#FFC400;--on-yellow:#2B2200;--hero:#1B7A2E;--hero-fg:#FFF;--hero-mut:#DDF0DF;--soon:#8A6A00;
+--f-d:'Baloo 2','Trebuchet MS',system-ui,sans-serif;--f-b:'Inter','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1A11;--surface:#162619;--soft:#1B3220;--sun:#2C2708;--fg:#EAF3EA;--muted:#A5BBA7;--line:#2A4130;--brand:#4CC364;--brand-d:#2F9E45;--on-brand:#06210D;--hero:#123B1B;--hero-mut:#C4E0C8;--soon:#F0C94A;color-scheme:dark}}
+*{box-sizing:border-box}
+html[lang=hi] .en,html[lang=en] .hi{display:none}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 var(--f-b);margin:0;-webkit-text-size-adjust:100%}
+.w{max-width:960px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-d);line-height:1.2;margin:0;text-wrap:balance}
+h2{font-size:clamp(26px,5vw,36px);font-weight:800}h3{font-size:19px;font-weight:600}p{margin:0}
+a:focus-visible,button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.hero{background:var(--hero);color:var(--hero-fg);padding-block:22px 44px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-d);font-weight:800;font-size:24px}
+.lang{display:flex;border:2px solid var(--yellow);border-radius:99px;overflow:hidden}
+.lang button{font:600 14px var(--f-b);padding:6px 14px;border:0;background:transparent;color:var(--hero-fg);cursor:pointer;min-height:36px}
+html[lang=hi] .lang [data-l=hi],html[lang=en] .lang [data-l=en]{background:var(--yellow);color:var(--on-yellow)}
+.hero .grid{display:grid;gap:28px;margin-top:26px;align-items:center}
+.hero h1{font-size:clamp(32px,8vw,54px);font-weight:800}.hero h1 em{font-style:normal;color:var(--yellow)}
+.lead{color:var(--hero-mut);font-size:18px;margin-top:14px;max-width:34em}
+.tag{display:inline-block;margin-top:14px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;border-radius:14px;background:var(--yellow);color:var(--on-yellow);font-weight:600;font-size:17px;text-decoration:none}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:22px}
+.small{font-size:13px;color:var(--hero-mut);margin-top:10px}
+.phone{background:var(--surface);color:var(--fg);border-radius:26px;padding:16px;max-width:320px;width:100%;margin-inline:auto;border:6px solid #0F5A1F;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.phone .row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}.phone .row:last-child{border:0}
+.pill{font-size:12px;padding:2px 10px;border-radius:99px;background:var(--soft);color:var(--brand-d);font-weight:600;white-space:nowrap}
+.sec{padding-block:48px}.band{background:var(--soft)}
+.intro{max-width:40em;margin-top:10px;color:var(--muted)}
+.steps{list-style:none;margin:26px 0 0;padding:0;display:grid;gap:12px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.steps li::before{content:counter(s);width:40px;height:40px;border-radius:50%;background:var(--brand);color:var(--on-brand);display:grid;place-items:center;font-family:var(--f-d);font-weight:800;font-size:20px}
+.steps strong{display:block;font-weight:600}.steps span.d{color:var(--muted);font-size:15px;display:block}
+.feat{display:grid;gap:14px;margin-top:26px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.feat>div{min-width:0;padding:16px 0;border-top:2px solid var(--brand)}.feat p{color:var(--muted);font-size:15px;margin-top:6px}
+.money{background:var(--sun);border-radius:18px;padding:22px;margin-top:26px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.money .big{font-family:var(--f-d);font-weight:800;font-size:42px;color:var(--brand-d);line-height:1.1}.money p{color:var(--muted);font-size:15px;margin-top:6px}
+.roles,.soon{display:grid;gap:12px;margin-top:26px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.roles>div{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.roles p,.soon p{color:var(--muted);font-size:15px;margin-top:6px}
+.soon>div{min-width:0;border:2px dashed var(--line);border-radius:14px;padding:16px}
+.lab{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--soon)}
+.trust{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:10px}
+.trust li{padding-left:28px;position:relative}.trust li::before{content:"";position:absolute;left:0;top:9px;width:14px;height:14px;border-radius:50%;background:var(--brand)}
+.final{background:var(--hero);color:var(--hero-fg);text-align:center;padding-block:52px}.final p{color:var(--hero-mut);margin-top:10px}.final .cta-row{justify-content:center}
+footer{padding-block:20px;font-size:13px;color:var(--muted);text-align:center}footer a{color:var(--brand)}
+@media(min-width:760px){.hero .grid{grid-template-columns:1.3fr 1fr}.sec{padding-block:64px}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="w">
+ <div class="top">
+  <div class="brand"><svg width="38" height="38" viewBox="0 0 48 48" role="img" aria-label="LokaLLo"><path d="M24 3C14.6 3 7 10.3 7 19.4 7 31 24 45 24 45s17-14 17-25.6C41 10.3 33.4 3 24 3z" fill="#FFC400"/><path d="M13 15h22l-2-5H15z" fill="#1B7A2E"/><path d="M13 15h22v3H13z" fill="#0F5A1F"/><path d="M16 23h3l2 6h9l2-8H18" fill="none" stroke="#0F5A1F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22" cy="32" r="1.8" fill="#0F5A1F"/><circle cx="29" cy="32" r="1.8" fill="#0F5A1F"/></svg>LokaLLo</div>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-l="hi">हिंदी</button><button type="button" data-l="en">English</button></div>
+ </div>
+ <div class="grid"><div>
+  <h1><span class="en">Order from your local shop, <em>from home</em></span><span class="hi">अपनी गली की दुकान से, <em>घर बैठे</em> सामान मंगाएं</span></h1>
+  <p class="lead"><span class="en">Pick a nearby grocery shop, send your list and get an item-wise bill. Money goes straight to the shop. No payment gateway in between.</span><span class="hi">पास की किराना दुकान चुनें, अपनी लिस्ट भेजें, दुकानदार आइटम-वार बिल बनाएगा। पैसा सीधे दुकान को। बीच में कोई पेमेंट गेटवे नहीं।</span></p>
+  <span class="tag">Local Store . Fresh Life</span>
+  <div class="cta-row"><a class="btn" href="https://toouzmbhlltipjjcyqim.supabase.co/storage/v1/object/public/lk-apk/LoKalLo.apk?download=LoKalLo.apk" rel="noopener"><span class="en">Download Android app</span><span class="hi">Android ऐप डाउनलोड करें</span></a></div>
+  <p class="small"><span class="en">Android APK. After download, tap Install.</span><span class="hi">Android के लिए APK। डाउनलोड के बाद "Install" दबाएं।</span></p>
+ </div>
+ <div class="phone" aria-hidden="true">
+  <div class="row"><b><span class="en">Your order</span><span class="hi">आपका ऑर्डर</span></b><span class="pill"><span class="en">Bill received</span><span class="hi">बिल आ गया</span></span></div>
+  <div class="row"><span><span class="en">Atta 5 kg</span><span class="hi">आटा 5 किग्रा</span></span><span>₹240</span></div>
+  <div class="row"><span><span class="en">Oil 1 L</span><span class="hi">तेल 1 L</span></span><span>₹150</span></div>
+  <div class="row"><span><span class="en">Sugar 2 kg</span><span class="hi">चीनी 2 किग्रा</span></span><span>₹90</span></div>
+  <div class="row"><b><span class="en">Total</span><span class="hi">कुल बिल</span></b><b>₹480</b></div>
+  <div class="row"><span><span class="en">Payment</span><span class="hi">भुगतान</span></span><span><span class="en">Cash or UPI, to the shop</span><span class="hi">कैश या UPI, दुकान को</span></span></div>
+ </div></div>
+</div></header>
+
+<section class="sec"><div class="w">
+ <h2><span class="en">How an order works</span><span class="hi">ऑर्डर कैसे होता है</span></h2>
+ <p class="intro"><span class="en">Six simple steps. The status shows in the app at every step.</span><span class="hi">छह आसान कदम। हर कदम का स्टेटस ऐप में दिखता रहता है।</span></p>
+ <ol class="steps"><li><div><strong><span class="en">Pick a shop</span><span class="hi">दुकान चुनें</span></strong><span class="d"><span class="en">GPS shows nearby shops and how far they are.</span><span class="hi">GPS से पास की दुकानें और उनकी दूरी दिखती है।</span></span></div></li><li><div><strong><span class="en">Send your list</span><span class="hi">लिस्ट भेजें</span></strong><span class="d"><span class="en">Write what you need. The shopkeeper sees it.</span><span class="hi">जो चाहिए लिख दें। दुकानदार उसे देखता है।</span></span></div></li><li><div><strong><span class="en">Get the bill</span><span class="hi">बिल आता है</span></strong><span class="d"><span class="en">The shopkeeper sends an item-wise bill with rates.</span><span class="hi">दुकानदार रेट के साथ आइटम-वार बिल भेजता है।</span></span></div></li><li><div><strong><span class="en">You confirm</span><span class="hi">आप कन्फर्म करें</span></strong><span class="d"><span class="en">If the bill looks right, confirm. The shop packs your order.</span><span class="hi">बिल ठीक लगे तो कन्फर्म करें। दुकान सामान तैयार करती है।</span></span></div></li><li><div><strong><span class="en">Delivery or pickup</span><span class="hi">डिलीवरी या पिकअप</span></strong><span class="d"><span class="en">Get it at home or collect it. Follow the delivery boy on a live map.</span><span class="hi">घर मंगाएं या खुद ले आएं। डिलीवरी बॉय का लाइव मैप देखें।</span></span></div></li><li><div><strong><span class="en">Order complete</span><span class="hi">ऑर्डर पूरा</span></strong><span class="d"><span class="en">Pay cash or UPI straight to the shop. The order stays in your history.</span><span class="hi">कैश या UPI से सीधे दुकान को दें। ऑर्डर हिस्ट्री में रहता है।</span></span></div></li></ol>
+</div></section>
+
+<section class="sec band"><div class="w"><h2><span class="en">For customers</span><span class="hi">ग्राहक के लिए</span></h2><div class="feat"><div><h3><span class="en">Nearby shops</span><span class="hi">पास की दुकानें</span></h3><p><span class="en">Find shops around you with distance. Order from the one you like.</span><span class="hi">अपने आसपास की दुकानें दूरी के साथ देखें। अपनी पसंद की दुकान से मंगाएं।</span></p></div><div><h3><span class="en">Write your own list</span><span class="hi">अपनी लिस्ट लिखें</span></h3><p><span class="en">Type your list or send an old order again in one tap.</span><span class="hi">सीधे लिखें या पुराना ऑर्डर एक टैप में दोबारा भेजें।</span></p></div><div><h3><span class="en">Item-wise bill</span><span class="hi">आइटम-वार बिल</span></h3><p><span class="en">See every rate and the total first. The order moves ahead only after you confirm.</span><span class="hi">हर सामान का रेट और टोटल पहले दिखता है। आपके कन्फर्म करने पर ही ऑर्डर आगे बढ़ता है।</span></p></div><div><h3><span class="en">Live status</span><span class="hi">लाइव स्टेटस</span></h3><p><span class="en">Bill sent, confirmed, ready, on the way, done. Every step on a timeline.</span><span class="hi">बिल भेजा, कन्फर्म, तैयार, रास्ते में, पूरा। हर कदम टाइमलाइन में।</span></p></div><div><h3><span class="en">Delivery boy map</span><span class="hi">डिलीवरी बॉय का मैप</span></h3><p><span class="en">See the delivery boy's live location while your order is on its way.</span><span class="hi">ऑर्डर रास्ते में हो तो डिलीवरी बॉय की लाइव लोकेशन देखें।</span></p></div><div><h3><span class="en">Returns and wallet</span><span class="hi">रिटर्न और वॉलेट</span></h3><p><span class="en">Request a return for wrong or damaged items. Track your Refer and Earn wallet.</span><span class="hi">गलत या खराब सामान का रिटर्न रिक्वेस्ट करें। Refer and Earn वॉलेट का हिसाब देखें।</span></p></div><div><h3><span class="en">Delivery OTP</span><span class="hi">डिलीवरी OTP</span></h3><p><span class="en">Shops that want it ask for an OTP on delivery, so the order reaches the right person.</span><span class="hi">जो दुकान चाहे, डिलीवरी पर OTP मांगती है। सामान सही व्यक्ति को ही मिलता है।</span></p></div></div></div></section>
+
+<section class="sec"><div class="w">
+ <h2><span class="en">For shopkeepers</span><span class="hi">दुकानदार के लिए</span></h2>
+ <p class="intro"><span class="en">Register and bring your shop online. All your accounts in one app.</span><span class="hi">रजिस्टर करें और अपनी दुकान ऑनलाइन लाएं। पूरा हिसाब-किताब एक ही ऐप में।</span></p>
+ <div class="feat"><div><h3><span class="en">Rate list and billing</span><span class="hi">रेट लिस्ट और बिलिंग</span></h3><p><span class="en">Build your rate list and make bills quickly from the customer's list.</span><span class="hi">अपनी रेट लिस्ट बनाएं और ग्राहक की लिस्ट देखकर तेज़ी से बिल बनाएं।</span></p></div><div><h3><span class="en">Stock</span><span class="hi">स्टॉक / सामान</span></h3><p><span class="en">See what you have and what is finished, in one place.</span><span class="hi">क्या है और क्या खत्म, एक जगह दिखता है।</span></p></div><div><h3><span class="en">Reports and profit</span><span class="hi">रिपोर्ट और मुनाफ़ा</span></h3><p><span class="en">See sales and profit by day or week.</span><span class="hi">दिन या हफ्ते के हिसाब से बिक्री और मुनाफ़ा देखें।</span></p></div><div><h3><span class="en">UPI QR</span><span class="hi">UPI QR</span></h3><p><span class="en">Add your UPI QR. Customer money goes straight to your account.</span><span class="hi">अपना UPI QR लगाएं। ग्राहक का पैसा सीधे आपके खाते में।</span></p></div><div><h3><span class="en">Google Drive backup</span><span class="hi">Google Drive बैकअप</span></h3><p><span class="en">Keep your data safe even if you change your phone.</span><span class="hi">फोन बदलें तो भी आपका डेटा सुरक्षित रहे।</span></p></div><div><h3><span class="en">Lucky Draw</span><span class="hi">लकी ड्रॉ</span></h3><p><span class="en">Run a lucky draw for your shop to bring customers back.</span><span class="hi">ग्राहकों को जोड़े रखने के लिए अपनी दुकान का लकी ड्रॉ चलाएं।</span></p></div></div>
+ <div class="money">
+  <div><div class="big">5%</div><p><span class="en">Platform commission on the value of goods only. No commission on delivery charge.</span><span class="hi">प्लेटफ़ॉर्म कमीशन सिर्फ सामान की कीमत पर। डिलीवरी चार्ज पर कोई कमीशन नहीं।</span></p></div>
+  <div><div class="big"><span class="en">Weekly</span><span class="hi">साप्ताहिक</span></div><p><span class="en">Week runs Monday to Sunday. Pay the commission by UPI for the week.</span><span class="hi">हफ्ता सोमवार से रविवार। हफ्ते का कमीशन UPI से जमा करें।</span></p></div>
+  <div><div class="big"><span class="en">Ledger</span><span class="hi">लेजर</span></div><p><span class="en">Every entry is permanent and cannot be changed, so accounts stay clear.</span><span class="hi">हर एंट्री स्थायी है, बदली नहीं जा सकती। हिसाब साफ रहता है।</span></p></div>
+ </div>
+</div></section>
+
+<section class="sec band"><div class="w"><h2><span class="en">Delivery boy and supplier</span><span class="hi">डिलीवरी बॉय और सप्लायर</span></h2>
+ <div class="roles">
+  <div><h3><span class="en">Delivery boy</span><span class="hi">डिलीवरी बॉय</span></h3><p><span class="en">Sees his orders, delivers them, and the customer sees his live location.</span><span class="hi">अपने ऑर्डर देखता है, डिलीवरी करता है और ग्राहक को उसकी लाइव लोकेशन दिखती है।</span></p></div>
+  <div><h3><span class="en">Supplier</span><span class="hi">सप्लायर</span></h3><p><span class="en">A way to reach shopkeepers with your goods and rates.</span><span class="hi">दुकानदारों तक अपना सामान और रेट पहुंचाने का रास्ता।</span></p></div>
+ </div></div></section>
+
+<section class="sec"><div class="w">
+ <h2><span class="en">Why you can trust it</span><span class="hi">भरोसा क्यों</span></h2>
+ <ul class="trust">
+  <li><span class="en">Money goes straight to the shop by UPI or cash. The app never holds your money.</span><span class="hi">पैसा सीधे दुकान को UPI या कैश से जाता है। ऐप आपका पैसा अपने पास नहीं रखती।</span></li>
+  <li><span class="en">You see the bill first and you confirm it.</span><span class="hi">बिल पहले दिखता है, कन्फर्म आप करते हैं।</span></li>
+  <li><span class="en">Every commission entry is in a permanent ledger.</span><span class="hi">कमीशन की हर एंट्री स्थायी लेजर में रहती है।</span></li>
+  <li><span class="en">Clear order status for both customer and shop.</span><span class="hi">ग्राहक और दुकान, दोनों के लिए साफ ऑर्डर स्टेटस।</span></li>
+ </ul>
+ <h2 style="margin-top:44px"><span class="en">Coming soon</span><span class="hi">जल्द आ रहा है</span></h2>
+ <div class="soon">
+  <div><span class="lab"><span class="en">Coming soon</span><span class="hi">जल्द आ रहा है</span></span><h3><span class="en">Choose your village or mohalla</span><span class="hi">गांव या मोहल्ला चुनें</span></h3><p><span class="en">Pick your area and see only shops from there.</span><span class="hi">अपना इलाका चुनकर सिर्फ वहीं की दुकानें देखें।</span></p></div>
+  <div><span class="lab"><span class="en">Coming soon</span><span class="hi">जल्द आ रहा है</span></span><h3><span class="en">Refer and earn rewards</span><span class="hi">रेफ़र करें, रिवॉर्ड पाएं</span></h3><p><span class="en">Reward credit for bringing shops and customers.</span><span class="hi">दुकान और ग्राहक जोड़ने पर रिवॉर्ड क्रेडिट।</span></p></div>
+ </div>
+</div></section>
+
+<section class="final"><div class="w">
+ <h2><span class="en">Your local shop, now on your phone</span><span class="hi">आपकी गली की दुकान, अब आपके फोन में</span></h2>
+ <p>LokaLLo . Local Store . Fresh Life</p>
+ <div class="cta-row"><a class="btn" href="https://toouzmbhlltipjjcyqim.supabase.co/storage/v1/object/public/lk-apk/LoKalLo.apk?download=LoKalLo.apk" rel="noopener"><span class="en">Download Android app</span><span class="hi">Android ऐप डाउनलोड करें</span></a></div>
+</div></section>
+<footer><div class="w">© LokaLLo by <a href="../">SpyWell InfoTech</a></div></footer>
+<script>
+(function(){var d=document.documentElement,k='lk-lang';
+function set(l){d.lang=l;try{localStorage.setItem(k,l)}catch(e){}}
+try{var s=localStorage.getItem(k);if(s==='en'||s==='hi')d.lang=s}catch(e){}
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.l)})});})();
+</script>
+</body>
+</html>
