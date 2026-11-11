@@ -221,18 +221,18 @@ export const products = [
 // Statuses: 'demo' | 'verified'. Use 'verified' only after the project is confirmed real and approved for display.
 export const portfolio = [
   {
-    id: 'padhai-pro',
-    icon: 'BookOpen',
+    id: 'lokallo',
+    icon: 'ShoppingBasket',
     status: 'verified',
-    image: '/apps/padhai-pro.jpg',
-    category: { en: 'Education App', hi: 'एजुकेशन ऐप' },
-    title: { en: 'Padhai Pro', hi: 'पढ़ाई प्रो' },
+    image: '',
+    category: { en: 'Local Shopping App', hi: 'लोकल शॉपिंग ऐप' },
+    title: { en: 'LoKalLo', hi: 'लोकल्लो' },
     description: {
-      en: 'Learn, practice and grow: CBSE lessons and daily mock tests for KG to Class 5 in Maths, English and EVS.',
-      hi: 'सीखो, अभ्यास करो, आगे बढ़ो: KG से कक्षा 5 तक गणित, अंग्रेज़ी और EVS के CBSE पाठ और रोज़ के मॉक टेस्ट।',
+      en: 'Order groceries and daily-use items from nearby shops, with home delivery or shop pickup, cash or UPI. Shopkeepers get orders, stock, bills and delivery in one app.',
+      hi: 'आसपास की दुकानों से किराना और रोज़ का सामान ऑर्डर करें, होम डिलीवरी या दुकान से पिकअप, कैश या UPI। दुकानदार को ऑर्डर, स्टॉक, बिल और डिलीवरी एक ही ऐप में।',
     },
     version: 'Android app (APK)',
-    download: 'https://github.com/spywellinfotech-sys/spywell-release/releases/download/v4.42.2/PadhaiPro-v4.42.2.apk',
+    download: '',
     link: '',
   },
   {
@@ -278,6 +278,21 @@ export const portfolio = [
     },
     version: 'Android app (APK), 61 MB',
     download: 'https://github.com/spywellinfotech-sys/spywell-release/releases/download/propdeal-v2.2.27/PropDeal-v2.2.27.apk',
+    link: '',
+  },
+  {
+    id: 'padhai-pro',
+    icon: 'BookOpen',
+    status: 'verified',
+    image: '/apps/padhai-pro.jpg',
+    category: { en: 'Education App', hi: 'एजुकेशन ऐप' },
+    title: { en: 'Padhai Pro', hi: 'पढ़ाई प्रो' },
+    description: {
+      en: 'Learn, practice and grow: CBSE lessons and daily mock tests for KG to Class 5 in Maths, English and EVS.',
+      hi: 'सीखो, अभ्यास करो, आगे बढ़ो: KG से कक्षा 5 तक गणित, अंग्रेज़ी और EVS के CBSE पाठ और रोज़ के मॉक टेस्ट।',
+    },
+    version: 'Android app (APK)',
+    download: 'https://github.com/spywellinfotech-sys/spywell-release/releases/download/v4.42.2/PadhaiPro-v4.42.2.apk',
     link: '',
   },
   {
