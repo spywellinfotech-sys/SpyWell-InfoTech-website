@@ -161,18 +161,18 @@ export const services = [
     slug: 'digital-wedding-cards',
     icon: 'Gem',
     demo: '/wedding-card/',
-    title: { en: 'Digital Wedding Cards', hi: 'डिजिटल वेडिंग कार्ड' },
+    title: { en: 'Digital Invitation Cards', hi: 'डिजिटल निमंत्रण कार्ड' },
     short: {
-      en: 'Shareable wedding invitations with Maps, call buttons and PDF.',
-      hi: 'Maps, कॉल बटन और PDF के साथ शेयर होने वाले शादी के निमंत्रण कार्ड।',
+      en: 'Animated invitations for weddings and every function, valid 30-45 days.',
+      hi: 'शादी और हर फ़ंक्शन के एनिमेटेड निमंत्रण कार्ड, 30-45 दिन की वैधता।',
     },
     description: {
-      en: 'We design animated digital wedding invitations in your family style. Guests get one WhatsApp link with events, venue on Google Maps and tap-to-call numbers. You also get a PDF and photo to save, and a private page showing how many people opened the card.',
-      hi: 'हम आपके परिवार की पसंद के अनुसार एनिमेटेड डिजिटल वेडिंग कार्ड बनाते हैं। मेहमानों को WhatsApp पर एक लिंक मिलता है जिसमें कार्यक्रम, Google Maps पर विवाह स्थल और एक टैप में कॉल करने वाले नंबर होते हैं। आपको PDF और फ़ोटो भी मिलती है, और एक निजी पेज जिसमें दिखता है कि कितने लोगों ने कार्ड खोला।',
+      en: 'We design animated digital invitations for weddings and every function (engagement, birthday, housewarming, mundan, katha and more), valid for 30 to 45 days. Guests get one WhatsApp link with events, venue on Google Maps and tap-to-call numbers. You also get a PDF and photo to save, and a private page showing how many people opened the card.',
+      hi: 'हम शादी और हर फ़ंक्शन (सगाई, जन्मदिन, गृह प्रवेश, मुंडन, कथा आदि) के एनिमेटेड डिजिटल निमंत्रण कार्ड बनाते हैं, 30 से 45 दिन की वैधता के साथ। मेहमानों को WhatsApp पर एक लिंक मिलता है जिसमें कार्यक्रम, Google Maps पर विवाह स्थल और एक टैप में कॉल करने वाले नंबर होते हैं। आपको PDF और फ़ोटो भी मिलती है, और एक निजी पेज जिसमें दिखता है कि कितने लोगों ने कार्ड खोला।',
     },
     points: {
-      en: ['Animated card with your names and photos', 'Google Maps venue link', 'Tap-to-call family numbers', 'PDF, photo and WhatsApp sharing', 'Private view and click insights'],
-      hi: ['आपके नाम और फ़ोटो के साथ एनिमेटेड कार्ड', 'Google Maps पर विवाह स्थल', 'एक टैप में कॉल वाले पारिवारिक नंबर', 'PDF, फ़ोटो और WhatsApp शेयर', 'निजी व्यू और क्लिक इनसाइट'],
+      en: ['Cards for any function, valid 30-45 days', 'Animated card with your names and photos', 'Google Maps venue link', 'Tap-to-call family numbers', 'PDF, photo and WhatsApp sharing', 'Private view and click insights'],
+      hi: ['हर फ़ंक्शन के लिए कार्ड, 30-45 दिन की वैधता', 'आपके नाम और फ़ोटो के साथ एनिमेटेड कार्ड', 'Google Maps पर विवाह स्थल', 'एक टैप में कॉल वाले पारिवारिक नंबर', 'PDF, फ़ोटो और WhatsApp शेयर', 'निजी व्यू और क्लिक इनसाइट'],
     },
   },
 ];
