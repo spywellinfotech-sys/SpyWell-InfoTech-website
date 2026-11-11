@@ -14,18 +14,19 @@ input,button{font:inherit;padding:12px;border-radius:10px;border:1px solid var(-
 .ln{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}a{color:var(--wine)}.ln:last-child{border:0}
 #err{color:#b00020;margin-top:8px}
 </style></head><body>
-<h1>Card Insights</h1><small>Kajal &amp; Divyanshu wedding card</small>
+<h1>Card Insights</h1><small id="sub">Kajal &amp; Divyanshu wedding card</small>
 <div class="card" id="login"><input id="pin" type="password" placeholder="PIN डालें" autocomplete="off"><button id="go">देखें</button><div id="err"></div></div>
 <div id="out" hidden></div>
 <script>
+var C=(location.search.match(/[?&]c=([\w-]+)/)||[])[1]||'kajal-divyanshu';
 var U='https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/rpc/card_stats',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
-var L={call1:'अशोक सैनी को कॉल',call2:'विनोद सैनी को कॉल',maps:'Google Maps',pdf:'PDF सेव',jpg:'फ़ोटो सेव',whatsapp:'WhatsApp शेयर',order:'SpyWell ऑर्डर बटन',view:'कार्ड खुला'};
+var L={call1:'अशोक सैनी को कॉल',call2:'विनोद सैनी को कॉल',maps:'Google Maps',pdf:'PDF सेव',jpg:'फ़ोटो सेव',whatsapp:'WhatsApp शेयर',order:'SpyWell ऑर्डर बटन',sample:'सैंपल कार्ड खोला',insightdemo:'इनसाइट सैंपल खोला',poster:'पोस्टर/PDF/फ़ोटो सेव',copy:'मैसेज कॉपी',vidaai:'विदाई एनिमेशन',view:'कार्ड खुला'};
 function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function load(pin){
- fetch(U,{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_pin:pin,p_card:'kajal-divyanshu'})})
+ fetch(U,{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_pin:pin,p_card:C})})
  .then(function(r){return r.json()}).then(function(d){
   if(!d||d.error){document.getElementById('err').textContent='PIN गलत है';return}
-  try{sessionStorage.setItem('pp',pin)}catch(e){}
+  try{sessionStorage.setItem('pp'+C,pin)}catch(e){}
   document.getElementById('login').hidden=true;var o=document.getElementById('out');o.hidden=false;
   var mx=Math.max.apply(null,d.days.map(function(x){return x.v}).concat([1]));
   var h='<div class="card"><div class="row"><div><div class="n">'+d.views+'</div><div class="k">कुल व्यू</div></div><div><div class="n">'+d.visitors+'</div><div class="k">अलग लोग</div></div><div><div class="n">'+d.today+'</div><div class="k">आज</div></div></div></div>';
@@ -38,5 +39,6 @@ function load(pin){
   h+='<button onclick="location.reload()">रीफ़्रेश</button>';o.innerHTML=h}).catch(function(){document.getElementById('err').textContent='नेटवर्क दिक्कत, दोबारा कोशिश करें'})}
 document.getElementById('go').onclick=function(){load(document.getElementById('pin').value.trim())};
 document.getElementById('pin').onkeydown=function(e){if(e.key==='Enter')load(this.value.trim())};
-try{var sp=sessionStorage.getItem('pp');if(sp)load(sp)}catch(e){}
+try{var sp=sessionStorage.getItem('pp'+C);if(sp)load(sp)}catch(e){}
+if(C==='wedding-promo')document.getElementById('sub').textContent='SpyWell प्रमोशन पेज (निमंत्रण कार्ड)';
 </script></body></html>

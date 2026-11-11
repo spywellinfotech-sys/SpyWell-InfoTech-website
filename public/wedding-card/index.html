@@ -76,9 +76,23 @@ a:focus-visible,button:focus-visible{outline:3px solid #1f8fe0;outline-offset:2p
  .acts{grid-template-columns:1fr 1fr}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+html.gate main,html.gate footer{display:none}
+#gate{display:none;width:min(calc(100vw - 24px),420px);margin:8vh auto 0;background:#fff;border:2px solid #b9cff3;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 14px 40px rgba(15,44,94,.2)}
+html.gate #gate{display:block}
+#gate h1{font:800 24px Baloo 2,Hind,sans-serif;color:#0f2c5e;margin-bottom:6px}
+#gate p{font-size:15px;line-height:1.5;margin-bottom:14px;color:#33415c}
+#gate input{display:block;width:100%;font:500 17px Hind,Poppins,sans-serif;padding:13px 14px;margin-bottom:10px;border:1.5px solid #b9cff3;border-radius:12px}
+#gate button{width:100%;font:600 17px Hind,Poppins,sans-serif;padding:14px;border:0;border-radius:999px;background:#e85d04;color:#fff;cursor:pointer}
+#gate small{display:block;margin-top:10px;font-size:12px;color:#5b6b88}#gerr{color:#b00020;font-size:13.5px;min-height:18px;margin-bottom:6px}
 </style>
 </head>
 <body>
+<script>(function(){try{if(!/[?&]nt\b/.test(location.search)&&!(localStorage.getItem('gp')&&localStorage.getItem('gn')))document.documentElement.classList.add('gate')}catch(e){}})()</script>
+<form id="gate" autocomplete="on"><a href="https://spywell.in/"><img src="/logo-full.png" alt="SpyWell InfoTech" width="115" height="46" style="margin-bottom:10px"></a><h1>डिजिटल निमंत्रण कार्ड</h1><p>सैंपल और जानकारी देखने के लिए अपना नाम और मोबाइल नंबर दर्ज करें।</p>
+<input id="gn" name="name" type="text" placeholder="आपका नाम" autocomplete="name" maxlength="60" required>
+<input id="gp" name="tel" type="tel" inputmode="numeric" placeholder="मोबाइल नंबर (10 अंक)" autocomplete="tel-national" maxlength="10" required>
+<div id="gerr"></div><button type="submit">आगे देखें</button>
+<small>आपका नाम और नंबर SpyWell InfoTech केवल आपसे संपर्क करने के लिए रखेगा।</small></form>
 <header><div class="wrap"><a href="https://spywell.in/"><img src="/logo-full.png" alt="SpyWell InfoTech" width="115" height="46"></a><a class="btn o" href="#order">ऑर्डर करें</a></div></header>
 
 <main>
@@ -172,6 +186,29 @@ document.getElementById('copy').onclick=function(){
   function ok(m){el.textContent=m;el.className='toast on';setTimeout(function(){el.className='toast'},2000)}
   if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){ok('मैसेज कॉपी हो गया')},function(){ok('कॉपी नहीं हुआ, मैसेज दबाकर कॉपी करें')})}else{ok('मैसेज दबाकर कॉपी करें')}
 };
+</script>
+<script>
+(function(){
+if(/[?&]nt\b/.test(location.search))return;
+var U='https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/card_events',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',v='',gn='',gp='';
+function ls(k,x){try{if(x===undefined)return localStorage.getItem(k)||'';localStorage.setItem(k,x)}catch(e){return ''}}
+v=ls('cv');if(!v){v=Math.random().toString(36).slice(2,12);ls('cv',v)}
+gn=ls('gn');gp=ls('gp');
+var dev=/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',ref='';
+try{ref=document.referrer?new URL(document.referrer).hostname:''}catch(e){}
+function t(ev){try{fetch(U,{method:'POST',keepalive:true,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({card:'wedding-promo',event:ev,visitor:v,ref:ref,device:dev,guest_name:gn,guest_phone:gp})})}catch(e){}}
+document.addEventListener('click',function(e){
+ var a=e.target.closest('a,button');if(!a)return;var h=a.getAttribute('href')||'',id=a.id;
+ if(h.indexOf('wa.me')>-1)t('order');else if(h.indexOf('card-insights-demo')>-1)t('insightdemo');else if(h.indexOf('vidaai')>-1)t('vidaai');else if(h.indexOf('/wedding-sample/')>-1&&!a.hasAttribute('download'))t('sample');else if(a.hasAttribute('download'))t('poster');else if(id==='copy')t('copy')});
+var root=document.documentElement;
+if(root.classList.contains('gate')){
+ document.getElementById('gate').addEventListener('submit',function(e){e.preventDefault();
+  var n=document.getElementById('gn').value.trim(),p=document.getElementById('gp').value.replace(/\D/g,'');
+  if(n.length<2){document.getElementById('gerr').textContent='कृपया अपना नाम लिखें';return}
+  if(!/^[6-9]\d{9}$/.test(p)){document.getElementById('gerr').textContent='सही 10 अंकों का मोबाइल नंबर डालें';return}
+  gn=n;gp=p;ls('gn',n);ls('gp',p);root.classList.remove('gate');window.scrollTo(0,0);t('view')});
+}else{t('view')}
+})();
 </script>
 </body>
 </html>
