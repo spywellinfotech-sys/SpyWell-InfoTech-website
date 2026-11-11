@@ -25,7 +25,7 @@ input,.btn{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--l
 <div class="card" id="form">
 <div id="inv"><div id="cf"></div></div>
 <div id="vis" hidden><label>विज़िटिंग कार्ड की PDF</label><input type="file" id="pdf" accept="application/pdf"><label>नाम / कंपनी</label><input id="vtitle" maxlength="120"></div>
-<label>वैधता (कितने दिन)</label><input id="days" type="number" inputmode="numeric" min="1" max="3650" value="45">
+<div id="dwrap"><label>वैधता (30 से 45 दिन)</label><input id="days" type="number" inputmode="numeric" min="30" max="45" value="45"></div>
 <div class="k" id="exp"></div><div class="err" id="err"></div>
 <button class="btn" id="go">लिंक और PIN बनाओ</button></div>
 
@@ -45,8 +45,8 @@ function fd(s){return new Date(s).toLocaleDateString('hi-IN',{day:'numeric',mont
 var form=CardForm($('cf'));
 function start(){var has=!!ls('ok');$('login').hidden=has;$('main').hidden=!has;draw()}
 $('okgo').onclick=function(){var v=$('okey').value.trim();if(v){ls('ok',v);start()}};
-function upd(){var n=parseInt($('days').value)||0;$('exp').textContent=n>0?'समाप्ति: '+fd(Date.now()+n*864e5)+' के बाद लिंक बंद':''}
-function setKind(k){kind=k;$('k1').className=k=='invitation'?'on':'';$('k2').className=k=='visiting'?'on':'';$('inv').hidden=k!='invitation';$('vis').hidden=k!='visiting';$('days').value=k=='invitation'?45:3650;upd()}
+function upd(){var n=parseInt($('days').value)||0;$('exp').textContent=(kind=='visiting'?'विज़िटिंग कार्ड की वैधता 1 साल है। ':'')+(n>0?'समाप्ति: '+fd(Date.now()+n*864e5)+' के बाद लिंक बंद':'')}
+function setKind(k){kind=k;$('k1').className=k=='invitation'?'on':'';$('k2').className=k=='visiting'?'on':'';$('inv').hidden=k!='invitation';$('vis').hidden=k!='visiting';$('dwrap').hidden=k!='invitation';$('days').value=k=='invitation'?45:365;upd()}
 $('k1').onclick=function(){setKind('invitation')};$('k2').onclick=function(){setKind('visiting')};$('days').oninput=upd;
 function H(){try{return JSON.parse(ls('cm2')||'[]')}catch(e){return[]}}
 function draw(){var h=H();$('hist').innerHTML=h.length?h.map(function(c,i){return '<div class="h"><span>'+(c.kind=='visiting'?'🪪 ':'💌 ')+(c.title||c.slug).replace(/</g,'&lt;')+'<br><small class="k">PIN '+c.pin+' · '+fd(c.expires_at)+'</small></span><button class="btn alt" style="width:auto;margin:0;padding:8px 12px" data-i="'+i+'">खोलो</button></div>'}).join(''):'<div class="k">अभी कोई कार्ड नहीं बनाया</div>'}
@@ -57,7 +57,7 @@ $('hist').onclick=function(e){var b=e.target.closest('[data-i]');if(b)show(H()[b
 document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;try{navigator.clipboard.writeText($(b.dataset.copy).textContent);b.textContent='कॉपी हो गया ✔'}catch(x){}});
 $('again').onclick=function(){$('res').hidden=true;$('form').hidden=false;$('err').textContent='';setKind(kind)};
 $('go').onclick=function(){
- $('err').textContent='';var d=parseInt($('days').value);if(!(d>=1&&d<=3650)){$('err').textContent='वैधता 1 से 3650 दिन के बीच डालें';return}
+ $('err').textContent='';var d=kind=='visiting'?365:parseInt($('days').value);if(!(d>=30&&d<=(kind=='visiting'?365:45))){$('err').textContent='निमंत्रण कार्ड की वैधता 30 से 45 दिन के बीच डालें';return}
  var f=new FormData();f.append('kind',kind);f.append('days',d);
  if(kind=='visiting'){var p=$('pdf').files[0];if(!p){$('err').textContent='पहले PDF चुनें';return}f.append('pdf',p);f.append('title',$('vtitle').value.trim())}
  else f.append('data',JSON.stringify(form.get()));
