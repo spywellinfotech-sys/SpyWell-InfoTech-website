@@ -194,7 +194,7 @@ html.embed .acts,html.embed .cta{display:none}
 
   <div class="box vbox rv" style="--d:3.8s"></div>
   <p class="pill vh rv" style="--d:3.8s">&#128205; विवाह स्थल</p>
-  <a href="https://maps.app.goo.gl/bu2nddtKY3hRvM9U6" target="_blank" rel="noopener" style="position:absolute;left:calc(var(--p)*487);width:calc(var(--p)*520);top:calc(var(--p)*1012);height:calc(var(--p)*140);z-index:6" aria-label="Open venue in Google Maps"></a>
+  <a data-ev="maps" href="https://maps.app.goo.gl/bu2nddtKY3hRvM9U6" target="_blank" rel="noopener" style="position:absolute;left:calc(var(--p)*487);width:calc(var(--p)*520);top:calc(var(--p)*1012);height:calc(var(--p)*140);z-index:6" aria-label="Open venue in Google Maps"></a>
   <p class="vn rv" style="--d:4s">ग्राम मीरपुर गन्देवड़</p>
   <p class="va rv" style="--d:4.1s">पो० बेहट, जिला सहारनपुर (उ.प्र.)</p>
 
@@ -206,15 +206,15 @@ html.embed .acts,html.embed .cta{display:none}
 
 <div class="acts">
   <a class="b" style="background:#1f6fd0;color:#fff" href="https://maps.app.goo.gl/bu2nddtKY3hRvM9U6" target="_blank" rel="noopener">&#128205; विवाह स्थल Google Maps पर देखें</a>
-  <a class="b" style="background:#2e8b57;color:#fff" href="tel:+919997783792">&#128222; अशोक सैनी : 99977 83792</a>
-  <a class="b" style="background:#2e8b57;color:#fff" href="tel:+919719797393">&#128222; विनोद सैनी : 97197 97393</a>
-  <a class="b pdf" href="Wedding-Card-Kajal-Divyanshu.pdf" download="Wedding-Card-Kajal-Divyanshu.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>PDF में फ़ोन में सेव करें</a>
-  <a class="b img" href="Wedding-Card-Kajal-Divyanshu.jpg" download="Wedding-Card-Kajal-Divyanshu.jpg">फ़ोटो (JPG) सेव करें</a>
+  <a class="b" style="background:#2e8b57;color:#fff" data-ev="call1" href="tel:+919997783792">&#128222; अशोक सैनी : 99977 83792</a>
+  <a class="b" style="background:#2e8b57;color:#fff" data-ev="call2" href="tel:+919719797393">&#128222; विनोद सैनी : 97197 97393</a>
+  <a class="b pdf" data-ev="pdf" href="Wedding-Card-Kajal-Divyanshu.pdf" download="Wedding-Card-Kajal-Divyanshu.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>PDF में फ़ोन में सेव करें</a>
+  <a class="b img" data-ev="jpg" href="Wedding-Card-Kajal-Divyanshu.jpg" download="Wedding-Card-Kajal-Divyanshu.jpg">फ़ोटो (JPG) सेव करें</a>
   <a class="b wa" id="wa" href="#" target="_blank" rel="noopener">WhatsApp पर भेजें</a>
   <button class="b re" id="re" type="button">&#8635; दोबारा चलाएँ</button>
 </div>
 
-<section class="cta">
+<section class="cta" data-ev="order">
   <h2>ऐसा डिजिटल वेडिंग कार्ड बनवाएँ</h2>
   <p>आपके नाम, परिवार, कार्यक्रम, स्थान और फ़ोटो के साथ। PDF, फ़ोटो और WhatsApp लिंक तीनों मिलेंगे।</p>
   <a href="https://wa.me/919837900303?text=%E0%A4%AE%E0%A5%81%E0%A4%9D%E0%A5%87%20%E0%A4%A1%E0%A4%BF%E0%A4%9C%E0%A4%BF%E0%A4%9F%E0%A4%B2%20%E0%A4%B5%E0%A5%87%E0%A4%A1%E0%A4%BF%E0%A4%82%E0%A4%97%20%E0%A4%95%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%A1%20%E0%A4%AC%E0%A4%A8%E0%A4%B5%E0%A4%BE%E0%A4%A8%E0%A4%BE%20%E0%A4%B9%E0%A5%88" target="_blank" rel="noopener">WhatsApp पर ऑर्डर करें</a>
@@ -234,6 +234,19 @@ html.embed .acts,html.embed .cta{display:none}
   document.getElementById('wa').href='https://wa.me/?text='+encodeURIComponent('शुभ विवाह: काजल सैनी संग दिव्यांशु सैनी\nआप सपरिवार सादर आमंत्रित हैं।\n'+u);
   document.getElementById('re').onclick=function(){var r=c.querySelectorAll('.rv,.shine');r.forEach(function(e){e.style.animation='none'});void c.offsetWidth;r.forEach(function(e){e.style.animation=''})};
 
+})();
+</script>
+<script>
+(function(){
+if(/[?&](static|embed|nt)\b/.test(location.search))return;
+var U='https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/card_events',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',v='';
+try{v=localStorage.getItem('cv')||'';if(!v){v=Math.random().toString(36).slice(2,12);localStorage.setItem('cv',v)}}catch(e){}
+var dev=/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',ref='';
+try{ref=document.referrer?new URL(document.referrer).hostname:''}catch(e){}
+function t(ev){try{fetch(U,{method:'POST',keepalive:true,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({card:'kajal-divyanshu',event:ev,visitor:v,ref:ref,device:dev})})}catch(e){}}
+t('view');
+document.addEventListener('click',function(e){var a=e.target.closest('[data-ev]');if(a)t(a.getAttribute('data-ev'))});
+var w=document.getElementById('wa');if(w)w.setAttribute('data-ev','whatsapp');
 })();
 </script>
 </body>
