@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Digital Wedding Card Sample | SpyWell InfoTech</title>
+<meta name="description" content="Sample animated digital wedding invitation made by SpyWell InfoTech. Get your own card with names, events, venue and WhatsApp RSVP.">
+<meta name="theme-color" content="#4a0d1c">
+<meta property="og:title" content="Digital Wedding Card Sample | SpyWell InfoTech">
+<meta property="og:description" content="Animated wedding invitation sample. Order your own.">
+<meta property="og:image" content="https://spywell.in/og-image.png">
+<link rel="icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--wine:#4a0d1c;--wine2:#6e1530;--gold:#e8c26a;--gold2:#b8862b;--cream:#fff4dc;--rose:#d94b6a;--mari:#f29a1f}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#1c0509}
+body{display:flex;justify-content:center;align-items:center;font-family:'Cormorant Garamond',serif;color:var(--cream)}
+.stage{position:relative;width:100%;max-width:440px;height:100dvh;max-height:860px;overflow:hidden;background:radial-gradient(120% 80% at 50% 0%,var(--wine2),var(--wine) 60%,#2a0610);user-select:none}
+.border{position:absolute;inset:14px;border:1.5px solid var(--gold);border-radius:10px;pointer-events:none;z-index:6;opacity:.8}
+.border::before{content:"";position:absolute;inset:6px;border:1px solid rgba(232,194,106,.45);border-radius:6px}
+/* progress */
+.bars{position:absolute;top:26px;left:28px;right:28px;display:flex;gap:4px;z-index:9}
+.bars i{flex:1;height:3px;background:rgba(255,244,220,.25);border-radius:2px;overflow:hidden}
+.bars i b{display:block;height:100%;width:0;background:var(--gold)}
+.bars i.done b{width:100%}
+.bars i.now b{animation:fill var(--d) linear forwards}
+.paused .bars i.now b{animation-play-state:paused}
+@keyframes fill{to{width:100%}}
+.ctl{position:absolute;top:40px;right:26px;z-index:9;display:flex;gap:8px}
+.ctl button{width:34px;height:34px;border-radius:50%;border:1px solid rgba(232,194,106,.6);background:rgba(74,13,28,.6);color:var(--gold);font:600 14px Poppins,sans-serif;cursor:pointer;display:grid;place-items:center}
+.tag{position:absolute;bottom:22px;left:0;right:0;text-align:center;font:500 10.5px Poppins,sans-serif;letter-spacing:.04em;color:rgba(255,244,220,.55);z-index:9}
+/* scenes */
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:84px 40px 60px;opacity:0;visibility:hidden;transition:opacity .7s}
+.scene.on{opacity:1;visibility:visible}
+.scene>*{opacity:0;transform:translateY(16px)}
+.scene.on>*{animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--i,0)*.45s + .3s)}
+@keyframes rise{to{opacity:1;transform:none}}
+.hi{font-family:'Tiro Devanagari Hindi',serif}
+.gold{color:var(--gold)}
+.ganesh{font-size:40px;line-height:1.3;color:var(--gold);text-shadow:0 0 24px rgba(232,194,106,.45)}
+.small{font-size:19px;line-height:1.5;color:var(--cream);margin-top:14px}
+.sub{font:500 11.5px Poppins,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-top:18px}
+.orn{width:150px;height:18px;margin:18px auto;background:
+ radial-gradient(circle at 50% 50%,var(--gold) 0 3px,transparent 4px),
+ linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold) 70%,transparent) center/100% 1px no-repeat}
+.name{font-size:58px;line-height:1.1;color:var(--cream)}
+.amp{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:44px;color:var(--gold);margin:4px 0}
+.en{font-style:italic;font-size:21px;color:var(--gold);margin-top:16px}
+.date{font-size:76px;line-height:1;font-weight:700;color:var(--cream)}
+.date span{color:var(--gold);font-weight:500}
+.count{display:flex;gap:10px;margin-top:26px}
+.count div{width:62px;padding:10px 0;border:1px solid rgba(232,194,106,.55);border-radius:10px;background:rgba(0,0,0,.18)}
+.count b{display:block;font-size:28px;font-weight:700;color:var(--gold)}
+.count small{font:400 10px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,244,220,.75)}
+.ev{width:100%;text-align:left;margin-top:8px}
+.ev li{list-style:none;display:grid;grid-template-columns:64px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid rgba(232,194,106,.25)}
+.ev li:last-child{border:0}
+.ev em{font-style:normal;font:600 13px Poppins,sans-serif;color:var(--gold);line-height:1.3}
+.ev strong{font-size:23px;font-weight:700;display:block;line-height:1.1}
+.ev span{font:400 12.5px Poppins,sans-serif;color:rgba(255,244,220,.8)}
+.btn{display:inline-block;margin-top:20px;padding:13px 26px;border-radius:999px;background:var(--gold);color:var(--wine);font:600 14.5px Poppins,sans-serif;text-decoration:none;border:0;cursor:pointer}
+.btn.line{background:transparent;color:var(--gold);border:1.5px solid var(--gold);margin-top:12px}
+.venue{font-size:30px;font-weight:700;line-height:1.15;margin-top:6px}
+/* doors */
+.door{position:absolute;top:0;bottom:0;width:50%;z-index:8;background:
+ radial-gradient(circle at 50% 50%,transparent 0 14px,rgba(232,194,106,.35) 15px 16px,transparent 17px) 0 0/46px 46px,
+ linear-gradient(180deg,#6e1530,#3a0814);transition:transform 1.5s cubic-bezier(.7,0,.2,1) .35s}
+.door.l{left:0;border-right:2px solid var(--gold);transform-origin:left}
+.door.r{right:0;border-left:2px solid var(--gold)}
+.open .door.l{transform:translateX(-102%)}
+.open .door.r{transform:translateX(102%)}
+.seal{position:absolute;z-index:9;top:50%;left:50%;width:84px;height:84px;margin:-42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f6dc96,var(--gold2));color:var(--wine);display:grid;place-items:center;font-size:30px;box-shadow:0 0 30px rgba(232,194,106,.6);transition:opacity .5s,transform .8s}
+.open .seal{opacity:0;transform:scale(1.7)}
+/* petals + sparkles */
+.fx{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden}
+.p{position:absolute;top:-30px;width:12px;height:16px;border-radius:0 100% 0 100%;opacity:.9;animation:fall linear infinite}
+@keyframes fall{0%{transform:translate3d(0,-30px,0) rotate(0)}100%{transform:translate3d(var(--dx),110vh,0) rotate(540deg)}}
+.s{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px 2px rgba(232,194,106,.8);animation:tw 2.4s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.1;transform:scale(.6)}50%{opacity:1;transform:scale(1.3)}}
+.glow{position:absolute;left:50%;top:50%;width:380px;height:380px;margin:-190px;border-radius:50%;background:radial-gradient(circle,rgba(232,194,106,.28),transparent 65%);z-index:1;animation:pulse 4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.12);opacity:.7}}
+.scene{z-index:5}
+.tap{position:absolute;top:70px;bottom:60px;width:34%;z-index:7}
+.tap.l{left:0}.tap.r{right:0}
+@media (prefers-reduced-motion:reduce){.p,.s,.glow{animation:none}.door{transition:none}.scene>*{animation-duration:.01s!important;animation-delay:0s!important}.bars i.now b{animation-duration:.01s}}
+a:focus-visible,button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+</style>
+</head>
+<body>
+<main class="stage" id="stage" aria-label="Digital wedding card sample">
+  <div class="border"></div>
+  <div class="bars" id="bars"></div>
+  <div class="ctl"><button id="pp" type="button" aria-label="Pause">II</button><button id="re" type="button" aria-label="Replay">&#8635;</button></div>
+  <div class="glow"></div>
+  <div class="fx" id="fx"></div>
+
+  <div class="door l"></div><div class="door r"></div><div class="seal hi">ॐ</div>
+
+  <section class="scene" data-d="5200">
+    <p class="hi ganesh" style="--i:0">॥ श्री गणेशाय नमः ॥</p>
+    <div class="orn" style="--i:1"></div>
+    <p class="hi small" style="--i:2">आपके स्नेह और आशीर्वाद के साथ<br>हमारे परिवार में शुभ विवाह का उत्सव</p>
+    <p class="sub" style="--i:3">With blessings of our elders</p>
+  </section>
+
+  <section class="scene" data-d="6000">
+    <p class="sub" style="--i:0">शुभ विवाह</p>
+    <p class="hi name" style="--i:1">रोहन</p>
+    <p class="amp" style="--i:2">weds</p>
+    <p class="hi name" style="--i:3">प्रिया</p>
+    <p class="en" style="--i:4">Rohan &amp; Priya</p>
+  </section>
+
+  <section class="scene" data-d="6500">
+    <p class="sub" style="--i:0">शुक्रवार · Friday</p>
+    <p class="date" style="--i:1">12<span> · </span>02<span> · </span>27</p>
+    <div class="orn" style="--i:2"></div>
+    <p class="hi small" style="--i:3">आपका आना, हमारा सौभाग्य</p>
+    <div class="count" style="--i:4" id="count"><div><b>00</b><small>Days</small></div><div><b>00</b><small>Hours</small></div><div><b>00</b><small>Min</small></div><div><b>00</b><small>Sec</small></div></div>
+  </section>
+
+  <section class="scene" data-d="7500">
+    <p class="sub" style="--i:0">कार्यक्रम · Events</p>
+    <ul class="ev">
+      <li style="--i:1"><em>10 Feb<br>4 PM</em><div><strong class="hi">मेहंदी</strong><span>Mehndi · Rose Garden</span></div></li>
+      <li style="--i:2"><em>11 Feb<br>10 AM</em><div><strong class="hi">हल्दी</strong><span>Haldi · Family Lawn</span></div></li>
+      <li style="--i:3"><em>11 Feb<br>7 PM</em><div><strong class="hi">संगीत</strong><span>Sangeet Night · Banquet Hall</span></div></li>
+      <li style="--i:4"><em>12 Feb<br>6 PM</em><div><strong class="hi">बारात व फेरे</strong><span>Baraat and Pheras · Grand Palace</span></div></li>
+    </ul>
+  </section>
+
+  <section class="scene" data-d="6500">
+    <p class="sub" style="--i:0">स्थान · Venue</p>
+    <p class="venue" style="--i:1">Grand Palace Resort</p>
+    <p class="small" style="--i:2">Delhi Road, Saharanpur<br>Uttar Pradesh</p>
+    <a class="btn" style="--i:3" href="https://www.google.com/maps/search/?api=1&query=Saharanpur%20Delhi%20Road" target="_blank" rel="noopener">Open in Maps</a>
+    <a class="btn line" style="--i:4" href="https://wa.me/919837900303?text=Congratulations%21%20We%20will%20be%20there." target="_blank" rel="noopener">Send RSVP on WhatsApp</a>
+  </section>
+
+  <section class="scene" data-d="0">
+    <p class="sub" style="--i:0">Sample card</p>
+    <p class="venue" style="--i:1">Want a card like this?</p>
+    <p class="small" style="--i:2">We make animated digital wedding invitations with your names, photos, events, map and WhatsApp RSVP. Ready in 1 to 2 days.</p>
+    <a class="btn" style="--i:3" href="https://wa.me/919837900303?text=I%20want%20a%20digital%20wedding%20card%20like%20the%20sample" target="_blank" rel="noopener">Order on WhatsApp</a>
+    <a class="btn line" style="--i:4" href="https://spywell.in" target="_blank" rel="noopener">spywell.in</a>
+  </section>
+
+  <p class="tag">SAMPLE · Made by SpyWell InfoTech · Names and venue are fictional</p>
+  <div class="tap l" id="prev"></div><div class="tap r" id="next"></div>
+</main>
+<script>
+(function(){
+  var st=document.getElementById('stage'),sc=[].slice.call(document.querySelectorAll('.scene')),bars=document.getElementById('bars'),fx=document.getElementById('fx');
+  var cur=-1,timer=null,paused=false,left=0,startAt=0;
+  sc.forEach(function(){bars.appendChild(document.createElement('i')).appendChild(document.createElement('b'))});
+  var bi=bars.children;
+  // petals and sparkles
+  var cols=['#f29a1f','#d94b6a','#ffcf5a','#e8765a'];
+  for(var i=0;i<16;i++){var p=document.createElement('div');p.className='p';p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%4];p.style.setProperty('--dx',(Math.random()*120-60)+'px');p.style.animationDuration=(7+Math.random()*7)+'s';p.style.animationDelay=(-Math.random()*12)+'s';p.style.transform='scale('+(.7+Math.random()*.8)+')';fx.appendChild(p)}
+  for(i=0;i<22;i++){var s=document.createElement('div');s.className='s';s.style.left=(8+Math.random()*84)+'%';s.style.top=(8+Math.random()*84)+'%';s.style.animationDelay=(Math.random()*2.4)+'s';fx.appendChild(s)}
+  function show(n){
+    clearTimeout(timer);cur=n;
+    sc.forEach(function(e,k){e.classList.remove('on');if(k===n){void e.offsetWidth;e.classList.add('on')}});
+    for(var k=0;k<bi.length;k++){bi[k].className=k<n?'done':'';bi[k].firstChild.style.animation='none'}
+    var d=+sc[n].dataset.d;
+    if(d){bi[n].className='now';var b=bi[n].firstChild;b.style.removeProperty('animation');b.style.setProperty('--d',d+'ms');bi[n].style.setProperty('--d',d+'ms');left=d;startAt=Date.now();if(!paused)timer=setTimeout(function(){go(1)},d)}else{bi[n].className='done'}
+  }
+  function go(dir){var n=cur+dir;if(n<0)n=0;if(n>=sc.length)n=sc.length-1;if(n!==cur||dir===0)show(n)}
+  function pause(on){paused=on;st.classList.toggle('paused',on);document.getElementById('pp').textContent=on?'▶':'II';
+    if(on){clearTimeout(timer);left-=Date.now()-startAt}else if(+sc[cur].dataset.d){startAt=Date.now();timer=setTimeout(function(){go(1)},left)}}
+  document.getElementById('next').onclick=function(){go(1)};
+  document.getElementById('prev').onclick=function(){go(-1)};
+  document.getElementById('pp').onclick=function(){pause(!paused)};
+  document.getElementById('re').onclick=function(){paused&&pause(false);st.classList.remove('open');void st.offsetWidth;start()};
+  // countdown to 12 Feb 2027, 6 PM IST
+  var target=new Date('2027-02-12T18:00:00+05:30').getTime(),cb=document.querySelectorAll('#count b');
+  function tick(){var t=Math.max(0,target-Date.now()),v=[Math.floor(t/864e5),Math.floor(t/36e5)%24,Math.floor(t/6e4)%60,Math.floor(t/1e3)%60];v.forEach(function(x,k){cb[k].textContent=String(x).padStart(2,'0')})}
+  tick();setInterval(tick,1000);
+  function start(){show(0);setTimeout(function(){st.classList.add('open')},300)}
+  start();
+})();
+</script>
+</body>
+</html>
