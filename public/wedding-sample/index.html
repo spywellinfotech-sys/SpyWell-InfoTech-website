@@ -77,6 +77,7 @@ body{background:#efe0c0;font-family:Hind,sans-serif;color:var(--ink);padding:14p
 .b.pdf{background:var(--wine);color:#fff}
 .b.img{background:#fff;color:var(--wine);border:2px solid var(--wine)}
 .b.wa{background:#1faa59;color:#fff}
+.b.vd{background:#e85d04;color:#fff}
 .b.re{background:transparent;color:var(--wine);padding:8px;font-size:14px}
 .b svg{width:20px;height:20px}
 .cta{width:min(calc(100vw - 20px),560px);margin-top:22px;background:#4a0d1c;color:#fff4dc;border-radius:20px;padding:20px;text-align:center}
@@ -91,6 +92,72 @@ a:focus-visible,button:focus-visible{outline:3px solid #1f8fe0;outline-offset:2p
 html.embed body{padding:0;background:transparent;display:block}
 html.embed .card{width:100vw;box-shadow:none;border-radius:0}
 html.embed .acts,html.embed .cta{display:none}
+
+/* ---------- Vidaai animation ---------- */
+.vid{position:fixed;inset:0;z-index:100;background:#12060c;display:none;align-items:center;justify-content:center}
+.vid.open{display:flex}
+.vstage{position:relative;height:100dvh;max-height:900px;aspect-ratio:9/16;max-width:100vw;overflow:hidden;background:#1a0b1e}
+.vstage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vx{position:absolute;top:14px;right:14px;z-index:5;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(0,0,0,.45);color:#fff;font:600 20px Poppins,sans-serif;cursor:pointer}
+.vq{position:absolute;left:0;right:0;bottom:11%;text-align:center;padding:0 24px;font-family:'Tiro Devanagari Hindi',Hind,serif;font-size:clamp(20px,5.4vw,28px);line-height:1.55;color:#ffe9a8;text-shadow:0 2px 14px rgba(0,0,0,.75),0 0 30px rgba(255,190,80,.5);opacity:0;z-index:4}
+.vre{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);z-index:5;border:0;border-radius:999px;padding:10px 22px;background:#e8c26a;color:#4a0d1c;font:600 14px Poppins,Hind,sans-serif;cursor:pointer;opacity:0;pointer-events:none}
+.vpet{position:absolute;top:-6%;width:10px;height:13px;border-radius:0 100% 0 100%;opacity:0;z-index:3;pointer-events:none}
+.vcap{position:absolute;top:16px;left:16px;z-index:5;color:rgba(255,244,220,.8);font:500 12px Poppins,Hind,sans-serif}
+.vid.play .vq{animation:vq 20s linear forwards}
+.vid.play .vre{animation:vre 20s linear forwards}
+@keyframes vq{0%,85%{opacity:0;transform:translateY(10px)}91%,100%{opacity:1;transform:none}}
+@keyframes vre{0%,98%{opacity:0;pointer-events:none}100%{opacity:1;pointer-events:auto}}
+.vid.play .vpet{animation:vfall linear infinite}
+@keyframes vfall{0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}8%{opacity:.95}100%{opacity:.9;transform:translate3d(var(--dx),108vh,0) rotate(600deg)}}
+/* camera */
+.vid.play #cam{animation:cam 20s ease-in-out forwards;transform-origin:185px 548px}
+@keyframes cam{0%{transform:scale(1.18)}60%{transform:scale(1.26)}100%{transform:scale(1.3)}}
+/* sky / sun */
+#gold{opacity:0}
+#sun{opacity:0}
+.vid.play #gold{animation:gold 20s linear forwards}
+.vid.play #sun{animation:sun 20s ease-out forwards}
+@keyframes gold{0%,78%{opacity:0}95%,100%{opacity:.9}}
+@keyframes sun{0%,76%{opacity:0;transform:translateY(46px)}96%,100%{opacity:1;transform:translateY(0)}}
+.tw{animation:tw 1.8s ease-in-out infinite}
+.tw:nth-child(2n){animation-delay:.6s}.tw:nth-child(3n){animation-delay:1.1s}
+@keyframes tw{0%,100%{opacity:.35}50%{opacity:1}}
+/* people */
+.arm,.mv,.flip,.body{transform-box:view-box}
+.vid.play .bride .mv{animation:bmv 20s linear forwards}
+@keyframes bmv{0%,10%{transform:translateX(0);opacity:1}17.5%,25%{transform:translateX(32px);opacity:1}28%,43%{transform:translateX(0);opacity:1}63%,69%{transform:translateX(112px);opacity:1}73%,100%{transform:translateX(130px);opacity:0}}
+.vid.play .bride .flip{animation:bfl 20s linear forwards}
+@keyframes bfl{0%,63%{transform:scaleX(1)}65%,67%{transform:scaleX(-1)}69%,100%{transform:scaleX(1)}}
+.vid.play .mother .mv{animation:mmv 20s linear forwards}
+@keyframes mmv{0%,10%{transform:translateX(0)}17.5%,25%{transform:translateX(7px)}28%,100%{transform:translateX(0)}}
+.vid.play .father .mv{animation:fmv 20s linear forwards}
+@keyframes fmv{0%,26%{transform:translateX(0)}30%,37.5%{transform:translateX(36px)}40%,100%{transform:translateX(0)}}
+.vid.play .groom .mv{animation:gmv 20s linear forwards}
+@keyframes gmv{0%,38%{transform:translateX(0);opacity:1}43%{transform:translateX(-53px);opacity:1}63%,69%{transform:translateX(57px);opacity:1}73%,100%{transform:translateX(75px);opacity:0}}
+.vid.play .father .arm{animation:farm 20s linear forwards}
+@keyframes farm{0%,26%{transform:rotate(0)}30%,37.5%{transform:rotate(-100deg)}40%,64%{transform:rotate(0)}66%{transform:rotate(-146deg)}68%{transform:rotate(-160deg)}70%{transform:rotate(-146deg)}72%{transform:rotate(-160deg)}74%{transform:rotate(-146deg)}76%{transform:rotate(-160deg)}78%{transform:rotate(-146deg)}80%{transform:rotate(-160deg)}82%{transform:rotate(-146deg)}84%{transform:rotate(-160deg)}87%{transform:rotate(-146deg)}90%,100%{transform:rotate(0)}}
+.vid.play .mother .arm{animation:marm 20s linear forwards}
+@keyframes marm{0%,64%{transform:rotate(0)}66%{transform:rotate(-150deg)}68%{transform:rotate(-165deg)}70%{transform:rotate(-150deg)}72%{transform:rotate(-165deg)}74%{transform:rotate(-150deg)}76%{transform:rotate(-165deg)}78%{transform:rotate(-150deg)}80%{transform:rotate(-165deg)}82%{transform:rotate(-150deg)}84%{transform:rotate(-165deg)}87%{transform:rotate(-150deg)}90%,100%{transform:rotate(0)}}
+.vid.play .groom .arm{animation:garm 20s linear forwards}
+@keyframes garm{0%,42%{transform:rotate(0)}46%,100%{transform:rotate(38deg)}}
+.vid.play .walk .body{animation:bob .45s ease-in-out 8.6s 9}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+/* car */
+.vid.play #car{animation:car 20s cubic-bezier(.5,0,.9,.6) forwards}
+@keyframes car{0%,73%{transform:translateX(0)}88%,100%{transform:translateX(220px)}}
+.vid.play .whl{animation:spin .35s linear 14.6s 9}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* emotion */
+#heart{opacity:0}
+.vid.play #heart{animation:heart 20s linear forwards}
+@keyframes heart{0%,15%{opacity:0;transform:translateY(0) scale(.6)}18%{opacity:1;transform:translateY(-6px) scale(1)}25%{opacity:1;transform:translateY(-16px) scale(1.1)}28%,100%{opacity:0;transform:translateY(-22px) scale(1)}}
+.tear{opacity:0}
+.vid.play .tear{animation:tear .9s ease-in 3.5s 3}
+@keyframes tear{0%{opacity:0;transform:translateY(0)}20%{opacity:.95}100%{opacity:0;transform:translateY(16px)}}
+#bless{opacity:0}
+.vid.play #bless{animation:bless 20s linear forwards}
+@keyframes bless{0%,30%{opacity:0}33%{opacity:.9}36%{opacity:.5}38%{opacity:.9}40%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.vid.play *{animation-duration:.01s!important;animation-delay:0s!important}}
 </style>
 </head>
 <body>
@@ -136,6 +203,7 @@ html.embed .acts,html.embed .cta{display:none}
 <div class="acts">
   <a class="b pdf" href="Wedding-Card-Aditya-Sonali.pdf" download="Wedding-Card-Aditya-Sonali.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>PDF में फ़ोन में सेव करें</a>
   <a class="b img" href="Wedding-Card-Aditya-Sonali.jpg" download="Wedding-Card-Aditya-Sonali.jpg">फ़ोटो (JPG) सेव करें</a>
+  <button class="b vd vbtn" id="vopen" type="button">&#127916; विदाई एनिमेशन देखें</button>
   <a class="b wa" id="wa" href="#" target="_blank" rel="noopener">WhatsApp पर भेजें</a>
   <button class="b re" id="re" type="button">&#8635; दोबारा चलाएँ</button>
 </div>
@@ -146,6 +214,62 @@ html.embed .acts,html.embed .cta{display:none}
   <a href="https://wa.me/919837900303?text=%E0%A4%AE%E0%A5%81%E0%A4%9D%E0%A5%87%20%E0%A4%A1%E0%A4%BF%E0%A4%9C%E0%A4%BF%E0%A4%9F%E0%A4%B2%20%E0%A4%B5%E0%A5%87%E0%A4%A1%E0%A4%BF%E0%A4%82%E0%A4%97%20%E0%A4%95%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%A1%20%E0%A4%AC%E0%A4%A8%E0%A4%B5%E0%A4%BE%E0%A4%A8%E0%A4%BE%20%E0%A4%B9%E0%A5%88" target="_blank" rel="noopener">WhatsApp पर ऑर्डर करें</a>
   <small>Sample card · Made by SpyWell InfoTech · spywell.in</small>
 </section>
+
+<div class="vid" id="vid" role="dialog" aria-label="Vidaai animation">
+ <div class="vstage" id="vst">
+  <button class="vx" id="vx" type="button" aria-label="Close">&times;</button>
+  <p class="vcap">विदाई · Illustrated animation</p>
+  <svg viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+   <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f2058"/><stop offset=".55" stop-color="#b85a63"/><stop offset="1" stop-color="#f4a259"/></linearGradient>
+    <linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7a63b"/><stop offset=".6" stop-color="#ffcf70"/><stop offset="1" stop-color="#ffe9a8"/></linearGradient>
+    <radialGradient id="sg"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#ffd27a"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="bg"><stop offset="0" stop-color="#fff2b0" stop-opacity=".95"/><stop offset="1" stop-color="#fff2b0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a2f33"/><stop offset="1" stop-color="#2b1318"/></linearGradient>
+   </defs>
+   <g id="cam">
+    <rect width="360" height="640" fill="url(#sky)"/>
+    <g id="sun"><circle cx="250" cy="372" r="95" fill="url(#sg)"/><circle cx="250" cy="372" r="34" fill="#ffe9a8"/></g>
+    <path d="M0 400 L40 372 L90 396 L150 360 L215 394 L275 366 L330 392 L360 378 L360 540 L0 540Z" fill="#3a2349" opacity=".85"/>
+    <rect id="gold" width="360" height="640" fill="url(#gl)" style="mix-blend-mode:soft-light"/>
+    <!-- house -->
+    <g>
+     <rect x="-10" y="318" width="190" height="212" fill="#f2cf9a"/>
+     <rect x="-10" y="306" width="190" height="14" fill="#d99a5b"/>
+     <path d="M52 530 V462 Q52 436 78 436 Q104 436 104 462 V530Z" fill="#6b2230"/>
+     <path d="M60 530 V464 Q60 446 78 446 Q96 446 96 464 V530Z" fill="#ffbf5e" opacity=".9"/>
+     <rect x="8" y="350" width="30" height="44" rx="14" fill="#ffd56a"/><rect x="118" y="350" width="30" height="44" rx="14" fill="#ffd56a"/>
+     <rect x="8" y="428" width="26" height="40" rx="12" fill="#ffd56a" opacity=".85"/><rect x="124" y="428" width="26" height="40" rx="12" fill="#ffd56a" opacity=".85"/>
+     <path d="M-10 322 Q35 350 80 322 T170 322" fill="none" stroke="#f29a1f" stroke-width="7" stroke-linecap="round" stroke-dasharray="0 11"/>
+     <path d="M-10 332 Q35 360 80 332 T170 332" fill="none" stroke="#d94b6a" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 13"/>
+     <path d="M52 440 V532 M104 440 V532" stroke="#f29a1f" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 11"/>
+     <g fill="#fff2a8"><circle class="tw" cx="6" cy="300" r="2.5"/><circle class="tw" cx="30" cy="304" r="2.5"/><circle class="tw" cx="54" cy="300" r="2.5"/><circle class="tw" cx="78" cy="304" r="2.5"/><circle class="tw" cx="102" cy="300" r="2.5"/><circle class="tw" cx="126" cy="304" r="2.5"/><circle class="tw" cx="150" cy="300" r="2.5"/><circle class="tw" cx="172" cy="304" r="2.5"/></g>
+    </g>
+    <rect y="520" width="360" height="120" fill="url(#gr)"/>
+    <path d="M0 560 H360" stroke="#7a4a44" stroke-width="2" opacity=".5"/>
+    <!-- car -->
+    <g transform="translate(240 556) scale(.85)"><g id="car">
+     <path d="M0 -30 L0 -14 Q0 -8 6 -8 L100 -8 Q108 -8 108 -14 L108 -26 Q108 -32 100 -34 L84 -40 L70 -60 Q66 -64 60 -64 L30 -64 Q22 -64 18 -58 L8 -38 Q0 -36 0 -30Z" fill="#f5eee2"/>
+     <path d="M16 -38 L26 -56 Q28 -58 32 -58 L50 -58 V-38Z" fill="#8fbfe0"/><path d="M56 -38 V-58 H62 Q65 -58 67 -55 L78 -38Z" fill="#8fbfe0"/>
+     <path d="M0 -22 H108" stroke="#c1121f" stroke-width="4"/>
+     <path d="M16 -64 Q60 -74 104 -40" fill="none" stroke="#f29a1f" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 9"/>
+     <path d="M104 -32 Q96 -52 82 -42" fill="none" stroke="#d94b6a" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 8"/>
+     <path d="M54 -22 q-7 -9 0 -13 q7 4 0 13z" fill="#c1121f" opacity="0"/>
+     <g class="whl" style="transform-origin:24px -6px"><circle cx="24" cy="-6" r="11" fill="#1d1d24"/><circle cx="24" cy="-6" r="5" fill="#9aa0ab"/><path d="M24 -6 H35 M24 -6 V5" stroke="#1d1d24" stroke-width="2"/></g>
+     <g class="whl" style="transform-origin:86px -6px"><circle cx="86" cy="-6" r="11" fill="#1d1d24"/><circle cx="86" cy="-6" r="5" fill="#9aa0ab"/><path d="M86 -6 H97 M86 -6 V5" stroke="#1d1d24" stroke-width="2"/></g>
+    </g></g>
+    <!-- people -->
+    <g id="people"></g>
+    <circle id="bless" cx="120" cy="428" r="28" fill="url(#bg)"/>
+    <g id="heart" style="transform-box:view-box"><path d="M158 414 c-8 -9 -20 0 -9 10 l9 8 l9 -8 c11 -10 -1 -19 -9 -10z" fill="#e63958"/></g>
+    <g fill="#bfe4ff"><ellipse class="tear" cx="124" cy="438" rx="1.7" ry="2.6"/><ellipse class="tear" cx="130" cy="440" rx="1.7" ry="2.6" style="animation-delay:4s"/></g>
+   </g>
+  </svg>
+  <p class="vq">बेटियाँ पराई नहीं होतीं,<br>बस एक नए घर की रौनक बन जाती हैं।</p>
+  <button class="vre" id="vre" type="button">&#8635; दोबारा देखें</button>
+ </div>
+</div>
+
 <script>
 (function(){
   if(location.search.indexOf('embed')>-1)document.documentElement.classList.add('embed');
@@ -156,6 +280,36 @@ html.embed .acts,html.embed .cta{display:none}
   var u='https://spywell.in/wedding-sample/';
   document.getElementById('wa').href='https://wa.me/?text='+encodeURIComponent('शुभ विवाह: आदित्य कुमार संग सोनाली\nआप सपरिवार सादर आमंत्रित हैं।\n'+u);
   document.getElementById('re').onclick=function(){var r=c.querySelectorAll('.rv,.shine');r.forEach(function(e){e.style.animation='none'});void c.offsetWidth;r.forEach(function(e){e.style.animation=''})};
+
+  // ---- vidaai ----
+  (function(){
+    var vid=document.getElementById('vid'),ppl=document.getElementById('people'),NS='http://www.w3.org/2000/svg';
+    var skin='#e8b58a',dark='#2a1410';
+    function person(cls,x,y,walk,inner,arm){return '<g class="'+cls+(walk?' walk':'')+'" transform="translate('+x+' '+y+')"><g class="mv"><g class="flip"><g class="body">'+inner+'</g>'+arm+'</g></g></g>'}
+    function armL(col,tip){return '<g class="arm" style="transform-origin:10px -94px"><path d="M10 -94 L16 -66" stroke="'+col+'" stroke-width="6" stroke-linecap="round"/><circle cx="16.5" cy="-63" r="3.6" fill="'+skin+'"/></g>'}
+    var bride='<path d="M-9 -84 C-12 -60 -30 -20 -34 0 L34 0 C30 -20 12 -60 9 -84Z" fill="#c1121f"/><path d="M-33 -3 L33 -3" stroke="#f1c24b" stroke-width="3"/><path d="M-26 -30 L26 -30" stroke="#f1c24b" stroke-width="1.5" opacity=".7"/><rect x="-9" y="-97" width="18" height="14" rx="3" fill="#8f0e19"/><circle cx="0" cy="-107" r="9.5" fill="'+skin+'"/><path d="M-10 -108 Q0 -122 10 -108 Q8 -114 0 -114 Q-8 -114 -10 -108Z" fill="'+dark+'"/><circle cx="0" cy="-109" r="1.3" fill="#c1121f"/><path d="M-15 -113 C-24 -96 -28 -60 -26 -22 L26 -22 C28 -60 24 -96 15 -113 Q0 -122 -15 -113Z" fill="#e0334a" opacity=".5" stroke="#f1c24b" stroke-width="1.2"/>';
+    var bArm='<g class="arm"><path d="M-9 -94 L-14 -66" stroke="'+skin+'" stroke-width="5" stroke-linecap="round"/><path d="M9 -94 L14 -66" stroke="'+skin+'" stroke-width="5" stroke-linecap="round"/><path d="M-14 -64 h4 M14 -64 h-4" stroke="#f1c24b" stroke-width="3"/></g>';
+    var mother='<path d="M-8 -86 C-10 -60 -22 -24 -24 0 L24 0 C22 -24 10 -60 8 -86Z" fill="#d6336c"/><path d="M-8 -94 L9 -60 L24 0 L12 0 L-2 -54Z" fill="#a31f52" opacity=".75"/><rect x="-8" y="-97" width="16" height="13" rx="3" fill="#b82a5e"/><circle cx="0" cy="-106" r="9" fill="'+skin+'"/><path d="M-9 -107 Q0 -120 9 -107 Q4 -112 0 -112 Q-4 -112 -9 -107Z" fill="#241a22"/><circle cx="-1" cy="-118" r="5.5" fill="#241a22"/>';
+    var father='<rect x="-17" y="-42" width="12" height="42" fill="#ece6da"/><rect x="5" y="-42" width="12" height="42" fill="#ece6da"/><path d="M-11 -97 L11 -97 L14 -38 L-14 -38Z" fill="#2f5fb0"/><circle cx="0" cy="-107" r="9.5" fill="'+skin+'"/><path d="M-9 -108 Q0 -122 9 -108 Q4 -113 0 -113 Q-4 -113 -9 -108Z" fill="#cfcfd6"/>';
+    var groom='<rect x="-14" y="-40" width="11" height="40" fill="#cdb98a"/><rect x="3" y="-40" width="11" height="40" fill="#cdb98a"/><path d="M-11 -97 L11 -97 L14 -34 L-14 -34Z" fill="#f4e5bd"/><path d="M0 -97 V-34" stroke="#c9a14a" stroke-width="1.5"/><g fill="#c9a14a"><circle cx="0" cy="-86" r="1.6"/><circle cx="0" cy="-74" r="1.6"/><circle cx="0" cy="-62" r="1.6"/></g><circle cx="0" cy="-107" r="9.5" fill="'+skin+'"/><ellipse cx="0" cy="-116" rx="11" ry="7.5" fill="#e8541f"/><path d="M-3 -122 Q2 -130 8 -124" stroke="#f1c24b" stroke-width="2" fill="none"/>';
+    ppl.innerHTML=
+      person('father',60,548,false,father,armL('#2f5fb0'))+
+      person('mother',165,548,false,mother,armL('#d6336c'))+
+      person('bride',120,552,true,bride,bArm)+
+      person('groom',205,556,true,groom,armL('#f4e5bd'));
+    var pet=document.createElement('div');pet.id='vpets';
+    var cols=['#e8541f','#d94b6a','#f2b134','#c7283e'];
+    for(var i=0;i<26;i++){var d=document.createElement('i');d.className='vpet';d.style.left=(Math.random()*100)+'%';d.style.background=cols[i%4];d.style.setProperty('--dx',(Math.random()*120-40)+'px');d.style.animationDuration=(5+Math.random()*4)+'s';d.style.animationDelay=(3+Math.random()*6)+'s';pet.appendChild(d)}
+    document.getElementById('vst').appendChild(pet);
+    function play(){vid.classList.remove('play');void vid.offsetWidth;vid.classList.add('play')}
+    function open(){vid.classList.add('open');play()}
+    function close(){vid.classList.remove('open','play')}
+    var ob=document.getElementById('vopen');if(ob)ob.onclick=open;
+    document.getElementById('vx').onclick=close;
+    document.getElementById('vre').onclick=play;
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+    if(location.search.indexOf('vidaai')>-1&&location.search.indexOf('embed')<0)open();
+  })();
 })();
 </script>
 </body>
