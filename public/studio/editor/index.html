@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>कार्ड एडिटर | SpyWell Digital Studio</title>
+<meta name="robots" content="noindex"><link rel="icon" href="/favicon.png">
+<style>
+:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
+.top{background:var(--wine);color:#fff;padding:8px 10px;display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:5}
+.top b{flex:1;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top button,.top a{width:auto;margin:0;padding:7px 11px;background:#fff;color:var(--wine);font-size:14px;border-radius:8px;border:0;font-weight:600;text-decoration:none;font-family:inherit;cursor:pointer}
+.top button:disabled{opacity:.4}
+.wrap{max-width:1040px;margin:auto;padding:10px}
+.state{font-size:13px;color:var(--mut);padding:4px 2px;min-height:24px}.state.bad{color:#b00020}
+.cols{display:block}
+#pvbox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:46vh}
+.pvbar{display:flex;justify-content:flex-end;margin:6px 0}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:6px 0 10px;padding-bottom:2px}
+.tabs button{flex:none;width:auto;margin:0;padding:8px 14px;border-radius:20px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;font-size:14px;cursor:pointer}
+.tabs button.on{background:var(--wine);color:#fff}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+label{display:block;font-size:13px;color:var(--mut);margin-top:12px}label:first-child{margin-top:0}
+input,textarea,select,button{font:inherit}
+input,textarea,select{padding:11px;border-radius:10px;border:1px solid var(--line);width:100%;display:block;background:#fff;color:var(--ink)}
+input[type=color]{padding:2px;height:44px}input[type=range]{padding:0;border:0}
+textarea{min-height:76px;resize:vertical}
+input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
+.btn{padding:11px;border-radius:10px;border:0;background:var(--wine);color:#fff;font-weight:600;width:100%;margin-top:12px;cursor:pointer}
+.btn.alt{background:#fff;color:var(--wine);border:1px solid var(--wine)}.btn.sm{width:auto;padding:7px 12px;font-size:14px;margin-top:8px}
+.btn.danger{background:#b00020}
+.item{border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:10px;background:#fffaf0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.chips button{width:auto;margin:6px 6px 0 0;padding:5px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:14px;cursor:pointer}
+.thumb{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block;margin-top:8px}
+.grid{display:flex;flex-wrap:wrap;gap:10px}
+.mini{width:150px;border:2px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;background:#fff;padding:0;text-align:left;color:var(--ink)}
+.mini.on{border-color:var(--wine);box-shadow:0 0 0 2px var(--wine)}
+.mini .box{height:215px;overflow:hidden}.mini .in2{width:360px;transform:scale(.4056);transform-origin:0 0;pointer-events:none}
+.mini .cap{font-size:12px;padding:5px 7px;border-top:1px solid var(--line)}.mini .cap span{color:var(--mut);display:block}
+.seg{display:flex;gap:6px}.seg button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.seg button.on{background:var(--wine);color:#fff;border-color:var(--wine)}
+#full{position:fixed;inset:0;background:#000a;z-index:20;overflow:auto;padding:46px 0 20px}#full .sheet{max-width:440px;margin:auto;background:#fff}
+#full .x{position:fixed;top:8px;right:10px;width:auto;margin:0;padding:6px 14px;border-radius:20px;border:0;background:#fff;color:var(--wine);font-weight:700;cursor:pointer}
+.k{font-size:13px;color:var(--mut)}
+[hidden]{display:none!important}
+@media(min-width:860px){.cols{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}#pvbox{max-height:calc(100vh - 130px)}.left{position:sticky;top:60px}}
+</style></head><body>
+<div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
+<button id="undo" disabled title="Undo">↶</button><button id="redo" disabled title="Redo">↷</button><button id="save">सेव</button></div>
+<div class="wrap">
+<div class="state" id="state">लोड हो रहा है…</div>
+<div class="cols" id="main" hidden>
+<div class="left"><div id="pvbox"><div id="pv"></div></div><div class="pvbar"><button class="btn alt sm" id="fullbtn">पूरा प्रीव्यू देखें</button></div></div>
+<div><div class="tabs" id="tabs"></div><div class="panel" id="panel"></div></div>
+</div></div>
+<div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/studio/render.js"></script>
+<script>
+(function(){
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
+var $=function(i){return document.getElementById(i)},R=window.StudioRender;
+function h(tag,props,kids){var e=document.createElement(tag);for(var k in props||{}){if(k==='class')e.className=props[k];else if(k==='text')e.textContent=props[k];else if(k.slice(0,2)==='on')e[k]=props[k];else if(props[k]!=null&&props[k]!==false)e.setAttribute(k,props[k])}(kids||[]).forEach(function(c){if(c)e.appendChild(c)});return e}
+function state(t,bad){var s=$('state');s.textContent=t;s.className='state'+(bad?' bad':'')}
+if(!window.supabase||!R){state('लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।',true);return}
+var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
+var ID=new URLSearchParams(location.search).get('id')||'';
+var D=null,T=[],C=null,UID='',tab='info',dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
+var LS='studio-draft-'+ID;
+
+function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
+function cfg(id){var t=T.filter(function(x){return x.id===(id||D.template_id)})[0];return t?t.config:{}}
+function draw(){R.render($('pv'),D.product_type,cfg(),C,{demo:true});$('ttl').textContent=R.title(D.product_type,C);if(!$('full').hidden)R.render($('fullpv'),D.product_type,cfg(),C,{demo:true})}
+function btns(){$('undo').disabled=hi<=0;$('redo').disabled=hi>=hist.length-1}
+function snap(){return JSON.stringify({c:C,t:D.template_id})}
+function pushHist(){clearTimeout(htimer);htimer=null;var s=snap();if(hist[hi]===s)return;hist=hist.slice(0,hi+1);hist.push(s);if(hist.length>60)hist.shift();hi=hist.length-1;btns()}
+function changed(){dirty=true;state('बदलाव सेव होना बाकी है');draw();
+  try{localStorage.setItem(LS,JSON.stringify({c:C,t:D.template_id,at:Date.now()}))}catch(e){}
+  clearTimeout(timer);timer=setTimeout(save,2500);clearTimeout(htimer);htimer=setTimeout(pushHist,500)}
+function go(n){if(htimer)pushHist();if(hi+n<0||hi+n>=hist.length)return;hi+=n;var o=JSON.parse(hist[hi]);C=shape(o.c);D.template_id=o.t;btns();panel();dirty=true;state('बदलाव सेव होना बाकी है');draw();
+  try{localStorage.setItem(LS,JSON.stringify({c:C,t:D.template_id,at:Date.now()}))}catch(e){}clearTimeout(timer);timer=setTimeout(save,2500)}
+
+async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=true;state('सेव हो रहा है…');
+  var s=snap(),o=JSON.parse(s);
+  var r=await sb.from('studio_designs').update({title:R.title(D.product_type,o.c),template_id:o.t,content_json:o.c}).eq('id',D.id).select('updated_at').single();
+  saving=false;
+  if(r.error||!r.data){state('सेव नहीं हुआ। इंटरनेट जाँचें, थोड़ी देर में दोबारा कोशिश होगी।',true);timer=setTimeout(save,8000);return}
+  if(snap()===s){dirty=false;try{localStorage.removeItem(LS)}catch(e){}
+    var bad=R.invalid(D.product_type,C).length;
+    state('सेव हो गया · '+new Date(r.data.updated_at).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})+(bad?' · '+bad+' जगह नंबर/ईमेल/लिंक गलत है, वह कार्ड में नहीं दिखेगा':''))}
+  else timer=setTimeout(save,1500)}
+
+/* ---------- panels ---------- */
+var TABS=[['info','जानकारी'],['list',''],['photo','फ़ोटो'],['design','डिज़ाइन'],['tpl','टेम्पलेट']];
+function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[1];
+  w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
+function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl})[tab](p)}
+
+function pInfo(p){
+  var bad=R.invalid(D.product_type,C);
+  R.FIELDS[D.product_type].forEach(function(d){
+    var k=d[0],typ=d[2],inp;
+    if(typ==='area')inp=h('textarea',{maxlength:d[3]});
+    else inp=h('input',{type:typ==='tel'?'tel':typ==='email'?'email':typ==='url'?'url':typ,maxlength:d[3],inputmode:typ==='tel'?'numeric':null});
+    inp.value=C.fields[k]||'';inp.id='f-'+k;
+    var er=h('div',{class:'e'});
+    function chk(){var v=inp.value.trim(),ok=!v||!(typ==='tel'||typ==='email'||typ==='url')||R.V[typ](v);inp.className=ok?'':'bad';
+      er.textContent=ok?'':typ==='tel'?'10 अंक का सही मोबाइल नंबर डालें':typ==='email'?'ईमेल सही नहीं है':'लिंक सही नहीं है'}
+    inp.oninput=function(){C.fields[k]=inp.value;chk();changed()};
+    p.appendChild(h('label',{text:d[1],for:'f-'+k}));p.appendChild(inp);p.appendChild(er);if(bad.indexOf(k)>=0)chk();
+  });
+}
+function field(label,type,val,max,on){var i=h('input',{type:type,maxlength:max});i.value=val||'';i.oninput=function(){on(i.value)};return h('div',{},[h('label',{text:label}),i])}
+function pList(p){
+  if(D.product_type==='invitation'){
+    p.appendChild(h('div',{class:'k',text:'सगाई, हल्दी, मेहंदी, संगीत जैसे कार्यक्रम जोड़ें। अधिकतम '+R.MAX_EVENTS+'।'}));
+    C.events.forEach(function(e,i){
+      p.appendChild(h('div',{class:'item'},[
+        field('कार्यक्रम का नाम','text',e.title,60,function(v){e.title=v;changed()}),
+        h('div',{class:'row2'},[field('तारीख','date',e.date,10,function(v){e.date=v;changed()}),field('समय','time',e.time,5,function(v){e.time=v;changed()})]),
+        field('स्थान','text',e.place,120,function(v){e.place=v;changed()}),
+        h('button',{class:'btn alt sm',text:'हटाएँ',onclick:function(){C.events.splice(i,1);panel();changed()}})]));
+    });
+    if(C.events.length<R.MAX_EVENTS){
+      var ch=h('div',{class:'chips'});
+      R.EVENT_PRESETS.forEach(function(n){ch.appendChild(h('button',{text:'+ '+n,onclick:function(){C.events.push({title:n,date:'',time:'',place:''});panel();changed()}}))});
+      p.appendChild(ch);
+      p.appendChild(h('button',{class:'btn alt',text:'+ दूसरा कार्यक्रम जोड़ें',onclick:function(){C.events.push({title:'',date:'',time:'',place:''});panel();changed()}}));
+    }
+  }else{
+    p.appendChild(h('div',{class:'k',text:'आप जो सेवाएँ या सामान देते हैं, एक-एक करके लिखें। अधिकतम '+R.MAX_SERVICES+'।'}));
+    C.services.forEach(function(s,i){
+      var inp=h('input',{type:'text',maxlength:60});inp.value=s||'';inp.oninput=function(){C.services[i]=inp.value;changed()};
+      p.appendChild(h('div',{class:'item'},[inp,h('button',{class:'btn alt sm',text:'हटाएँ',onclick:function(){C.services.splice(i,1);panel();changed()}})]));
+    });
+    if(C.services.length<R.MAX_SERVICES)p.appendChild(h('button',{class:'btn alt',text:'+ सेवा जोड़ें',onclick:function(){C.services.push('');panel();changed()}}));
+  }
+}
+function range(label,min,max,val,on){var i=h('input',{type:'range',min:min,max:max,step:(max-min)<=2?0.05:1});i.value=val;i.oninput=function(){on(+i.value)};return h('div',{},[h('label',{text:label}),i])}
+function pPhoto(p){
+  var msg=h('div',{class:'e',id:'uperr'});
+  R.IMAGES[D.product_type].forEach(function(d){
+    var k=d[0],im=C.images[k],box=h('div',{class:'item'},[h('b',{text:d[1]})]);
+    var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp'});file.style.marginTop='8px';
+    file.onchange=function(){if(file.files[0])upload(k,file.files[0],d[2],msg)};
+    if(im&&im.url){
+      var th=h('img',{class:'thumb',src:im.url,alt:''});box.appendChild(th);
+      box.appendChild(h('div',{class:'k',text:'फ़ोटो बदलने के लिए नई चुनें'}));box.appendChild(file);
+      if(d[2])box.appendChild(range('आकार',40,340,im.size||d[2],function(v){im.size=v;changed()}));
+      if(k!=='logo')box.appendChild(range('फ़ोटो का कौन सा हिस्सा दिखे (ऊपर ↔ नीचे)',0,100,im.pos==null?50:im.pos,function(v){im.pos=v;changed()}));
+      box.appendChild(h('button',{class:'btn alt sm',text:'फ़ोटो हटाएँ',onclick:function(){delete C.images[k];panel();changed()}}));
+    }else box.appendChild(file);
+    p.appendChild(box);
+  });
+  p.appendChild(h('div',{class:'k',text:'JPG, PNG या WEBP, 5 MB तक।'}));p.appendChild(msg);
+}
+function shrink(file,keepPng){return new Promise(function(res){
+  var img=new Image(),u=URL.createObjectURL(file);
+  img.onload=function(){URL.revokeObjectURL(u);var m=1600,s=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));
+    var x=c.getContext('2d');var png=keepPng&&file.type==='image/png';if(!png){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}x.drawImage(img,0,0,c.width,c.height);
+    c.toBlob(function(b){res(b||file)},png?'image/png':'image/jpeg',0.85)};
+  img.onerror=function(){URL.revokeObjectURL(u);res(null)};img.src=u})}
+async function upload(k,file,defSize,msg){
+  msg.textContent='';
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type)){msg.textContent='सिर्फ JPG, PNG या WEBP फ़ोटो चलेगी।';return}
+  if(file.size>5*1024*1024){msg.textContent='फ़ोटो 5 MB से छोटी होनी चाहिए।';return}
+  msg.className='k';msg.textContent='फ़ोटो अपलोड हो रही है…';
+  var blob=await shrink(file,k==='logo');
+  if(!blob){msg.className='e';msg.textContent='यह फ़ोटो खुल नहीं पाई। दूसरी फ़ोटो चुनें।';return}
+  var path=UID+'/'+D.id+'/'+k+'-'+Date.now()+(blob.type==='image/png'?'.png':'.jpg');
+  var r=await sb.storage.from('studio-assets').upload(path,blob,{contentType:blob.type,upsert:false});
+  if(r.error){msg.className='e';msg.textContent='अपलोड नहीं हुआ। दोबारा कोशिश करें।';return}
+  await sb.from('studio_assets').insert({user_id:UID,design_id:D.id,path:path,mime:blob.type,size_bytes:blob.size});
+  var old=C.images[k]||{};C.images[k]={url:R.BUCKET+path,size:old.size||defSize||0,pos:old.pos==null?50:old.pos};
+  panel();changed();
+}
+function pDesign(p){
+  var s=C.style,t=cfg(),pal=t.palette||{};
+  function sel(label,key,opts,cur){var e=h('select');opts.forEach(function(o){var op=h('option',{value:o[0],text:o[1]});if(String(o[0])===String(cur))op.selected=true;e.appendChild(op)});
+    e.onchange=function(){s[key]=key==='weight'?+e.value:e.value;changed()};return h('div',{},[h('label',{text:label}),e])}
+  var fonts=Object.keys(R.FONTS).map(function(k){return[k,R.FONTS[k][0]]});
+  p.appendChild(h('div',{class:'row2'},[sel('लिखावट (font)','font',fonts,s.font||t.font||'hind'),sel('नाम की लिखावट','nameFont',fonts,s.nameFont||t.nameFont||'playfair')]));
+  p.appendChild(range('अक्षरों का आकार',0.8,1.4,s.size||1,function(v){s.size=v;changed()}));
+  p.appendChild(sel('अक्षरों की मोटाई','weight',[[400,'सामान्य'],[500,'थोड़ा मोटा'],[600,'मोटा'],[700,'बहुत मोटा']],s.weight||400));
+  var seg=h('div',{class:'seg'});[['left','बाएँ'],['center','बीच में'],['right','दाएँ']].forEach(function(a){
+    seg.appendChild(h('button',{class:s.align===a[0]?'on':'',text:a[1],onclick:function(){s.align=a[0];panel();changed()}}))});
+  p.appendChild(h('label',{text:'लिखावट किस तरफ़ हो'}));p.appendChild(seg);
+  function colr(label,key,def){var i=h('input',{type:'color'});i.value=s[key]||def;i.oninput=function(){s[key]=i.value;changed()};return h('div',{},[h('label',{text:label}),i])}
+  p.appendChild(h('div',{class:'row3'},[colr('अक्षरों का रंग','fg',pal.fg||'#222222'),colr('बैकग्राउंड','bg',pal.bg||'#ffffff'),colr('मुख्य रंग','ac',pal.ac||'#8b1a2b')]));
+  var rb=h('button',{class:'btn alt',text:'टेम्पलेट जैसा वापस करें (रंग और लिखावट)'});
+  rb.onclick=function(){if(!resetArmed){resetArmed=true;rb.textContent='पक्का? रंग, लिखावट और आकार के बदलाव हट जाएँगे। हाँ, वापस करें';rb.className='btn danger';return}C.style={};panel();changed()};
+  p.appendChild(rb);p.appendChild(h('div',{class:'k',text:'आपकी लिखी जानकारी और फ़ोटो नहीं हटेंगी।'}));
+}
+function pTpl(p){
+  var g=h('div',{class:'grid'});
+  T.forEach(function(t){
+    var inner=h('div',{class:'in2'});R.render(inner,D.product_type,t.config,C,{demo:true});
+    g.appendChild(h('button',{class:'mini'+(t.id===D.template_id?' on':''),onclick:function(){if(t.id===D.template_id)return;D.template_id=t.id;panel();changed()}},
+      [h('div',{class:'box'},[inner]),h('div',{class:'cap'},[document.createTextNode(t.name),h('span',{text:(t.config&&t.config.style)||''})])]));
+  });
+  p.appendChild(g);if(!T.length)p.appendChild(h('div',{class:'k',text:'कोई टेम्पलेट उपलब्ध नहीं है।'}));
+}
+
+/* ---------- start ---------- */
+$('undo').onclick=function(){go(-1)};$('redo').onclick=function(){go(1)};
+$('save').onclick=function(){if(!dirty){state('सब कुछ सेव है');return}save()};
+$('fullbtn').onclick=function(){$('full').hidden=false;R.render($('fullpv'),D.product_type,cfg(),C,{demo:true})};
+$('fullx').onclick=function(){$('full').hidden=true};
+window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue=''}});
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&dirty)save()});
+
+(async function(){
+  var s=await sb.auth.getSession();
+  if(!s.data.session){location.replace('/studio/');return}
+  UID=s.data.session.user.id;
+  if(!/^[0-9a-f-]{36}$/i.test(ID)){state('यह डिज़ाइन नहीं मिला।',true);return}
+  var r=await sb.from('studio_designs').select('id,user_id,template_id,product_type,title,status,content_json,updated_at').eq('id',ID).maybeSingle();
+  if(r.error||!r.data){state('यह डिज़ाइन नहीं मिला, या आपको इसे खोलने की अनुमति नहीं है।',true);return}
+  D=r.data;C=shape(D.content_json);
+  var t=await sb.from('studio_templates').select('id,name,config,sort').eq('product_type',D.product_type).order('sort',{ascending:true});
+  T=t.data||[];
+  var restored=false;
+  try{var b=JSON.parse(localStorage.getItem(LS)||'null');if(b&&b.at>new Date(D.updated_at).getTime()){C=shape(b.c);if(b.t)D.template_id=b.t;restored=true}}catch(e){}
+  $('main').hidden=false;tabs();panel();draw();pushHist();
+  if(restored){dirty=true;state('पिछली बार के बिना सेव बदलाव वापस लाए गए हैं, सेव हो रहे हैं…');timer=setTimeout(save,800)}
+  else state((D.status==='published'?'यह कार्ड प्रकाशित है; बदलाव सेव होते ही लाइव कार्ड में दिखेंगे · ':'')+'आख़िरी बदलाव: '+new Date(D.updated_at).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
+})();
+})();
+</script>
+</body></html>

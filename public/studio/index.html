@@ -20,6 +20,18 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 .tile{border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;background:#fffaf0}
 .tile b{display:block;color:var(--wine)}.tile span{font-size:12px;color:var(--mut)}
 .badge{display:inline-block;background:#1b6e3c;color:#fff;border-radius:20px;padding:2px 10px;font-size:12px;margin-left:6px}
+.tile{display:block;width:100%;margin:0;color:var(--ink);font-weight:400;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chips button{width:auto;margin:0;padding:5px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:14px;font-weight:400}
+.chips button.on{background:var(--wine);color:#fff;border-color:var(--wine)}
+.des{border-top:1px solid var(--line);padding:10px 0}.des b{display:block}.des .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.des .acts button,.des .acts a{width:auto;margin:0;padding:6px 12px;font-size:14px;border-radius:8px;text-decoration:none;display:inline-block;font-weight:600}
+.des .acts a{background:var(--wine);color:#fff}.des .acts button{background:#fff;color:var(--wine);border:1px solid var(--wine)}.des .acts button.danger{background:#b00020;color:#fff;border-color:#b00020}
+.st{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;margin-left:6px;background:#eee;color:#444}.st.published{background:#1b6e3c;color:#fff}.st.unpublished{background:#7a6248;color:#fff}
+.minis{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.mini{width:150px;border:2px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;background:#fff;padding:0;margin:0;text-align:left;color:var(--ink);font-weight:400}
+.mini .box{height:215px;overflow:hidden}.mini .in2{width:360px;transform:scale(.4056);transform-origin:0 0;pointer-events:none}
+.mini .cap{font-size:12px;padding:5px 7px;border-top:1px solid var(--line)}.mini .cap span{color:var(--mut);display:block}
+@media(min-width:700px){.wrap{max-width:760px}}
 [hidden]{display:none!important}
 </style></head><body>
 <div class="top"><b>SpyWell Digital Studio</b><button id="out" hidden>लॉगआउट</button></div>
@@ -69,16 +81,29 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <h1>नमस्ते, <span id="d-name"></span><span class="badge" id="d-admin" hidden>Admin</span></h1>
 <div class="k" id="d-mail"></div>
 </div>
-<div class="card">
+<div class="card" id="c-new">
 <b>नया बनाएँ</b>
 <div class="grid" style="margin-top:10px">
-<div class="tile"><b>शादी का कार्ड</b><span>जल्द आ रहा है</span></div>
-<div class="tile"><b>विज़िटिंग कार्ड</b><span>जल्द आ रहा है</span></div>
+<button type="button" class="tile" data-new="invitation"><b>शादी का कार्ड</b><span>टेम्पलेट चुनें और बनाएँ</span></button>
+<button type="button" class="tile" data-new="visiting"><b>विज़िटिंग कार्ड</b><span>टेम्पलेट चुनें और बनाएँ</span></button>
 </div>
+</div>
+<div class="card" id="c-pick" hidden>
+<b id="pk-title"></b>
+<div class="k">जो डिज़ाइन पसंद हो उस पर टैप करें। बाद में भी बदल सकते हैं।</div>
+<div class="err" id="pk-err"></div>
+<div class="minis" id="pk-grid"></div>
+<button type="button" class="alt" id="pk-back">वापस</button>
 </div>
 <div class="card">
 <b>मेरे डिज़ाइन</b>
-<div class="k" id="d-list" style="margin-top:8px"></div>
+<input id="q" placeholder="नाम से खोजें" style="margin-top:10px">
+<div class="chips" id="flt"></div>
+<div id="d-list" style="margin-top:8px"></div>
+</div>
+<div class="card">
+<b>हाल की गतिविधि</b>
+<div class="k" id="d-act" style="margin-top:8px"></div>
 </div>
 <form class="card" id="v-prof">
 <b>मेरी प्रोफ़ाइल</b>
@@ -91,6 +116,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/studio/render.js"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -113,8 +139,60 @@ function msg(e){
 function busy(f,on){var b=f.querySelector('button[type=submit]');if(b)b.disabled=on}
 document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.getAttribute('data-go'))}});
 
+var R=window.StudioRender,ME=null,TPL=[],LIST=[],FLT='all',armed='';
+var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'शादी का कार्ड',visiting:'विज़िटिंग कार्ड'};
+function mk(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+function when(d){return new Date(d).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+async function loadList(){
+  var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
+  if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
+  LIST=d.data||[];drawList();
+  var A=$('d-act');A.textContent='';
+  if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
+  LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
+}
+function drawFilters(){var w=$('flt');w.textContent='';
+  [['all','सभी'],['draft','ड्राफ़्ट'],['published','प्रकाशित'],['unpublished','बंद'],['invitation','शादी'],['visiting','विज़िटिंग']].forEach(function(f){
+    var b=mk('button',FLT===f[0]?'on':'',f[1]);b.type='button';b.onclick=function(){FLT=f[0];drawFilters();drawList()};w.appendChild(b)})}
+function drawList(){
+  var L=$('d-list'),q=$('q').value.trim().toLowerCase();L.textContent='';
+  var rows=LIST.filter(function(x){return (FLT==='all'||x.status===FLT||x.product_type===FLT)&&(!q||(x.title||'').toLowerCase().indexOf(q)>=0)});
+  if(!LIST.length){L.appendChild(mk('div','k','अभी कोई डिज़ाइन नहीं है। ऊपर से नया कार्ड बनाएँ।'));return}
+  if(!rows.length){L.appendChild(mk('div','k','इस खोज या फ़िल्टर में कोई डिज़ाइन नहीं मिला।'));return}
+  rows.forEach(function(x){
+    var r=mk('div','des'),t=mk('b','',x.title||'बिना नाम');t.appendChild(mk('span','st '+x.status,STN[x.status]));r.appendChild(t);
+    r.appendChild(mk('div','k',TYN[x.product_type]+' · आख़िरी बदलाव '+when(x.updated_at)));
+    var a=mk('div','acts'),e=mk('a','','खोलें / बदलें');e.href='/studio/editor/?id='+x.id;a.appendChild(e);
+    var c=mk('button','','कॉपी बनाएँ');c.type='button';c.onclick=function(){dup(x.id,c)};a.appendChild(c);
+    var d=mk('button',armed===x.id?'danger':'',armed===x.id?'पक्का मिटाएँ?':'मिटाएँ');d.type='button';
+    d.onclick=function(){if(armed!==x.id){armed=x.id;drawList();return}del(x.id,d)};a.appendChild(d);
+    r.appendChild(a);L.appendChild(r)});
+}
+async function dup(id,btn){btn.disabled=true;
+  var r=await sb.from('studio_designs').select('template_id,product_type,title,content_json').eq('id',id).single();
+  if(!r.error&&r.data){var n=await sb.from('studio_designs').insert({user_id:ME.id,template_id:r.data.template_id,product_type:r.data.product_type,title:((r.data.title||'')+' (कॉपी)').slice(0,120),content_json:r.data.content_json||{}});
+    if(n.error)btn.textContent='कॉपी नहीं बनी'}else btn.textContent='कॉपी नहीं बनी';
+  btn.disabled=false;loadList()}
+async function del(id,btn){btn.disabled=true;var r=await sb.from('studio_designs').delete().eq('id',id);armed='';if(r.error){btn.textContent='नहीं मिटा'}loadList()}
+function pick(type){
+  $('c-new').hidden=true;$('c-pick').hidden=false;$('pk-err').textContent='';$('pk-title').textContent=TYN[type]+' का टेम्पलेट चुनें';
+  var g=$('pk-grid');g.textContent='';var rows=TPL.filter(function(t){return t.product_type===type});
+  if(!rows.length)g.appendChild(mk('div','k','अभी कोई टेम्पलेट उपलब्ध नहीं है।'));
+  rows.forEach(function(t){
+    var b=mk('button','mini');b.type='button';var box=mk('div','box'),inn=mk('div','in2');R.render(inn,type,t.config,{},{demo:true});box.appendChild(inn);b.appendChild(box);
+    var cap=mk('div','cap',t.name);cap.appendChild(mk('span','',(t.config&&t.config.style)||''));b.appendChild(cap);
+    b.onclick=async function(){b.disabled=true;
+      var r=await sb.from('studio_designs').insert({user_id:ME.id,template_id:t.id,product_type:type,title:type==='invitation'?'नया शादी कार्ड':'नया विज़िटिंग कार्ड',content_json:{}}).select('id').single();
+      if(r.error||!r.data){b.disabled=false;$('pk-err').textContent='नया डिज़ाइन नहीं बन पाया। दोबारा कोशिश करें।';return}
+      location.href='/studio/editor/?id='+r.data.id};
+    g.appendChild(b)});
+  $('c-pick').scrollIntoView({block:'start'});
+}
+document.querySelectorAll('[data-new]').forEach(function(b){b.onclick=function(){pick(b.getAttribute('data-new'))}});
+$('pk-back').onclick=function(){$('c-pick').hidden=true;$('c-new').hidden=false};
+$('q').oninput=drawList;
 async function dash(user){
-  show('dash');
+  ME=user;show('dash');$('c-pick').hidden=true;$('c-new').hidden=false;
   $('d-mail').textContent=user.email||'';
   var meta=user.user_metadata||{};
   var p=await sb.from('studio_profiles').select('full_name,phone').eq('id',user.id).maybeSingle();
@@ -127,11 +205,10 @@ async function dash(user){
   $('pf-n').value=prof.full_name||'';$('pf-m').value=prof.phone||'';
   var a=await sb.rpc('studio_is_admin');
   $('d-admin').hidden=a.data!==true;
-  var d=await sb.from('studio_designs').select('id,title,status,product_type,updated_at').order('updated_at',{ascending:false});
-  var L=$('d-list');L.textContent='';
-  if(d.error){L.textContent='डिज़ाइन लोड नहीं हुए';return}
-  if(!d.data.length){L.textContent='अभी कोई डिज़ाइन नहीं है।';return}
-  d.data.forEach(function(x){var r=document.createElement('div');r.textContent=x.title+' · '+(x.status==='published'?'प्रकाशित':x.status==='draft'?'ड्राफ़्ट':'बंद');L.appendChild(r)});
+  $('d-list').textContent='लोड हो रहा है…';drawFilters();
+  var t=await sb.from('studio_templates').select('id,product_type,name,config,sort').eq('active',true).order('sort',{ascending:true});
+  TPL=t.data||[];
+  await loadList();
 }
 
 $('v-login').onsubmit=async function(e){e.preventDefault();$('li-err').textContent='';busy(this,true);

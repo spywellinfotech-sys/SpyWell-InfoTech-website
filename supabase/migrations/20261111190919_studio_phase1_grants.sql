@@ -1,0 +1,11 @@
+grant select, insert, update on public.studio_profiles to authenticated;
+grant select on public.studio_roles to authenticated;
+grant select on public.studio_templates to anon, authenticated;
+grant insert, update, delete on public.studio_templates to authenticated;
+grant select on public.studio_designs to anon, authenticated;
+grant insert, update, delete on public.studio_designs to authenticated;
+grant select, insert, delete on public.studio_assets to authenticated;
+revoke execute on function public.studio_is_admin() from public;
+grant execute on function public.studio_is_admin() to anon, authenticated;
+revoke execute on function public.studio_touch() from public, anon, authenticated;
+revoke execute on function public.studio_design_guard() from public, anon, authenticated;
