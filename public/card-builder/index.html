@@ -23,7 +23,8 @@ input,.btn{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--l
 <div id="main" hidden>
 <div class="seg"><button id="k1" class="on">निमंत्रण कार्ड</button><button id="k2">विज़िटिंग कार्ड</button></div>
 <div class="card" id="form">
-<div id="inv"><div id="cf"></div></div>
+<div id="inv"><div style="background:#fdf6e8;border:1px dashed #8b1a2b;border-radius:12px;padding:12px;margin-bottom:6px"><b>कार्ड की PDF से details अपने आप भरें</b>
+<input type="file" id="xpdf" accept="application/pdf" style="margin-top:8px"><button class="btn alt" id="xgo" type="button" style="margin-top:8px">PDF पढ़कर भरो</button><div class="k" id="xmsg"></div></div><div id="cf"></div></div>
 <div id="vis" hidden><label>विज़िटिंग कार्ड की PDF</label><input type="file" id="pdf" accept="application/pdf"><label>नाम / कंपनी</label><input id="vtitle" maxlength="120"></div>
 <div id="dwrap"><label>वैधता (30 से 45 दिन)</label><input id="days" type="number" inputmode="numeric" min="30" max="45" value="45"></div>
 <div class="k" id="exp"></div><div class="err" id="err"></div>
@@ -67,5 +68,13 @@ $('go').onclick=function(){
   if(r._s==401){ls('ok','');$('err').textContent='Owner key गलत है, दोबारा डालें';start();return}
   if(!r.url){$('err').textContent='नहीं बना: '+(r.error||('error '+r._s));return}
   var h=H();h.unshift(r);ls('cm2',JSON.stringify(h.slice(0,50)));draw();show(r)}).catch(function(){$('go').disabled=false;$('err').textContent='इंटरनेट की दिक्कत, दोबारा कोशिश करें'})};
+$('xgo').onclick=function(){var p=$('xpdf').files[0];$('xmsg').textContent='';if(!p){$('xmsg').textContent='पहले PDF चुनें';return}
+ var f=new FormData();f.append('pdf',p);$('xgo').disabled=true;$('xmsg').textContent='पढ़ रहे हैं… (10-20 सेकंड)';
+ fetch(API.replace('card-create','card-extract'),{method:'POST',headers:{'x-owner-key':ls('ok')},body:f}).then(function(r){return r.json().then(function(j){j._s=r.status;return j})}).then(function(r){
+  $('xgo').disabled=false;
+  if(r._s==503){$('xmsg').textContent='यह सुविधा अभी चालू नहीं है (AI key जोड़नी बाकी है)';return}
+  if(r._s==401){$('xmsg').textContent='Owner key गलत है';return}
+  if(!r.fields){$('xmsg').textContent='पढ़ नहीं पाए: '+(r.error||r._s);return}
+  form.set(r.fields);$('xmsg').textContent='भर गया ✔ नीचे जाँच लें और ज़रूरत हो तो सुधारें'}).catch(function(){$('xgo').disabled=false;$('xmsg').textContent='इंटरनेट की दिक्कत'})};
 setKind('invitation');start();
 </script></body></html>

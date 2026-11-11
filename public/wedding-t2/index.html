@@ -8,6 +8,7 @@
 .th2{--bg:#0f5a43;--bg2:#073a2b;--paper:#fff9e8;--acc:#c9a24a;--hd:#0f5a43;--btn:#0f5a43}
 .th3{--bg:#14284f;--bg2:#0a1630;--paper:#f7f4ee;--acc:#d4af37;--hd:#14284f;--btn:#14284f}
 .th4{--bg:#e8a3b5;--bg2:#c9718a;--paper:#fffafb;--acc:#b9788a;--hd:#a23559;--btn:#a23559}
+.th5{--bg:#e8761a;--bg2:#a8420b;--paper:#fff6e0;--acc:#d98a1f;--hd:#b3400b;--btn:#b3400b}
 *{box-sizing:border-box;margin:0}
 body{background:radial-gradient(120% 80% at 50% 0,var(--bg),var(--bg2));font-family:Hind,sans-serif;color:var(--ink);padding:14px 0 40px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
 #msgbox{display:none;max-width:420px;margin:60px 16px;background:#fff;border:1px solid #e8d5ad;border-radius:14px;padding:22px;text-align:center}
@@ -81,21 +82,23 @@ html.gate #gate{display:block}#gate h1{font-family:Amita,serif;color:var(--hd);f
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',R=document.documentElement;
+var demo=(location.search.match(/[?&]demo=(\d)/)||[])[1]||'';
+var SAMPLE={title:'रोहित & प्रिया',kind:'template',expired:false,data:{tpl:demo||'1',groom:'रोहित वर्मा',bride:'प्रिया शर्मा',bride_parents:'श्रीमती सुनीता शर्मा एवं\nश्री राजेश शर्मा',groom_parents:'श्रीमती अनीता वर्मा एवं\nश्री सुरेश वर्मा\nग्राम रामपुर, जिला मेरठ',wed_date:'2026-12-05',ev1_title:'महिला संगीत',ev1_text:'गुरुवार\n4 दिसंबर 2026\nरात्रि 8:00 बजे',ev2_title:'बारात',ev2_text:'शनिवार, 5 दिसंबर 2026\nआगमन : प्रातः 9:00 बजे',ev3_title:'प्रीतिभोज',ev3_text:'शनिवार, 5 दिसंबर 2026\nदोपहर 12:00 बजे',venue:'ग्राम रामपुर',address:'जिला मेरठ (उ.प्र.)',maps:'https://maps.google.com',call1_name:'सुरेश वर्मा',call1:'9876543210',call2_name:'राजेश शर्मा',call2:'9123456780',family:'समस्त वर्मा परिवार'}};
 var id=(location.search.match(/[?&]id=([\w-]+)/)||[])[1]||'',$=function(x){return document.getElementById(x)};
 function bad(h){R.classList.remove('ld');R.classList.add('bad');$('msgbox').innerHTML=h}
 function ls(k,x){try{if(x===undefined)return localStorage.getItem(k)||'';localStorage.setItem(k,x)}catch(e){return ''}}
 var v=ls('cv');if(!v){v=Math.random().toString(36).slice(2,12);ls('cv',v)}
 var gn=ls('gn'),gp=ls('gp'),dev=/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',ref='';
 try{ref=document.referrer?new URL(document.referrer).hostname:''}catch(e){}
-function t(ev){try{fetch(B+'/rest/v1/card_events',{method:'POST',keepalive:true,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({card:id,event:ev,visitor:v,ref:ref,device:dev,guest_name:gn,guest_phone:gp})})}catch(e){}}
-if(!id){bad('<h2>लिंक सही नहीं है</h2>कृपया भेजने वाले से सही लिंक माँगें।');return}
-fetch(B+'/rest/v1/rpc/card_get',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_slug:id})})
-.then(function(r){return r.json()}).then(function(d){
+function t(ev){if(demo)return;try{fetch(B+'/rest/v1/card_events',{method:'POST',keepalive:true,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({card:id,event:ev,visitor:v,ref:ref,device:dev,guest_name:gn,guest_phone:gp})})}catch(e){}}
+if(!id&&!demo){bad('<h2>लिंक सही नहीं है</h2>कृपया भेजने वाले से सही लिंक माँगें।');return}
+(demo?Promise.resolve(SAMPLE):fetch(B+'/rest/v1/rpc/card_get',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_slug:id})})
+.then(function(r){return r.json()})).then(function(d){
  if(!d||d.error||d.kind!=='template'){bad('<h2>कार्ड नहीं मिला</h2>लिंक गलत है या हटा दिया गया है।');return}
  if(d.expired){bad('<h2>यह कार्ड अब उपलब्ध नहीं है</h2>इस कार्ड की वैधता समाप्त हो चुकी है।');return}
  var x=d.data||{};
- if(x.tpl==='1'||!x.tpl){location.replace('/wedding-t/?id='+encodeURIComponent(id));return}
- R.classList.add('th'+(['2','3','4'].indexOf(x.tpl)>-1?x.tpl:'2'));
+ if(x.tpl==='1'||!x.tpl){location.replace('/wedding-t/?'+(demo?'demo=1':'id='+encodeURIComponent(id)));return}
+ R.classList.add('th'+(['2','3','4','5'].indexOf(x.tpl)>-1?x.tpl:'2'));
  var dt='';try{dt=new Date(x.wed_date+'T00:00:00').toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}catch(e){}
  x.wed_date_text=dt;document.title='शुभ विवाह | '+(d.title||'');
  document.querySelectorAll('[data-f]').forEach(function(el){
@@ -116,7 +119,7 @@ fetch(B+'/rest/v1/rpc/card_get',{method:'POST',headers:{apikey:K,Authorization:'
  document.addEventListener('click',function(e){var a=e.target.closest('[data-ev]');if(a)t(a.getAttribute('data-ev'))});
  function open(){R.classList.remove('gate');window.scrollTo(0,0);t('view')}
  R.classList.remove('ld');
- if(gn&&gp)open();else $('gate').addEventListener('submit',function(e){e.preventDefault();
+ if(demo||(gn&&gp))open();else $('gate').addEventListener('submit',function(e){e.preventDefault();
   var n=$('gn').value.trim(),p=$('gp').value.replace(/\D/g,'');
   if(n.length<2){$('gerr').textContent='कृपया अपना नाम लिखें';return}
   if(!/^[6-9]\d{9}$/.test(p)){$('gerr').textContent='सही 10 अंकों का मोबाइल नंबर डालें';return}
