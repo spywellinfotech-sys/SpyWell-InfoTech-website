@@ -24,7 +24,10 @@ input,.btn{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--l
 <div class="seg"><button id="k1" class="on">निमंत्रण कार्ड</button><button id="k2">विज़िटिंग कार्ड</button></div>
 <div class="card" id="form">
 <div id="inv"><div style="background:#fdf6e8;border:1px dashed #8b1a2b;border-radius:12px;padding:12px;margin-bottom:6px"><b>कार्ड की PDF से details अपने आप भरें</b>
-<input type="file" id="xpdf" accept="application/pdf" style="margin-top:8px"><button class="btn alt" id="xgo" type="button" style="margin-top:8px">PDF पढ़कर भरो</button><div class="k" id="xmsg"></div></div><div id="cf"></div></div>
+<input type="file" id="xpdf" accept="application/pdf" style="margin-top:8px"><button class="btn alt" id="xgo" type="button" style="margin-top:8px">PDF पढ़कर भरो</button><div class="k" id="xmsg"></div>
+<details style="margin-top:10px"><summary style="font-weight:600;color:#8b1a2b">या Claude chat से मिला text यहाँ paste करें (बिना API खर्च)</summary>
+<textarea id="pj" rows="5" placeholder="chat में Claude जो {...} देगा वह यहाँ paste करें" style="font:inherit;padding:10px;border-radius:10px;border:1px solid #e8d5ad;width:100%;margin-top:8px"></textarea>
+<button class="btn alt" id="pjgo" type="button">paste किया हुआ भरो</button><div class="k" id="pjmsg"></div></details></div><div id="cf"></div></div>
 <div id="vis" hidden><label>विज़िटिंग कार्ड की PDF</label><input type="file" id="pdf" accept="application/pdf"><label>नाम / कंपनी</label><input id="vtitle" maxlength="120"></div>
 <div id="dwrap"><label>वैधता (30 से 45 दिन)</label><input id="days" type="number" inputmode="numeric" min="30" max="45" value="45"></div>
 <div class="k" id="exp"></div><div class="err" id="err"></div>
@@ -76,5 +79,8 @@ $('xgo').onclick=function(){var p=$('xpdf').files[0];$('xmsg').textContent='';if
   if(r._s==401){$('xmsg').textContent='Owner key गलत है';return}
   if(!r.fields){$('xmsg').textContent='पढ़ नहीं पाए: '+(r.error||r._s);return}
   form.set(r.fields);$('xmsg').textContent='भर गया ✔ नीचे जाँच लें और ज़रूरत हो तो सुधारें'}).catch(function(){$('xgo').disabled=false;$('xmsg').textContent='इंटरनेट की दिक्कत'})};
+$('pjgo').onclick=function(){var m=$('pj').value.match(/\{[\s\S]*\}/);$('pjmsg').textContent='';
+ if(!m){$('pjmsg').textContent='{ } वाला text नहीं मिला';return}
+ try{var o=JSON.parse(m[0]);form.set(o.fields||o);$('pjmsg').textContent='भर गया ✔ नीचे जाँच लें'}catch(e){$('pjmsg').textContent='text सही नहीं है, Claude से दोबारा माँगें'}};
 setKind('invitation');start();
 </script></body></html>
