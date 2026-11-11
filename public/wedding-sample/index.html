@@ -20,7 +20,7 @@ body{background:#efe0c0;font-family:Hind,sans-serif;color:var(--ink);padding:14p
 .card{--p:.0834cqw;container-type:inline-size;position:relative;width:min(calc(100vw - 20px),560px);aspect-ratio:1199/1312;overflow:hidden;background:radial-gradient(120% 90% at 50% 40%,#fffaf0,var(--cream) 55%,#f6e4bd);box-shadow:0 14px 40px rgba(90,40,10,.28);border-radius:6px}
 .card *{position:absolute}
 .card .t{left:0;right:0;text-align:center;line-height:1.25}
-.card img{max-width:none}
+.card img{max-width:none;height:auto}
 .blend{mix-blend-mode:multiply}
 .corner-l{left:0;top:0;width:calc(var(--p)*322);-webkit-mask-image:linear-gradient(90deg,#000 78%,transparent),linear-gradient(180deg,#000 82%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,#000 78%,transparent),linear-gradient(180deg,#000 82%,transparent);mask-composite:intersect}
 .corner-r{right:0;top:0;width:calc(var(--p)*319);-webkit-mask-image:linear-gradient(270deg,#000 78%,transparent),linear-gradient(180deg,#000 82%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(270deg,#000 78%,transparent),linear-gradient(180deg,#000 82%,transparent);mask-composite:intersect}
@@ -88,6 +88,9 @@ a:focus-visible,button:focus-visible{outline:3px solid #1f8fe0;outline-offset:2p
 .static body,body.static{padding:0;background:#fff}
 .static .card{width:1199px;box-shadow:none;border-radius:0}
 .static .acts,.static .cta{display:none}
+html.embed body{padding:0;background:transparent;display:block}
+html.embed .card{width:100vw;box-shadow:none;border-radius:0}
+html.embed .acts,html.embed .cta{display:none}
 </style>
 </head>
 <body>
@@ -145,6 +148,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #1f8fe0;outline-offset:2p
 </section>
 <script>
 (function(){
+  if(location.search.indexOf('embed')>-1)document.documentElement.classList.add('embed');
   var q=location.search.indexOf('static')>-1;
   if(q){document.documentElement.classList.add('static');document.body.classList.add('static');return}
   var c=document.getElementById('card'),cols=['#e8541f','#d94b6a','#f2b134','#c7283e'];
