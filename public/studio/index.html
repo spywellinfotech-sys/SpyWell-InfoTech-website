@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SpyWell Digital Studio</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.png">
+<style>
+:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
+.top{background:var(--wine);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.top b{font-size:17px}.top button{width:auto;margin:0;padding:6px 12px;background:#fff;color:var(--wine);font-size:14px}
+.wrap{max-width:560px;margin:auto;padding:16px}h1{font-size:22px;color:var(--wine);margin:6px 0 2px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+label{display:block;font-size:13px;color:var(--mut);margin-top:12px}
+input,button{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--line);width:100%;display:block;background:#fff;color:var(--ink)}
+button{background:var(--wine);color:#fff;border:0;font-weight:600;margin-top:14px;cursor:pointer}
+button.alt{background:#fff;color:var(--wine);border:1px solid var(--wine)}
+button.link{background:none;color:var(--wine);border:0;padding:6px;margin-top:8px;font-weight:500;text-decoration:underline}
+button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok{color:#1b6e3c;margin-top:10px}
+.k{font-size:13px;color:var(--mut)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;background:#fffaf0}
+.tile b{display:block;color:var(--wine)}.tile span{font-size:12px;color:var(--mut)}
+.badge{display:inline-block;background:#1b6e3c;color:#fff;border-radius:20px;padding:2px 10px;font-size:12px;margin-left:6px}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="top"><b>SpyWell Digital Studio</b><button id="out" hidden>लॉगआउट</button></div>
+<div class="wrap">
+
+<div id="v-load" class="k" style="padding:30px;text-align:center">लोड हो रहा है…</div>
+
+<form class="card" id="v-login" hidden>
+<h1>लॉगिन</h1>
+<label>ईमेल</label><input id="li-e" type="email" autocomplete="email" required>
+<label>पासवर्ड</label><input id="li-p" type="password" autocomplete="current-password" required>
+<div class="err" id="li-err"></div>
+<button type="submit">लॉगिन करें</button>
+<button type="button" class="link" data-go="forgot">पासवर्ड भूल गए?</button>
+<button type="button" class="alt" data-go="reg">नया खाता बनाएँ</button>
+</form>
+
+<form class="card" id="v-reg" hidden>
+<h1>नया खाता</h1>
+<label>आपका नाम</label><input id="rg-n" maxlength="80" required>
+<label>मोबाइल नंबर</label><input id="rg-m" inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}" required>
+<label>ईमेल</label><input id="rg-e" type="email" autocomplete="email" required>
+<label>पासवर्ड (कम से कम 8 अक्षर)</label><input id="rg-p" type="password" minlength="8" autocomplete="new-password" required>
+<div class="err" id="rg-err"></div><div class="ok" id="rg-ok"></div>
+<button type="submit">खाता बनाएँ</button>
+<button type="button" class="link" data-go="login">पहले से खाता है? लॉगिन करें</button>
+</form>
+
+<form class="card" id="v-forgot" hidden>
+<h1>पासवर्ड रीसेट</h1>
+<div class="k">अपना ईमेल डालें। हम पासवर्ड बदलने का लिंक भेजेंगे।</div>
+<label>ईमेल</label><input id="fg-e" type="email" required>
+<div class="err" id="fg-err"></div><div class="ok" id="fg-ok"></div>
+<button type="submit">लिंक भेजें</button>
+<button type="button" class="link" data-go="login">वापस लॉगिन पर</button>
+</form>
+
+<form class="card" id="v-newpw" hidden>
+<h1>नया पासवर्ड</h1>
+<label>नया पासवर्ड (कम से कम 8 अक्षर)</label><input id="np-p" type="password" minlength="8" autocomplete="new-password" required>
+<div class="err" id="np-err"></div>
+<button type="submit">पासवर्ड बदलें</button>
+</form>
+
+<div id="v-dash" hidden>
+<div class="card">
+<h1>नमस्ते, <span id="d-name"></span><span class="badge" id="d-admin" hidden>Admin</span></h1>
+<div class="k" id="d-mail"></div>
+</div>
+<div class="card">
+<b>नया बनाएँ</b>
+<div class="grid" style="margin-top:10px">
+<div class="tile"><b>शादी का कार्ड</b><span>जल्द आ रहा है</span></div>
+<div class="tile"><b>विज़िटिंग कार्ड</b><span>जल्द आ रहा है</span></div>
+</div>
+</div>
+<div class="card">
+<b>मेरे डिज़ाइन</b>
+<div class="k" id="d-list" style="margin-top:8px"></div>
+</div>
+<form class="card" id="v-prof">
+<b>मेरी प्रोफ़ाइल</b>
+<label>नाम</label><input id="pf-n" maxlength="80" required>
+<label>मोबाइल नंबर</label><input id="pf-m" inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}">
+<div class="err" id="pf-err"></div><div class="ok" id="pf-ok"></div>
+<button type="submit">सेव करें</button>
+</form>
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
+var $=function(i){return document.getElementById(i)};
+var VIEWS=['load','login','reg','forgot','newpw','dash'];
+function show(v){VIEWS.forEach(function(x){$('v-'+x).hidden=x!==v});$('out').hidden=v!=='dash'}
+if(!window.supabase){$('v-load').textContent='लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।';return}
+var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
+var HERE=location.origin+'/studio/';
+var recovering=false;
+function msg(e){
+  var m=(e&&e.message)||'कुछ गड़बड़ हुई';
+  if(/Invalid login/i.test(m))return 'ईमेल या पासवर्ड गलत है';
+  if(/already registered/i.test(m))return 'इस ईमेल से खाता पहले से बना है। लॉगिन करें।';
+  if(/not confirmed/i.test(m))return 'पहले ईमेल में आया लिंक खोलकर खाता पक्का करें';
+  if(/rate limit|too many/i.test(m))return 'बहुत बार कोशिश हुई। थोड़ी देर बाद करें।';
+  if(/at least|weak/i.test(m))return 'पासवर्ड कम से कम 8 अक्षर का रखें';
+  return m;
+}
+function busy(f,on){var b=f.querySelector('button[type=submit]');if(b)b.disabled=on}
+document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.getAttribute('data-go'))}});
+
+async function dash(user){
+  show('dash');
+  $('d-mail').textContent=user.email||'';
+  var meta=user.user_metadata||{};
+  var p=await sb.from('studio_profiles').select('full_name,phone').eq('id',user.id).maybeSingle();
+  var prof=p.data;
+  if(!prof){
+    prof={full_name:(meta.full_name||'').slice(0,80)||null,phone:meta.phone||null};
+    await sb.from('studio_profiles').insert({id:user.id,full_name:prof.full_name,phone:prof.phone});
+  }
+  $('d-name').textContent=prof.full_name||'ग्राहक';
+  $('pf-n').value=prof.full_name||'';$('pf-m').value=prof.phone||'';
+  var a=await sb.rpc('studio_is_admin');
+  $('d-admin').hidden=a.data!==true;
+  var d=await sb.from('studio_designs').select('id,title,status,product_type,updated_at').order('updated_at',{ascending:false});
+  var L=$('d-list');L.textContent='';
+  if(d.error){L.textContent='डिज़ाइन लोड नहीं हुए';return}
+  if(!d.data.length){L.textContent='अभी कोई डिज़ाइन नहीं है।';return}
+  d.data.forEach(function(x){var r=document.createElement('div');r.textContent=x.title+' · '+(x.status==='published'?'प्रकाशित':x.status==='draft'?'ड्राफ़्ट':'बंद');L.appendChild(r)});
+}
+
+$('v-login').onsubmit=async function(e){e.preventDefault();$('li-err').textContent='';busy(this,true);
+  var r=await sb.auth.signInWithPassword({email:$('li-e').value.trim(),password:$('li-p').value});
+  busy(this,false);if(r.error)$('li-err').textContent=msg(r.error)};
+$('v-reg').onsubmit=async function(e){e.preventDefault();$('rg-err').textContent='';$('rg-ok').textContent='';busy(this,true);
+  var r=await sb.auth.signUp({email:$('rg-e').value.trim(),password:$('rg-p').value,
+    options:{emailRedirectTo:HERE,data:{full_name:$('rg-n').value.trim(),phone:$('rg-m').value.trim(),app:'studio'}}});
+  busy(this,false);
+  if(r.error){$('rg-err').textContent=msg(r.error);return}
+  if(r.data.user&&r.data.user.identities&&!r.data.user.identities.length){$('rg-err').textContent='इस ईमेल से खाता पहले से बना है। लॉगिन करें।';return}
+  if(!r.data.session)$('rg-ok').textContent='खाता बन गया। अपने ईमेल में आया लिंक खोलें, फिर लॉगिन करें।'};
+$('v-forgot').onsubmit=async function(e){e.preventDefault();$('fg-err').textContent='';$('fg-ok').textContent='';busy(this,true);
+  var r=await sb.auth.resetPasswordForEmail($('fg-e').value.trim(),{redirectTo:HERE});
+  busy(this,false);
+  if(r.error)$('fg-err').textContent=msg(r.error);else $('fg-ok').textContent='अगर यह ईमेल हमारे पास है तो लिंक भेज दिया गया है। ईमेल देखें।'};
+$('v-newpw').onsubmit=async function(e){e.preventDefault();$('np-err').textContent='';busy(this,true);
+  var r=await sb.auth.updateUser({password:$('np-p').value});
+  busy(this,false);
+  if(r.error){$('np-err').textContent=msg(r.error);return}
+  recovering=false;var s=await sb.auth.getSession();if(s.data.session)dash(s.data.session.user);else show('login')};
+$('v-prof').onsubmit=async function(e){e.preventDefault();$('pf-err').textContent='';$('pf-ok').textContent='';busy(this,true);
+  var u=(await sb.auth.getUser()).data.user;
+  if(!u){busy(this,false);show('login');return}
+  var n=$('pf-n').value.trim(),m=$('pf-m').value.trim()||null;
+  var r=await sb.from('studio_profiles').update({full_name:n,phone:m}).eq('id',u.id);
+  busy(this,false);
+  if(r.error)$('pf-err').textContent='सेव नहीं हुआ';else{$('pf-ok').textContent='सेव हो गया';$('d-name').textContent=n}};
+$('out').onclick=async function(){await sb.auth.signOut()};
+
+sb.auth.onAuthStateChange(function(ev,session){
+  if(ev==='PASSWORD_RECOVERY'){recovering=true;show('newpw');return}
+  if(recovering)return;
+  if(session)setTimeout(function(){dash(session.user)},0);else show('login');
+});
+})();
+</script>
+</body></html>
