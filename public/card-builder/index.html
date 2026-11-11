@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Card Builder | SpyWell</title>
+<style>
+:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
+header{background:var(--wine);color:#fff;padding:14px 16px}header b{font-size:20px}header small{opacity:.8;display:block}
+.wrap{max-width:560px;margin:auto;padding:14px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.seg button{padding:14px 6px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:600;color:var(--ink);cursor:pointer}.seg button.on{border-color:var(--wine);background:var(--wine);color:#fff}
+label{display:block;font-size:13px;color:#7a6248;margin-top:12px}
+input,.btn{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--line);width:100%;background:#fff;color:var(--ink)}
+.btn{background:var(--wine);color:#fff;border:0;font-weight:600;margin-top:12px;display:block;text-align:center;text-decoration:none;cursor:pointer}.btn.alt{background:#fff;color:var(--wine);border:1px solid var(--wine)}.btn:disabled{opacity:.5}
+.k{font-size:12.5px;color:#7a6248}.val{background:#fdf6e8;border:1px solid var(--line);border-radius:10px;padding:10px;word-break:break-all;margin-top:4px}
+.pin{font-size:34px;letter-spacing:8px;color:var(--wine);font-weight:700;text-align:center}.err{color:#b00020;margin-top:8px}
+.h{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}.h:last-child{border:0}
+[hidden]{display:none!important}
+</style></head><body>
+<header><b>Card Builder</b><small>spywell.in</small></header>
+<div class="wrap">
+<div class="card" id="login" hidden><b>Owner key</b><div class="k">एक बार डालें, यह इसी फ़ोन में सेव रहेगी।</div>
+<input id="okey" type="password" placeholder="Owner key" autocomplete="off"><button class="btn" id="okgo">सेव करें</button></div>
+
+<div id="main" hidden>
+<div class="seg"><button id="k1" class="on">निमंत्रण कार्ड</button><button id="k2">विज़िटिंग कार्ड</button></div>
+<div class="card" id="form">
+<div id="inv"><div id="cf"></div></div>
+<div id="vis" hidden><label>विज़िटिंग कार्ड की PDF</label><input type="file" id="pdf" accept="application/pdf"><label>नाम / कंपनी</label><input id="vtitle" maxlength="120"></div>
+<label>वैधता (कितने दिन)</label><input id="days" type="number" inputmode="numeric" min="1" max="3650" value="45">
+<div class="k" id="exp"></div><div class="err" id="err"></div>
+<button class="btn" id="go">लिंक और PIN बनाओ</button></div>
+
+<div class="card" id="res" hidden><b id="rt"></b>
+<label>कार्ड का लिंक</label><div class="val" id="ru"></div><button class="btn" data-copy="ru">लिंक कॉपी</button>
+<a class="btn alt" id="rwa" target="_blank">WhatsApp पर भेजें</a><a class="btn alt" id="rop" target="_blank">कार्ड खोलकर देखें</a>
+<label>Insights PIN</label><div class="pin" id="rp"></div><div class="val" id="ri"></div>
+<button class="btn alt" data-copy="ri">Insights लिंक कॉपी</button><div class="k" id="rx"></div>
+<button class="btn alt" id="again">नया कार्ड बनाओ</button></div>
+<div class="card"><b>पुराने कार्ड</b><div id="hist"></div></div>
+</div></div>
+<script src="/card-form.js"></script>
+<script>
+var API='https://rxhanrtoaplwphmwpgqg.supabase.co/functions/v1/card-create',$=function(x){return document.getElementById(x)},kind='invitation';
+function ls(k,x){try{if(x===undefined)return localStorage.getItem(k)||'';localStorage.setItem(k,x)}catch(e){return ''}}
+function fd(s){return new Date(s).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})}
+var form=CardForm($('cf'));
+function start(){var has=!!ls('ok');$('login').hidden=has;$('main').hidden=!has;draw()}
+$('okgo').onclick=function(){var v=$('okey').value.trim();if(v){ls('ok',v);start()}};
+function upd(){var n=parseInt($('days').value)||0;$('exp').textContent=n>0?'समाप्ति: '+fd(Date.now()+n*864e5)+' के बाद लिंक बंद':''}
+function setKind(k){kind=k;$('k1').className=k=='invitation'?'on':'';$('k2').className=k=='visiting'?'on':'';$('inv').hidden=k!='invitation';$('vis').hidden=k!='visiting';$('days').value=k=='invitation'?45:3650;upd()}
+$('k1').onclick=function(){setKind('invitation')};$('k2').onclick=function(){setKind('visiting')};$('days').oninput=upd;
+function H(){try{return JSON.parse(ls('cm2')||'[]')}catch(e){return[]}}
+function draw(){var h=H();$('hist').innerHTML=h.length?h.map(function(c,i){return '<div class="h"><span>'+(c.kind=='visiting'?'🪪 ':'💌 ')+(c.title||c.slug).replace(/</g,'&lt;')+'<br><small class="k">PIN '+c.pin+' · '+fd(c.expires_at)+'</small></span><button class="btn alt" style="width:auto;margin:0;padding:8px 12px" data-i="'+i+'">खोलो</button></div>'}).join(''):'<div class="k">अभी कोई कार्ड नहीं बनाया</div>'}
+function show(c){$('form').hidden=true;$('res').hidden=false;$('rt').textContent=c.kind=='visiting'?'विज़िटिंग कार्ड तैयार':'निमंत्रण कार्ड तैयार';
+ $('ru').textContent=c.url;$('rp').textContent=c.pin;$('ri').textContent=c.insights;$('rop').href=c.url;$('rx').textContent='वैधता: '+fd(c.expires_at)+' तक, उसके बाद पेज अपने आप बंद';
+ $('rwa').href='https://wa.me/?text='+encodeURIComponent((c.kind=='visiting'?'':'शुभ विवाह: ')+(c.title?c.title+'\n':'')+c.url)}
+$('hist').onclick=function(e){var b=e.target.closest('[data-i]');if(b)show(H()[b.dataset.i])};
+document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;try{navigator.clipboard.writeText($(b.dataset.copy).textContent);b.textContent='कॉपी हो गया ✔'}catch(x){}});
+$('again').onclick=function(){$('res').hidden=true;$('form').hidden=false;$('err').textContent='';setKind(kind)};
+$('go').onclick=function(){
+ $('err').textContent='';var d=parseInt($('days').value);if(!(d>=1&&d<=3650)){$('err').textContent='वैधता 1 से 3650 दिन के बीच डालें';return}
+ var f=new FormData();f.append('kind',kind);f.append('days',d);
+ if(kind=='visiting'){var p=$('pdf').files[0];if(!p){$('err').textContent='पहले PDF चुनें';return}f.append('pdf',p);f.append('title',$('vtitle').value.trim())}
+ else f.append('data',JSON.stringify(form.get()));
+ $('go').disabled=true;
+ fetch(API,{method:'POST',headers:{'x-owner-key':ls('ok')},body:f}).then(function(r){return r.json().then(function(j){j._s=r.status;return j})}).then(function(r){
+  $('go').disabled=false;
+  if(r._s==401){ls('ok','');$('err').textContent='Owner key गलत है, दोबारा डालें';start();return}
+  if(!r.url){$('err').textContent='नहीं बना: '+(r.error||('error '+r._s));return}
+  var h=H();h.unshift(r);ls('cm2',JSON.stringify(h.slice(0,50)));draw();show(r)}).catch(function(){$('go').disabled=false;$('err').textContent='इंटरनेट की दिक्कत, दोबारा कोशिश करें'})};
+setKind('invitation');start();
+</script></body></html>

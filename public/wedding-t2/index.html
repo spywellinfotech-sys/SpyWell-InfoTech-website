@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><meta name="theme-color" content="#8b1a2b"><title>शुभ विवाह</title>
+<link rel="icon" href="/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Amita:wght@700&family=Hind:wght@400;500;600;700&family=Rozha+One&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f5a43;--bg2:#073a2b;--paper:#fff9e8;--ink:#2b1a14;--acc:#b98a2e;--hd:#8b1a2b;--btn:#8b1a2b}
+.th2{--bg:#0f5a43;--bg2:#073a2b;--paper:#fff9e8;--acc:#c9a24a;--hd:#0f5a43;--btn:#0f5a43}
+.th3{--bg:#14284f;--bg2:#0a1630;--paper:#f7f4ee;--acc:#d4af37;--hd:#14284f;--btn:#14284f}
+.th4{--bg:#e8a3b5;--bg2:#c9718a;--paper:#fffafb;--acc:#b9788a;--hd:#a23559;--btn:#a23559}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(120% 80% at 50% 0,var(--bg),var(--bg2));font-family:Hind,sans-serif;color:var(--ink);padding:14px 0 40px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+#msgbox{display:none;max-width:420px;margin:60px 16px;background:#fff;border:1px solid #e8d5ad;border-radius:14px;padding:22px;text-align:center}
+html.ld #msgbox,html.bad #msgbox{display:block}html.ld body>*:not(#msgbox){visibility:hidden}html.bad body>*:not(#msgbox){display:none}
+html.gate .card,html.gate .acts,html.gate .cta{display:none}#gate{display:none;max-width:420px;width:calc(100vw - 28px);margin:40px auto;background:var(--paper);border:3px double var(--acc);border-radius:16px;padding:24px;text-align:center}
+html.gate #gate{display:block}#gate h1{font-family:Amita,serif;color:var(--hd);font-size:28px;margin-bottom:8px}
+#gate input,#gate button{font:inherit;width:100%;padding:13px;border-radius:10px;border:1px solid #ddd;margin-top:10px}
+#gate button{background:var(--btn);color:#fff;border:0;font-weight:700}#gerr{color:#b00020;margin-top:8px;min-height:20px}#gate small{display:block;margin-top:10px;color:#7a6248;font-size:12px}
+.card{position:relative;width:min(calc(100vw - 20px),520px);background:var(--paper);border:6px double var(--acc);border-radius:18px;padding:26px 18px 24px;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,.35);overflow:hidden}
+.card:before,.card:after{content:"";position:absolute;left:10px;right:10px;height:6px;background:repeating-linear-gradient(90deg,var(--acc) 0 8px,transparent 8px 16px);opacity:.7}
+.card:before{top:8px}.card:after{bottom:8px}
+.rv{opacity:0;animation:up .9s ease forwards;animation-delay:var(--d,0s)}@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.gt{color:var(--hd);font-size:15px}.ttl{font-family:Amita,serif;font-size:44px;line-height:1.15;color:var(--hd);margin:6px 0}
+.intro{font-size:14px;margin:4px 0 10px}.nm{font-family:'Rozha One',serif;font-size:32px;line-height:1.2;color:var(--hd);word-break:break-word}
+.sg{color:var(--acc);font-size:22px;margin:4px 0}.par{font-size:13px;margin:4px 0 8px;opacity:.9}
+.dv{height:2px;background:linear-gradient(90deg,transparent,var(--acc),transparent);margin:14px 20px}
+.dt{font-weight:700;font-size:19px;color:var(--hd)}
+.evs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.ev{border:1px solid var(--acc);border-radius:12px;padding:10px 6px;background:rgba(255,255,255,.55);min-width:0}
+.ev h3{font-size:14px;color:var(--hd);margin-bottom:4px}.ev p{font-size:12px;line-height:1.5;word-break:break-word}
+.vn{font-weight:700;font-size:20px}.va{font-size:14px}
+.pill{display:inline-block;background:var(--hd);color:#fff;border-radius:99px;padding:3px 16px;font-size:13px;margin-bottom:8px}
+.ct{font-size:14px;line-height:1.7}.in{font-weight:700;margin-top:6px;color:var(--hd)}
+.acts{width:min(calc(100vw - 20px),520px);margin-top:14px}.b{display:block;width:100%;padding:14px;border-radius:12px;border:0;font:inherit;font-weight:700;text-align:center;text-decoration:none;margin-top:10px;color:#fff;cursor:pointer}
+.cta{width:min(calc(100vw - 20px),520px);margin-top:22px;background:rgba(0,0,0,.35);color:#fff;border-radius:16px;padding:18px;text-align:center}
+.cta h2{font-size:17px;color:#ffe29a;margin-bottom:6px}.cta a{display:inline-block;margin-top:10px;background:#ffe29a;color:#2b1a14;border-radius:99px;padding:10px 22px;font-weight:700;text-decoration:none}
+.petal{position:absolute;top:-20px;width:12px;height:12px;border-radius:70% 0 70% 0;opacity:.8;animation:fall linear infinite;pointer-events:none}
+@keyframes fall{to{transform:translate(var(--dx),620px) rotate(360deg);opacity:0}}
+.ft{margin-top:18px;font-size:12px;color:#fff;opacity:.8}
+</style></head><body>
+<script>document.documentElement.classList.add('gate','ld')</script>
+<div id="msgbox">लोड हो रहा है…</div>
+<form id="gate" autocomplete="on"><h1>॥ शुभ विवाह ॥</h1><p>निमंत्रण कार्ड देखने के लिए अपना नाम और मोबाइल नंबर दर्ज करें।</p>
+<input id="gn" type="text" placeholder="आपका नाम" autocomplete="name" maxlength="60" required>
+<input id="gp" type="tel" inputmode="numeric" placeholder="मोबाइल नंबर (10 अंक)" autocomplete="tel-national" maxlength="10" required>
+<div id="gerr"></div><button type="submit">कार्ड खोलें</button>
+<small>आपका नाम और नंबर सिर्फ़ यह जानने के लिए रखा जाता है कि निमंत्रण किसने देखा।</small></form>
+<div class="card" id="card">
+ <img class="rv" style="--d:.1s;width:84px;mix-blend-mode:multiply" src="/kajal-divyanshu/ganesh.jpg" alt="">
+ <p class="gt rv" style="--d:.2s">॥ श्री गणेशाय नमः ॥</p>
+ <h1 class="ttl rv" style="--d:.4s">शुभ विवाह</h1>
+ <p class="intro rv" style="--d:.7s">आप सभी को बड़े हर्ष के साथ सूचित करते हैं कि<br>हमारी सुपुत्री</p>
+ <p class="nm rv" style="--d:1s" data-f="bride"></p>
+ <p class="par rv" style="--d:1.1s" data-f="bride_parents" data-ml="(सुपुत्री : |)"></p>
+ <p class="sg rv" style="--d:1.3s">❖ संग ❖</p>
+ <p class="nm rv" style="--d:1.5s" data-f="groom"></p>
+ <p class="par rv" style="--d:1.6s" data-f="groom_parents" data-ml="(सुपुत्र : |)"></p>
+ <div class="dv"></div>
+ <p class="intro rv" style="--d:1.9s">का शुभ विवाह</p><p class="dt rv" style="--d:2s" data-f="wed_date_text"></p>
+ <p class="intro rv" style="--d:2.1s">को संपन्न होगा। आप सपरिवार पधारकर नवदंपति को आशीर्वाद प्रदान करें।</p>
+ <div class="evs rv" style="--d:2.4s">
+  <div class="ev"><h3 data-f="ev1_title"></h3><p data-f="ev1_text" data-ml="|"></p></div>
+  <div class="ev"><h3 data-f="ev2_title"></h3><p data-f="ev2_text" data-ml="|"></p></div>
+  <div class="ev"><h3 data-f="ev3_title"></h3><p data-f="ev3_text" data-ml="|"></p></div>
+ </div>
+ <span class="pill rv" style="--d:2.7s">&#128205; विवाह स्थल</span>
+ <p class="vn rv" style="--d:2.8s" data-f="venue"></p><p class="va rv" style="--d:2.9s" data-f="address"></p>
+ <div class="dv"></div>
+ <span class="pill rv" style="--d:3.1s">सादर आमंत्रित</span>
+ <p class="ct rv" style="--d:3.2s" id="ct"></p><p class="in rv" style="--d:3.3s" data-f="family"></p>
+</div>
+<div class="acts">
+ <a class="b" id="bmap" style="background:#1f6fd0" data-ev="maps" href="#" target="_blank" rel="noopener">&#128205; विवाह स्थल Google Maps पर देखें</a>
+ <a class="b" id="bc1" style="background:#2e8b57" data-ev="call1" href="#"></a>
+ <a class="b" id="bc2" style="background:#2e8b57" data-ev="call2" href="#"></a>
+ <a class="b" id="wa" style="background:#1fa855" data-ev="whatsapp" href="#" target="_blank" rel="noopener">WhatsApp पर भेजें</a>
+ <button class="b" id="re" style="background:var(--btn)" type="button">&#8635; दोबारा चलाएँ</button>
+</div>
+<section class="cta" data-ev="order"><h2>ऐसा डिजिटल वेडिंग कार्ड बनवाएँ</h2><div>नाम, परिवार, कार्यक्रम और स्थान के साथ।</div><a href="/card-order/">अपना कार्ड बनवाएँ</a></section>
+<p class="ft">Digital card by SpyWell InfoTech · spywell.in</p>
+<script>
+(function(){
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',R=document.documentElement;
+var id=(location.search.match(/[?&]id=([\w-]+)/)||[])[1]||'',$=function(x){return document.getElementById(x)};
+function bad(h){R.classList.remove('ld');R.classList.add('bad');$('msgbox').innerHTML=h}
+function ls(k,x){try{if(x===undefined)return localStorage.getItem(k)||'';localStorage.setItem(k,x)}catch(e){return ''}}
+var v=ls('cv');if(!v){v=Math.random().toString(36).slice(2,12);ls('cv',v)}
+var gn=ls('gn'),gp=ls('gp'),dev=/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',ref='';
+try{ref=document.referrer?new URL(document.referrer).hostname:''}catch(e){}
+function t(ev){try{fetch(B+'/rest/v1/card_events',{method:'POST',keepalive:true,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({card:id,event:ev,visitor:v,ref:ref,device:dev,guest_name:gn,guest_phone:gp})})}catch(e){}}
+if(!id){bad('<h2>लिंक सही नहीं है</h2>कृपया भेजने वाले से सही लिंक माँगें।');return}
+fetch(B+'/rest/v1/rpc/card_get',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_slug:id})})
+.then(function(r){return r.json()}).then(function(d){
+ if(!d||d.error||d.kind!=='template'){bad('<h2>कार्ड नहीं मिला</h2>लिंक गलत है या हटा दिया गया है।');return}
+ if(d.expired){bad('<h2>यह कार्ड अब उपलब्ध नहीं है</h2>इस कार्ड की वैधता समाप्त हो चुकी है।');return}
+ var x=d.data||{};
+ if(x.tpl==='1'||!x.tpl){location.replace('/wedding-t/?id='+encodeURIComponent(id));return}
+ R.classList.add('th'+(['2','3','4'].indexOf(x.tpl)>-1?x.tpl:'2'));
+ var dt='';try{dt=new Date(x.wed_date+'T00:00:00').toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}catch(e){}
+ x.wed_date_text=dt;document.title='शुभ विवाह | '+(d.title||'');
+ document.querySelectorAll('[data-f]').forEach(function(el){
+  var val=String(x[el.getAttribute('data-f')]||'').trim(),ml=el.getAttribute('data-ml');
+  if(ml){var pp=ml.split('|'),lines=val.split(/\n/).map(function(l){return l.trim()}).filter(Boolean);
+   if(!lines.length){el.style.display='none';return}
+   el.innerHTML=lines.map(function(l,i){var e=l.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]});return(i==0?pp[0]:'')+e+(i==lines.length-1?pp[1]:'')}).join('<br>')}
+  else{if(!val)el.style.display='none';el.textContent=val}});
+ var ct=[];function fm(n){return n.replace(/(\d{5})(\d{5})/,'$1 $2')}
+ [['call1_name','call1','bc1'],['call2_name','call2','bc2']].forEach(function(c){var nm=x[c[0]]||'',ph=x[c[1]]||'',b=$(c[2]);
+  if(ph){ct.push((nm?nm+' : ':'')+fm(ph));b.href='tel:+91'+ph;b.innerHTML='&#128222; '+(nm?nm+' : ':'')+fm(ph)}else b.style.display='none'});
+ $('ct').innerHTML=ct.join('<br>');
+ if(x.maps)$('bmap').href=x.maps;else $('bmap').style.display='none';
+ $('wa').href='https://wa.me/?text='+encodeURIComponent('शुभ विवाह: '+(d.title||'')+'\nआप सपरिवार सादर आमंत्रित हैं।\n'+location.origin+'/c/?id='+id);
+ var c=$('card'),cols=['#e8541f','#d94b6a','#f2b134','#c7283e'];
+ for(var i=0;i<12;i++){var p=document.createElement('i');p.className='petal';p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%4];p.style.setProperty('--dx',(Math.random()*160-80)+'px');p.style.animationDuration=(8+Math.random()*7)+'s';p.style.animationDelay=(-Math.random()*14)+'s';c.appendChild(p)}
+ $('re').onclick=function(){var r=c.querySelectorAll('.rv');r.forEach(function(e){e.style.animation='none'});void c.offsetWidth;r.forEach(function(e){e.style.animation=''})};
+ document.addEventListener('click',function(e){var a=e.target.closest('[data-ev]');if(a)t(a.getAttribute('data-ev'))});
+ function open(){R.classList.remove('gate');window.scrollTo(0,0);t('view')}
+ R.classList.remove('ld');
+ if(gn&&gp)open();else $('gate').addEventListener('submit',function(e){e.preventDefault();
+  var n=$('gn').value.trim(),p=$('gp').value.replace(/\D/g,'');
+  if(n.length<2){$('gerr').textContent='कृपया अपना नाम लिखें';return}
+  if(!/^[6-9]\d{9}$/.test(p)){$('gerr').textContent='सही 10 अंकों का मोबाइल नंबर डालें';return}
+  gn=n;gp=p;ls('gn',n);ls('gp',p);open()});
+}).catch(function(){bad('<h2>नेटवर्क दिक्कत</h2>कृपया दोबारा कोशिश करें।')});
+})();
+</script></body></html>

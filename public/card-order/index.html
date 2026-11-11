@@ -18,22 +18,8 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px}.k{font-size:13px;
 <h1>डिजिटल शादी कार्ड</h1>
 <div class="k">जानकारी भरें, पेमेंट करें, और कार्ड का लिंक तुरंत पाएँ। कार्ड <span id="days">45</span> दिन तक चलेगा।</div>
 
-<form class="card" id="f">
-<label>दूल्हे का नाम *</label><input name="groom" maxlength="60" required>
-<label>दुल्हन का नाम *</label><input name="bride" maxlength="60" required>
-<label>दूल्हे के पिता का नाम</label><input name="groom_father" maxlength="60">
-<label>दुल्हन के पिता का नाम</label><input name="bride_father" maxlength="60">
-<label>शादी की तारीख *</label><input type="date" name="date" required>
-<label>समय (जैसे: शाम 7 बजे से)</label><input name="time" maxlength="30">
-<label>जगह का नाम *</label><input name="venue" maxlength="120" required>
-<label>पता / गाँव</label><input name="address" maxlength="160">
-<label>Google Maps लिंक</label><input name="maps" type="url" placeholder="https://maps.app.goo.gl/..." maxlength="300">
-<label>पहला कॉल नंबर *</label><input name="call1" inputmode="numeric" maxlength="10" required>
-<label>पहले नंबर वाले का नाम</label><input name="call1_name" maxlength="40">
-<label>दूसरा कॉल नंबर</label><input name="call2" inputmode="numeric" maxlength="10">
-<label>दूसरे नंबर वाले का नाम</label><input name="call2_name" maxlength="40">
-<label>कोई ख़ास संदेश</label><textarea name="note" maxlength="200" rows="2"></textarea>
-<label>आपका मोबाइल नंबर (पेमेंट के लिए) *</label><input name="buyer" inputmode="numeric" maxlength="10" required>
+<form class="card" id="f"><div id="cf"></div>
+<label style="display:block;font-size:13px;color:#7a6248;margin-top:12px">आपका मोबाइल नंबर (पेमेंट के लिए) *</label><input id="buyer" inputmode="numeric" maxlength="10" required>
 <div class="err" id="err"></div>
 <button id="pay" type="submit">पेमेंट करें और कार्ड पाएँ</button>
 </form>
@@ -49,10 +35,12 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px}.k{font-size:13px;
 </div>
 <div class="k" style="text-align:center;margin:18px 0">SpyWell InfoTech · spywell.in</div>
 </div>
+<script src="/card-form.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',$=function(x){return document.getElementById(x)};
+var form=CardForm($('cf'));
 fetch(B+'/rest/v1/rpc/card_price',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:'{}'}).then(function(r){return r.json()}).then(function(d){
  if(d&&d.days)$('days').textContent=d.days;if(d&&d.price)$('pay').textContent='₹'+d.price+' पेमेंट करें और कार्ड पाएँ'}).catch(function(){});
 function api(b){return fetch(B+'/functions/v1/card-pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(j){j._s=r.status;return j})})}
@@ -61,7 +49,7 @@ function done(r){$('f').hidden=true;$('done').hidden=false;$('du').textContent=r
  try{localStorage.setItem('lastcard',JSON.stringify(r))}catch(e){}window.scrollTo(0,0)}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(b){try{navigator.clipboard.writeText($(b.dataset.copy).textContent);b.textContent='कॉपी हो गया ✔'}catch(x){}}});
 $('f').addEventListener('submit',function(e){e.preventDefault();$('err').textContent='';
- var fd=new FormData($('f')),data={};fd.forEach(function(v,k){data[k]=v});var buyer=data.buyer;delete data.buyer;
+ var data=form.get(),buyer=$('buyer').value.trim();
  $('pay').disabled=true;
  api({action:'create',data:data,buyer_phone:buyer}).then(function(o){
   if(!o.order_id){$('pay').disabled=false;$('err').textContent=o._s==503?'पेमेंट अभी शुरू नहीं हुआ है, थोड़ी देर बाद कोशिश करें':(o.error||'कुछ गड़बड़ हुई');return}

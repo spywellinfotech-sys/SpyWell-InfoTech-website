@@ -53,6 +53,7 @@ if(!id){msg('<h1>लिंक सही नहीं है</h1>कृपया 
 fetch(B+'/rest/v1/rpc/card_get',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_slug:id})})
 .then(function(r){return r.json()}).then(function(d){
  if(!d||d.error){msg('<h1>कार्ड नहीं मिला</h1>लिंक गलत है या हटा दिया गया है।');return}
+ if(d.kind==='template'&&!d.expired){location.replace('/wedding-t/?id='+encodeURIComponent(id));return}
  if(d.expired){msg('<h1>यह कार्ड अब उपलब्ध नहीं है</h1>इस कार्ड की वैधता समाप्त हो चुकी है।');return}
  document.title=d.title||'SpyWell Card';
  var pdf=d.pdf_path?B+'/storage/v1/object/public/cards/'+d.pdf_path:'';
