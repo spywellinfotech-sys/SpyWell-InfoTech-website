@@ -34,7 +34,7 @@ a.alt{background:#fff;color:var(--wine);border:1px solid var(--wine)}
 <a id="dl" class="btn" data-ev="pdf" download>PDF सेव करें</a>
 <a id="wa" class="btn alt" data-ev="whatsapp" target="_blank" rel="noopener">WhatsApp पर भेजें</a>
 </div>
-<div class="ft">SpyWell InfoTech · spywell.in</div>
+<div class="ft">SpyWell InfoTech · spywell.in<br><a id="insl" href="#" style="color:#8b6b3a">इनसाइट देखें (PIN से)</a></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
@@ -57,7 +57,7 @@ fetch(B+'/rest/v1/rpc/card_get',{method:'POST',headers:{apikey:K,Authorization:'
  if(d.expired){msg('<h1>यह कार्ड अब उपलब्ध नहीं है</h1>इस कार्ड की वैधता समाप्त हो चुकी है।');return}
  document.title=d.title||'SpyWell Card';
  var pdf=d.pdf_path?B+'/storage/v1/object/public/cards/'+d.pdf_path:'';
- $('dl').href=pdf;
+ $('dl').href=pdf;$('insl').href='/card-insights/?c='+encodeURIComponent(id);
  $('wa').href='https://wa.me/?text='+encodeURIComponent((d.title?d.title+'\n':'')+location.href);
  function E(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
  function tpl(x){

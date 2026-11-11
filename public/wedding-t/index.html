@@ -230,6 +230,7 @@ html.ld body>*:not(#msgbox){visibility:hidden}#msgbox{display:none;max-width:420
 </section>
 
 <p style="margin-top:20px;font-size:12px;color:#8b6b3a">Digital card by SpyWell InfoTech</p>
+<p style="margin:6px 0 24px;font-size:12px"><a id="insl" href="#" style="color:#8b6b3a">इनसाइट देखें (PIN से)</a></p>
 
 <script>
 (function(){
@@ -266,6 +267,7 @@ if(!id&&!demo){bad('<h2>लिंक सही नहीं है</h2>कृप
  $('ct').innerHTML=ct.join('<br>');
  var mp=x.maps||'';
  ['mapbox','bmap'].forEach(function(i){if(mp)$(i).href=mp;else $(i).style.display='none'});
+ var il=$('insl');if(il)il.href='/card-insights/?c='+encodeURIComponent(id);
  var u=location.origin+'/c/?id='+id;
  $('wa').href='https://wa.me/?text='+encodeURIComponent('शुभ विवाह: '+(d.title||'')+'\nआप सपरिवार सादर आमंत्रित हैं।\n'+u);
  $('wa').setAttribute('data-ev','whatsapp');

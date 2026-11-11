@@ -79,6 +79,7 @@ html.gate #gate{display:block}#gate h1{font-family:Amita,serif;color:var(--hd);f
 </div>
 <section class="cta" data-ev="order"><h2>ऐसा डिजिटल वेडिंग कार्ड बनवाएँ</h2><div>नाम, परिवार, कार्यक्रम और स्थान के साथ।</div><a href="/card-order/">अपना कार्ड बनवाएँ</a></section>
 <p class="ft">Digital card by SpyWell InfoTech · spywell.in</p>
+<p class="ft" style="margin-top:4px"><a id="insl" href="#" style="color:#fff">इनसाइट देखें (PIN से)</a></p>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',R=document.documentElement;
@@ -112,6 +113,7 @@ if(!id&&!demo){bad('<h2>लिंक सही नहीं है</h2>कृप
   if(ph){ct.push((nm?nm+' : ':'')+fm(ph));b.href='tel:+91'+ph;b.innerHTML='&#128222; '+(nm?nm+' : ':'')+fm(ph)}else b.style.display='none'});
  $('ct').innerHTML=ct.join('<br>');
  if(x.maps)$('bmap').href=x.maps;else $('bmap').style.display='none';
+ $('insl').href='/card-insights/?c='+encodeURIComponent(id);
  $('wa').href='https://wa.me/?text='+encodeURIComponent('शुभ विवाह: '+(d.title||'')+'\nआप सपरिवार सादर आमंत्रित हैं।\n'+location.origin+'/c/?id='+id);
  var c=$('card'),cols=['#e8541f','#d94b6a','#f2b134','#c7283e'];
  for(var i=0;i<12;i++){var p=document.createElement('i');p.className='petal';p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%4];p.style.setProperty('--dx',(Math.random()*160-80)+'px');p.style.animationDuration=(8+Math.random()*7)+'s';p.style.animationDelay=(-Math.random()*14)+'s';c.appendChild(p)}
