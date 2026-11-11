@@ -19,7 +19,7 @@ export default function Home() {
 
       {/* Hero */}
       <section className="overflow-hidden bg-gradient-to-b from-navy-50 to-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_.85fr] lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 md:grid-cols-[1.15fr_.85fr] lg:px-8 lg:py-24">
           <div>
             <p className="inline-flex rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-electric-600 ring-1 ring-electric-500/25">
               {t('home.badge')}
