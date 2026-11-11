@@ -14,6 +14,11 @@ a.alt{background:#fff;color:var(--wine);border:1px solid var(--wine)}
 #pages canvas{width:100%;height:auto;display:block;margin:0 0 12px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.15);background:#fff}
 .ft{text-align:center;color:#7a6248;font-size:12px;margin:18px 0}
 [hidden]{display:none!important}
+.tc{background:#fffaf0;border:3px double #c9a24a;border-radius:16px;padding:26px 18px;text-align:center;box-shadow:0 2px 14px rgba(0,0,0,.15)}
+.tc .gn{font-size:15px;color:#8b1a2b;letter-spacing:1px}.tc h2{margin:6px 0;font-size:30px;line-height:1.25;color:#8b1a2b}
+.tc .amp{font-size:22px;color:#c9a24a;margin:0}.tc p{margin:8px 0}.tc .dt{font-size:20px;font-weight:700;margin:14px 0 2px}
+.tc hr{border:0;border-top:1px solid #e8d5ad;margin:16px 30px}.tc a.b{display:block;margin:8px 0;padding:11px;border-radius:10px;background:#8b1a2b;color:#fff;text-decoration:none;font-weight:600}
+.tc a.b.o{background:#fff;color:#8b1a2b;border:1px solid #8b1a2b}
 </style></head><body><div class="wrap">
 <div id="msg" class="box">लोड हो रहा है…</div>
 
@@ -50,11 +55,25 @@ fetch(B+'/rest/v1/rpc/card_get',{method:'POST',headers:{apikey:K,Authorization:'
  if(!d||d.error){msg('<h1>कार्ड नहीं मिला</h1>लिंक गलत है या हटा दिया गया है।');return}
  if(d.expired){msg('<h1>यह कार्ड अब उपलब्ध नहीं है</h1>इस कार्ड की वैधता समाप्त हो चुकी है।');return}
  document.title=d.title||'SpyWell Card';
- var pdf=B+'/storage/v1/object/public/cards/'+d.pdf_path;
+ var pdf=d.pdf_path?B+'/storage/v1/object/public/cards/'+d.pdf_path:'';
  $('dl').href=pdf;
  $('wa').href='https://wa.me/?text='+encodeURIComponent((d.title?d.title+'\n':'')+location.href);
+ function E(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+ function tpl(x){
+  var dt='';try{dt=new Date(x.date+'T00:00:00').toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}catch(e){}
+  var h='<div class="tc"><div class="gn">॥ श्री गणेशाय नमः ॥</div><p>शुभ विवाह</p><h2>'+E(x.groom)+'</h2><p class="amp">संग</p><h2>'+E(x.bride)+'</h2>';
+  if(x.groom_father||x.bride_father)h+='<p>'+(x.groom_father?'पुत्र श्री '+E(x.groom_father):'')+(x.groom_father&&x.bride_father?' · ':'')+(x.bride_father?'पुत्री श्री '+E(x.bride_father):'')+'</p>';
+  h+='<hr><p>आप सपरिवार सादर आमंत्रित हैं</p><div class="dt">'+E(dt)+'</div>'+(x.time?'<div>'+E(x.time)+'</div>':'');
+  h+='<p><b>'+E(x.venue)+'</b>'+(x.address?'<br>'+E(x.address):'')+'</p>';
+  if(x.note)h+='<p>'+E(x.note)+'</p>';
+  h+='<hr>';
+  if(x.maps)h+='<a class="b o" data-ev="maps" target="_blank" rel="noopener" href="'+E(x.maps)+'">📍 Google Maps पर जगह देखें</a>';
+  if(x.call1)h+='<a class="b" data-ev="call1" href="tel:+91'+E(x.call1)+'">📞 '+E(x.call1_name||'कॉल करें')+'</a>';
+  if(x.call2)h+='<a class="b" data-ev="call2" href="tel:+91'+E(x.call2)+'">📞 '+E(x.call2_name||'कॉल करें')+'</a>';
+  return h+'</div>'}
  function show(){
   $('gate').hidden=true;$('msg').hidden=true;$('view').hidden=false;t('view');
+  if(d.kind==='template'){$('pages').innerHTML=tpl(d.data||{});$('dl').hidden=true;return}
   if(!window.pdfjsLib){$('pages').innerHTML='<a class="btn" href="'+pdf+'">कार्ड खोलें (PDF)</a>';return}
   pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   pdfjsLib.getDocument(pdf).promise.then(function(doc){

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>डिजिटल शादी कार्ड बनाएँ | SpyWell InfoTech</title>
+<style>
+:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
+.wrap{max-width:560px;margin:auto;padding:16px}h1{font-size:23px;color:var(--wine);margin:8px 0 2px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+label{display:block;font-size:13px;color:#7a6248;margin-top:12px}
+input,textarea,button,a.btn{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--line);width:100%;display:block;background:#fff;color:var(--ink)}
+button,a.btn{background:var(--wine);color:#fff;border:0;font-weight:600;margin-top:14px;text-align:center;text-decoration:none;cursor:pointer}
+a.alt,button.alt{background:#fff;color:var(--wine);border:1px solid var(--wine)}
+button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px}.k{font-size:13px;color:#7a6248}
+.pin{font-size:38px;letter-spacing:8px;color:var(--wine);font-weight:700;text-align:center}
+.val{background:#fdf6e8;border:1px solid var(--line);border-radius:10px;padding:10px;word-break:break-all;margin-top:4px}
+[hidden]{display:none!important}
+</style></head><body><div class="wrap">
+<h1>डिजिटल शादी कार्ड</h1>
+<div class="k">जानकारी भरें, पेमेंट करें, और कार्ड का लिंक तुरंत पाएँ। कार्ड <span id="days">45</span> दिन तक चलेगा।</div>
+
+<form class="card" id="f">
+<label>दूल्हे का नाम *</label><input name="groom" maxlength="60" required>
+<label>दुल्हन का नाम *</label><input name="bride" maxlength="60" required>
+<label>दूल्हे के पिता का नाम</label><input name="groom_father" maxlength="60">
+<label>दुल्हन के पिता का नाम</label><input name="bride_father" maxlength="60">
+<label>शादी की तारीख *</label><input type="date" name="date" required>
+<label>समय (जैसे: शाम 7 बजे से)</label><input name="time" maxlength="30">
+<label>जगह का नाम *</label><input name="venue" maxlength="120" required>
+<label>पता / गाँव</label><input name="address" maxlength="160">
+<label>Google Maps लिंक</label><input name="maps" type="url" placeholder="https://maps.app.goo.gl/..." maxlength="300">
+<label>पहला कॉल नंबर *</label><input name="call1" inputmode="numeric" maxlength="10" required>
+<label>पहले नंबर वाले का नाम</label><input name="call1_name" maxlength="40">
+<label>दूसरा कॉल नंबर</label><input name="call2" inputmode="numeric" maxlength="10">
+<label>दूसरे नंबर वाले का नाम</label><input name="call2_name" maxlength="40">
+<label>कोई ख़ास संदेश</label><textarea name="note" maxlength="200" rows="2"></textarea>
+<label>आपका मोबाइल नंबर (पेमेंट के लिए) *</label><input name="buyer" inputmode="numeric" maxlength="10" required>
+<div class="err" id="err"></div>
+<button id="pay" type="submit">पेमेंट करें और कार्ड पाएँ</button>
+</form>
+
+<div class="card" id="done" hidden>
+<b>पेमेंट हो गया, आपका कार्ड तैयार है!</b>
+<label>कार्ड का लिंक (सबको भेजें)</label><div class="val" id="du"></div>
+<button data-copy="du">लिंक कॉपी करें</button>
+<a class="btn alt" id="dwa" target="_blank" rel="noopener">WhatsApp पर भेजें</a>
+<label>आपका PIN (कौन-कौन ने कार्ड खोला, यह देखने के लिए)</label><div class="pin" id="dp"></div>
+<a class="btn alt" id="di">Insights देखें</a>
+<div class="k" style="margin-top:12px">कृपया यह PIN और लिंक अभी सेव कर लें।</div>
+</div>
+<div class="k" style="text-align:center;margin:18px 0">SpyWell InfoTech · spywell.in</div>
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+(function(){
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',$=function(x){return document.getElementById(x)};
+fetch(B+'/rest/v1/rpc/card_price',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:'{}'}).then(function(r){return r.json()}).then(function(d){
+ if(d&&d.days)$('days').textContent=d.days;if(d&&d.price)$('pay').textContent='₹'+d.price+' पेमेंट करें और कार्ड पाएँ'}).catch(function(){});
+function api(b){return fetch(B+'/functions/v1/card-pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(j){j._s=r.status;return j})})}
+function done(r){$('f').hidden=true;$('done').hidden=false;$('du').textContent=r.url;$('dp').textContent=r.pin;$('di').href=r.insights;
+ $('dwa').href='https://wa.me/?text='+encodeURIComponent('शुभ विवाह - आप सपरिवार सादर आमंत्रित हैं\n'+r.url);
+ try{localStorage.setItem('lastcard',JSON.stringify(r))}catch(e){}window.scrollTo(0,0)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(b){try{navigator.clipboard.writeText($(b.dataset.copy).textContent);b.textContent='कॉपी हो गया ✔'}catch(x){}}});
+$('f').addEventListener('submit',function(e){e.preventDefault();$('err').textContent='';
+ var fd=new FormData($('f')),data={};fd.forEach(function(v,k){data[k]=v});var buyer=data.buyer;delete data.buyer;
+ $('pay').disabled=true;
+ api({action:'create',data:data,buyer_phone:buyer}).then(function(o){
+  if(!o.order_id){$('pay').disabled=false;$('err').textContent=o._s==503?'पेमेंट अभी शुरू नहीं हुआ है, थोड़ी देर बाद कोशिश करें':(o.error||'कुछ गड़बड़ हुई');return}
+  var rz=new Razorpay({key:o.key_id,order_id:o.order_id,amount:o.amount,currency:'INR',name:'SpyWell InfoTech',description:'डिजिटल शादी कार्ड',prefill:{contact:buyer},theme:{color:'#8b1a2b'},
+   handler:function(p){$('err').textContent='कार्ड बन रहा है…';
+    api({action:'verify',order_id:p.razorpay_order_id,payment_id:p.razorpay_payment_id,signature:p.razorpay_signature}).then(function(r){
+     if(r.url)done(r);else{$('pay').disabled=false;$('err').textContent='पेमेंट मिल गया है, पर कार्ड बनने में देरी है। कृपया 9-10 मिनट बाद इसी पेज को दोबारा खोलकर संपर्क करें।'}})},
+   modal:{ondismiss:function(){$('pay').disabled=false}}});
+  rz.open()}).catch(function(){$('pay').disabled=false;$('err').textContent='इंटरनेट की दिक्कत, दोबारा कोशिश करें'})});
+})();
+</script></body></html>
