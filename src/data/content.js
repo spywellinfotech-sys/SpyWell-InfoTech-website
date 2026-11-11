@@ -157,6 +157,24 @@ export const services = [
       hi: ['एमवीपी प्लानिंग और बिल्ड', 'सब्सक्रिप्शन और बिलिंग', 'एडमिन पैनल', 'स्केलेबल आर्किटेक्चर'],
     },
   },
+  {
+    slug: 'digital-wedding-cards',
+    icon: 'Gem',
+    demo: '/wedding-card/',
+    title: { en: 'Digital Wedding Cards', hi: 'डिजिटल वेडिंग कार्ड' },
+    short: {
+      en: 'Shareable wedding invitations with Maps, call buttons and PDF.',
+      hi: 'Maps, कॉल बटन और PDF के साथ शेयर होने वाले शादी के निमंत्रण कार्ड।',
+    },
+    description: {
+      en: 'We design animated digital wedding invitations in your family style. Guests get one WhatsApp link with events, venue on Google Maps and tap-to-call numbers. You also get a PDF and photo to save, and a private page showing how many people opened the card.',
+      hi: 'हम आपके परिवार की पसंद के अनुसार एनिमेटेड डिजिटल वेडिंग कार्ड बनाते हैं। मेहमानों को WhatsApp पर एक लिंक मिलता है जिसमें कार्यक्रम, Google Maps पर विवाह स्थल और एक टैप में कॉल करने वाले नंबर होते हैं। आपको PDF और फ़ोटो भी मिलती है, और एक निजी पेज जिसमें दिखता है कि कितने लोगों ने कार्ड खोला।',
+    },
+    points: {
+      en: ['Animated card with your names and photos', 'Google Maps venue link', 'Tap-to-call family numbers', 'PDF, photo and WhatsApp sharing', 'Private view and click insights'],
+      hi: ['आपके नाम और फ़ोटो के साथ एनिमेटेड कार्ड', 'Google Maps पर विवाह स्थल', 'एक टैप में कॉल वाले पारिवारिक नंबर', 'PDF, फ़ोटो और WhatsApp शेयर', 'निजी व्यू और क्लिक इनसाइट'],
+    },
+  },
 ];
 
 // Statuses: 'development' | 'planned' | 'live'. Set 'live' only for real, released products.

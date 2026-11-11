@@ -34,6 +34,14 @@ export default function Services() {
                     >
                       {t('common.talk')}
                     </Link>
+                    {s.demo && (
+                      <a
+                        href={s.demo}
+                        className="ml-3 mt-5 inline-flex rounded-full border border-navy-200 px-5 py-2.5 text-sm font-semibold text-navy-800 transition hover:bg-navy-50"
+                      >
+                        {lang === 'hi' ? 'सैंपल देखें' : 'View sample'}
+                      </a>
+                    )}
                   </div>
                   <div className="rounded-xl bg-slate-50 p-5">
                     <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-navy-700">{t('services.features')}</h3>
