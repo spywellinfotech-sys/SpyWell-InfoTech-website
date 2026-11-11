@@ -160,9 +160,23 @@ html.embed .acts,html.embed .cta{display:none}
 .vid.play #bless{animation:bless 20s linear forwards}
 @keyframes bless{0%,30%{opacity:0}33%{opacity:.9}36%{opacity:.5}38%{opacity:.9}40%,100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.vid.play *{animation-duration:.01s!important;animation-delay:0s!important}}
+html.gate .card,html.gate .acts,html.gate .cta,html.gate #cs{display:none}
+#gate{display:none;width:min(calc(100vw - 20px),420px);margin:8vh auto 0;background:#fffaf0;border:1.5px solid var(--gold);border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 14px 40px rgba(90,40,10,.25)}
+html.gate #gate{display:block}
+#gate h1{font:700 24px Hind,sans-serif;color:var(--wine);margin-bottom:6px}
+#gate p{font-size:14.5px;line-height:1.5;margin-bottom:14px}
+#gate input{display:block;width:100%;font:500 17px Hind,Poppins,sans-serif;padding:13px 14px;margin-bottom:10px;border:1.5px solid #e2cd9c;border-radius:12px;background:#fff;color:var(--ink)}
+#gate button{width:100%;font:600 17px Hind,Poppins,sans-serif;padding:14px;border:0;border-radius:999px;background:var(--wine);color:#fff;cursor:pointer}
+#gate small{display:block;margin-top:10px;font-size:12px;color:#8b6b3a}#gerr{color:#b00020;font-size:13.5px;min-height:18px;margin-bottom:6px}
 </style>
 </head>
 <body>
+<script>(function(){try{if(!/[?&](static|embed|nt)\b/.test(location.search)&&!(localStorage.getItem('gp')&&localStorage.getItem('gn')))document.documentElement.classList.add('gate')}catch(e){}})()</script>
+<form id="gate" autocomplete="on"><h1>॥ शुभ विवाह ॥</h1><p>निमंत्रण कार्ड देखने के लिए अपना नाम और मोबाइल नंबर दर्ज करें।</p>
+<input id="gn" name="name" type="text" placeholder="आपका नाम" autocomplete="name" maxlength="60" required>
+<input id="gp" name="tel" type="tel" inputmode="numeric" placeholder="मोबाइल नंबर (10 अंक)" autocomplete="tel-national" maxlength="10" required>
+<div id="gerr"></div><button type="submit">कार्ड खोलें</button>
+<small>आपका नाम और नंबर सिर्फ़ यह जानने के लिए रखा जाता है कि निमंत्रण किसने देखा।</small></form>
 <div class="card" id="card">
   <img class="corner-l rv" style="--d:.1s" src="tl.jpg" alt="" width="322" height="380">
   <img class="corner-r rv" style="--d:.1s" src="tr.jpg" alt="" width="319" height="380">
@@ -239,14 +253,23 @@ html.embed .acts,html.embed .cta{display:none}
 <script>
 (function(){
 if(/[?&](static|embed|nt)\b/.test(location.search))return;
-var U='https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/card_events',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',v='';
-try{v=localStorage.getItem('cv')||'';if(!v){v=Math.random().toString(36).slice(2,12);localStorage.setItem('cv',v)}}catch(e){}
+var U='https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/card_events',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',v='',gn='',gp='';
+function ls(k,x){try{if(x===undefined)return localStorage.getItem(k)||'';localStorage.setItem(k,x)}catch(e){return ''}}
+v=ls('cv');if(!v){v=Math.random().toString(36).slice(2,12);ls('cv',v)}
+gn=ls('gn');gp=ls('gp');
 var dev=/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',ref='';
 try{ref=document.referrer?new URL(document.referrer).hostname:''}catch(e){}
-function t(ev){try{fetch(U,{method:'POST',keepalive:true,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({card:'kajal-divyanshu',event:ev,visitor:v,ref:ref,device:dev})})}catch(e){}}
-t('view');
-document.addEventListener('click',function(e){var a=e.target.closest('[data-ev]');if(a)t(a.getAttribute('data-ev'))});
+function t(ev){try{fetch(U,{method:'POST',keepalive:true,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({card:'kajal-divyanshu',event:ev,visitor:v,ref:ref,device:dev,guest_name:gn,guest_phone:gp})})}catch(e){}}
 var w=document.getElementById('wa');if(w)w.setAttribute('data-ev','whatsapp');
+document.addEventListener('click',function(e){var a=e.target.closest('[data-ev]');if(a)t(a.getAttribute('data-ev'))});
+var root=document.documentElement;
+if(root.classList.contains('gate')){
+ document.getElementById('gate').addEventListener('submit',function(e){e.preventDefault();
+  var n=document.getElementById('gn').value.trim(),p=document.getElementById('gp').value.replace(/\D/g,'');
+  if(n.length<2){document.getElementById('gerr').textContent='कृपया अपना नाम लिखें';return}
+  if(!/^[6-9]\d{9}$/.test(p)){document.getElementById('gerr').textContent='सही 10 अंकों का मोबाइल नंबर डालें';return}
+  gn=n;gp=p;ls('gn',n);ls('gp',p);root.classList.remove('gate');window.scrollTo(0,0);t('view')});
+}else{t('view')}
 })();
 </script>
 </body>

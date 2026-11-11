@@ -11,7 +11,7 @@ h1{font-size:21px;color:var(--wine);margin:6px 0 2px}small{color:#7a6248}
 input,button{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--line);width:100%}button{background:var(--wine);color:#fff;border:0;font-weight:600;margin-top:8px}
 .bar{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:8px}.bar div{flex:1;background:var(--wine);border-radius:4px 4px 0 0;min-height:2px;position:relative}
 .bar span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:10px}
-.ln{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}.ln:last-child{border:0}
+.ln{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}a{color:var(--wine)}.ln:last-child{border:0}
 #err{color:#b00020;margin-top:8px}
 </style></head><body>
 <h1>Card Insights</h1><small>Kajal &amp; Divyanshu wedding card</small>
@@ -30,10 +30,11 @@ function load(pin){
   var mx=Math.max.apply(null,d.days.map(function(x){return x.v}).concat([1]));
   var h='<div class="card"><div class="row"><div><div class="n">'+d.views+'</div><div class="k">कुल व्यू</div></div><div><div class="n">'+d.visitors+'</div><div class="k">अलग लोग</div></div><div><div class="n">'+d.today+'</div><div class="k">आज</div></div></div></div>';
   h+='<div class="card"><b>पिछले 14 दिन</b><div class="bar">'+d.days.map(function(x){return'<div style="height:'+Math.round(x.v/mx*100)+'%"><span>'+x.v+'</span></div>'}).join('')+'</div></div>';
+  h+='<div class="card"><b>किसने खोला ('+d.guests.length+')</b>'+(d.guests.map(function(g){var t=new Date(g.t).toLocaleString('hi-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});return'<div class="ln"><span>'+esc(g.n)+'<br><a href="tel:+91'+esc(g.p)+'">'+esc(g.p)+'</a></span><small style="text-align:right">'+g.v+' बार खोला<br>'+g.k+' क्लिक<br>'+t+'</small></div>'}).join('')||'<div class="k">अभी किसी ने नहीं खोला</div>')+'</div>';
   h+='<div class="card"><b>बटन क्लिक</b>'+(Object.keys(d.clicks).map(function(k){return'<div class="ln"><span>'+esc(L[k]||k)+'</span><b>'+d.clicks[k]+'</b></div>'}).join('')||'<div class="k">अभी कोई क्लिक नहीं</div>')+'</div>';
   h+='<div class="card"><b>फ़ोन / कंप्यूटर</b>'+Object.keys(d.devices).map(function(k){return'<div class="ln"><span>'+esc(k)+'</span><b>'+d.devices[k]+'</b></div>'}).join('')+'</div>';
   h+='<div class="card"><b>कहाँ से आए</b>'+Object.keys(d.sources).map(function(k){return'<div class="ln"><span>'+esc(k)+'</span><b>'+d.sources[k]+'</b></div>'}).join('')+'</div>';
-  h+='<div class="card"><b>ताज़ा गतिविधि</b>'+d.recent.map(function(x){var t=new Date(x.t).toLocaleString('hi-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});return'<div class="ln"><span>'+esc(L[x.e]||x.e)+'</span><small>'+t+'</small></div>'}).join('')+'</div>';
+  h+='<div class="card"><b>ताज़ा गतिविधि</b>'+d.recent.map(function(x){var t=new Date(x.t).toLocaleString('hi-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});return'<div class="ln"><span>'+esc(x.n||'अज्ञात')+' : '+esc(L[x.e]||x.e)+'</span><small>'+t+'</small></div>'}).join('')+'</div>';
   h+='<button onclick="location.reload()">रीफ़्रेश</button>';o.innerHTML=h}).catch(function(){document.getElementById('err').textContent='नेटवर्क दिक्कत, दोबारा कोशिश करें'})}
 document.getElementById('go').onclick=function(){load(document.getElementById('pin').value.trim())};
 document.getElementById('pin').onkeydown=function(e){if(e.key==='Enter')load(this.value.trim())};
