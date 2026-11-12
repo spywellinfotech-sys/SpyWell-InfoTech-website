@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SpyWell Digital Studio</title><link rel="icon" href="/favicon.png">
+<title>SpyWell Live Studio</title><link rel="icon" href="/favicon.png">
 <style>body{margin:0;background:#f3ead6;font:16px/1.5 Hind,Poppins,system-ui,sans-serif;color:#2b1a14}
 #sheet{max-width:440px;margin:0 auto;background:#fff;min-height:100vh}
 .msg{padding:60px 24px;text-align:center}.msg b{display:block;font-size:20px;margin-bottom:8px}
 .foot{max-width:440px;margin:0 auto;text-align:center;font-size:12px;padding:12px;color:#7a6248}.foot a{color:#8b1a2b}</style><script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n.js"></script></head><body>
 <div id="sheet"><div class="msg">लोड हो रहा है…</div></div>
-<div class="foot" id="foot" hidden>SpyWell Digital Studio से बनाया गया · <a href="/studio/">अपना कार्ड बनाएँ</a></div>
+<div class="foot" id="foot" hidden>SpyWell Live Studio से बनाया गया · <a href="/studio/">अपना कार्ड बनाएँ</a></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/studio/qr.js"></script>
 <script src="/studio/render.js"></script>
@@ -39,7 +39,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   if(typeof sty.set==='string'&&/^[a-z0-9]{8,32}$/.test(sty.set)){
     var sr=await sb.from('studio_designs').select('slug,title,lbl:content_json->style->>setLabel,ord:created_at').eq('status','published').eq('product_type',t).eq('user_id',r.data.user_id).eq('content_json->style->>set',sty.set).order('created_at').limit(12);
     if(!sr.error&&sr.data&&sr.data.length>1){tabs.style.display='flex';sr.data.forEach(function(x,i){var a=document.createElement('a');a.textContent=String(x.lbl||x.title||('कार्ड '+(i+1))).slice(0,24);var cur=x.slug===s;a.href=cur?'#':'/'+(t==='invitation'?'inv':'v')+'/'+x.slug;a.style.cssText='flex:none;padding:7px 14px;border-radius:20px;text-decoration:none;font-size:14px;font-weight:600;border:1px solid #8b1a2b;'+(cur?'background:#8b1a2b;color:#fff':'color:#8b1a2b;background:#fff');tabs.appendChild(a)})}}
-  document.title=window.StudioRender.title(t,cj)+' | SpyWell Digital Studio';
+  document.title=window.StudioRender.title(t,cj)+' | SpyWell Live Studio';
   try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
   document.getElementById('foot').hidden=false;
   try{var tk='sv_'+t+s;if(!sessionStorage.getItem(tk)){sessionStorage.setItem(tk,'1');track('view')}}catch(e){}

@@ -1,4 +1,4 @@
-/* SpyWell Digital Studio: tiny i18n. Source text is Hindi; translations come from window.I18N_DATA (hindi -> {en,pa,mr,gu,ur}).
+/* SpyWell Live Studio: tiny i18n. Source text is Hindi; translations come from window.I18N_DATA (hindi -> {en,pa,mr,gu,ur}).
    The page DOM is translated at runtime (outside .sr cards); cards use I18N.tr(text, cardLang). */
 (function () {
   var LANGS = { hi: ['हिन्दी', 'ltr'], en: ['English', 'ltr'], pa: ['ਪੰਜਾਬੀ', 'ltr'], mr: ['मराठी', 'ltr'], gu: ['ગુજરાતી', 'ltr'], ur: ['اردو', 'rtl'] };

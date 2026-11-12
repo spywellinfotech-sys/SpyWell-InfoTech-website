@@ -1,5 +1,5 @@
 /* QR code generator. Core: "QRCode for JavaScript", Copyright (c) 2009 Kazuhiko Arase, MIT license (http://www.opensource.org/licenses/mit-license.php),
-   as packaged in qrcode-terminal. "QR Code" is a registered trademark of DENSO WAVE INCORPORATED. Bundled for the browser for SpyWell Digital Studio. */
+   as packaged in qrcode-terminal. "QR Code" is a registered trademark of DENSO WAVE INCORPORATED. Bundled for the browser for SpyWell Live Studio. */
 (function(){
 var M={};function require(n){return M[n.replace("./","")]}
 M["QRMode"]=(function(){var module={exports:{}},exports=module.exports;

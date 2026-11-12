@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>कार्ड एडिटर | SpyWell Digital Studio</title>
+<title>कार्ड एडिटर | SpyWell Live Studio</title>
 <meta name="robots" content="noindex"><link rel="icon" href="/favicon.png">
 <style>
 :root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}
@@ -256,7 +256,7 @@ async function buy(msg){
   try{
     var o=await fnCall('studio-pay',{action:'create'});await loadRzp();
     await new Promise(function(res,rej){
-      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Digital Studio',description:'AI से कार्ड पढ़ना ('+o.credits+' बार)',
+      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:'AI से कार्ड पढ़ना ('+o.credits+' बार)',
         handler:async function(r){try{var v=await fnCall('studio-pay',{action:'verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});CR.bal=v.balance;res()}catch(e){rej(e)}},
         modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});

@@ -1,4 +1,4 @@
-/* SpyWell Digital Studio – template renderer.
+/* SpyWell Live Studio – template renderer.
    One engine for editor preview, template chooser and public pages.
    Input: product type + template config (studio_templates.config) + customer content (studio_designs.content_json).
    content_json shape: { fields:{}, events:[], services:[], style:{}, images:{} }
