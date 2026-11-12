@@ -131,7 +131,6 @@ button{min-height:48px;border-radius:12px}
 <button type="button" class="alt" id="pk-back">वापस</button>
 </div>
 <div class="card" id="c-disc">
-<div class="chips" style="margin:0 0 10px"><button type="button" data-sw="saved" class="">📇 मेरे सेव कार्ड</button><button type="button" data-sw="disc" class="on">🔍 नए बिज़नेस खोजें</button></div>
 <b>🔍 बिज़नेस खोजें (Discover)</b>
 <div class="k">Vi-card पर सार्वजनिक किए गए बिज़नेस कार्ड, नाम, कंपनी, व्यवसाय या शहर से खोजें।</div>
 <input id="dq" type="search" placeholder="जैसे: CCTV, कोयला, Saharanpur, नाम…" style="margin-top:8px" autocomplete="off">
@@ -139,7 +138,6 @@ button{min-height:48px;border-radius:12px}
 <div id="dres" style="margin-top:10px"></div><button type="button" id="dmore" hidden style="margin-top:8px">और दिखाएँ</button>
 </div>
 <div class="card" id="c-saved">
-<div class="chips" style="margin:0 0 10px"><button type="button" data-sw="saved" class="on">📇 मेरे सेव कार्ड</button><button type="button" data-sw="disc" class="">🔍 नए बिज़नेस खोजें</button></div>
 <b>📇 सेव किए हुए कार्ड और कॉन्टैक्ट्स</b>
 <div class="k">दूसरों के कार्ड खोलकर "सेव करें" दबाइए, या नीचे से नंबर खुद जोड़िए। यहीं से कॉल और WhatsApp कीजिए।</div>
 <input id="ct-q" type="search" placeholder="🔍 नाम, नंबर या व्यवसाय (industry) से खोजें" style="margin-top:8px">
@@ -400,10 +398,9 @@ function setTab(t){
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','saved','mine','me'].indexOf(t)<0)t='home';if(t==='disc'){discFill();if(!$('dres').childNodes.length)discGo(false)}
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
-  document.querySelectorAll('#tabbar button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')===(t==='disc'?'saved':t))});
+  document.querySelectorAll('#tabbar button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t)});
   try{history.replaceState(null,'','#'+t)}catch(e){}window.scrollTo(0,0)}
 document.querySelectorAll('#tabbar button').forEach(function(b){b.onclick=function(){setTab(b.getAttribute('data-tab'))}});
-document.querySelectorAll('[data-sw]').forEach(function(b){b.onclick=function(){setTab(b.getAttribute('data-sw'))}});
 document.querySelectorAll('#c-qa button').forEach(function(b){b.onclick=function(){var t=b.getAttribute('data-tab');if(t==='new'){var e=$('c-new');e.scrollIntoView({behavior:'smooth'});return}setTab(t)}});
 async function dash(user){
   ME=user;show('dash');OCCSEL='';$('c-pick').hidden=true;$('c-new').hidden=false;
@@ -466,5 +463,5 @@ sb.auth.onAuthStateChange(function(ev,session){
 });
 })();
 </script>
-<nav id="tabbar" hidden><button type="button" data-tab="home"><i>🏠</i>होम</button><button type="button" data-tab="saved"><i>📇</i>सेव कार्ड<b id="tb-n" hidden></b></button><button type="button" data-tab="mine"><i>🎨</i>मेरे डिज़ाइन</button><button type="button" data-tab="me"><i>👤</i>प्रोफ़ाइल</button></nav>
+<nav id="tabbar" hidden><button type="button" data-tab="home"><i>🏠</i>होम</button><button type="button" data-tab="disc"><i>🔍</i>खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव कार्ड<b id="tb-n" hidden></b></button><button type="button" data-tab="mine"><i>🎨</i>मेरे डिज़ाइन</button><button type="button" data-tab="me"><i>👤</i>प्रोफ़ाइल</button></nav>
 </body></html>
