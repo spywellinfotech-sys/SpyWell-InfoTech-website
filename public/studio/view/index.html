@@ -13,7 +13,7 @@
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
-var q=new URLSearchParams(location.search),t=q.get('t')==='i'?'invitation':q.get('t')==='v'?'visiting':'',s=(q.get('s')||'').toLowerCase();
+var q=new URLSearchParams(location.search),t=q.get('t')==='i'?'invitation':(q.get('t')==='v'||q.get('t')==='w')?'visiting':'',asWeb=q.get('t')==='w',s=(q.get('s')||'').toLowerCase();
 var box=document.getElementById('sheet');
 function msg(a,b){box.textContent='';var d=document.createElement('div');d.className='msg';var x=document.createElement('b');x.textContent=a;d.appendChild(x);d.appendChild(document.createTextNode(b||''));box.appendChild(d)}
 if(!t||!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(s)||s.length<3||s.length>60){msg('यह लिंक सही नहीं है','कृपया भेजने वाले से पूरा लिंक दोबारा माँगें।');return}
@@ -29,7 +29,8 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   function track(kind){try{var dev=/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',src='';
     try{var ref=document.referrer?new URL(document.referrer).hostname.replace(/^www\./,''):'';src=new URLSearchParams(location.search).get('src')||ref||'direct'}catch(e){src='direct'}
     sb.rpc('studio_track',{p_slug:s,p_type:t,p_kind:kind,p_visitor:vid,p_device:dev,p_src:src}).then(function(){},function(){})}catch(e){}}
-  var cj=r.data.content_json||{},sty=(cj.style&&typeof cj.style==='object')?cj.style:{},isSite=t==='visiting'&&sty.site===true;
+  var cj=r.data.content_json||{},sty=(cj.style&&typeof cj.style==='object')?cj.style:{},isSite=asWeb&&sty.site===true;
+  if(asWeb&&!isSite){msg('यह मिनी वेबसाइट अभी चालू नहीं है','कार्ड का मालिक एडिटर में "मिनी वेबसाइट मोड" चालू करे। तब तक सीधा कार्ड देखें: /v/'+s);return}
   if(isSite){box.style.maxWidth='none';box.style.background='transparent'}
   var tabs=document.createElement('div');tabs.id='sets';tabs.style.cssText='max-width:'+(isSite?'820px':'440px')+';margin:0 auto;display:none;gap:6px;overflow-x:auto;padding:8px;background:#f3ead6;position:sticky;top:0;z-index:9';
   box.parentNode.insertBefore(tabs,box);
@@ -37,7 +38,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   else window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},cj,{onAct:track});
   if(typeof sty.set==='string'&&/^[a-z0-9]{8,32}$/.test(sty.set)){
     var sr=await sb.from('studio_designs').select('slug,title,lbl:content_json->style->>setLabel,ord:created_at').eq('status','published').eq('product_type',t).eq('user_id',r.data.user_id).eq('content_json->style->>set',sty.set).order('created_at').limit(12);
-    if(!sr.error&&sr.data&&sr.data.length>1){tabs.style.display='flex';sr.data.forEach(function(x,i){var a=document.createElement('a');a.textContent=String(x.lbl||x.title||('कार्ड '+(i+1))).slice(0,24);var cur=x.slug===s;a.href=cur?'#':'/'+(t==='invitation'?'i':'v')+'/'+x.slug;a.style.cssText='flex:none;padding:7px 14px;border-radius:20px;text-decoration:none;font-size:14px;font-weight:600;border:1px solid #8b1a2b;'+(cur?'background:#8b1a2b;color:#fff':'color:#8b1a2b;background:#fff');tabs.appendChild(a)})}}
+    if(!sr.error&&sr.data&&sr.data.length>1){tabs.style.display='flex';sr.data.forEach(function(x,i){var a=document.createElement('a');a.textContent=String(x.lbl||x.title||('कार्ड '+(i+1))).slice(0,24);var cur=x.slug===s;a.href=cur?'#':'/'+(t==='invitation'?'inv':'v')+'/'+x.slug;a.style.cssText='flex:none;padding:7px 14px;border-radius:20px;text-decoration:none;font-size:14px;font-weight:600;border:1px solid #8b1a2b;'+(cur?'background:#8b1a2b;color:#fff':'color:#8b1a2b;background:#fff');tabs.appendChild(a)})}}
   document.title=window.StudioRender.title(t,cj)+' | SpyWell Digital Studio';
   document.getElementById('foot').hidden=false;
   try{var tk='sv_'+t+s;if(!sessionStorage.getItem(tk)){sessionStorage.setItem(tk,'1');track('view')}}catch(e){}

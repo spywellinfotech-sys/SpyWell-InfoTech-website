@@ -341,7 +341,9 @@ async function pIns(p){
 
 /* ---------- publish ---------- */
 var SLUG=/^[a-z0-9]+(-[a-z0-9]+)*$/;
-function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'i':'v')+'/'+slug}
+function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'inv':'v')+'/'+slug}
+function webUrl(slug){return location.origin+'/web/'+slug}
+function mobSlug(){var f=C.fields||{},m=String(D.product_type==='invitation'?(f.c1_phone||f.c2_phone):f.mobile).replace(/\D/g,'');if(m.length>=10)m=m.slice(-10);return m.length>=3?m:''}
 function slugify(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)}
 
 function newKey(){var a='abcdefghijklmnopqrstuvwxyz0123456789',k='';for(var i=0;i<12;i++)k+=a[Math.floor(Math.random()*a.length)];return k}
@@ -350,7 +352,7 @@ function pExtra(p){
     var on=C.style.site===true;
     var cb=h('input',{type:'checkbox'});cb.checked=on;cb.style.cssText='width:auto;margin-right:8px';
     cb.onchange=function(){C.style.site=cb.checked?true:undefined;if(!cb.checked)delete C.style.site;changed()};
-    p.appendChild(h('div',{class:'item'},[h('label',{style:'display:flex;align-items:center'},[cb,h('b',{text:'🌐 मिनी वेबसाइट मोड'})]),h('div',{class:'k',text:'चालू करने पर आपका लिंक पूरे पेज की वेबसाइट की तरह खुलेगा: होम, हमारे बारे में, सेवाएँ, संपर्क, QR और कॉन्टैक्ट सेव। वही लिंक रहेगा।'})]));
+    p.appendChild(h('div',{class:'item'},[h('label',{style:'display:flex;align-items:center'},[cb,h('b',{text:'🌐 मिनी वेबसाइट मोड'})]),h('div',{class:'k',text:'चालू करने पर आपको अलग वेबसाइट लिंक (spywell.in/web/आपका-नाम) मिलेगा: हमारे बारे में, सेवाएँ, संपर्क, QR और कॉन्टैक्ट सेव। विज़िटिंग कार्ड का /v/ लिंक वैसा ही रहेगा।'})]));
     return}
   var box=h('div',{class:'item'});p.appendChild(box);
   box.appendChild(h('b',{text:'🗂 इसी इवेंट के कई कार्ड'}));
@@ -383,6 +385,12 @@ function pPub(p){
     var cv=h('canvas');cv.style.cssText='width:200px;height:200px;display:block;margin:12px auto;border:1px solid #e8d5ad';
     p.appendChild(cv);try{window.StudioQR.draw(cv,url,600)}catch(e){}
     var info=h('div',{class:'k',id:'pubmsg'});
+    if(D.product_type==='visiting'&&C.style.site===true){var wu=webUrl(D.slug);
+      p.appendChild(h('div',{class:'item'},[h('b',{text:'🌐 मिनी वेबसाइट लिंक'}),h('div',{class:'k',text:wu,style:'word-break:break-all;margin-top:6px'}),
+        h('button',{class:'btn alt',text:'वेबसाइट खोलें',onclick:function(){window.open(wu,'_blank','noopener')}}),
+        h('button',{class:'btn alt',text:'वेबसाइट लिंक कॉपी',onclick:async function(){try{await navigator.clipboard.writeText(wu);info.className='k';info.textContent='वेबसाइट लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ।'}}}),
+        h('button',{class:'btn alt',text:'वेबसाइट WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('हमारी वेबसाइट: '+wu),'_blank','noopener')}})]))}
+    else if(D.product_type==='visiting')p.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
     p.appendChild(h('button',{class:'btn',text:'WhatsApp पर भेजें',onclick:function(){var t=(D.product_type==='invitation'?'हमारे विवाह का निमंत्रण: ':'हमारा डिजिटल विज़िटिंग कार्ड: ')+url;window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener')}}));
     p.appendChild(h('button',{class:'btn alt',text:'लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(url);info.className='k';info.textContent='लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें और कॉपी करें।'}}}));
     p.appendChild(h('button',{class:'btn alt',text:'कार्ड खोलकर देखें',onclick:function(){window.open(url,'_blank','noopener')}}));
@@ -398,7 +406,7 @@ function pPub(p){
   p.appendChild(h('div',{class:'k',text:D.status==='unpublished'?'यह कार्ड अभी बंद है। दोबारा प्रकाशित करने के लिए लिंक चुनें।':'प्रकाशित करने पर आपका कार्ड एक लिंक और QR कोड से सबके लिए खुल जाएगा।'}));
   p.appendChild(h('label',{text:'कार्ड का लिंक (अंग्रेज़ी छोटे अक्षर, अंक और -)'}));
   var inp=h('input',{type:'text',maxlength:60,autocapitalize:'none',autocomplete:'off',spellcheck:'false'});
-  inp.value=D.slug||slugify(R.title(D.product_type,C));p.appendChild(inp);
+  inp.value=D.slug||mobSlug()||slugify(R.title(D.product_type,C));p.appendChild(inp);
   var pre=h('div',{class:'k',style:'word-break:break-all'});p.appendChild(pre);
   var er=h('div',{class:'e'});p.appendChild(er);
   var pb=h('button',{class:'btn',text:'प्रकाशित करें'});p.appendChild(pb);

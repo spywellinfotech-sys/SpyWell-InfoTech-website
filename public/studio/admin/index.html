@@ -82,7 +82,7 @@ async function cardsView(){
   if(r.error){list.appendChild(h('div',{class:'msg bad',text:'कार्ड नहीं आए'}));return}
   if(!r.data.length)list.appendChild(h('div',{class:'msg',text:'इस ग्राहक का कोई कार्ड नहीं'}));
   r.data.forEach(function(d){
-    var m=h('div',{class:'k'}),pub=d.status==='published',url=location.origin+'/'+(d.product_type==='invitation'?'i':'v')+'/'+d.slug;
+    var m=h('div',{class:'k'}),pub=d.status==='published',url=location.origin+'/'+(d.product_type==='invitation'?'inv':'v')+'/'+d.slug;
     var del=h('button',{class:'btn d',text:'मिटाएँ'});
     del.onclick=async function(){if(!del.dataset.a){del.dataset.a='1';del.textContent='पक्का मिटाएँ? वापस नहीं आएगा';return}
       var x=await sb.from('studio_designs').delete().eq('id',d.id).select('id');if(x.error||!x.data.length){m.textContent='मिटाया नहीं जा सका';return}window.__draw()};
