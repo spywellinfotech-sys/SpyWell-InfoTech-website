@@ -8,6 +8,7 @@ import { Section, SectionHeading } from '../components/Section';
 import { ServiceCard, ProductCard, PortfolioCard } from '../components/Cards';
 import { useLang } from '../i18n/LanguageContext';
 import { whatsappLink } from '../data/site';
+import { openStudio } from '../components/StudioPopup';
 import { services, products, portfolio, industries, process, whyUs } from '../data/content';
 
 export default function Home() {
@@ -39,6 +40,19 @@ export default function Home() {
             </div>
           </div>
           <HeroSlideshow />
+        </div>
+      </section>
+
+      {/* SpyWell Live Studio banner */}
+      <section className="bg-gradient-to-r from-navy-800 to-navy-900 text-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-start gap-4 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+          <div>
+            <p className="font-display text-xl font-extrabold sm:text-2xl">✨ {t('studio.bannerTitle')}</p>
+            <p className="mt-1 max-w-3xl text-navy-100">{t('studio.bannerSub')}</p>
+          </div>
+          <button type="button" onClick={openStudio} className="shrink-0 rounded-full bg-electric-500 px-7 py-3 font-bold text-white shadow-lg transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
+            {t('studio.bannerBtn')}
+          </button>
         </div>
       </section>
 

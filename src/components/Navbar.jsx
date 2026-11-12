@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { useLang } from '../i18n/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import Logo from './Logo';
+import { openStudio } from './StudioPopup';
 
 const links = [
   ['/', 'nav.home'],
@@ -57,6 +58,7 @@ export default function Navbar() {
         </ul>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <button type="button" onClick={openStudio} className="rounded-full border-2 border-electric-500 px-4 py-2 text-sm font-bold text-electric-600 transition hover:bg-electric-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500">✨ SpyWell {t('nav.studio')}</button>
           <LanguageSwitcher />
           <Link to="/contact" className="rounded-full bg-electric-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500 focus-visible:ring-offset-2">
             {t('nav.cta')}
@@ -87,6 +89,9 @@ export default function Navbar() {
               </NavLink>
             </li>
           ))}
+          <li>
+            <button type="button" onClick={() => { setOpen(false); openStudio(); }} className="block w-full rounded-md px-3 py-3 text-left text-base font-bold text-electric-600 hover:bg-navy-50">✨ SpyWell {t('nav.studio')}</button>
+          </li>
           <li className="pt-2">
             <Link to="/contact" className="block rounded-full bg-electric-500 px-5 py-3 text-center font-bold text-white">
               {t('nav.cta')}

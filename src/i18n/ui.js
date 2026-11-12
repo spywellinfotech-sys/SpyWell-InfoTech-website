@@ -6,7 +6,12 @@ export const ui = {
       home: 'Home', about: 'About', services: 'Services', products: 'Products',
       portfolio: 'Portfolio', industries: 'Industries', contact: 'Contact',
       cta: 'Free Consultation', menu: 'Open menu', close: 'Close menu', skip: 'Skip to main content',
-      language: 'Language',
+      language: 'Language', studio: 'Live Studio',
+    },
+    studio: {
+      bannerTitle: 'SpyWell Live Studio: online invitation cards, visiting cards and mini websites',
+      bannerSub: 'Make it from your phone and share one link on WhatsApp. No printing, no running around. AI enabled.',
+      bannerBtn: 'See how it works', newTab: 'Open in new tab', close: 'Close', create: 'Create your card now',
     },
     common: {
       learnMore: 'Learn more', viewAll: 'View all', viewServices: 'View our services',
@@ -108,7 +113,12 @@ export const ui = {
       home: 'होम', about: 'हमारे बारे में', services: 'सेवाएँ', products: 'प्रोडक्ट',
       portfolio: 'पोर्टफ़ोलियो', industries: 'उद्योग', contact: 'संपर्क',
       cta: 'मुफ़्त परामर्श', menu: 'मेनू खोलें', close: 'मेनू बंद करें', skip: 'मुख्य सामग्री पर जाएँ',
-      language: 'भाषा',
+      language: 'भाषा', studio: 'लाइव स्टूडियो',
+    },
+    studio: {
+      bannerTitle: 'SpyWell Live Studio: ऑनलाइन इनविटेशन कार्ड, विज़िटिंग कार्ड और मिनी वेबसाइट',
+      bannerSub: 'फ़ोन से बनाइए और एक लिंक WhatsApp पर भेज दीजिए। न छपाई, न दौड़-भाग। AI चालू है।',
+      bannerBtn: 'देखिए कैसे काम करता है', newTab: 'नई टैब में खोलें', close: 'बंद करें', create: 'अभी अपना कार्ड बनाएँ',
     },
     common: {
       learnMore: 'और जानें', viewAll: 'सभी देखें', viewServices: 'हमारी सेवाएँ देखें',

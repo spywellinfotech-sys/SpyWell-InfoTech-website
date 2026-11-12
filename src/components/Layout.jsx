@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import WhatsAppFloat from './WhatsAppFloat';
+import StudioModal from './StudioPopup';
 import { useLang } from '../i18n/LanguageContext';
 
 export default function Layout() {
@@ -32,6 +33,7 @@ export default function Layout() {
       </main>
       <Footer />
       <WhatsAppFloat />
+      <StudioModal />
     </div>
   );
 }
