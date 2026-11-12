@@ -1,0 +1,18 @@
+insert into public.studio_templates(id,product_type,name,description,config,sort) values
+ ('vc-12','visiting','Royal Navy Diagonal','Navy, tilted header','{"style": "Corporate", "layout": "diag", "palette": {"bg": "#f4f7fc", "fg": "#0f1d3d", "ac": "#1e3a8a"}, "font": "poppins", "nameFont": "playfair"}',12),
+ ('vc-13','visiting','Doctor Ring','Teal, round photo ring, clinics','{"style": "Medical", "layout": "ring", "palette": {"bg": "#f0fafc", "fg": "#0b2a33", "ac": "#0e7490"}, "font": "hind", "nameFont": "hind"}',13),
+ ('vc-14','visiting','Advocate Border','Black and gold bordered card','{"style": "Professional", "layout": "card", "palette": {"bg": "#151515", "fg": "#f1ede2", "ac": "#b8912f"}, "font": "poppins", "nameFont": "playfair", "anim": "soft"}',14),
+ ('vc-15','visiting','Rose Ribbon','Pink ribbon name, salon and boutique','{"style": "Creative", "layout": "ribbon", "palette": {"bg": "#fff5f8", "fg": "#3b1024", "ac": "#be185d"}, "font": "mukta", "nameFont": "playfair"}',15),
+ ('vc-16','visiting','Builder Dots','Brown dotted header','{"style": "Business", "layout": "dots", "palette": {"bg": "#fffaf3", "fg": "#2e1a0b", "ac": "#92400e"}, "font": "hind", "nameFont": "yatra"}',16),
+ ('vc-17','visiting','Sky Diagonal','Light blue tilted header','{"style": "Modern", "layout": "diag", "palette": {"bg": "#f2faff", "fg": "#0c2a3d", "ac": "#0284c7"}, "font": "poppins", "nameFont": "poppins"}',17),
+ ('vc-18','visiting','Forest Ring','Dark green and gold, premium','{"style": "Premium", "layout": "ring", "palette": {"bg": "#0f2a1d", "fg": "#eaf3ea", "ac": "#d4b04a"}, "font": "poppins", "nameFont": "playfair", "anim": "soft"}',18),
+ ('vc-19','visiting','Sunset Ribbon','Orange ribbon name','{"style": "Bold", "layout": "ribbon", "palette": {"bg": "#ffffff", "fg": "#2b1507", "ac": "#ea580c"}, "font": "mukta", "nameFont": "yatra"}',19),
+ ('vc-20','visiting','Maroon Border','Maroon framed traditional card','{"style": "Traditional", "layout": "card", "palette": {"bg": "#fff9ee", "fg": "#2b1410", "ac": "#7f1d1d"}, "font": "tiro", "nameFont": "yatra"}',20),
+ ('vc-21','visiting','Mint Dots','Soft green dotted header','{"style": "Fresh", "layout": "dots", "palette": {"bg": "#f6fffb", "fg": "#14332a", "ac": "#059669"}, "font": "poppins", "nameFont": "poppins"}',21),
+ ('vc-22','visiting','Plum Diagonal','Plum and rose gold','{"style": "Premium", "layout": "diag", "palette": {"bg": "#3b0f33", "fg": "#fbeff0", "ac": "#e0a899"}, "font": "poppins", "nameFont": "playfair", "anim": "soft"}',22),
+ ('vc-23','visiting','Mono Border','Black and white framed','{"style": "Minimal", "layout": "card", "palette": {"bg": "#ffffff", "fg": "#111111", "ac": "#111111"}, "font": "poppins", "nameFont": "poppins"}',23),
+ ('vc-24','visiting','Gold Ring','Cream and gold, jewellery','{"style": "Premium", "layout": "ring", "palette": {"bg": "#fffbeb", "fg": "#3a2a06", "ac": "#a16207"}, "font": "tiro", "nameFont": "playfair", "anim": "soft"}',24),
+ ('vc-25','visiting','Tech Ribbon','Dark with cyan ribbon','{"style": "Tech", "layout": "ribbon", "palette": {"bg": "#0b1220", "fg": "#e6f1f7", "ac": "#22d3ee"}, "font": "poppins", "nameFont": "poppins", "anim": "soft"}',25),
+ ('vc-26','visiting','Kisan Dots','Earthy green dotted header','{"style": "Business", "layout": "dots", "palette": {"bg": "#f8fbef", "fg": "#1f2d0b", "ac": "#3f6212"}, "font": "hind", "nameFont": "yatra"}',26),
+ ('vc-27','visiting','Peacock Diagonal','Peacock blue and gold','{"style": "Premium", "layout": "diag", "palette": {"bg": "#fdf8ea", "fg": "#0a2a30", "ac": "#0b6e7f"}, "font": "hind", "nameFont": "yatra"}',27)
+on conflict (id) do nothing;

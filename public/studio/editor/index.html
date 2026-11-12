@@ -185,7 +185,7 @@ function pDesign(p){
   p.appendChild(h('div',{class:'row2'},[
     sel('एनिमेशन','anim',[['rich','पूरा (पंखुड़ियाँ + चमक)'],['soft','हल्का'],['none','बंद']],s.anim||t.anim||'rich'),
     sel('गिरने वाली सजावट','petal',[['none','कुछ नहीं'],['❀','फूल ❀'],['❦','पत्ती ❦'],['✦','तारा ✦'],['❤','दिल ❤'],['★','सितारा ★']],s.petal||t.petal||(D.product_type==='invitation'?'❀':'none'))]));
-  var lays=D.product_type==='invitation'?[['frame','फ्रेम'],['double','दोहरा फ्रेम'],['arch','मेहराब'],['plain','सादा']]:[['band','पट्टी'],['wave','लहर'],['side','साइड लाइन']];
+  var lays=D.product_type==='invitation'?[['frame','फ्रेम'],['double','दोहरा फ्रेम'],['arch','मेहराब'],['plain','सादा']]:[['band','पट्टी'],['wave','लहर'],['side','साइड लाइन'],['diag','तिरछी पट्टी'],['ring','गोल फ़ोटो रिंग'],['dots','बिंदी वाली पट्टी'],['ribbon','रिबन नाम'],['card','बॉर्डर कार्ड']];
   var cl=s.layout||t.layout||lays[0][0];if(!lays.some(function(x){return x[0]===cl}))cl=lays[0][0];
   p.appendChild(sel('कार्ड की बनावट','layout',lays,cl));
   if(D.product_type==='invitation')p.appendChild(sel('सजावटी चिह्न','ornament',[['none','कोई नहीं'],['❖','❖'],['❁','❁'],['❋','❋'],['✦','✦'],['❀','❀'],['❦','❦'],['ॐ','ॐ'],['❤','❤']],s.ornament||t.ornament||'none'));
