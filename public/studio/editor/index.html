@@ -117,7 +117,8 @@ function pInfo(p){
   if(D.product_type==='visiting')urlBox(p);
   R.fieldsFor(D.product_type,cfg()).forEach(function(d){
     var k=d[0],typ=d[2],inp;
-    if(typ==='select'){inp=h('select');inp.appendChild(h('option',{value:'',text:'— सूची से चुनें —'}));IND.forEach(function(o){inp.appendChild(h('option',{value:o.id,text:o.name_hi}))});inp.value=C.fields[k]||'';inp.id='f-'+k;inp.onchange=function(){C.fields[k]=inp.value;changed()};p.appendChild(h('label',{text:d[1],for:'f-'+k}));p.appendChild(inp);return}
+    if(k==='industry_other'){var iw=h('div',{id:'io-wrap'}),io=h('input',{type:'text',maxlength:40,id:'f-industry_other',placeholder:'जैसे: कोयला व्यापार, बैंड बाजा, ड्रोन सर्विस'});io.value=C.fields[k]||'';io.oninput=function(){C.fields[k]=io.value;changed()};iw.appendChild(h('label',{text:d[1],for:'f-industry_other'}));iw.appendChild(io);iw.style.display=C.fields.industry==='other'?'':'none';p.appendChild(iw);return}
+    if(typ==='select'){inp=h('select');inp.appendChild(h('option',{value:'',text:'— सूची से चुनें —'}));IND.forEach(function(o){inp.appendChild(h('option',{value:o.id,text:o.name_hi}))});inp.value=C.fields[k]||'';inp.id='f-'+k;inp.onchange=function(){C.fields[k]=inp.value;var w=$('io-wrap');if(w)w.style.display=inp.value==='other'?'':'none';if(inp.value!=='other'){delete C.fields.industry_other;var q=$('f-industry_other');if(q)q.value=''}changed()};p.appendChild(h('label',{text:d[1],for:'f-'+k}));p.appendChild(inp);return}
     else if(typ==='area')inp=h('textarea',{maxlength:d[3]});
     else inp=h('input',{type:typ==='tel'?'tel':typ==='email'?'email':typ==='url'?'url':typ,maxlength:d[3],inputmode:typ==='tel'?'numeric':null});
     inp.value=C.fields[k]||'';inp.id='f-'+k;

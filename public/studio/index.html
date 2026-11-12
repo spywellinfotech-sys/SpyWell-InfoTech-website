@@ -114,7 +114,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <label>नाम</label><input id="ct-n" maxlength="80">
 <label>दुकान / कंपनी (खाली छोड़ सकते हैं)</label><input id="ct-b" maxlength="80">
 <label>मोबाइल नंबर (10 अंक)</label><input id="ct-m" type="tel" inputmode="numeric" maxlength="10">
-<label>व्यवसाय का प्रकार</label><select id="ct-i"></select>
+<label>व्यवसाय का प्रकार</label><select id="ct-i"></select><input id="ct-io" type="text" maxlength="30" placeholder="अपना व्यवसाय लिखें" hidden style="margin-top:6px">
 <div class="err" id="ct-e"></div>
 <button type="button" id="ct-add">कॉन्टैक्ट सेव करें</button></details>
 <div id="sv-list" style="margin-top:8px"></div>
@@ -196,9 +196,10 @@ function drawContacts(){
 $('ct-q').oninput=drawContacts;
 $('ct-add').onclick=async function(){var n=$('ct-n').value.trim(),m=$('ct-m').value.replace(/\D/g,'').slice(-10),er=$('ct-e');er.textContent='';
   if(!n){er.textContent='नाम लिखें';return}if(!/^[6-9][0-9]{9}$/.test(m)){er.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}
-  this.disabled=true;var r=await sb.from('studio_contacts').insert({user_id:ME.id,name:n,business:$('ct-b').value.trim(),mobile:m,industry:$('ct-i').value});this.disabled=false;
+  this.disabled=true;var r=await sb.from('studio_contacts').insert({user_id:ME.id,name:n,business:$('ct-b').value.trim(),mobile:m,industry:($('ct-i').value==='other'&&$('ct-io').value.trim()?$('ct-io').value.trim().slice(0,30):$('ct-i').value)});this.disabled=false;
   if(r.error){er.textContent=r.error.code==='23505'?'यह नंबर पहले से जुड़ा है':'सेव नहीं हुआ, दोबारा कोशिश करें';return}
-  $('ct-n').value='';$('ct-b').value='';$('ct-m').value='';$('ct-i').value='';loadSaved()};
+  $('ct-n').value='';$('ct-b').value='';$('ct-m').value='';$('ct-i').value='';$('ct-io').value='';$('ct-io').hidden=true;loadSaved()};
+$('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(o.hidden)o.value=''};
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
