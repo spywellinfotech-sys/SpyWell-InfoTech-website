@@ -37,6 +37,9 @@ export default function Home() {
               <a href={whatsappLink(t('contact.waGreeting'))} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border-2 border-navy-800 px-7 py-3 font-semibold text-navy-800 transition hover:bg-navy-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-800">
                 <MessageCircle size={18} aria-hidden="true" /> {t('common.whatsapp')}
               </a>
+              <button type="button" onClick={openStudio} className="inline-flex items-center gap-2 rounded-full border-2 border-electric-500 px-7 py-3 font-semibold text-electric-600 transition hover:bg-electric-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500">
+                ✨ SpyWell {t('nav.studio')}
+              </button>
             </div>
           </div>
           <HeroSlideshow />
