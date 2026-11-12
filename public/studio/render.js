@@ -247,6 +247,7 @@
     var sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'; sc.onload = go; sc.onerror = done; document.head.appendChild(sc);
   }
   function saveCardBtn(root, f) { var b = el('button', 'sr-save sr-savecard', T('\uD83D\uDDBC कार्ड फ़ोटो सेव करें')); b.type = 'button'; b.setAttribute('data-act', 'savecard'); b.onclick = function () { saveCardImage(root, f, b); }; return b; }
+  function motifStrip(m) { var d = el('div', 'sr-mt'); for (var n = 0; n < 7; n++) { var sp = el('span', '', m); sp.style.setProperty('--n', n); d.appendChild(sp); } return d; }
   function buildVisiting(root, d) {
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd');
     if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hd.appendChild(lg); }
@@ -294,7 +295,9 @@
     root.className += ' a-' + align;
     var fx = ['curtain', 'aurora', 'neon', 'flip'].indexOf(s.fx || t.fx) >= 0 ? (s.fx || t.fx) : ''; if (fx && !(opts.demo && !opts.play)) root.className += ' fx-' + fx;
     if (type === 'invitation' && d.images.bg) { st.backgroundImage = 'url("' + d.images.bg.url + '")'; st.backgroundPosition = '50% ' + d.images.bg.pos + '%'; st.setProperty('--pane', rgba(bg, 0.88)); } else st.setProperty('--pane', 'transparent');
+    var mo = type === 'visiting' && t.motif ? txt(t.motif, 8) : '';
     if (type === 'visiting') buildVisiting(root, d); else buildInvitation(root, d, { ornament: s.ornament === 'none' ? '' : (s.ornament || (t.ornament === 'none' ? '' : txt(t.ornament, 4))) });
+    if (mo) root.insertBefore(motifStrip(mo), root.firstChild);
     var anim = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich'), play = !!opts.play || !opts.demo;
     if (anim !== 'none' && play) {
       root.className += ' sr-an sr-an-' + anim;
@@ -409,7 +412,7 @@
     if (wa) act.appendChild(actA(link('', 'WhatsApp', 'https://wa.me/91' + wa), 'whatsapp'));
     if (mapUrl) act.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map'));
     if (act.children.length) hin.appendChild(act);
-    hero.appendChild(hin); root.appendChild(hero);
+    hero.appendChild(hin); var smo = t.motif ? txt(t.motif, 8) : ''; if (smo) hero.insertBefore(motifStrip(smo), hero.firstChild); root.appendChild(hero);
     function sec(title) { var x = el('div', 'ws-sec'), i = el('div', 'ws-in'); i.appendChild(el('h2', '', title)); x.appendChild(i); root.appendChild(x); return i; }
     if (f.about) sec(T('हमारे बारे में')).appendChild(el('p', 'ws-about', f.about));
     if (d.services.length) { var si = sec(T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { g.appendChild(el('div', 'ws-card', x)); }); si.appendChild(g); }
@@ -433,7 +436,7 @@
       var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('ws-on'); io.unobserve(e.target); } }); }, { threshold: 0.12 });
       Array.prototype.forEach.call(root.querySelectorAll('.ws-sec .ws-in'), function (x) { x.classList.add('ws-rv'); io.observe(x); });
       Array.prototype.forEach.call(root.querySelectorAll('.ws-card,.sr-chip,.sr-qr'), function (x, i) { x.style.setProperty('--k', i % 6); });
-      if (wan === 'rich') { var bl = el('div', 'ws-bl'); for (var n = 0; n < 6; n++) { var b = el('i'); b.style.cssText = 'left:' + (8 + n * 16) + '%;width:' + (30 + (n * 17) % 40) + 'px;height:' + (30 + (n * 17) % 40) + 'px;animation-delay:' + (-n * 1.6) + 's;animation-duration:' + (9 + n * 2) + 's'; bl.appendChild(b); } root.querySelector('.ws-hero').appendChild(bl); }
+      if (wan === 'rich') { var bl = el('div', 'ws-bl'); for (var n = 0; n < 6; n++) { var b = el('i', '', smo); b.style.cssText = 'left:' + (8 + n * 16) + '%;width:' + (30 + (n * 17) % 40) + 'px;height:' + (30 + (n * 17) % 40) + 'px;animation-delay:' + (-n * 1.6) + 's;animation-duration:' + (9 + n * 2) + 's'; bl.appendChild(b); } root.querySelector('.ws-hero').appendChild(bl); }
     }
     mount.textContent = ''; mount.appendChild(root); return root;
   }
@@ -457,6 +460,9 @@
     '.ws-an .ws-card,.ws-an .sr-chip{opacity:0;transform:scale(.92)}.ws-an .ws-on .ws-card,.ws-an .ws-on .sr-chip{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease,box-shadow .2s;transition-delay:calc(var(--k,0)*.08s)}' +
     '.ws-an .ws-card:hover{box-shadow:0 6px 16px rgba(0,0,0,.14);transform:translateY(-3px)}' +
     '.ws-an .ws-navbtn{animation:srpls 2s ease-out 1.5s infinite}' +
+    '.sr-mt{display:flex;justify-content:space-around;align-items:center;font-size:1.25em;padding:.4em .5em;background:var(--soft);overflow:hidden}.sr-mt span{display:block}.sr-vc .sr-mt+.hd{margin-top:0}' +
+    '.ws-hero .sr-mt{background:rgba(255,255,255,.18);margin:-2.2em 0 1.4em}.ws-bl i{display:flex;align-items:center;justify-content:center;background:none!important;font-style:normal;font-size:26px;width:auto!important;height:auto!important}' +
+    '.sr-an .sr-mt span,.ws-an .sr-mt span{animation:srflt 3s ease-in-out infinite;animation-delay:calc(var(--n)*.25s)}' +
     '@media (prefers-reduced-motion:reduce){.ws-an .ws-hero,.ws-an .ws-hero .ws-in>*,.ws-rv,.ws-an .ws-card,.ws-an .sr-chip{animation:none!important;opacity:1!important;transform:none!important;transition:none!important}.ws-bl{display:none}}';
 
   function ensureAssets() {

@@ -64,7 +64,7 @@ function state(t,bad){var s=$('state');s.textContent=t;s.className='state'+(bad?
 if(!window.supabase||!R){state('लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
 var ID=new URLSearchParams(location.search).get('id')||'';
-var IND=[],D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':/[?&]tab=pub/.test(location.search)?'pub':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
+var IND=[],tplInd='',D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':/[?&]tab=pub/.test(location.search)?'pub':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
 var LS='studio-draft-'+ID;
 
 function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
@@ -209,8 +209,11 @@ function pTpl(p){
       chips.appendChild(h('button',{class:tplOcc===o[0]?'on':'',text:o[1],onclick:function(){tplOcc=o[0];panel()}}))});
     p.appendChild(chips);
   }
+  var myInd=D.product_type==='visiting'?(C.fields.industry||''):'';
+  var hasInd=myInd&&T.some(function(t){return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0});
+  if(hasInd){var ic=h('div',{class:'chips'});[['mine','⭐ मेरी industry के लिए'],['all','सभी']].forEach(function(o){ic.appendChild(h('button',{class:(tplInd||'mine')===o[0]?'on':'',text:o[1],onclick:function(){tplInd=o[0];panel()}}))});p.appendChild(ic)}
   var g=h('div',{class:'grid'});
-  T.filter(function(t){return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
+  T.filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
     var inner=h('div',{class:'in2'});R.render(inner,D.product_type,t.config,C,{demo:true});
     g.appendChild(h('button',{class:'mini'+(t.id===D.template_id?' on':''),onclick:function(){if(t.id===D.template_id)return;D.template_id=t.id;panel();changed()}},
       [h('div',{class:'box'},[inner]),h('div',{class:'cap'},[document.createTextNode(t.name),h('span',{text:(t.config&&t.config.style)||''})])]));
