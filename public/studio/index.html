@@ -85,7 +85,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <div class="card" id="c-new">
 <b>नया बनाएँ</b>
 <div class="grid" style="margin-top:10px">
-<button type="button" class="tile" data-new="invitation"><b>शादी का कार्ड</b><span>टेम्पलेट चुनें और बनाएँ</span></button>
+<button type="button" class="tile" data-new="invitation"><b>इनविटेशन कार्ड</b><span>शादी, जन्मदिन, पूजा, गृह प्रवेश आदि</span></button>
 <button type="button" class="tile" data-new="visiting"><b>विज़िटिंग कार्ड</b><span>टेम्पलेट चुनें और बनाएँ</span></button>
 </div>
 </div>
@@ -141,7 +141,7 @@ function busy(f,on){var b=f.querySelector('button[type=submit]');if(b)b.disabled
 document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.getAttribute('data-go'))}});
 
 var R=window.StudioRender,ME=null,TPL=[],LIST=[],FLT='all',armed='';
-var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'शादी का कार्ड',visiting:'विज़िटिंग कार्ड'};
+var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'इनविटेशन कार्ड',visiting:'विज़िटिंग कार्ड'};
 function mk(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
 function when(d){return new Date(d).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
 async function loadList(){
@@ -176,25 +176,35 @@ async function dup(id,btn){btn.disabled=true;
     if(n.error)btn.textContent='कॉपी नहीं बनी'}else btn.textContent='कॉपी नहीं बनी';
   btn.disabled=false;loadList()}
 async function del(id,btn){btn.disabled=true;var r=await sb.from('studio_designs').delete().eq('id',id);armed='';if(r.error){btn.textContent='नहीं मिटा'}loadList()}
+var OCCSEL='';
+function pickOcc(){
+  $('c-new').hidden=true;$('c-pick').hidden=false;$('pk-err').textContent='';$('pk-title').textContent='कौन सा इनविटेशन कार्ड बनाना है?';
+  var g=$('pk-grid');g.textContent='';var O=R.OCCASIONS;
+  Object.keys(O).forEach(function(k){
+    var n=TPL.filter(function(t){return t.product_type==='invitation'&&((t.config&&t.config.occasion)||'wedding')===k}).length;if(!n)return;
+    var b=mk('button','tile');b.type='button';b.appendChild(mk('b','',O[k].name));b.appendChild(mk('span','',n+' टेम्पलेट'));
+    b.onclick=function(){OCCSEL=k;pick('invitation')};g.appendChild(b)});
+}
 function pick(type){
-  $('c-new').hidden=true;$('c-pick').hidden=false;$('pk-err').textContent='';$('pk-title').textContent=TYN[type]+' का टेम्पलेट चुनें';
-  var g=$('pk-grid');g.textContent='';var rows=TPL.filter(function(t){return t.product_type===type});
+  if(type==='invitation'&&!OCCSEL){pickOcc();return}
+  $('c-new').hidden=true;$('c-pick').hidden=false;$('pk-err').textContent='';$('pk-title').textContent=(type==='invitation'?R.OCCASIONS[OCCSEL].name+' का':TYN[type])+' टेम्पलेट चुनें';
+  var g=$('pk-grid');g.textContent='';var rows=TPL.filter(function(t){return t.product_type===type&&(type!=='invitation'||((t.config&&t.config.occasion)||'wedding')===OCCSEL)});
   if(!rows.length)g.appendChild(mk('div','k','अभी कोई टेम्पलेट उपलब्ध नहीं है।'));
   rows.forEach(function(t){
     var b=mk('button','mini');b.type='button';var box=mk('div','box'),inn=mk('div','in2');R.render(inn,type,t.config,{},{demo:true});box.appendChild(inn);b.appendChild(box);
     var cap=mk('div','cap',t.name);cap.appendChild(mk('span','',(t.config&&t.config.style)||''));b.appendChild(cap);
     b.onclick=async function(){b.disabled=true;
-      var r=await sb.from('studio_designs').insert({user_id:ME.id,template_id:t.id,product_type:type,title:type==='invitation'?'नया शादी कार्ड':'नया विज़िटिंग कार्ड',content_json:{}}).select('id').single();
+      var r=await sb.from('studio_designs').insert({user_id:ME.id,template_id:t.id,product_type:type,title:type==='invitation'?'नया '+R.OCCASIONS[OCCSEL].name+' कार्ड':'नया विज़िटिंग कार्ड',content_json:{}}).select('id').single();
       if(r.error||!r.data){b.disabled=false;$('pk-err').textContent='नया डिज़ाइन नहीं बन पाया। दोबारा कोशिश करें।';return}
       location.href='/studio/editor/?id='+r.data.id};
     g.appendChild(b)});
   $('c-pick').scrollIntoView({block:'start'});
 }
 document.querySelectorAll('[data-new]').forEach(function(b){b.onclick=function(){pick(b.getAttribute('data-new'))}});
-$('pk-back').onclick=function(){$('c-pick').hidden=true;$('c-new').hidden=false};
+$('pk-back').onclick=function(){if(OCCSEL){OCCSEL='';pickOcc();return}$('c-pick').hidden=true;$('c-new').hidden=false};
 $('q').oninput=drawList;
 async function dash(user){
-  ME=user;show('dash');$('c-pick').hidden=true;$('c-new').hidden=false;
+  ME=user;show('dash');OCCSEL='';$('c-pick').hidden=true;$('c-new').hidden=false;
   $('d-mail').textContent=user.email||'';
   var meta=user.user_metadata||{};
   var p=await sb.from('studio_profiles').select('full_name,phone').eq('id',user.id).maybeSingle();

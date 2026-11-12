@@ -23,7 +23,7 @@ function h(t,p,k){var e=document.createElement(t);for(var a in p||{}){if(a==='cl
 function say(t,bad){app.textContent='';app.appendChild(h('div',{class:'msg'+(bad?' bad':''),text:t}))}
 if(!window.supabase){say('लोड नहीं हो पाया',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
-var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'शादी का कार्ड',visiting:'विज़िटिंग कार्ड'};
+var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'इनविटेशन कार्ड',visiting:'विज़िटिंग कार्ड'};
 var tab='cust',body,sel=null;
 function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):''}
 (async function(){
@@ -31,7 +31,7 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
   var a=await sb.rpc('studio_is_admin');
   if(a.error||a.data!==true){say('इस पेज को खोलने की अनुमति नहीं है।',true);return}
   var st=await sb.rpc('studio_admin_stats');app.textContent='';
-  if(!st.error&&st.data){var g=h('div',{class:'stats'});[['customers','ग्राहक'],['invitations','शादी कार्ड'],['visiting','विज़िटिंग'],['published','प्रकाशित'],['drafts','ड्राफ़्ट'],['ai_calls_7d','AI (7 दिन)']].forEach(function(x){g.appendChild(h('div',{class:'stat'},[h('b',{text:String(st.data[x[0]]==null?0:st.data[x[0]])}),h('span',{text:x[1]})]))});app.appendChild(g)}
+  if(!st.error&&st.data){var g=h('div',{class:'stats'});[['customers','ग्राहक'],['invitations','इनविटेशन कार्ड'],['visiting','विज़िटिंग'],['published','प्रकाशित'],['drafts','ड्राफ़्ट'],['ai_calls_7d','AI (7 दिन)']].forEach(function(x){g.appendChild(h('div',{class:'stat'},[h('b',{text:String(st.data[x[0]]==null?0:st.data[x[0]])}),h('span',{text:x[1]})]))});app.appendChild(g)}
   var vc=await sb.rpc('studio_admin_view_counts');VC={};var tv=0,tc=0;(vc.data||[]).forEach(function(x){VC[x.design_id]=x;tv+=Number(x.views);tc+=Number(x.clicks)});
   if(!vc.error){var g2=h('div',{class:'stats'});[[tv,'कुल कार्ड व्यू'],[tc,'कुल बटन क्लिक']].forEach(function(x){g2.appendChild(h('div',{class:'stat'},[h('b',{text:String(x[0])}),h('span',{text:x[1]})]))});app.appendChild(g2)}
   var bp=h('div');app.appendChild(bp);balPanel(bp);
