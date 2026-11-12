@@ -344,7 +344,7 @@ async function pIns(p){
 /* ---------- publish ---------- */
 var SLUG=/^[a-z0-9]+(-[a-z0-9]+)*$/;
 function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'inv':'v')+'/'+slug}
-function shareText(){return D.product_type==='invitation'?'आप सादर आमंत्रित हैं: ':'हमारा डिजिटल विज़िटिंग कार्ड: '}
+function shareText(){return D.product_type==='invitation'?'आप सादर आमंत्रित हैं: ':'हमारा ऑनलाइन विज़िटिंग कार्ड: '}
 function webUrl(slug){return location.origin+'/web/'+slug}
 function mobSlug(){var f=C.fields||{},m=String(D.product_type==='invitation'?(f.c1_phone||f.c2_phone):f.mobile).replace(/\D/g,'');if(m.length>=10)m=m.slice(-10);return m.length>=3?m:''}
 function slugify(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)}
