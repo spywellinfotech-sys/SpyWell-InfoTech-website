@@ -28,5 +28,5 @@ if(m.length!==10){$('h').textContent='यह QR सही नहीं है';$
 var n=String(q.get('n')||'').slice(0,30),v=String(q.get('v')||'').slice(0,14).toUpperCase();
 $('call').href='tel:+91'+m;$('wa').href='https://wa.me/91'+m+'?text='+encodeURIComponent('नमस्ते, आपकी गाड़ी के बारे में।');
 if(v){var s=document.createElement('span');s.className='v';s.textContent=v;$('vw').appendChild(s)}
-$('nm').textContent=(n?n+' · ':'')+'+91 '+m})();
+$('nm').textContent=n})();
 </script></body></html>
