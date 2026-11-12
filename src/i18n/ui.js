@@ -6,7 +6,7 @@ export const ui = {
       home: 'Home', about: 'About', services: 'Services', products: 'Products',
       portfolio: 'Portfolio', industries: 'Industries', contact: 'Contact',
       cta: 'Free Consultation', menu: 'Open menu', close: 'Close menu', skip: 'Skip to main content',
-      language: 'Language', studio: 'Live Studio',
+      language: 'Language', studio: 'Live Studio', studioShort: 'Studio',
     },
     studio: {
       bannerTitle: 'SpyWell Live Studio: online invitation cards, visiting cards and mini websites',
@@ -113,7 +113,7 @@ export const ui = {
       home: 'होम', about: 'हमारे बारे में', services: 'सेवाएँ', products: 'प्रोडक्ट',
       portfolio: 'पोर्टफ़ोलियो', industries: 'उद्योग', contact: 'संपर्क',
       cta: 'मुफ़्त परामर्श', menu: 'मेनू खोलें', close: 'मेनू बंद करें', skip: 'मुख्य सामग्री पर जाएँ',
-      language: 'भाषा', studio: 'लाइव स्टूडियो',
+      language: 'भाषा', studio: 'लाइव स्टूडियो', studioShort: 'स्टूडियो',
     },
     studio: {
       bannerTitle: 'SpyWell Live Studio: ऑनलाइन इनविटेशन कार्ड, विज़िटिंग कार्ड और मिनी वेबसाइट',

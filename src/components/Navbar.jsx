@@ -65,7 +65,10 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-1.5 lg:hidden">
+          {pathname === '/' && (
+            <button type="button" onClick={openStudio} className="rounded-full border-2 border-electric-500 px-2.5 py-1 text-xs font-bold leading-tight text-electric-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric-500">✨ {t('nav.studioShort')}</button>
+          )}
           <LanguageSwitcher />
           <button
             type="button"
@@ -89,9 +92,6 @@ export default function Navbar() {
               </NavLink>
             </li>
           ))}
-          <li>
-            <button type="button" onClick={() => { setOpen(false); openStudio(); }} className="block w-full rounded-md px-3 py-3 text-left text-base font-bold text-electric-600 hover:bg-navy-50">✨ SpyWell {t('nav.studio')}</button>
-          </li>
           <li className="pt-2">
             <Link to="/contact" className="block rounded-full bg-electric-500 px-5 py-3 text-center font-bold text-white">
               {t('nav.cta')}
