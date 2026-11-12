@@ -37,6 +37,7 @@
     visiting: [
       ['name', 'आपका नाम', 'text', 60],
       ['business', 'व्यवसाय / दुकान का नाम', 'text', 80],
+      ['industry', 'व्यवसाय का प्रकार (Industry)', 'select', 30],
       ['designation', 'पद', 'text', 60],
       ['mobile', 'मोबाइल नंबर', 'tel', 15],
       ['whatsapp', 'WhatsApp नंबर', 'tel', 15],

@@ -42,7 +42,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 .k{font-size:13px;color:var(--mut)}
 [hidden]{display:none!important}
 @media(min-width:860px){.cols{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}#pvbox{max-height:calc(100vh - 130px)}.left{position:sticky;top:60px}}
-</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n.js"></script></head><body>
+</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script></head><body>
 <div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
 <button id="undo" disabled title="Undo">↶</button><button id="redo" disabled title="Redo">↷</button><button id="save">सेव</button></div>
 <div class="wrap">
@@ -64,7 +64,7 @@ function state(t,bad){var s=$('state');s.textContent=t;s.className='state'+(bad?
 if(!window.supabase||!R){state('लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
 var ID=new URLSearchParams(location.search).get('id')||'';
-var D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':/[?&]tab=pub/.test(location.search)?'pub':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
+var IND=[],D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':/[?&]tab=pub/.test(location.search)?'pub':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
 var LS='studio-draft-'+ID;
 
 function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
@@ -99,7 +99,8 @@ function pInfo(p){
   var bad=R.invalid(D.product_type,C);
   R.fieldsFor(D.product_type,cfg()).forEach(function(d){
     var k=d[0],typ=d[2],inp;
-    if(typ==='area')inp=h('textarea',{maxlength:d[3]});
+    if(typ==='select'){inp=h('select');inp.appendChild(h('option',{value:'',text:'— सूची से चुनें —'}));IND.forEach(function(o){inp.appendChild(h('option',{value:o.id,text:o.name_hi}))});inp.value=C.fields[k]||'';inp.id='f-'+k;inp.onchange=function(){C.fields[k]=inp.value;changed()};p.appendChild(h('label',{text:d[1],for:'f-'+k}));p.appendChild(inp);return}
+    else if(typ==='area')inp=h('textarea',{maxlength:d[3]});
     else inp=h('input',{type:typ==='tel'?'tel':typ==='email'?'email':typ==='url'?'url':typ,maxlength:d[3],inputmode:typ==='tel'?'numeric':null});
     inp.value=C.fields[k]||'';inp.id='f-'+k;
     var er=h('div',{class:'e'});
@@ -514,6 +515,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   D=r.data;C=shape(D.content_json);
   var t=await sb.from('studio_templates').select('id,name,config,sort').eq('product_type',D.product_type).order('sort',{ascending:true});
   T=t.data||[];
+  try{var ir=await sb.from('studio_industries').select('id,name_en,name_hi,sort').order('sort',{ascending:true});IND=ir.data||[]}catch(x){}
   var restored=false;
   try{var b=JSON.parse(localStorage.getItem(LS)||'null');if(b&&b.at>new Date(D.updated_at).getTime()){C=shape(b.c);if(b.t)D.template_id=b.t;restored=true}}catch(e){}
   if(R.isEmpty(D.product_type,C)&&!restored)tab='ai';

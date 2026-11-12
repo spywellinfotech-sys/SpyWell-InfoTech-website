@@ -33,7 +33,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 .mini .cap{font-size:12px;padding:5px 7px;border-top:1px solid var(--line)}.mini .cap span{color:var(--mut);display:block}
 @media(min-width:700px){.wrap{max-width:760px}}
 [hidden]{display:none!important}
-</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n.js"></script></head><body>
+</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script></head><body>
 <div class="top"><b><img src="/logo.png" alt="SpyWell" width="30" height="30" style="background:#fff;border-radius:50%;padding:2px;vertical-align:middle;margin-right:8px">SpyWell Live Studio</b><button id="out" hidden>लॉगआउट</button></div>
 <div class="wrap">
 
@@ -99,8 +99,17 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <button type="button" class="alt" id="pk-back">वापस</button>
 </div>
 <div class="card" id="c-saved">
-<b>💾 सेव किए हुए कार्ड</b>
-<div class="k">दूसरों के कार्ड खोलकर "सेव करें" दबाइए, वे यहाँ जमा होंगे।</div>
+<b>👥 मेरे कॉन्टैक्ट्स</b>
+<div class="k">दूसरों के कार्ड खोलकर "सेव करें" दबाइए, या नीचे से नंबर खुद जोड़िए। यहीं से कॉल और WhatsApp कीजिए।</div>
+<input id="ct-q" placeholder="नाम या नंबर खोजें" style="margin-top:8px">
+<div class="chips" id="ct-flt"></div>
+<details style="margin-top:10px"><summary style="cursor:pointer;color:var(--wine);font-weight:600">➕ नया कॉन्टैक्ट जोड़ें</summary>
+<label>नाम</label><input id="ct-n" maxlength="80">
+<label>दुकान / कंपनी (खाली छोड़ सकते हैं)</label><input id="ct-b" maxlength="80">
+<label>मोबाइल नंबर (10 अंक)</label><input id="ct-m" type="tel" inputmode="numeric" maxlength="10">
+<label>व्यवसाय का प्रकार</label><select id="ct-i"></select>
+<div class="err" id="ct-e"></div>
+<button type="button" id="ct-add">कॉन्टैक्ट सेव करें</button></details>
 <div id="sv-list" style="margin-top:8px"></div>
 </div>
 <div class="card">
@@ -151,16 +160,38 @@ var R=window.StudioRender,ME=null,TPL=[],LIST=[],FLT='all',armed='';
 var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'इनविटेशन कार्ड',visiting:'विज़िटिंग कार्ड'};
 function mk(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
 function when(d){return new Date(d).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+var IND=[],INDN={},CT=[],CTF='all';
 async function loadSaved(){
   try{var pend=localStorage.getItem('sp_pending_save');if(pend){localStorage.removeItem('sp_pending_save');var pp=pend.split('|');if((pp[0]==='invitation'||pp[0]==='visiting')&&pp[1])await sb.rpc('studio_save_card',{p_type:pp[0],p_slug:pp[1]})}}catch(e){}
-  var box=$('sv-list');if(!box)return;
-  var r=await sb.from('studio_saved_cards').select('id,product_type,slug,title,subtitle').eq('user_id',ME.id).order('created_at',{ascending:false});
-  box.textContent='';if(r.error){box.textContent='सूची लोड नहीं हुई।';return}
-  if(!r.data||!r.data.length){box.appendChild(mk('div','k','अभी कोई कार्ड सेव नहीं है।'));return}
-  r.data.forEach(function(x){var row=mk('div','item');row.style.cssText='display:flex;align-items:center;gap:8px;margin-top:6px';
-    var a=mk('a','',(x.product_type==='invitation'?'💌 ':'📇 ')+(x.title||x.slug));a.href='/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug;a.target='_blank';a.rel='noopener';a.style.cssText='flex:1;font-weight:600;color:var(--wine);text-decoration:none';
-    row.appendChild(a);if(x.subtitle){var sb2=mk('span','k',x.subtitle);row.appendChild(sb2)}
-    var d=mk('button','alt','हटाएँ');d.type='button';d.style.cssText='width:auto;padding:4px 10px;margin:0';d.onclick=async function(){d.disabled=true;await sb.from('studio_saved_cards').delete().eq('id',x.id);loadSaved()};row.appendChild(d);box.appendChild(row)})}
+  if(!IND.length){var ir=await sb.from('studio_industries').select('id,name_hi,sort').order('sort',{ascending:true});IND=ir.data||[];IND.forEach(function(o){INDN[o.id]=o.name_hi});
+    var si=$('ct-i');if(si){si.textContent='';var o0=mk('option','','— सूची से चुनें —');o0.value='';si.appendChild(o0);IND.forEach(function(o){var op=mk('option','',o.name_hi);op.value=o.id;si.appendChild(op)})}}
+  var a=await sb.from('studio_saved_cards').select('id,product_type,slug,title,subtitle,industry,mobile,whatsapp,created_at').eq('user_id',ME.id).order('created_at',{ascending:false});
+  var b=await sb.from('studio_contacts').select('id,name,business,mobile,industry,created_at').eq('user_id',ME.id).order('created_at',{ascending:false});
+  if(a.error&&b.error){$('sv-list').textContent='सूची लोड नहीं हुई।';return}
+  CT=[];(a.data||[]).forEach(function(x){CT.push({src:'card',id:x.id,title:x.title||x.slug,sub:x.subtitle,ind:x.industry,mob:x.mobile,wa:x.whatsapp,href:'/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug,ico:x.product_type==='invitation'?'💌 ':'📇 ',t:x.created_at})});
+  (b.data||[]).forEach(function(x){CT.push({src:'man',id:x.id,title:x.name,sub:x.business,ind:x.industry,mob:x.mobile,wa:x.mobile,ico:'👤 ',t:x.created_at})});
+  CT.sort(function(p,q){return String(q.t).localeCompare(String(p.t))});drawContacts()}
+function drawContacts(){
+  var box=$('sv-list'),fl=$('ct-flt'),q=($('ct-q').value||'').trim().toLowerCase();box.textContent='';fl.textContent='';
+  var used={};CT.forEach(function(x){if(x.ind)used[x.ind]=(used[x.ind]||0)+1});
+  var chips=[['all','सभी ('+CT.length+')']].concat(Object.keys(used).map(function(k){return [k,(INDN[k]||k)+' ('+used[k]+')']}));
+  if(chips.length>1)chips.forEach(function(c){var bt=mk('button',CTF===c[0]?'on':'',c[1]);bt.type='button';bt.onclick=function(){CTF=c[0];drawContacts()};fl.appendChild(bt)});
+  if(!CT.length){box.appendChild(mk('div','k','अभी कोई कॉन्टैक्ट नहीं है।'));return}
+  var rows=CT.filter(function(x){return (CTF==='all'||x.ind===CTF)&&(!q||(x.title+' '+(x.sub||'')+' '+(x.mob||'')).toLowerCase().indexOf(q)>=0)});
+  if(!rows.length){box.appendChild(mk('div','k','कोई कॉन्टैक्ट नहीं मिला।'));return}
+  rows.forEach(function(x){var row=mk('div','des');var t=mk('b','',x.ico+x.title);row.appendChild(t);
+    var meta=[x.sub,x.ind?(INDN[x.ind]||x.ind):'',x.mob?('+91 '+x.mob):''].filter(Boolean).join(' · ');if(meta)row.appendChild(mk('div','k',meta));
+    var ac=mk('div','acts');
+    if(x.mob){var c=mk('a','','📞 कॉल');c.href='tel:+91'+x.mob;ac.appendChild(c);var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+(x.wa||x.mob);w.target='_blank';w.rel='noopener';ac.appendChild(w)}
+    if(x.href){var o=mk('a','','कार्ड खोलें');o.href=x.href;o.target='_blank';o.rel='noopener';ac.appendChild(o)}
+    var dl=mk('button','danger','हटाएँ');dl.type='button';dl.onclick=async function(){if(!confirm('यह कॉन्टैक्ट हटाएँ?'))return;dl.disabled=true;await sb.from(x.src==='card'?'studio_saved_cards':'studio_contacts').delete().eq('id',x.id);loadSaved()};ac.appendChild(dl);
+    row.appendChild(ac);box.appendChild(row)})}
+$('ct-q').oninput=drawContacts;
+$('ct-add').onclick=async function(){var n=$('ct-n').value.trim(),m=$('ct-m').value.replace(/\D/g,'').slice(-10),er=$('ct-e');er.textContent='';
+  if(!n){er.textContent='नाम लिखें';return}if(!/^[6-9][0-9]{9}$/.test(m)){er.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}
+  this.disabled=true;var r=await sb.from('studio_contacts').insert({user_id:ME.id,name:n,business:$('ct-b').value.trim(),mobile:m,industry:$('ct-i').value});this.disabled=false;
+  if(r.error){er.textContent=r.error.code==='23505'?'यह नंबर पहले से जुड़ा है':'सेव नहीं हुआ, दोबारा कोशिश करें';return}
+  $('ct-n').value='';$('ct-b').value='';$('ct-m').value='';$('ct-i').value='';loadSaved()};
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
