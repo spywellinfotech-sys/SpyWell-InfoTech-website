@@ -166,7 +166,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){
 var R=window.StudioRender,ME=null,TPL=[],LIST=[],FLT='all',armed='';
 var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'इनविटेशन कार्ड',visiting:'विज़िटिंग कार्ड'};
 function mk(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
-function when(d){return new Date(d).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+function when(d){return new Date(d).toLocaleString((window.spLoc?spLoc():'hi-IN'),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
 var IND=[],INDN={},CT=[],CTF='all';
 async function loadSaved(){
   try{var pend=localStorage.getItem('sp_pending_save');if(pend){localStorage.removeItem('sp_pending_save');var pp=pend.split('|');if((pp[0]==='invitation'||pp[0]==='visiting')&&pp[1])await sb.rpc('studio_save_card',{p_type:pp[0],p_slug:pp[1]})}}catch(e){}

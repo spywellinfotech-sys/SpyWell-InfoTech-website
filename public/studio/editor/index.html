@@ -92,7 +92,7 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
   if(r.error||!r.data){state('सेव नहीं हुआ। इंटरनेट जाँचें, थोड़ी देर में दोबारा कोशिश होगी।',true);timer=setTimeout(save,8000);return}
   if(snap()===s){dirty=false;try{localStorage.removeItem(LS)}catch(e){}
     var bad=R.invalid(D.product_type,C).length;
-    state('सेव हो गया · '+new Date(r.data.updated_at).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})+(bad?' · '+bad+' जगह नंबर/ईमेल/लिंक गलत है, वह कार्ड में नहीं दिखेगा':''))}
+    state('सेव हो गया · '+new Date(r.data.updated_at).toLocaleTimeString((window.spLoc?spLoc():'hi-IN'),{hour:'2-digit',minute:'2-digit'})+(bad?' · '+bad+' जगह नंबर/ईमेल/लिंक गलत है, वह कार्ड में नहीं दिखेगा':''))}
   else timer=setTimeout(save,1500)}
 
 /* ---------- panels ---------- */
@@ -496,7 +496,7 @@ function pExtra(p){
 
 var DOMERR={bad_domain:'डोमेन सही नहीं है। ऐसे लिखें: aapkanaam.com',domain_taken:'यह डोमेन किसी और के नाम से जुड़ चुका है।',forbidden:'यह कार्ड आपका नहीं है।'};
 var PLN={card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'फ़ुल वेबसाइट + अपना डोमेन'};
-function fmtD(x){try{return new Date(x).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}}
+function fmtD(x){try{return new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi-IN'),{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}}
 var MANERR={bad_utr:'UTR/ट्रांज़ैक्शन नंबर सही नहीं है (8 से 30 अक्षर/अंक)।',utr_used:'यह UTR पहले इस्तेमाल हो चुका है।',already_pending:'इस कार्ड का भुगतान पहले से जाँच में है।',bad_plan:'प्लान सही नहीं है।',free:'इसके लिए भुगतान की ज़रूरत नहीं है।'};
 async function manualPay(plan,amount){
   var r=await sb.from('studio_settings').select('k,v').in('k',['manual_pay','upi_id','upi_name']),S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});
@@ -738,7 +738,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   $('main').hidden=false;tabs();panel();draw();pushHist();
   sb.rpc('studio_insights_setup',{p_design:D.id}).then(function(r){if(r.error||!r.data)return;INS={id:D.id,key:r.data.key};if(r.data.pin){try{localStorage.setItem(pinKey(),r.data.pin)}catch(x){}state('📊 इनसाइट लिंक और PIN तैयार हैं। "📊 इनसाइट" टैब से कॉपी करें।')}},function(){});
   if(restored){dirty=true;state('पिछली बार के बिना सेव बदलाव वापस लाए गए हैं, सेव हो रहे हैं…');timer=setTimeout(save,800)}
-  else state((D.status==='published'?'यह कार्ड प्रकाशित है; बदलाव सेव होते ही लाइव कार्ड में दिखेंगे · ':'')+'आख़िरी बदलाव: '+new Date(D.updated_at).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
+  else state((D.status==='published'?'यह कार्ड प्रकाशित है; बदलाव सेव होते ही लाइव कार्ड में दिखेंगे · ':'')+'आख़िरी बदलाव: '+new Date(D.updated_at).toLocaleString((window.spLoc?spLoc():'hi-IN'),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
 })();
 })();
 </script>

@@ -86,3 +86,4 @@
   function init() { document.documentElement.lang = cur; document.documentElement.dir = LANGS[cur][1]; picker(); applyAll(); start(); reveal(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
+;window.spLoc=function(){try{var l=localStorage.getItem('sp_lang')||'hi';return({hi:'hi-IN',en:'en-IN',pa:'pa-IN',mr:'mr-IN',gu:'gu-IN',ur:'ur-PK'})[l]||'hi-IN'}catch(e){return'hi-IN'}};

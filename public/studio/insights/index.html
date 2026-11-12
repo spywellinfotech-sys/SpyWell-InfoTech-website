@@ -57,7 +57,7 @@ function show(d){
     if((d.leads||[]).length){var cv=el('button','','⬇️ सूची डाउनलोड करें (CSV)');cv.style.cssText='width:100%;margin-top:10px';cv.onclick=function(){
       var q=function(v){return '"'+String(v).replace(/"/g,'""')+'"'},t2='\ufeffनाम,मोबाइल,आखिरी बार\n'+d.leads.map(function(x){return [q(x.n),q(x.m),q(new Date(x.at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}))].join(',')}).join('\n');
       var u=URL.createObjectURL(new Blob([t2],{type:'text/csv;charset=utf-8'})),a3=document.createElement('a');a3.href=u;a3.download='card-viewers.csv';document.body.appendChild(a3);a3.click();a3.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)};lbx.appendChild(cv)}}
-  if((d.recent||[]).length){var rb=box('ताज़ा गतिविधि');d.recent.forEach(function(x){row(rb,LB[x.k]||x.k,new Date(x.at).toLocaleString('hi-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))})}
+  if((d.recent||[]).length){var rb=box('ताज़ा गतिविधि');d.recent.forEach(function(x){row(rb,LB[x.k]||x.k,new Date(x.at).toLocaleString((window.spLoc?spLoc():'hi-IN'),{timeZone:'Asia/Kolkata',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))})}
   m.appendChild(el('small','','हर व्यक्ति का एक ही सत्र एक बार गिना जाता है।'));
 }
 ask('');
