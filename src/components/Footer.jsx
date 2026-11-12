@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Mail, MapPin, MessageCircle } from 'lucide-react';
 import { useLang } from '../i18n/LanguageContext';
 import { SITE, mailLink, whatsappLink } from '../data/site';
+import { openStudio } from './StudioPopup';
 import { services } from '../data/content';
 import Logo from './Logo';
 
@@ -63,6 +64,7 @@ export default function Footer() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs sm:flex-row sm:px-6 lg:px-8">
           <p>© {year} {SITE.name}. {t('footer.rights')}</p>
           <p className="flex gap-4">
+            <button type="button" className="hover:text-white" onClick={openStudio}>✨ SpyWell {t('nav.studio')}</button>
             <Link className="hover:text-white" to="/privacy">{t('footer.privacy')}</Link>
             <Link className="hover:text-white" to="/terms">{t('footer.terms')}</Link>
           </p>
