@@ -395,6 +395,30 @@ function pPub(p){
         h('button',{class:'btn alt',text:'वेबसाइट WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('हमारी वेबसाइट: '+wu),'_blank','noopener')}})]))}
     else if(D.product_type==='visiting')p.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
     if(D.product_type==='visiting'){
+      var cm=String((C.fields||{}).mobile||'').replace(/\D/g,'').slice(-10),cbox=h('div',{class:'item'});
+      cbox.appendChild(h('b',{text:'🚗 गाड़ी पर लगाने वाला कॉल QR'}));
+      if(cm.length!==10){cbox.appendChild(h('div',{class:'k',text:'पहले "जानकारी" टैब में अपना 10 अंक का मोबाइल नंबर भरें।'}))}
+      else{
+        cbox.appendChild(h('div',{class:'k',text:'इसे स्कैन करते ही सीधा आपके नंबर '+cm+' पर कॉल लग जाता है। गाड़ी के शीशे या बाइक पर लगाइए। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।'}));
+        var ttl=h('input',{type:'text',maxlength:40,value:'गाड़ी हटवाने के लिए कॉल करें',placeholder:'स्टिकर पर लिखा वाक्य'});ttl.style.marginTop='8px';cbox.appendChild(ttl);
+        var sc=h('canvas'),pv=h('img',{alt:'कार QR स्टिकर'});pv.style.cssText='width:100%;max-width:260px;display:block;margin:10px auto;border:1px solid #e8d5ad;border-radius:8px';cbox.appendChild(pv);
+        function drawSticker(){var W=800,H=1000,x=sc.getContext('2d');sc.width=W;sc.height=H;
+          x.fillStyle='#fff';x.fillRect(0,0,W,H);x.strokeStyle='#8b1a2b';x.lineWidth=14;x.strokeRect(14,14,W-28,H-28);
+          x.fillStyle='#8b1a2b';x.fillRect(14,14,W-28,150);x.fillStyle='#fff';x.textAlign='center';x.font='bold 70px sans-serif';x.fillText('📞 SCAN TO CALL',W/2,118);
+          var q=document.createElement('canvas');try{window.StudioQR.draw(q,'tel:+91'+cm,560)}catch(e){}
+          x.drawImage(q,(W-560)/2,200,560,560);
+          x.fillStyle='#2b1a14';x.font='bold 46px sans-serif';
+          var t=(ttl.value||'').trim().slice(0,40);x.fillText(t,W/2,830,W-80);
+          x.font='bold 58px sans-serif';x.fillText('+91 '+cm,W/2,910);
+          x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('SpyWell Live Studio',W/2,962);try{pv.src=sc.toDataURL('image/png')}catch(e){}}
+        drawSticker();ttl.oninput=drawSticker;
+        cbox.appendChild(h('button',{class:'btn',text:'⬇️ QR स्टिकर डाउनलोड करें',onclick:function(){
+          sc.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a2=document.createElement('a');a2.href=u;a2.download='car-call-qr-'+cm+'.png';document.body.appendChild(a2);a2.click();a2.remove();
+            setTimeout(function(){URL.revokeObjectURL(u)},4000)},'image/png')}}));
+        cbox.appendChild(h('div',{class:'k',text:'डाउनलोड न हो तो ऊपर की तस्वीर को देर तक दबाकर सेव करें, फिर प्रिंट करवाइए।'}));
+      }
+      p.appendChild(cbox)}
+    if(D.product_type==='visiting'){
       function upq(what){window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मुझे '+what+' चाहिए। मेरा कार्ड: '+url),'_blank','noopener')}
       p.appendChild(h('div',{class:'item'},[h('b',{text:'🚀 अपग्रेड करें'}),
         h('div',{class:'k',text:'1) विज़िटिंग कार्ड ✅ 2) मिनी वेबसाइट '+(C.style.site===true?'✅':'(ऊपर स्विच से चालू करें)')+' 3) अपना डोमेन (जैसे www.aapkanaam.com) 4) पूरी वेबसाइट'}),
