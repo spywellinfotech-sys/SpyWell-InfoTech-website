@@ -14,6 +14,7 @@ input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);fo
 <div class="top"><b>SpyWell Studio · एडमिन</b><a href="/studio/">← Studio</a></div>
 <div class="wrap" id="app"><div class="msg">लोड हो रहा है…</div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/studio/render.js"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -54,7 +55,7 @@ async function cardsView(){
   var c=sel;body.appendChild(h('button',{class:'btn',text:'← वापस',onclick:function(){sel=null;window.__draw()}}));
   body.appendChild(h('div',{class:'card'},[h('b',{text:c.full_name||'(नाम नहीं)'}),h('div',{class:'k',text:[c.phone,c.email].filter(Boolean).join(' · ')})]));
   var list=h('div');body.appendChild(list);
-  var r=await sb.from('studio_designs').select('id,title,status,product_type,slug,updated_at').eq('user_id',c.id).order('updated_at',{ascending:false});
+  var r=await sb.from('studio_designs').select('id,title,status,product_type,slug,updated_at,content_json').eq('user_id',c.id).order('updated_at',{ascending:false});
   if(r.error){list.appendChild(h('div',{class:'msg bad',text:'कार्ड नहीं आए'}));return}
   if(!r.data.length)list.appendChild(h('div',{class:'msg',text:'इस ग्राहक का कोई कार्ड नहीं'}));
   r.data.forEach(function(d){
@@ -78,6 +79,17 @@ async function cardsView(){
         Object.keys(x.devices||{}).forEach(function(k){ln((k==='mobile'?'फ़ोन':'कंप्यूटर')+': '+x.devices[k])});
         Object.keys(x.sources||{}).forEach(function(k){ln('स्रोत '+(k==='direct'?'सीधा लिंक / WhatsApp':k)+': '+x.sources[k])});
         ln('पिछले 14 दिन: '+x.days.map(function(z){return z.n}).join(' · '))}}),
+      h('button',{class:'btn',text:'📋 विवरण देखें',onclick:function(){
+        var box=document.getElementById('dt-'+d.id);if(box.textContent){box.textContent='';return}
+        var cj=d.content_json||{},f=cj.fields||{},R=window.StudioRender,seen={};
+        function ln(a,b){box.appendChild(h('div',{class:'k',text:a+': '+b,style:'color:#2b1a14'}))}
+        ((R&&R.FIELDS&&R.FIELDS[d.product_type])||[]).forEach(function(x){seen[x[0]]=1;if(f[x[0]])ln(x[1],f[x[0]])});
+        Object.keys(f).forEach(function(k){if(!seen[k]&&f[k])ln(k,f[k])});
+        if((cj.services||[]).length)ln('सेवाएँ',cj.services.join(', '));
+        (cj.events||[]).forEach(function(e,i){ln('कार्यक्रम '+(i+1),[e.title,e.date,e.time,e.place].filter(Boolean).join(' · '))});
+        if(cj.style&&cj.style.site)ln('मिनी वेबसाइट','चालू');
+        if(!box.textContent)box.appendChild(h('div',{class:'k',text:'कार्ड में अभी कुछ भरा नहीं गया।'}))}}),
+      h('div',{id:'dt-'+d.id,style:'margin-top:6px'}),
       h('div',{id:'ins-'+d.id,style:'margin-top:6px'}),
       del,m]);list.appendChild(row)})}
 async function tplView(){
