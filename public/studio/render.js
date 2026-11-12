@@ -305,7 +305,6 @@
     var soc = el('div', 'sr-soc');
     [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (s) { var u = V.url(s[1]); if (u) soc.appendChild(link('', s[0], u)); });
     if (soc.children.length) bd.appendChild(soc);
-    var qi = qrImage(f); if (qi) { var qw = el('div', 'sr-qr'); qw.appendChild(qi); qw.appendChild(el('div', 'sr-qrt', T('स्कैन करें और कॉन्टैक्ट सेव करें'))); bd.appendChild(qw); }
     bd.appendChild(shareBar(f, opts));
     root.appendChild(bd);
   }
@@ -469,7 +468,6 @@
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('📇 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; tools.appendChild(sv0); }
     tools.appendChild(saveCardBtn(root, f));
     ci.appendChild(tools);
-    var qi = qrImage(f); if (qi) { var qw = el('div', 'sr-qr'); qw.appendChild(qi); qw.appendChild(el('div', 'sr-qrt', T('स्कैन करें और कॉन्टैक्ट सेव करें'))); ci.appendChild(qw); }
     if (tel || wa) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
     var shs = el('div', 'ws-sec'), shi = el('div', 'ws-in'); shi.appendChild(shareBar(f, opts)); shs.appendChild(shi); root.appendChild(shs);
     root.appendChild(el('div', 'ws-foot', '© ' + new Date().getFullYear() + ' ' + (f.business || f.name || '')));
