@@ -443,6 +443,7 @@
     if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
     if (wa) act.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
+    if (mapUrl) act.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map'));
     if (act.children.length) hin.appendChild(act);
     hero.appendChild(hin); hero.appendChild(waveEl()); var smo = t.motif ? txt(t.motif, 8) : ''; if (smo) hero.insertBefore(motifStrip(smo), hero.firstChild); root.appendChild(hero);
     function sec(title) { var x = el('div', 'ws-sec'), i = el('div', 'ws-in'); i.appendChild(el('h2', '', title)); i.appendChild(el('div', 'ws-bar')); x.appendChild(i); root.appendChild(x); return i; }
