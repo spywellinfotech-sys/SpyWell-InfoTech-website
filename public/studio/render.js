@@ -46,6 +46,9 @@
       ['maplink', 'लोकेशन लिंक (Google Maps)', 'url', 300],
       ['website', 'वेबसाइट', 'url', 150],
       ['about', 'व्यवसाय के बारे में', 'area', 400],
+      ['tagline', 'टैगलाइन: एक लाइन (मिनी वेबसाइट)', 'text', 120],
+      ['hours', 'खुलने का समय (मिनी वेबसाइट)', 'text', 100],
+      ['since', 'स्थापना वर्ष, जैसे 2015 (मिनी वेबसाइट)', 'text', 4],
       ['facebook', 'Facebook लिंक', 'url', 200],
       ['instagram', 'Instagram लिंक', 'url', 200],
       ['youtube', 'YouTube लिंक', 'url', 200],
@@ -54,10 +57,10 @@
   };
   var IMAGES = {
     invitation: [['couple', 'जोड़े की फ़ोटो', 150], ['family', 'परिवार की फ़ोटो', 280], ['bg', 'बैकग्राउंड फ़ोटो', 0]],
-    visiting: [['logo', 'लोगो', 56], ['photo', 'प्रोफ़ाइल फ़ोटो', 108]]
+    visiting: [['logo', 'लोगो', 56], ['photo', 'प्रोफ़ाइल फ़ोटो', 108], ['g1', 'गैलरी फ़ोटो 1 (मिनी वेबसाइट)', 0], ['g2', 'गैलरी फ़ोटो 2 (मिनी वेबसाइट)', 0], ['g3', 'गैलरी फ़ोटो 3 (मिनी वेबसाइट)', 0], ['g4', 'गैलरी फ़ोटो 4 (मिनी वेबसाइट)', 0], ['g5', 'गैलरी फ़ोटो 5 (मिनी वेबसाइट)', 0], ['g6', 'गैलरी फ़ोटो 6 (मिनी वेबसाइट)', 0]]
   };
   var EVENT_PRESETS_W = ['सगाई', 'हल्दी', 'मेहंदी', 'संगीत', 'शादी', 'रिसेप्शन'], EVENT_PRESETS = EVENT_PRESETS_W;
-  var MAX_EVENTS = 8, MAX_SERVICES = 12;
+  var MAX_EVENTS = 8, MAX_SERVICES = 12, MAX_HIGH = 8;
   var OCCASIONS = {
     wedding: { name: 'विवाह', presets: EVENT_PRESETS_W },
     engagement: { name: 'सगाई / रोका', presets: ['रोका', 'सगाई', 'रिंग सेरेमनी', 'भोज'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'पहला नाम', bride_parents: 'परिवार / परिचय (पहले नाम के लिए)', groom: 'दूसरा नाम', groom_parents: 'परिवार / परिचय (दूसरे नाम के लिए)', date: 'कार्यक्रम की तारीख', time: 'कार्यक्रम का समय', venue: 'कार्यक्रम स्थल का नाम', address: 'स्थल का पता' },
@@ -130,14 +133,20 @@
   function maps(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
 
   /* Tolerant normaliser: whatever is stored, the renderer only sees this safe shape. */
+  var SVI = [[/repair|रिपेयर|मरम्मत|service|सर्विस|fix/i, '🛠️'], [/deliver|डिलीवरी|transport|ट्रांसपोर्ट|shipping|supply|सप्लाई/i, '🚚'], [/wholesale|थोक|bulk|trade|ट्रेड/i, '📦'], [/sale|बिक्री|buy|shop|दुकान|retail/i, '🛒'], [/design|डिज़ाइन|print|प्रिंट/i, '🎨'], [/consult|सलाह|advice|training|class|कोचिंग|शिक्षा/i, '🎓'], [/install|फिटिंग|इंस्टॉल|construction|निर्माण/i, '🏗️'], [/food|खाना|catering|कैटरिंग|restaurant|होटल/i, '🍽️'], [/medic|दवा|health|हेल्थ|clinic/i, '💊'], [/car|गाड़ी|taxi|टैक्सी|vehicle/i, '🚗'], [/home|घर|property|प्रॉपर्टी|land|ज़मीन/i, '🏠'], [/online|web|app|software|digital|डिजिटल/i, '💻'], [/charcoal|कोयला|wood|लकड़ी|coal/i, '🔥']], SVD = ['⭐', '✅', '💼', '📌', '🎯', '🌟'];
+  function svIcon(name, i) { for (var k = 0; k < SVI.length; k++) if (SVI[k][0].test(name)) return SVI[k][1]; return SVD[i % SVD.length]; }
+  function waveEl() { var d = document.createElement('div'); d.className = 'ws-wave'; d.innerHTML = '<svg viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 20c60 30 120 30 200 10s140-20 200 5v5H0z" fill="var(--bg)"/></svg>'; return d; }
+  function svParts(x) { x = String(x || ''); var i = x.indexOf('|'); return i < 0 ? [x.trim(), ''] : [x.slice(0, i).trim(), x.slice(i + 1).trim()]; }
+  function svName(x) { return svParts(x)[0]; }
   function normalize(type, c) {
     c = c && typeof c === 'object' ? c : {};
-    var out = { fields: {}, events: [], services: [], style: {}, images: {} }, f = c.fields && typeof c.fields === 'object' ? c.fields : {};
+    var out = { fields: {}, events: [], services: [], highlights: [], style: {}, images: {} }, f = c.fields && typeof c.fields === 'object' ? c.fields : {};
     (FIELDS[type] || []).forEach(function (d) { out.fields[d[0]] = txt(f[d[0]], d[3]); });
     if (type === 'invitation' && Array.isArray(c.events)) c.events.slice(0, MAX_EVENTS).forEach(function (e) {
       e = e && typeof e === 'object' ? e : {}; out.events.push({ title: txt(e.title, 60), date: V.date(e.date), time: V.time(e.time), place: txt(e.place, 120) });
     });
-    if (type === 'visiting' && Array.isArray(c.services)) c.services.slice(0, MAX_SERVICES).forEach(function (s) { s = txt(s, 60); if (s) out.services.push(s); });
+    if (type === 'visiting' && Array.isArray(c.services)) c.services.slice(0, MAX_SERVICES).forEach(function (s) { s = txt(s, 160); if (s) out.services.push(s); });
+    if (type === 'visiting' && Array.isArray(c.highlights)) c.highlights.slice(0, MAX_HIGH).forEach(function (s) { s = txt(s, 80); if (s) out.highlights.push(s); });
     var s = c.style && typeof c.style === 'object' ? c.style : {};
     out.style = { font: FONTS[s.font] ? s.font : '', nameFont: FONTS[s.nameFont] ? s.nameFont : '', size: num(s.size, 0.8, 1.4, 1),
       weight: [400, 500, 600, 700].indexOf(+s.weight) >= 0 ? +s.weight : 0, align: ['left', 'center', 'right'].indexOf(s.align) >= 0 ? s.align : '',
@@ -266,7 +275,7 @@
     act.appendChild(saveCardBtn(root, f));
     if (f.address || V.url(f.maplink)) act.appendChild(actA(link('', T('\uD83D\uDCCD लोकेशन'), V.url(f.maplink) || maps([f.business, f.address].filter(Boolean).join(', '))), 'map'));
     if (act.children.length) bd.appendChild(act);
-    if (d.services.length) { var sv = el('div', 'sr-svs'); sv.appendChild(el('div', 'sr-sub', T('सेवाएँ'))); d.services.forEach(function (s) { sv.appendChild(el('span', 'sr-chip', s)); }); bd.appendChild(sv); }
+    if (d.services.length) { var sv = el('div', 'sr-svs'); sv.appendChild(el('div', 'sr-sub', T('सेवाएँ'))); d.services.forEach(function (s) { sv.appendChild(el('span', 'sr-chip', svName(s))); }); bd.appendChild(sv); }
     [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
       if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', T(r[0]))); if (r[0] === 'मोबाइल') row.appendChild(actA(link('', r[1], 'tel:+91' + tel), 'call')); else row.appendChild(el('div', '', r[1])); bd.appendChild(row);
     });
@@ -407,28 +416,37 @@
     if (d.images.photo) hin.appendChild(picture('ph', d.images.photo, 'circle'));
     if (f.name) hin.appendChild(el('h1', 'sr-nm', f.name));
     if (f.designation) hin.appendChild(el('div', 'sr-des', f.designation));
-    var act = el('div', 'sr-act');
+    if (f.tagline) hin.appendChild(el('p', 'ws-tag', f.tagline));
+    var act = el('div', 'sr-act ws-act');
     if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call'));
-    if (wa) act.appendChild(actA(link('', 'WhatsApp', 'https://wa.me/91' + wa), 'whatsapp'));
+    if (wa) act.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp'));
     if (mapUrl) act.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map'));
     if (act.children.length) hin.appendChild(act);
-    hero.appendChild(hin); var smo = t.motif ? txt(t.motif, 8) : ''; if (smo) hero.insertBefore(motifStrip(smo), hero.firstChild); root.appendChild(hero);
-    function sec(title) { var x = el('div', 'ws-sec'), i = el('div', 'ws-in'); i.appendChild(el('h2', '', title)); x.appendChild(i); root.appendChild(x); return i; }
+    hero.appendChild(hin); hero.appendChild(waveEl()); var smo = t.motif ? txt(t.motif, 8) : ''; if (smo) hero.insertBefore(motifStrip(smo), hero.firstChild); root.appendChild(hero);
+    function sec(title) { var x = el('div', 'ws-sec'), i = el('div', 'ws-in'); i.appendChild(el('h2', '', title)); i.appendChild(el('div', 'ws-bar')); x.appendChild(i); root.appendChild(x); return i; }
+    var yr = /^\d{4}$/.test(f.since || '') ? f.since : '';
+    if (yr || f.hours || d.services.length) { var stt = el('div', 'ws-stats'); if (yr) { var a1 = el('div', 'ws-stat'); a1.appendChild(el('i', 'ws-si', '🏆')); a1.appendChild(el('b', '', String(Math.max(1, new Date().getFullYear() - (+yr)) ) + '+')); a1.appendChild(el('small', '', T('साल का अनुभव'))); stt.appendChild(a1); } if (d.services.length) { var a2 = el('div', 'ws-stat'); a2.appendChild(el('i', 'ws-si', '🧰')); a2.appendChild(el('b', '', String(d.services.length))); a2.appendChild(el('small', '', T('सेवाएँ'))); stt.appendChild(a2); } if (f.hours) { var a3 = el('div', 'ws-stat'); a3.appendChild(el('i', 'ws-si', '🕘')); a3.appendChild(el('b', 'ws-hrs', T('खुलने का समय'))); a3.appendChild(el('small', '', f.hours)); stt.appendChild(a3); } root.appendChild(stt); }
     if (f.about) sec(T('हमारे बारे में')).appendChild(el('p', 'ws-about', f.about));
-    if (d.services.length) { var si = sec(T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { g.appendChild(el('div', 'ws-card', x)); }); si.appendChild(g); }
+    if (d.services.length) { var si = sec(T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { var c = el('div', 'ws-card ws-sv'), p2 = svParts(x); c.appendChild(el('div', 'ws-ic', svIcon(p2[0], g.children.length))); c.appendChild(el('em', 'ws-no', String(g.children.length + 1))); c.appendChild(el('b', '', p2[0])); if (p2[1]) c.appendChild(el('p', 'ws-sd', p2[1])); g.appendChild(c); }); si.appendChild(g); }
+    if (d.highlights.length) { var hi = sec(T('हमें क्यों चुनें')), hg = el('div', 'ws-grid ws-hl'); d.highlights.forEach(function (x) { var c = el('div', 'ws-card ws-hi'); c.appendChild(el('div', 'ws-ic ws-ic2', '✔')); c.appendChild(el('span', '', x)); hg.appendChild(c); }); hi.appendChild(hg); }
+    var gk = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6'].filter(function (k) { return d.images[k]; });
+    if (gk.length) { var gi = sec(T('गैलरी')), gg = el('div', 'ws-gal'); gk.forEach(function (k) { var im = picture('ws-gp', d.images[k], 'gallery'); im.style.width = '100%'; gg.appendChild(im); }); gi.appendChild(gg); }
+    if (mapUrl) { var mi = sec(T('हमें यहाँ खोजें')); if (f.address) mi.appendChild(el('p', 'ws-about', f.address)); if (!opts.demo && f.address) { var fr = el('iframe', 'ws-map'); fr.setAttribute('loading', 'lazy'); fr.setAttribute('title', 'map'); fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade'); fr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent([f.business, f.address].filter(Boolean).join(', ')) + '&output=embed'; mi.appendChild(fr); } var mb = actA(link('ws-navbtn ws-mapbtn', T('🧭 रास्ता देखें'), mapUrl), 'map'); mi.appendChild(mb); }
     var ci = sec(T('संपर्क करें')), cg = el('div', 'ws-grid');
     [['मोबाइल', tel && ('+91 ' + tel), tel && 'tel:+91' + tel, 'call'], ['ईमेल', em, em && 'mailto:' + em, 'email'], ['पता', f.address, mapUrl, 'map'], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, ''), web, 'website']].forEach(function (r) {
-      if (!r[1]) return; var c = el('div', 'ws-card'); c.appendChild(el('small', '', T(r[0]))); if (r[2]) c.appendChild(actA(link('', r[1], r[2]), r[3])); else c.appendChild(el('div', '', r[1])); cg.appendChild(c);
+      if (!r[1]) return; var c = el('div', 'ws-card ws-ct'); c.appendChild(el('div', 'ws-ic ws-ic2', ({call: '📞', email: '✉️', map: '📍', website: '🌐'})[r[3]] || '•')); c.appendChild(el('small', '', T(r[0]))); if (r[2]) c.appendChild(actA(link('', r[1], r[2]), r[3])); else c.appendChild(el('div', '', r[1])); cg.appendChild(c);
     });
     ci.appendChild(cg);
     var soc = el('div', 'sr-soc');
-    [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (x) { var u = V.url(x[1]); if (u) soc.appendChild(link('', x[0], u)); });
+    [['Facebook', f.facebook, '📘'], ['Instagram', f.instagram, '📸'], ['YouTube', f.youtube, '▶️'], ['LinkedIn', f.linkedin, '💼']].forEach(function (x) { var u = V.url(x[1]); if (u) soc.appendChild(link('', x[2] + ' ' + x[0], u)); });
     if (soc.children.length) ci.appendChild(soc);
     var tools = el('div', 'sr-act');
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('📇 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; tools.appendChild(sv0); }
     tools.appendChild(saveCardBtn(root, f));
     ci.appendChild(tools);
     var qi = qrImage(f); if (qi) { var qw = el('div', 'sr-qr'); qw.appendChild(qi); qw.appendChild(el('div', 'sr-qrt', T('स्कैन करें और कॉन्टैक्ट सेव करें'))); ci.appendChild(qw); }
+    if (tel || wa) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
+    root.appendChild(el('div', 'ws-foot', '© ' + new Date().getFullYear() + ' ' + (f.business || f.name || '')));
     if (typeof opts.onAct === 'function') root.addEventListener('click', function (ev) { var x = ev.target.closest ? ev.target.closest('[data-act]') : null; if (x) { try { opts.onAct(x.getAttribute('data-act')); } catch (e) { } } });
     var wan = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich');
     if (wan !== 'none' && !opts.demo && 'IntersectionObserver' in window) {
@@ -451,6 +469,23 @@
     '.ws-about{max-width:34em;margin:0 auto;white-space:pre-line}.ws-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.7em}' +
     '.ws-card{background:var(--soft);border-radius:12px;padding:.9em;font-weight:600}.ws-card small{display:block;opacity:.65;font-weight:400;margin-bottom:.2em}' +
     '.ws-card a{text-decoration:none;word-break:break-all}' +
+    '.ws-hero .ws-act a,.ws-hero .ws-act button,.ws-cta .ws-act a{flex:1 1 9em;max-width:12em;display:flex;align-items:center;justify-content:center;gap:.3em;min-height:2.8em;padding:.5em 1em;border-radius:2em;font-weight:700;text-decoration:none;box-sizing:border-box}' +
+    '.ws-tag{max-width:30em;margin:.4em auto 1em;opacity:.95;font-size:1.05em}' +
+    '.ws-stats{display:flex;justify-content:center;flex-wrap:wrap;gap:.8em;padding:1.2em 1em;background:var(--soft)}.ws-stat{min-width:7em;text-align:center}.ws-stat b{display:block;font-size:1.5em;color:var(--ac);font-family:var(--nf)}.ws-stat small{opacity:.75}' +
+    '.ws-sv b{display:block;color:var(--ac)}.ws-sd{font-weight:400;font-size:.88em;opacity:.8;margin-top:.3em;line-height:1.4}' +
+    '.ws-hl .ws-card{text-align:left}.ws-ck{color:var(--ac);font-weight:700}' +
+    '.ws-gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(9em,1fr));gap:.6em}.ws-gal .ws-gp{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;display:block}' +
+    '.ws-map{width:100%;height:14em;border:0;border-radius:12px;margin:.8em 0}.ws-mapbtn{display:inline-block}' +
+    '.ws-cta{background:var(--ac);color:var(--bg);padding:2em 0}.ws-cta h2{font-family:var(--nf);margin-bottom:.7em}.ws-cta .ws-act{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.ws-cta .ws-act a{background:var(--bg);color:var(--ac)!important}' +
+    '.ws-foot{padding:1.2em;font-size:.8em;opacity:.65}' +
+    '.ws-hero{padding-bottom:3.2em}.ws-wave{position:absolute;left:0;right:0;bottom:-1px;height:2.2em;line-height:0}.ws-wave svg{width:100%;height:100%;display:block}' +
+    '.ws-bar{width:3.2em;height:4px;border-radius:4px;background:var(--ac);margin:-.3em auto 1em;opacity:.8}' +
+    '.ws-ic{width:2.8em;height:2.8em;border-radius:50%;background:color-mix(in srgb,var(--ac) 16%,var(--bg));display:flex;align-items:center;justify-content:center;font-size:1.4em;margin:0 auto .5em}.ws-ic2{background:var(--ac);color:var(--bg);font-size:1.1em;font-weight:700}' +
+    '.ws-sv{position:relative;text-align:center}.ws-no{position:absolute;top:.5em;right:.7em;font-style:normal;font-size:.75em;font-weight:700;color:var(--ac);opacity:.7}' +
+    '.ws-hi{display:flex;align-items:center;gap:.7em;text-align:left}.ws-hi .ws-ic{margin:0;flex:none;font-size:1em}' +
+    '.ws-ct .ws-ic{font-size:1.1em;margin-bottom:.3em}' +
+    '.ws-stats{gap:.6em;padding:1.4em .8em}.ws-stat{flex:1 1 7em;background:var(--bg);border-radius:16px;padding:.9em .5em;box-shadow:0 2px 10px rgba(0,0,0,.07)}.ws-si{display:block;font-style:normal;font-size:1.4em;margin-bottom:.1em}.ws-hrs{font-size:1em!important;font-family:var(--f)!important}' +
+    '.ws-card{box-shadow:0 1px 6px rgba(0,0,0,.05)}' +
     '.ws-hero{position:relative;overflow:hidden}.ws-hero .ws-in{position:relative;z-index:1}' +
     '.ws-an .ws-hero{background-image:linear-gradient(120deg,var(--ac),color-mix(in srgb,var(--ac) 60%,#fff),var(--ac));background-size:300% 100%;animation:sraur 12s ease-in-out infinite}' +
     '.ws-an .ws-hero .ws-in>*{opacity:0;animation:srup .8s ease forwards}.ws-an .ws-hero .ws-in>*:nth-child(2){animation-delay:.15s}.ws-an .ws-hero .ws-in>*:nth-child(3){animation-delay:.3s}.ws-an .ws-hero .ws-in>*:nth-child(4){animation-delay:.45s}.ws-an .ws-hero .ws-in>*:nth-child(5){animation-delay:.6s}' +
@@ -474,5 +509,5 @@
   }
 
   window.StudioRender = { fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
-    FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, BUCKET: BUCKET };
+    FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, MAX_HIGH: MAX_HIGH, svParts: svParts, BUCKET: BUCKET };
 })();

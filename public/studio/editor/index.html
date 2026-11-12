@@ -67,7 +67,7 @@ var ID=new URLSearchParams(location.search).get('id')||'';
 var IND=[],tplInd='',D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':/[?&]tab=pub/.test(location.search)?'pub':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
 var LS='studio-draft-'+ID;
 
-function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
+function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],highlights:Array.isArray(c.highlights)?c.highlights:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
 function cfg(id){var t=T.filter(function(x){return x.id===(id||D.template_id)})[0];return t?t.config:{}}
 function draw(){R.render($('pv'),D.product_type,cfg(),C,{demo:true});$('ttl').textContent=R.title(D.product_type,C);if(!$('full').hidden)R.render($('fullpv'),D.product_type,cfg(),C,{demo:true,play:true})}
 function btns(){$('undo').disabled=hi<=0;$('redo').disabled=hi>=hist.length-1}
@@ -104,6 +104,7 @@ function urlBox(p){
     try{var j=await fnCall('studio-url',{url:u});pushHist();var n=0,F=C.fields||(C.fields={});
       Object.keys(j.fields||{}).forEach(function(k){if(!String(F[k]||'').trim()){F[k]=j.fields[k];n++}});
       if(Array.isArray(j.services)&&j.services.length&&!(C.services&&C.services.length)){C.services=j.services;n++}
+      if(Array.isArray(j.highlights)&&j.highlights.length&&!(C.highlights&&C.highlights.length)){C.highlights=j.highlights;n++}
       changed();draw();msg.className='k';msg.textContent=n?n+' जानकारी अपने-आप भर गई। जो पहले से भरा था वह नहीं बदला। नीचे जाँच लें।':'कोई नई जानकारी नहीं मिली, या सब पहले से भरा है।';
       if(n)setTimeout(panel,1200)}
     catch(e){msg.className='e';msg.textContent=URLERR[e.code||e.message]||'कुछ गड़बड़ हुई। दोबारा कोशिश करें।'}
@@ -145,18 +146,30 @@ function pList(p){
       p.appendChild(h('button',{class:'btn alt',text:'+ दूसरा कार्यक्रम जोड़ें',onclick:function(){C.events.push({title:'',date:'',time:'',place:''});panel();changed()}}));
     }
   }else{
-    p.appendChild(h('div',{class:'k',text:'आप जो सेवाएँ या सामान देते हैं, एक-एक करके लिखें। अधिकतम '+R.MAX_SERVICES+'।'}));
+    p.appendChild(h('div',{class:'k',text:'आप जो सेवाएँ या सामान देते हैं, एक-एक करके लिखें और हर एक का छोटा विवरण भी दें। अधिकतम '+R.MAX_SERVICES+'।'}));
     C.services.forEach(function(s,i){
-      var inp=h('input',{type:'text',maxlength:60});inp.value=s||'';inp.oninput=function(){C.services[i]=inp.value;changed()};
-      p.appendChild(h('div',{class:'item'},[inp,h('button',{class:'btn alt sm',text:'हटाएँ',onclick:function(){C.services.splice(i,1);panel();changed()}})]));
+      var pr=R.svParts(s),nm=h('input',{type:'text',maxlength:60,placeholder:'सेवा / प्रोडक्ट का नाम'}),ds=h('textarea',{maxlength:100,rows:2,placeholder:'छोटा विवरण (मिनी वेबसाइट पर नाम के नीचे दिखेगा)'});nm.value=pr[0];ds.value=pr[1];ds.style.marginTop='6px';
+      function sv(){C.services[i]=nm.value.replace(/\|/g,' ')+(ds.value.trim()?' | '+ds.value.replace(/\|/g,' ').trim():'');changed()}nm.oninput=sv;ds.oninput=sv;
+      p.appendChild(h('div',{class:'item'},[nm,ds,h('button',{class:'btn alt sm',text:'हटाएँ',onclick:function(){C.services.splice(i,1);panel();changed()}})]));
     });
     if(C.services.length<R.MAX_SERVICES)p.appendChild(h('button',{class:'btn alt',text:'+ सेवा जोड़ें',onclick:function(){C.services.push('');panel();changed()}}));
+    if(C.style.site===true){
+      if(!C.highlights)C.highlights=[];
+      p.appendChild(h('div',{class:'k',style:'margin-top:14px;font-weight:700',text:'✔ हमें क्यों चुनें (मिनी वेबसाइट)'}));
+      p.appendChild(h('div',{class:'k',text:'अपनी खूबियाँ छोटे वाक्यों में लिखें, जैसे: "सीधे फ़ैक्ट्री से सप्लाई", "समय पर डिलीवरी", "10 साल का अनुभव"। अधिकतम '+R.MAX_HIGH+'।'}));
+      C.highlights.forEach(function(s,i){
+        var inp=h('input',{type:'text',maxlength:80});inp.value=s||'';inp.oninput=function(){C.highlights[i]=inp.value;changed()};
+        p.appendChild(h('div',{class:'item'},[inp,h('button',{class:'btn alt sm',text:'हटाएँ',onclick:function(){C.highlights.splice(i,1);panel();changed()}})]));
+      });
+      if(C.highlights.length<R.MAX_HIGH)p.appendChild(h('button',{class:'btn alt',text:'+ खूबी जोड़ें',onclick:function(){C.highlights.push('');panel();changed()}}));
+    }
   }
 }
 function range(label,min,max,val,on){var i=h('input',{type:'range',min:min,max:max,step:(max-min)<=2?0.05:1});i.value=val;i.oninput=function(){on(+i.value)};return h('div',{},[h('label',{text:label}),i])}
 function pPhoto(p){
   var msg=h('div',{class:'e',id:'uperr'});
   R.IMAGES[D.product_type].forEach(function(d){
+    if(/^g\d$/.test(d[0])&&C.style.site!==true)return;
     var k=d[0],im=C.images[k],box=h('div',{class:'item'},[h('b',{text:d[1]})]);
     var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp'});file.style.marginTop='8px';
     file.onchange=function(){if(file.files[0])upload(k,file.files[0],d[2],msg)};

@@ -4,7 +4,7 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info", "Access-Control-Allow-Methods": "POST, OPTIONS" };
 const json = (o: unknown, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { ...cors, "Content-Type": "application/json" } });
-const FIELDS: Record<string, number> = { name: 60, business: 80, designation: 60, mobile: 15, whatsapp: 15, email: 100, address: 200, website: 150, about: 400, facebook: 200, instagram: 200, youtube: 200, linkedin: 200 };
+const FIELDS: Record<string, number> = { name: 60, business: 80, designation: 60, mobile: 15, whatsapp: 15, email: 100, address: 200, website: 150, about: 400, tagline: 120, hours: 100, since: 4, facebook: 200, instagram: 200, youtube: 200, linkedin: 200 };
 const str = (v: unknown, n: number) => (typeof v === "string" || typeof v === "number" ? String(v).slice(0, n).trim() : "");
 const DAILY = 10;
 
@@ -106,7 +106,7 @@ ${material}
 </page>
 
 Return ONLY one JSON object, no other words:
-{"fields":{"name":"owner / contact person","business":"business name","designation":"","mobile":"10 digits","whatsapp":"10 digits only if clearly WhatsApp","email":"","address":"","website":"${page.url.slice(0, 150)}","about":"one or two sentences about the business, only from the page","facebook":"url","instagram":"url","youtube":"url","linkedin":"url"},"services":["up to 12 short service or product names"]}
+{"fields":{"name":"owner / contact person","business":"business name","designation":"","mobile":"10 digits","whatsapp":"10 digits only if clearly WhatsApp","email":"","address":"","website":"${page.url.slice(0, 150)}","about":"one or two sentences about the business, only from the page","tagline":"one short line / slogan, only if the page has one","hours":"opening hours text if given","since":"4-digit year the business was established, if given","facebook":"url","instagram":"url","youtube":"url","linkedin":"url"},"services":["up to 12 items, each formatted exactly as Name | one short sentence (under 90 characters) describing it, taken only from the page; if the page gives no description write only the Name"],"highlights":["up to 6 short strengths / reasons to choose them, only if the page states them"]}
 Rules: copy details exactly as the page gives them (Hindi stays Hindi, English stays English); never guess; anything not found is "" (or an empty array); phone numbers digits only; social links must be full URLs that appear in the page.`;
 
   const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 60_000);
@@ -129,7 +129,9 @@ Rules: copy details exactly as the page gives them (Hindi stays Hindi, English s
   for (const k of ["mobile", "whatsapp"]) if (fields[k]) { fields[k] = fields[k].replace(/\D/g, "").slice(-10); if (fields[k].length !== 10) delete fields[k]; }
   for (const k of ["website", "facebook", "instagram", "youtube", "linkedin"]) if (fields[k] && !/^https?:\/\//i.test(fields[k])) delete fields[k];
   if (fields.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) delete fields.email;
-  const services = (Array.isArray(o.services) ? o.services : []).slice(0, 12).map((s: unknown) => str(s, 60)).filter(Boolean);
+  const services = (Array.isArray(o.services) ? o.services : []).slice(0, 12).map((s: unknown) => { const v = str(s, 160); const i = v.indexOf("|"); return i < 0 ? v : v.slice(0, i).trim() + " | " + v.slice(i + 1).replace(/\|/g, " ").trim(); }).filter(Boolean);
+  const highlights = (Array.isArray(o.highlights) ? o.highlights : []).slice(0, 8).map((s: unknown) => str(s, 80)).filter(Boolean);
+  if (fields.since && !/^\d{4}$/.test(fields.since)) delete fields.since;
   await finish({ status: "ok", input_tokens: j?.usage?.input_tokens ?? null, output_tokens: j?.usage?.output_tokens ?? null });
-  return json({ fields, services, used: (count || 0) + 1, limit: DAILY });
+  return json({ fields, services, highlights, used: (count || 0) + 1, limit: DAILY });
 });
