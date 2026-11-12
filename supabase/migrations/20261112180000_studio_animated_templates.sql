@@ -1,0 +1,6 @@
+insert into public.studio_templates(id,product_type,name,description,config,active,sort) values
+('inv-26','invitation','Royal Curtain (Animated)','curtain opens, sparkles','{"fx":"curtain","anim":"rich","font":"hind","petal":"✦","style":"Animated","layout":"double","palette":{"ac":"#d4af37","bg":"#5a0f24","fg":"#fbe9c9"},"nameFont":"vibes","ornament":"❖"}'::jsonb,true,26),
+('inv-27','invitation','Aurora Glow (Animated)','moving colour glow, floating hearts','{"fx":"aurora","anim":"rich","font":"poppins","petal":"❤","style":"Animated","layout":"arch","palette":{"ac":"#c2255c","bg":"#fff0f6","fg":"#3b1a2a"},"nameFont":"playfair","ornament":"❤"}'::jsonb,true,27),
+('vc-30','visiting','Neon Night (Animated)','glowing border and light sweep','{"fx":"neon","anim":"rich","style":"Animated","layout":"card","palette":{"bg":"#0b1020","fg":"#e8f1ff","ac":"#22d3ee"},"font":"poppins","nameFont":"poppins"}'::jsonb,true,30),
+('vc-31','visiting','Gold Flip (Animated)','card flips in, shimmering header','{"fx":"flip","anim":"rich","style":"Animated","layout":"wave","palette":{"bg":"#fffaf0","fg":"#2b2418","ac":"#b8860b"},"font":"hind","nameFont":"playfair"}'::jsonb,true,31)
+on conflict (id) do nothing;

@@ -291,6 +291,7 @@
     st.setProperty('--soft', rgba(fg, 0.14)); st.fontSize = (16 * s.size) + 'px'; if (s.weight) st.fontWeight = s.weight;
     var align = s.align || (layout === 'side' || (type === 'invitation' && layout === 'plain' && t.align === 'left') ? 'left' : 'center');
     root.className += ' a-' + align;
+    var fx = ['curtain', 'aurora', 'neon', 'flip'].indexOf(s.fx || t.fx) >= 0 ? (s.fx || t.fx) : ''; if (fx && !(opts.demo && !opts.play)) root.className += ' fx-' + fx;
     if (type === 'invitation' && d.images.bg) { st.backgroundImage = 'url("' + d.images.bg.url + '")'; st.backgroundPosition = '50% ' + d.images.bg.pos + '%'; st.setProperty('--pane', rgba(bg, 0.88)); } else st.setProperty('--pane', 'transparent');
     if (type === 'visiting') buildVisiting(root, d); else buildInvitation(root, d, { ornament: s.ornament === 'none' ? '' : (s.ornament || (t.ornament === 'none' ? '' : txt(t.ornament, 4))) });
     var anim = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich'), play = !!opts.play || !opts.demo;
@@ -368,7 +369,18 @@
     '.sr-qrt{font-size:.8em;opacity:.75;margin-top:.5em}' +
     '.sr-an .sr-save{animation:srup .8s ease forwards}.sr-an .sr-qr{animation:srpop .9s ease forwards;animation-delay:calc(var(--i,0) * .12s + .2s);opacity:0}.sr-an-rich .sr-qrimg{animation:srflt 3.2s ease-in-out 1.5s infinite}' +
     '.sr-an .sr-call{animation:srup .8s ease forwards,srpls 2s ease-out 1.4s infinite}' +
-    '@media (prefers-reduced-motion:reduce){.sr-an *,.sr-pw{animation:none!important;opacity:1!important;transform:none!important}.sr-pw{display:none}}';
+    '.fx-curtain::before,.fx-curtain::after{content:"";position:absolute;top:0;bottom:0;width:51%;z-index:5;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.25),transparent 30%,transparent 70%,rgba(0,0,0,.25)),repeating-linear-gradient(90deg,var(--ac) 0 10px,color-mix(in srgb,var(--ac) 70%,#000) 10px 20px);animation:srcl 2.2s cubic-bezier(.7,0,.2,1) .5s forwards}' +
+    '.fx-curtain::before{left:0}.fx-curtain::after{right:0;--d:1}@keyframes srcl{to{transform:translateX(-102%)}}.fx-curtain::after{animation-name:srcr}@keyframes srcr{to{transform:translateX(102%)}}' +
+    '.fx-curtain .in{animation:srgl 3.5s ease-in-out 3s infinite}@keyframes srgl{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 22px 2px var(--ac)}}' +
+    '.fx-aurora{background-image:linear-gradient(125deg,var(--bg),color-mix(in srgb,var(--ac) 38%,var(--bg)),var(--bg),color-mix(in srgb,var(--ac) 22%,var(--bg)),var(--bg));background-size:400% 400%;animation:sraur 14s ease-in-out infinite}' +
+    '@keyframes sraur{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}' +
+    '.fx-aurora .in{animation:srgl 4s ease-in-out infinite;backdrop-filter:blur(2px)}' +
+    '.fx-neon{box-shadow:inset 0 0 0 2px var(--ac),inset 0 0 18px var(--ac);animation:srnb 3s ease-in-out infinite}@keyframes srnb{0%,100%{box-shadow:inset 0 0 0 2px var(--ac),inset 0 0 8px var(--ac)}50%{box-shadow:inset 0 0 0 2px var(--ac),inset 0 0 26px var(--ac)}}' +
+    '.fx-neon .sr-nm{text-shadow:0 0 8px var(--ac),0 0 18px var(--ac)}.fx-neon .sr-act a{animation:srnb2 2.6s ease-in-out infinite}@keyframes srnb2{0%,100%{box-shadow:0 0 4px var(--ac)}50%{box-shadow:0 0 14px var(--ac)}}' +
+    '.fx-neon::after,.fx-flip::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.22) 50%,transparent 60%) -150% 0/250% 100% no-repeat;animation:srsw 4.5s ease-in-out 1s infinite}@keyframes srsw{0%{background-position:-150% 0}60%,100%{background-position:150% 0}}' +
+    '.fx-flip{animation:srfl 1.3s cubic-bezier(.2,.8,.2,1) both;transform-origin:50% 0}@keyframes srfl{from{opacity:0;transform:perspective(700px) rotateX(-70deg)}to{opacity:1;transform:perspective(700px) rotateX(0)}}' +
+    '.fx-flip .hd{animation:sraur 10s ease-in-out infinite;background-image:linear-gradient(120deg,var(--ac),color-mix(in srgb,var(--ac) 55%,#fff),var(--ac));background-size:300% 100%}' +
+    '@media (prefers-reduced-motion:reduce){.sr-an *,.sr-pw{animation:none!important;opacity:1!important;transform:none!important}.sr-pw{display:none}.fx-curtain::before,.fx-curtain::after{display:none}}';
   var assetsDone = false;
 
   /* Mini website: full-page layout built from a visiting card's data. */
