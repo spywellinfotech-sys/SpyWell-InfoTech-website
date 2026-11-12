@@ -394,6 +394,12 @@ function pPub(p){
         h('button',{class:'btn alt',text:'वेबसाइट लिंक कॉपी',onclick:async function(){try{await navigator.clipboard.writeText(wu);info.className='k';info.textContent='वेबसाइट लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ।'}}}),
         h('button',{class:'btn alt',text:'वेबसाइट WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('हमारी वेबसाइट: '+wu),'_blank','noopener')}})]))}
     else if(D.product_type==='visiting')p.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
+    if(D.product_type==='visiting'){
+      function upq(what){window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मुझे '+what+' चाहिए। मेरा कार्ड: '+url),'_blank','noopener')}
+      p.appendChild(h('div',{class:'item'},[h('b',{text:'🚀 अपग्रेड करें'}),
+        h('div',{class:'k',text:'1) विज़िटिंग कार्ड ✅ 2) मिनी वेबसाइट '+(C.style.site===true?'✅':'(ऊपर स्विच से चालू करें)')+' 3) अपना डोमेन (जैसे www.aapkanaam.com) 4) पूरी वेबसाइट'}),
+        h('button',{class:'btn alt',text:'🌍 अपना डोमेन लगवाएँ',onclick:function(){upq('अपने मिनी वेबसाइट पर अपना कस्टम डोमेन')}}),
+        h('button',{class:'btn alt',text:'🏢 पूरी वेबसाइट बनवाएँ',onclick:function(){upq('अपने बिज़नेस की पूरी वेबसाइट')}})]))}
     p.appendChild(h('button',{class:'btn',text:'WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent(shareText()+url),'_blank','noopener')}}));
     var wn=h('input',{type:'tel',placeholder:'मोबाइल नंबर (10 अंक)',maxlength:15,inputmode:'numeric'});wn.style.marginTop='10px';
     p.appendChild(wn);
