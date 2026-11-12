@@ -9,7 +9,8 @@
 .top b{flex:1;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .top button,.top a{width:auto;margin:0;padding:7px 11px;background:#fff;color:var(--wine);font-size:14px;border-radius:8px;border:0;font-weight:600;text-decoration:none;font-family:inherit;cursor:pointer}
 .top button:disabled{opacity:.4}
-.wrap{max-width:1040px;margin:auto;padding:10px}
+.wrap{max-width:1040px;margin:auto;padding:10px 10px 86px}
+#pubbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -2px 10px rgba(0,0,0,.08)}#pubbar button{width:100%;max-width:520px;margin:0 auto;display:block;padding:13px;border:0;border-radius:12px;background:var(--wine);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
 .state{font-size:13px;color:var(--mut);padding:4px 2px;min-height:24px}.state.bad{color:#b00020}
 .cols{display:block}
 #pvbox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:46vh}
@@ -51,6 +52,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 <div class="left"><div id="pvbox"><div id="pv"></div></div><div class="pvbar"><button class="btn alt sm" id="fullbtn">पूरा प्रीव्यू देखें</button></div></div>
 <div><div class="tabs" id="tabs"></div><div class="panel" id="panel"></div></div>
 </div></div>
+<div id="pubbar" hidden><button type="button" id="pubbtn">🚀 प्रकाशित करें</button></div>
 <div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/studio/render.js"></script>
@@ -93,7 +95,9 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
 var TABS=[['info','जानकारी'],['list',''],['photo','फ़ोटो'],['design','डिज़ाइन'],['tpl','टेम्पलेट'],['ai','AI से भरें'],['pub','प्रकाशित करें'],['ins','📊 इनसाइट']];
 function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
-function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p)}
+function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p);pubBar()}
+function pubBar(){var b=$('pubbar');if(!b)return;b.hidden=!D||D.status==='published'||$('main').hidden}
+(function(){var bt=document.getElementById('pubbtn');if(bt)bt.onclick=function(){if(tab!=='pub'){tab='pub';tabs();panel();window.scrollTo(0,0);return}var g=document.getElementById('pubgo');if(g)g.click()}})();
 
 var URLERR={bad_url:'यह वेबसाइट लिंक सही नहीं है। पूरा लिंक डालें (जैसे www.aapkidukan.com)।',fetch_failed:'यह वेबसाइट खुल नहीं पाई या इसमें पढ़ने लायक जानकारी नहीं मिली।',limit:'आज के लिए URL से भरने की सीमा पूरी हो गई। कल फिर कोशिश करें।',ai_off:'यह सुविधा अभी बंद है। थोड़ी देर बाद कोशिश करें।',unauthorized:'लॉगिन पूरा नहीं है। पेज दोबारा खोलकर लॉगिन करें।',ai_busy:'सर्वर व्यस्त है। थोड़ी देर बाद कोशिश करें।'};
 function urlBox(p){
@@ -551,7 +555,7 @@ function pPub(p){
   inp.value=D.slug||mobSlug()||slugify(R.title(D.product_type,C));p.appendChild(inp);
   var pre=h('div',{class:'k',style:'word-break:break-all'});p.appendChild(pre);
   var er=h('div',{class:'e'});p.appendChild(er);
-  var pb=h('button',{class:'btn',text:'प्रकाशित करें'});p.appendChild(pb);
+  var pb=h('button',{class:'btn',text:'प्रकाशित करें',id:'pubgo'});p.appendChild(pb);
   var tm=null,ok=false,seq=0;
   async function check(){var v=inp.value.trim().toLowerCase();pre.textContent=v?pubUrl(v):'';ok=false;er.className='e';
     if(!v){er.textContent='लिंक का नाम लिखें';return}
