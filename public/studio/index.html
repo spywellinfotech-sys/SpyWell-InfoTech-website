@@ -96,6 +96,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <h1>नमस्ते, <span id="d-name"></span><span class="badge" id="d-admin" hidden>Admin</span></h1>
 <div class="k" id="d-mail"></div>
 </div>
+<div class="card" id="c-note" hidden></div>
 <div class="card" id="c-new">
 <b>नया बनाएँ</b>
 <div class="grid ig" style="margin-top:10px">
@@ -141,6 +142,18 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <div class="card">
 <b>हाल की गतिविधि</b>
 <div class="k" id="d-act" style="margin-top:8px"></div>
+</div>
+<div class="card" id="c-sub">
+<b>💳 मेरा सब्सक्रिप्शन</b>
+<div id="sub-list" style="margin-top:8px"><div class="k">लोड हो रहा है…</div></div>
+<div class="k" id="sub-cr" style="margin-top:8px"></div>
+<div style="margin-top:12px;border-top:1px dashed var(--line);padding-top:10px"><b>🔊 Vi-card Voice</b>
+<div class="k">प्लान खत्म होने, रिन्यू और AI क्रेडिट की सूचना बोलकर सुनाता है। आवाज़ न चले तो सूचना लिखी हुई दिखती है।</div>
+<label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="vo-on" style="width:auto;margin:0"> आवाज़ वाली सूचना चालू</label>
+<div style="display:flex;gap:8px;margin-top:8px"><select id="vo-lang" style="flex:1"><option value="hi">हिंदी</option><option value="en">English</option></select>
+<select id="vo-rate" style="flex:1"><option value="0.8">धीमी</option><option value="1">सामान्य</option><option value="1.25">तेज़</option></select></div>
+<div style="display:flex;gap:8px;margin-top:8px"><button type="button" id="vo-say" style="flex:1">▶ अभी सुनें</button><button type="button" id="vo-stop" style="flex:1">⏹ रोकें</button></div>
+<div class="k" id="vo-msg"></div></div>
 </div>
 <form class="card" id="v-prof">
 <b>मेरी प्रोफ़ाइल</b>
@@ -233,7 +246,7 @@ var SUBI={},PLN2={card:'विज़िटिंग कार्ड',site:'म�
 async function loadSubs(){
   var ids=LIST.filter(function(x){return x.product_type==='visiting'}).map(function(x){return x.id});
   await Promise.all(ids.map(async function(id){try{var r=await sb.rpc('studio_sub_info',{p_id:id});if(!r.error&&r.data)SUBI[id]=r.data}catch(e){}}));
-  drawList()}
+  drawList();subCredits()}
 function subLine(x){var i=SUBI[x.id];if(!i||!i.enabled&&!i.plan)return null;
   var pu=i.paid_until?new Date(i.paid_until):null,life=pu&&pu.getFullYear()>=2099,
   dt=life?'लाइफटाइम':(pu?pu.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'');
@@ -314,10 +327,56 @@ async function discGo(more){
   DOFF+=rows.length;$('dmore').hidden=DOFF>=DTOT}
 function discFill(){var si=$('dind');if(si.options.length)return;var o0=mk('option','','सभी व्यवसाय');o0.value='';si.appendChild(o0);IND.forEach(function(o){var op=mk('option','',o.name_hi);op.value=o.id;si.appendChild(op)})}
 $('dq').oninput=function(){clearTimeout(DTM);DTM=setTimeout(function(){discGo(false)},350)};$('dind').onchange=$('dsort').onchange=function(){discGo(false)};$('dmore').onclick=function(){discGo(true)};
+var VO={on:false,lang:'hi',rate:1},CRB=null;
+try{var vs=JSON.parse(localStorage.getItem('vc_voice')||'{}');VO.on=!!vs.on;VO.lang=vs.lang==='en'?'en':'hi';VO.rate=+vs.rate||1}catch(e){}
+function voSave(){try{localStorage.setItem('vc_voice',JSON.stringify(VO))}catch(e){}}
+function voSpeak(txt){var m=$('vo-msg');
+  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){m.textContent='इस फ़ोन/ब्राउज़र में आवाज़ उपलब्ध नहीं, सूचना ऊपर लिखी दिखेगी।';return false}
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.lang=VO.lang==='en'?'en-IN':'hi-IN';u.rate=VO.rate;
+    var vv=speechSynthesis.getVoices().filter(function(v){return v.lang&&v.lang.toLowerCase().indexOf(VO.lang==='en'?'en':'hi')===0});if(vv[0])u.voice=vv[0];
+    u.onerror=function(){m.textContent='आवाज़ नहीं चल पाई।'};speechSynthesis.speak(u);m.textContent='';return true}catch(e){return false}}
+function dFmt(iso){return new Date(iso).toLocaleDateString(VO.lang==='en'?'en-IN':'hi-IN',{day:'numeric',month:'long'})}
+function subEvents(){var ev=[];
+  LIST.forEach(function(x){var i=SUBI[x.id];if(!i||!i.plan)return;var nm=PLN2[i.plan]||i.plan,pu=i.paid_until?new Date(i.paid_until):null;if(!pu||pu.getFullYear()>=2099)return;
+    var days=Math.ceil((pu-Date.now())/864e5),t=x.title||'';
+    if(i.state==='expired'||(i.state==='unpaid'))ev.push({k:'exp_'+x.id,hi:t+' का '+nm+' प्लान समाप्त हो गया है। कृपया रिन्यू करें।',en:'The '+nm+' plan for '+t+' has expired. Please renew.',bad:1});
+    else if(i.state==='grace')ev.push({k:'gr_'+x.id,hi:t+' का '+nm+' प्लान ग्रेस पीरियड में है। जल्दी रिन्यू करें, वरना लिंक बंद हो जाएगा।',en:'The '+nm+' plan for '+t+' is in its grace period. Renew soon or the link will stop working.',bad:1});
+    else if(days<=7&&days>=0)ev.push({k:'soon_'+x.id,hi:t+' का '+nm+' प्लान '+dFmt(i.paid_until)+' को समाप्त होगा।',en:'The '+nm+' plan for '+t+' will expire on '+dFmt(i.paid_until)+'.'})});
+  if(CRB!=null&&CRB<=20)ev.push({k:'cr_'+CRB,hi:'आपके AI क्रेडिट में '+CRB+' क्रेडिट शेष हैं।',en:'You have '+CRB+' AI credits remaining.'});
+  return ev}
+function subDraw(){var L=$('sub-list');if(!L)return;L.textContent='';
+  var vis=LIST.filter(function(x){return x.product_type==='visiting'});
+  if(!vis.length)L.appendChild(mk('div','k','अभी कोई विज़िटिंग कार्ड नहीं है।'));
+  vis.forEach(function(x){var i=SUBI[x.id],row=mk('div','des');row.appendChild(mk('b','',x.title||'बिना नाम'));
+    if(!i||(!i.enabled&&!i.plan)){row.appendChild(mk('div','k','इस कार्ड पर कोई शुल्क लागू नहीं।'))}
+    else{var pu=i.paid_until?new Date(i.paid_until):null,life=pu&&pu.getFullYear()>=2099,loc='hi-IN',f=function(d){return d.toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'})};
+      var ln=[['वर्तमान प्लान',i.plan?(PLN2[i.plan]||i.plan):'कोई नहीं'],['स्थिति',STX[i.state]||i.state||'—']];
+      if(i.plan&&i.prices&&i.prices[i.plan]!=null&&!life)ln.push(['प्लान की कीमत','₹'+i.prices[i.plan]+' / वर्ष']);
+      if(pu)ln.push(['समाप्ति / रिन्यू की तारीख',life?'लाइफटाइम':f(pu)]);
+      if(i.next_amount&&i.state!=='active'&&i.state!=='free')ln.push(['अभी देय','₹'+i.next_amount]);
+      ln.forEach(function(a){var d=mk('div','k');d.appendChild(document.createTextNode(a[0]+': '));d.appendChild(mk('b','',a[1]));row.appendChild(d)});
+      var a2=mk('a','','रिन्यू / अपग्रेड करें');a2.href='/studio/editor/?id='+x.id+'&tab=pub';row.appendChild(a2)}
+    L.appendChild(row)});
+  $('sub-cr').textContent=CRB==null?'':'🤖 बचे हुए AI क्रेडिट: '+CRB;
+  noteDraw()}
+function noteDraw(){var n=$('c-note'),ev=subEvents().filter(function(e){return e.bad||true});n.textContent='';
+  if(!ev.length){n.hidden=true;return}n.hidden=false;
+  ev.forEach(function(e){var d=mk('div',e.bad?'e':'k',(e.bad?'⚠️ ':'🔔 ')+e[VO.lang]);d.style.margin='4px 0';n.appendChild(d)});
+  var b=mk('button','','🔊 सुनें');b.type='button';b.onclick=function(){voSpeak(ev.map(function(e){return e[VO.lang]}).join(' '))};n.appendChild(b);
+  if(VO.on){var seen={};try{seen=JSON.parse(localStorage.getItem('vc_voice_seen')||'{}')}catch(e){}var today=new Date().toISOString().slice(0,10),fresh=ev.filter(function(e){return seen[e.k]!==today});
+    if(fresh.length&&!window.__voPend){window.__voPend=1;var go=function(){document.removeEventListener('pointerdown',go);
+      if(voSpeak(fresh.map(function(e){return e[VO.lang]}).join(' '))){fresh.forEach(function(e){seen[e.k]=today});try{localStorage.setItem('vc_voice_seen',JSON.stringify(seen))}catch(e){}}};
+      document.addEventListener('pointerdown',go)}}}
+async function subCredits(){try{var c=await sb.from('studio_ai_credits').select('balance').eq('user_id',ME.id).maybeSingle();CRB=c.data?c.data.balance:0}catch(e){}subDraw()}
+$('vo-on').checked=VO.on;$('vo-lang').value=VO.lang;$('vo-rate').value=String(VO.rate);
+$('vo-on').onchange=function(){VO.on=this.checked;voSave();if(VO.on&&!window.speechSynthesis)$('vo-msg').textContent='इस फ़ोन में आवाज़ उपलब्ध नहीं, सूचना लिखी हुई दिखेगी।'};
+$('vo-lang').onchange=function(){VO.lang=this.value;voSave();noteDraw()};$('vo-rate').onchange=function(){VO.rate=+this.value;voSave()};
+$('vo-say').onclick=function(){var ev=subEvents();voSpeak(ev.length?ev.map(function(e){return e[VO.lang]}).join(' '):(VO.lang==='en'?'You have no subscription alerts right now.':'अभी कोई सब्सक्रिप्शन सूचना नहीं है।'))};
+$('vo-stop').onclick=function(){try{speechSynthesis.cancel()}catch(e){}};
 var TABMAP=null;
 function setTab(t){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'home'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list').parentNode,'mine'],[$('d-act').parentNode,'mine'],[$('v-prof'),'me']];
+    var items=[[dc[0],'home'],[$('c-note'),'home'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list').parentNode,'mine'],[$('d-act').parentNode,'mine'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','saved','mine','me'].indexOf(t)<0)t='home';if(t==='disc'){discFill();if(!$('dres').childNodes.length)discGo(false)}
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
