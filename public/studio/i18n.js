@@ -2,7 +2,7 @@
    The page DOM is translated at runtime (outside .sr cards); cards use I18N.tr(text, cardLang). */
 (function () {
   var LANGS = { hi: ['हिन्दी', 'ltr'], en: ['English', 'ltr'], pa: ['ਪੰਜਾਬੀ', 'ltr'], mr: ['मराठी', 'ltr'], gu: ['ગુજરાતી', 'ltr'], ur: ['اردو', 'rtl'] };
-  var D = window.I18N_DATA || {}, cur = 'hi', origText = new WeakMap(), lastWritten = new WeakMap(), keys = null, busy = false, obs = null;
+  var D = window.I18N_DATA || {}, cur = 'en', origText = new WeakMap(), lastWritten = new WeakMap(), keys = null, busy = false, obs = null;
   try { var s = localStorage.getItem('sp_lang'); if (s && LANGS[s]) cur = s; } catch (e) { }
   function tr(hi, lang) {
     lang = lang || cur; if (lang === 'hi' || typeof hi !== 'string') return hi;
