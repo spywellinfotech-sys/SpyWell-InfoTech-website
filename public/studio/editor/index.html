@@ -64,7 +64,7 @@ function state(t,bad){var s=$('state');s.textContent=t;s.className='state'+(bad?
 if(!window.supabase||!R){state('लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
 var ID=new URLSearchParams(location.search).get('id')||'';
-var D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
+var D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':/[?&]tab=pub/.test(location.search)?'pub':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
 var LS='studio-draft-'+ID;
 
 function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
@@ -343,7 +343,39 @@ async function pIns(p){
 var SLUG=/^[a-z0-9]+(-[a-z0-9]+)*$/;
 function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'i':'v')+'/'+slug}
 function slugify(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)}
+
+function newKey(){var a='abcdefghijklmnopqrstuvwxyz0123456789',k='';for(var i=0;i<12;i++)k+=a[Math.floor(Math.random()*a.length)];return k}
+function pExtra(p){
+  if(D.product_type==='visiting'){
+    var on=C.style.site===true;
+    var cb=h('input',{type:'checkbox'});cb.checked=on;cb.style.cssText='width:auto;margin-right:8px';
+    cb.onchange=function(){C.style.site=cb.checked?true:undefined;if(!cb.checked)delete C.style.site;changed()};
+    p.appendChild(h('div',{class:'item'},[h('label',{style:'display:flex;align-items:center'},[cb,h('b',{text:'🌐 मिनी वेबसाइट मोड'})]),h('div',{class:'k',text:'चालू करने पर आपका लिंक पूरे पेज की वेबसाइट की तरह खुलेगा: होम, हमारे बारे में, सेवाएँ, संपर्क, QR और कॉन्टैक्ट सेव। वही लिंक रहेगा।'})]));
+    return}
+  var box=h('div',{class:'item'});p.appendChild(box);
+  box.appendChild(h('b',{text:'🗂 इसी इवेंट के कई कार्ड'}));
+  box.appendChild(h('div',{class:'k',text:'जैसे हल्दी, मेहंदी, संगीत, फेरे या बर्थडे/पूजा के अलग-अलग कार्ड। सब एक सेट में जुड़ते हैं और हर कार्ड के ऊपर टैब दिखते हैं।'}));
+  var lab=h('input',{type:'text',maxlength:24,placeholder:'इस कार्ड का टैब नाम (जैसे: हल्दी)'});lab.value=C.style.setLabel||'';lab.style.marginTop='8px';
+  lab.oninput=function(){if(lab.value.trim())C.style.setLabel=lab.value.trim().slice(0,24);else delete C.style.setLabel;changed()};
+  box.appendChild(lab);
+  var list=h('div',{class:'k',style:'margin-top:8px'});box.appendChild(list);
+  var key=C.style.set;
+  if(key)sb.from('studio_designs').select('id,title,status,lbl:content_json->style->>setLabel').eq('user_id',UID).eq('content_json->style->>set',key).order('created_at').then(function(r){
+    if(r.error||!r.data)return;list.textContent='इस सेट के कार्ड: ';
+    r.data.forEach(function(x){var a=h('a',{href:'/studio/editor/?id='+x.id,text:(x.lbl||x.title||'कार्ड')+(x.id===D.id?' (यह)':'')+(x.status==='published'?'':' ·अप्रकाशित'),style:'display:block;margin-top:4px;color:#8b1a2b'});list.appendChild(a)})});
+  var nb=h('button',{class:'btn alt',text:'+ इसी इवेंट का नया कार्ड जोड़ें'});
+  nb.onclick=async function(){nb.disabled=true;
+    if(!C.style.set){C.style.set=newKey();dirty=true}
+    if(dirty)await save();
+    var nc=JSON.parse(JSON.stringify(C));delete nc.style.setLabel;
+    var r=await sb.from('studio_designs').insert({user_id:UID,template_id:D.template_id,product_type:D.product_type,title:((D.title||'')+' (नया)').slice(0,120),content_json:nc}).select('id').single();
+    if(r.error||!r.data){nb.disabled=false;state('नया कार्ड नहीं बना');return}
+    location.href='/studio/editor/?id='+r.data.id+'&tab=pub'};
+  box.appendChild(nb);
+}
+
 function pPub(p){
+  pExtra(p);
   var live=D.status==='published';
   if(live){
     var url=pubUrl(D.slug);

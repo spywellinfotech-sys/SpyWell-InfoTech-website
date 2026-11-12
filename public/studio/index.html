@@ -172,7 +172,7 @@ function drawList(){
 }
 async function dup(id,btn){btn.disabled=true;
   var r=await sb.from('studio_designs').select('template_id,product_type,title,content_json').eq('id',id).single();
-  if(!r.error&&r.data){var n=await sb.from('studio_designs').insert({user_id:ME.id,template_id:r.data.template_id,product_type:r.data.product_type,title:((r.data.title||'')+' (कॉपी)').slice(0,120),content_json:r.data.content_json||{}});
+  if(!r.error&&r.data){var n=await sb.from('studio_designs').insert({user_id:ME.id,template_id:r.data.template_id,product_type:r.data.product_type,title:((r.data.title||'')+' (कॉपी)').slice(0,120),content_json:(function(c){c=JSON.parse(JSON.stringify(c||{}));if(c.style){delete c.style.set;delete c.style.setLabel}return c})(r.data.content_json)});
     if(n.error)btn.textContent='कॉपी नहीं बनी'}else btn.textContent='कॉपी नहीं बनी';
   btn.disabled=false;loadList()}
 async function del(id,btn){btn.disabled=true;var r=await sb.from('studio_designs').delete().eq('id',id);armed='';if(r.error){btn.textContent='नहीं मिटा'}loadList()}

@@ -357,6 +357,63 @@
     '.sr-an .sr-call{animation:srup .8s ease forwards,srpls 2s ease-out 1.4s infinite}' +
     '@media (prefers-reduced-motion:reduce){.sr-an *,.sr-pw{animation:none!important;opacity:1!important;transform:none!important}.sr-pw{display:none}}';
   var assetsDone = false;
+
+  /* Mini website: full-page layout built from a visiting card's data. */
+  function site(mount, tplConfig, content, opts) {
+    ensureAssets(); opts = opts || {};
+    var t = tplConfig && typeof tplConfig === 'object' ? tplConfig : {}, pal = t.palette || {};
+    var d = normalize('visiting', content), s = d.style, f = d.fields;
+    var bg = s.bg || col(pal.bg, '#ffffff'), fg = s.fg || col(pal.fg, '#222222'), ac = s.ac || col(pal.ac, '#8b1a2b');
+    var root = el('div', 'sr sr-site'), st = root.style;
+    st.setProperty('--bg', bg); st.setProperty('--fg', fg); st.setProperty('--ac', ac);
+    st.setProperty('--f', (FONTS[s.font || t.font] || FONTS.hind)[1]); st.setProperty('--nf', (FONTS[s.nameFont || t.nameFont] || FONTS.playfair)[1]);
+    st.setProperty('--soft', rgba(fg, 0.1)); st.fontSize = (16 * s.size) + 'px'; if (s.weight) st.fontWeight = s.weight;
+    var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website);
+    var mapUrl = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address].filter(Boolean).join(', '))) : '';
+    var nav = el('div', 'ws-nav'); nav.appendChild(el('b', '', f.business || f.name || 'SpyWell'));
+    if (tel) nav.appendChild(actA(link('ws-navbtn', '📞 कॉल', 'tel:+91' + tel), 'call'));
+    root.appendChild(nav);
+    var hero = el('div', 'ws-hero'), hin = el('div', 'ws-in');
+    if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hin.appendChild(lg); }
+    if (d.images.photo) hin.appendChild(picture('ph', d.images.photo, 'circle'));
+    if (f.name) hin.appendChild(el('h1', 'sr-nm', f.name));
+    if (f.designation) hin.appendChild(el('div', 'sr-des', f.designation));
+    var act = el('div', 'sr-act');
+    if (tel) act.appendChild(actA(link('sr-call', '📞 कॉल करें', 'tel:+91' + tel), 'call'));
+    if (wa) act.appendChild(actA(link('', 'WhatsApp', 'https://wa.me/91' + wa), 'whatsapp'));
+    if (mapUrl) act.appendChild(actA(link('', '📍 लोकेशन', mapUrl), 'map'));
+    if (act.children.length) hin.appendChild(act);
+    hero.appendChild(hin); root.appendChild(hero);
+    function sec(title) { var x = el('div', 'ws-sec'), i = el('div', 'ws-in'); i.appendChild(el('h2', '', title)); x.appendChild(i); root.appendChild(x); return i; }
+    if (f.about) sec('हमारे बारे में').appendChild(el('p', 'ws-about', f.about));
+    if (d.services.length) { var si = sec('सेवाएँ'), g = el('div', 'ws-grid'); d.services.forEach(function (x) { g.appendChild(el('div', 'ws-card', x)); }); si.appendChild(g); }
+    var ci = sec('संपर्क करें'), cg = el('div', 'ws-grid');
+    [['मोबाइल', tel && ('+91 ' + tel), tel && 'tel:+91' + tel, 'call'], ['ईमेल', em, em && 'mailto:' + em, 'email'], ['पता', f.address, mapUrl, 'map'], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, ''), web, 'website']].forEach(function (r) {
+      if (!r[1]) return; var c = el('div', 'ws-card'); c.appendChild(el('small', '', r[0])); if (r[2]) c.appendChild(actA(link('', r[1], r[2]), r[3])); else c.appendChild(el('div', '', r[1])); cg.appendChild(c);
+    });
+    ci.appendChild(cg);
+    var soc = el('div', 'sr-soc');
+    [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (x) { var u = V.url(x[1]); if (u) soc.appendChild(link('', x[0], u)); });
+    if (soc.children.length) ci.appendChild(soc);
+    var tools = el('div', 'sr-act');
+    if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', '📇 कॉन्टैक्ट सेव करें'); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; tools.appendChild(sv0); }
+    tools.appendChild(saveCardBtn(root, f));
+    ci.appendChild(tools);
+    var qi = qrImage(f); if (qi) { var qw = el('div', 'sr-qr'); qw.appendChild(qi); qw.appendChild(el('div', 'sr-qrt', 'स्कैन करें और कॉन्टैक्ट सेव करें')); ci.appendChild(qw); }
+    if (typeof opts.onAct === 'function') root.addEventListener('click', function (ev) { var x = ev.target.closest ? ev.target.closest('[data-act]') : null; if (x) { try { opts.onAct(x.getAttribute('data-act')); } catch (e) { } } });
+    mount.textContent = ''; mount.appendChild(root); return root;
+  }
+  CSS += '.sr-site{max-width:820px;margin:0 auto;min-height:100vh;text-align:center}.ws-in{padding:0 1.2em}' +
+    '.ws-nav{display:flex;justify-content:space-between;align-items:center;padding:.8em 1.2em;background:var(--bg);border-bottom:1px solid var(--soft);position:sticky;top:0;z-index:3}' +
+    '.ws-navbtn{background:var(--ac);color:var(--bg)!important;text-decoration:none;padding:.4em .9em;border-radius:2em;font-size:.85em;font-weight:600}' +
+    '.ws-hero{background:var(--ac);color:var(--bg);padding:2.2em 0 2.6em}.ws-hero .ph{border-radius:50%;object-fit:cover;border:4px solid var(--bg);margin:0 auto .7em}' +
+    '.ws-hero .sr-nm{font-family:var(--nf);font-size:2em;font-weight:700}.ws-hero .sr-des{opacity:.85}.ws-hero .sr-lg{margin:0 auto .6em;object-fit:contain}' +
+    '.ws-hero .sr-act{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.ws-hero .sr-act a,.ws-hero .sr-act button{width:auto;margin:0;background:var(--bg);color:var(--ac)!important}' +
+    '.ws-sec{padding:1.8em 0;border-bottom:1px solid var(--soft)}.ws-sec h2{font-family:var(--nf);font-size:1.35em;margin-bottom:.7em;color:var(--ac)}' +
+    '.ws-about{max-width:34em;margin:0 auto;white-space:pre-line}.ws-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.7em}' +
+    '.ws-card{background:var(--soft);border-radius:12px;padding:.9em;font-weight:600}.ws-card small{display:block;opacity:.65;font-weight:400;margin-bottom:.2em}' +
+    '.ws-card a{text-decoration:none;word-break:break-all}';
+
   function ensureAssets() {
     if (assetsDone) return; assetsDone = true;
     var s = document.createElement('style'); s.textContent = CSS; document.head.appendChild(s);
@@ -365,6 +422,6 @@
     document.head.appendChild(l);
   }
 
-  window.StudioRender = { fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
+  window.StudioRender = { fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
     FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, BUCKET: BUCKET };
 })();
