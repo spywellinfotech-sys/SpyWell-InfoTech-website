@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>कॉल करें | SpyWell Live Studio</title><link rel="icon" href="/favicon.png">
+<style>
+:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif;text-align:center}
+.top{background:var(--wine);color:#fff;padding:12px 16px;font-weight:700}
+.wrap{max-width:420px;margin:auto;padding:22px 16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 16px;margin-bottom:16px}
+.ic{font-size:54px}h1{font-size:20px;margin:6px 0;color:var(--wine)}.v{display:inline-block;margin:6px 0;padding:4px 14px;border:2px solid var(--ink);border-radius:8px;font:700 20px monospace;letter-spacing:1px}
+.n{font-size:15px;color:var(--mut)}
+a.btn{display:block;margin-top:12px;padding:15px;border-radius:12px;text-decoration:none;font-weight:700;font-size:18px;color:#fff}
+.call{background:#1f9d55}.wa{background:#25d366}
+.free{background:#fff8e6;border:2px dashed #c9a227;border-radius:16px;padding:16px}.free b{color:var(--wine);display:block;margin-bottom:4px}
+.free a{display:inline-block;margin-top:10px;padding:11px 18px;border-radius:10px;background:var(--wine);color:#fff;text-decoration:none;font-weight:700}
+.k{font-size:12px;color:var(--mut);margin-top:12px}.k a{color:var(--wine)}
+</style><script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n.js"></script></head><body>
+<div class="top"><img src="/logo.png" alt="" width="26" height="26" style="background:#fff;border-radius:50%;padding:2px;vertical-align:middle;margin-right:6px">SpyWell Live Studio</div>
+<div class="wrap">
+<div class="card"><div class="ic">📞</div><h1 id="h">गाड़ी के मालिक को कॉल करें</h1><div id="vw"></div><div class="n" id="nm"></div>
+<a class="btn call" id="call" href="#">📞 अभी कॉल करें</a><a class="btn wa" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp पर संदेश भेजें</a></div>
+<div class="free"><b>🚗 अपनी गाड़ी के लिए भी मुफ़्त कॉल QR बनाएँ</b><div class="n">सिर्फ़ अपना नंबर डालिए और स्टिकर डाउनलोड कीजिए। कोई लॉगिन नहीं, कोई पैसा नहीं।</div><a href="/studio/carqr/">मुफ़्त QR बनाएँ →</a></div>
+<div class="k">SpyWell Live Studio से बना · <a href="/studio/promo/">ऑनलाइन कार्ड और मिनी वेबसाइट देखें</a></div>
+</div>
+<script>
+(function(){var q=new URLSearchParams(location.search),m=String(q.get('m')||'').replace(/\D/g,'').slice(-10),$=function(i){return document.getElementById(i)};
+if(m.length!==10){$('h').textContent='यह QR सही नहीं है';$('call').hidden=true;$('wa').hidden=true;return}
+var n=String(q.get('n')||'').slice(0,30),v=String(q.get('v')||'').slice(0,14).toUpperCase();
+$('call').href='tel:+91'+m;$('wa').href='https://wa.me/91'+m+'?text='+encodeURIComponent('नमस्ते, आपकी गाड़ी के बारे में।');
+if(v){var s=document.createElement('span');s.className='v';s.textContent=v;$('vw').appendChild(s)}
+$('nm').textContent=(n?n+' · ':'')+'+91 '+m})();
+</script></body></html>

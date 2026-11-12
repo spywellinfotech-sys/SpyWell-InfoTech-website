@@ -15,13 +15,13 @@ img{width:100%;max-width:300px;display:block;margin:12px auto;border:1px solid v
 </style><script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n.js"></script></head><body>
 <div class="top"><b><img src="/logo.png" alt="SpyWell" width="30" height="30" style="background:#fff;border-radius:50%;padding:2px;vertical-align:middle;margin-right:8px">🚗 कार कॉल QR</b><a href="/studio/">← Studio</a></div>
 <div class="wrap"><h1>गाड़ी पर लगाने वाला कॉल QR</h1>
-<div class="k">इसे स्कैन करते ही सीधा आपके नंबर पर कॉल लगता है। बिल्कुल मुफ़्त, कोई लॉगिन नहीं चाहिए। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।</div>
+<div class="k">इसे स्कैन करने पर "कॉल करें" का बड़ा बटन खुलता है। बिल्कुल मुफ़्त, कोई लॉगिन नहीं चाहिए। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।</div>
 <div class="card">
 <label>मोबाइल नंबर (10 अंक)</label><input id="m" type="tel" inputmode="numeric" maxlength="15" placeholder="9876543210">
 <label>स्टिकर पर लिखा वाक्य</label><input id="t" type="text" maxlength="40" value="गाड़ी हटवाने के लिए कॉल करें">
 <label>आपका नाम (खाली छोड़ सकते हैं)</label><input id="n" type="text" maxlength="30">
 <label>गाड़ी नंबर (खाली छोड़ सकते हैं)</label><input id="v" type="text" maxlength="14" placeholder="UP11 AB 1234">
-<label>QR का प्रकार</label><select id="w"><option value="c">सिर्फ़ कॉल QR</option><option value="cw">कॉल QR + WhatsApp QR (दो QR)</option></select>
+<label>QR का प्रकार</label><select id="w"><option value="p">कॉल पेज QR (कॉल बटन + मुफ़्त QR बनाने का लिंक)</option><option value="c">सीधा कॉल QR (बिना इंटरनेट भी चले)</option><option value="cw">सीधा कॉल QR + WhatsApp QR (दो QR)</option></select>
 <div class="e" id="err"></div>
 <img id="pv" alt="कार QR स्टिकर" hidden>
 <button type="button" id="dl">⬇️ QR स्टिकर डाउनलोड करें</button>
@@ -32,6 +32,7 @@ img{width:100%;max-width:300px;display:block;margin:12px auto;border:1px solid v
 (function(){
 var $=function(i){return document.getElementById(i)},sc=document.createElement('canvas');
 var q=new URLSearchParams(location.search);try{if(q.get('m'))$('m').value=String(q.get('m')).replace(/\D/g,'').slice(-10);if(q.get('n'))$('n').value=String(q.get('n')).slice(0,30)}catch(e){}
+function pageUrl(cm){var u='https://spywell.in/studio/call/?m='+cm,nn=$('n').value.trim().slice(0,30),vv=$('v').value.trim().toUpperCase().slice(0,14);if(nn)u+='&n='+encodeURIComponent(nn);if(vv)u+='&v='+encodeURIComponent(vv);return u}
 function num(){return $('m').value.replace(/\D/g,'').slice(-10)}
 function qr(text,px){var c=document.createElement('canvas');try{window.StudioQR.draw(c,text,px)}catch(e){}return c}
 function draw(){var cm=num();$('err').textContent='';
@@ -41,7 +42,7 @@ function draw(){var cm=num();$('err').textContent='';
   x.fillStyle='#8b1a2b';x.fillRect(14,14,W-28,150);x.fillStyle='#fff';x.textAlign='center';x.font='bold 70px sans-serif';x.fillText(two?'📞 CALL / WhatsApp':'📞 SCAN TO CALL',W/2,118,W-60);
   if(two){x.drawImage(qr('tel:+91'+cm,330),40,215,330,330);x.drawImage(qr('https://wa.me/91'+cm,330),430,215,330,330);
     x.fillStyle='#2b1a14';x.font='bold 36px sans-serif';x.fillText('📞 CALL',205,590);x.fillText('💬 WHATSAPP',595,590)}
-  else x.drawImage(qr('tel:+91'+cm,500),150,190,500,500);
+  else x.drawImage(qr($('w').value==='p'?pageUrl(cm):'tel:+91'+cm,500),150,190,500,500);
   x.fillStyle='#2b1a14';x.font='bold 46px sans-serif';x.fillText(($('t').value||'').trim().slice(0,40),W/2,two?680:740,W-80);
   var line=[$('n').value.trim(),$('v').value.trim().toUpperCase()].filter(Boolean).join('  |  ');
   x.font='34px sans-serif';if(line)x.fillText(line,W/2,two?740:800,W-80);

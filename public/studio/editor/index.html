@@ -399,11 +399,11 @@ function pPub(p){
       cbox.appendChild(h('b',{text:'🚗 गाड़ी पर लगाने वाला कॉल QR'}));
       if(cm.length!==10){cbox.appendChild(h('div',{class:'k',text:'पहले "जानकारी" टैब में अपना 10 अंक का मोबाइल नंबर भरें।'}))}
       else{
-        cbox.appendChild(h('div',{class:'k',text:'इसे स्कैन करते ही सीधा आपके नंबर '+cm+' पर कॉल लग जाता है। गाड़ी के शीशे या बाइक पर लगाइए। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।'}));
+        cbox.appendChild(h('div',{class:'k',text:'इसे स्कैन करने पर आपके नंबर '+cm+' पर "कॉल करें" का बड़ा बटन खुलता है। गाड़ी के शीशे या बाइक पर लगाइए। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।'}));
         var ttl=h('input',{type:'text',maxlength:40,value:'गाड़ी हटवाने के लिए कॉल करें',placeholder:'स्टिकर पर लिखा वाक्य'});ttl.style.marginTop='8px';cbox.appendChild(ttl);
         var onm=h('input',{type:'text',maxlength:30,value:String((C.fields||{}).name||'').slice(0,30),placeholder:'आपका नाम (स्टिकर पर, खाली छोड़ सकते हैं)'});onm.style.marginTop='6px';cbox.appendChild(onm);
         var vno=h('input',{type:'text',maxlength:14,placeholder:'गाड़ी नंबर, जैसे UP11 AB 1234 (खाली छोड़ सकते हैं)'});vno.style.marginTop='6px';cbox.appendChild(vno);
-        var wsel=h('select',{},[h('option',{value:'c',text:'सिर्फ़ कॉल QR'}),h('option',{value:'cw',text:'कॉल QR + WhatsApp QR (दो QR)'})]);wsel.style.marginTop='6px';cbox.appendChild(wsel);
+        var wsel=h('select',{},[h('option',{value:'p',text:'कॉल पेज QR (कॉल बटन + मुफ़्त QR बनाने का लिंक)'}),h('option',{value:'c',text:'सीधा कॉल QR (बिना इंटरनेट भी चले)'}),h('option',{value:'cw',text:'सीधा कॉल QR + WhatsApp QR (दो QR)'})]);wsel.style.marginTop='6px';cbox.appendChild(wsel);
         var sc=h('canvas'),pv=h('img',{alt:'कार QR स्टिकर'});pv.style.cssText='width:100%;max-width:260px;display:block;margin:10px auto;border:1px solid #e8d5ad;border-radius:8px';cbox.appendChild(pv);
         function drawSticker(){var W=800,H=1000,x=sc.getContext('2d'),two=wsel.value==='cw';sc.width=W;sc.height=H;
           x.fillStyle='#fff';x.fillRect(0,0,W,H);x.strokeStyle='#8b1a2b';x.lineWidth=14;x.strokeRect(14,14,W-28,H-28);
@@ -411,7 +411,7 @@ function pPub(p){
           function qr(text,px){var q=document.createElement('canvas');try{window.StudioQR.draw(q,text,px)}catch(e){}return q}
           if(two){x.drawImage(qr('tel:+91'+cm,330),40,215,330,330);x.drawImage(qr('https://wa.me/91'+cm,330),430,215,330,330);
             x.fillStyle='#2b1a14';x.font='bold 36px sans-serif';x.fillText('📞 CALL',205,590);x.fillText('💬 WHATSAPP',595,590)}
-          else x.drawImage(qr('tel:+91'+cm,500),150,190,500,500);
+          else{var pu='https://spywell.in/studio/call/?m='+cm,nn=(onm.value||'').trim().slice(0,30),vv=(vno.value||'').trim().toUpperCase().slice(0,14);if(nn)pu+='&n='+encodeURIComponent(nn);if(vv)pu+='&v='+encodeURIComponent(vv);x.drawImage(qr(wsel.value==='p'?pu:'tel:+91'+cm,500),150,190,500,500)}
           x.fillStyle='#2b1a14';x.font='bold 46px sans-serif';
           var t=(ttl.value||'').trim().slice(0,40);x.fillText(t,W/2,two?680:740,W-80);
           var nm=(onm.value||'').trim(),vn=(vno.value||'').trim().toUpperCase();
