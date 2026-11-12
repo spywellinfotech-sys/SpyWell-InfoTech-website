@@ -42,6 +42,8 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 #full .x{position:fixed;top:8px;right:10px;width:auto;margin:0;padding:6px 14px;border-radius:20px;border:0;background:#fff;color:var(--wine);font-weight:700;cursor:pointer}
 .k{font-size:13px;color:var(--mut)}
 [hidden]{display:none!important}
+button:active{transform:scale(.96);filter:brightness(.9)}button{-webkit-tap-highlight-color:rgba(139,26,43,.25);transition:transform .08s}
+#toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);max-width:90vw;z-index:30;background:#2b2b2b;color:#fff;padding:11px 18px;border-radius:24px;font-size:15px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.3);text-align:center}#toast.bad{background:#b00020}#toast.ok{background:#1b7a3a}
 @media(min-width:860px){.cols{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}#pvbox{max-height:calc(100vh - 130px)}.left{position:sticky;top:60px}}
 </style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script></head><body>
 <div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
@@ -52,6 +54,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 <div class="left"><div id="pvbox"><div id="pv"></div></div><div class="pvbar"><button class="btn alt sm" id="fullbtn">पूरा प्रीव्यू देखें</button></div></div>
 <div><div class="tabs" id="tabs"></div><div class="panel" id="panel"></div></div>
 </div></div>
+<div id="toast" hidden></div>
 <div id="pubbar" hidden><div class="pbrow"><button type="button" id="pubbtn">🚀 प्रकाशित करें</button><button type="button" id="pinbtn" hidden>🔑 PIN</button></div></div>
 <div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -62,6 +65,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 var $=function(i){return document.getElementById(i)},R=window.StudioRender;
 function h(tag,props,kids){var e=document.createElement(tag);for(var k in props||{}){if(k==='class')e.className=props[k];else if(k==='text')e.textContent=props[k];else if(k.slice(0,2)==='on')e[k]=props[k];else if(props[k]!=null&&props[k]!==false)e.setAttribute(k,props[k])}(kids||[]).forEach(function(c){if(c)e.appendChild(c)});return e}
+var toastT=null;function toast(t,kind){var e=document.getElementById('toast');if(!e)return;e.textContent=t;e.className=kind==='bad'?'bad':kind==='ok'?'ok':'';e.hidden=false;try{if(navigator.vibrate)navigator.vibrate(kind==='bad'?[40,40,40]:25)}catch(x){}clearTimeout(toastT);toastT=setTimeout(function(){e.hidden=true},kind==='bad'?4000:2500)}
 function state(t,bad){var s=$('state');s.textContent=t;s.className='state'+(bad?' bad':'')}
 if(!window.supabase||!R){state('लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
@@ -97,7 +101,7 @@ function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var na
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p);pubBar()}
 function pubBar(){var b=$('pubbar'),bt=$('pubbtn');if(!b||!bt)return;var live=D&&D.status==='published';b.hidden=!D||$('main').hidden||(live&&tab==='ins');bt.textContent=live?'📊 इनसाइट देखें':'🚀 प्रकाशित करें';var pn=$('pinbtn');if(pn)pn.hidden=!live;document.documentElement.style.setProperty('--i18n-lift',b.hidden?'0px':'72px')}
-(function(){var pn=document.getElementById('pinbtn');if(pn)pn.onclick=function(){tab='ins';tabs();panel();setTimeout(function(){var x=document.getElementById('pinbox');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},150)};var bt=document.getElementById('pubbtn');if(bt)bt.onclick=function(){if(D&&D.status==='published'){tab='ins';tabs();panel();window.scrollTo(0,0);return}if(tab!=='pub'){tab='pub';tabs();panel();window.scrollTo(0,0);return}var g=document.getElementById('pubgo');if(g)g.click()}})();
+(function(){var pn=document.getElementById('pinbtn');if(pn)pn.onclick=function(){tab='ins';tabs();panel();setTimeout(function(){var x=document.getElementById('pinbox');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},150)};var bt=document.getElementById('pubbtn');if(bt)bt.onclick=function(){if(D&&D.status==='published'){tab='ins';tabs();panel();window.scrollTo(0,0);return}if(tab!=='pub'){tab='pub';tabs();panel();window.scrollTo(0,0);toast('लिंक का नाम चुनें, फिर दोबारा "प्रकाशित करें" दबाएँ');return}var g=document.getElementById('pubgo');if(g)g.click()}})();
 
 var URLERR={bad_url:'यह वेबसाइट लिंक सही नहीं है। पूरा लिंक डालें (जैसे www.aapkidukan.com)।',fetch_failed:'यह वेबसाइट खुल नहीं पाई या इसमें पढ़ने लायक जानकारी नहीं मिली।',limit:'आज के लिए URL से भरने की सीमा पूरी हो गई। कल फिर कोशिश करें।',ai_off:'यह सुविधा अभी बंद है। थोड़ी देर बाद कोशिश करें।',unauthorized:'लॉगिन पूरा नहीं है। पेज दोबारा खोलकर लॉगिन करें।',ai_busy:'सर्वर व्यस्त है। थोड़ी देर बाद कोशिश करें।'};
 function urlBox(p){
@@ -594,21 +598,24 @@ function pPub(p){
     }catch(e){er.className='e';er.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।':e.code==='free'||e.code==='already_paid'?'':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, अपने-आप जुड़ जाएगा।';
       return e.code==='free'||e.code==='already_paid'}}
   pb.onclick=async function(){
-    if(R.isEmpty(D.product_type,C)){er.className='e';er.textContent='पहले कार्ड में कुछ जानकारी भरें।';return}
-    await check();if(!ok)return;pb.disabled=true;
-    await pubInfo();
-    if(PI&&!PI.paid&&PI.price>0){var paidOk=await payPub();if(!paidOk){pb.disabled=false;return}await pubInfo()}
+    if(R.isEmpty(D.product_type,C)){er.className='e';er.textContent='पहले कार्ड में कुछ जानकारी भरें।';toast('पहले कार्ड में कुछ जानकारी भरें।','bad');return}
+    await check();if(!ok){toast(er.textContent||'लिंक का नाम जाँचें','bad');return}pb.disabled=true;var pbOld=pb.textContent;pb.textContent='⏳ प्रकाशित हो रहा है…';toast('प्रकाशित हो रहा है…');
+    await pubInfo();pb.textContent='⏳ प्रकाशित हो रहा है…';
+    if(PI&&!PI.paid&&PI.price>0){var paidOk=await payPub();if(!paidOk){pb.disabled=false;pb.textContent=pbOld;toast(er.textContent||'भुगतान पूरा नहीं हुआ','bad');return}await pubInfo()}
     if(dirty)await save();
     var v=inp.value.trim().toLowerCase();
     var r=await sb.from('studio_designs').update({slug:v,status:'published'}).eq('id',D.id).select('slug,status').single();
-    pb.disabled=false;
-    if(r.error||!r.data){er.className='e';er.textContent=(r.error&&/payment_required/.test(r.error.message||''))?'पहले भुगतान ज़रूरी है।':'प्रकाशित नहीं हुआ। नाम दूसरा चुनकर दोबारा कोशिश करें।';return}
-    D.slug=r.data.slug;D.status='published';panel();state('कार्ड प्रकाशित हो गया')};
+    pb.disabled=false;pb.textContent=pbOld;
+    if(r.error||!r.data){er.className='e';er.textContent=(r.error&&/payment_required/.test(r.error.message||''))?'पहले भुगतान ज़रूरी है।':'प्रकाशित नहीं हुआ। नाम दूसरा चुनकर दोबारा कोशिश करें।';toast(er.textContent,'bad');return}
+    D.slug=r.data.slug;D.status='published';panel();state('कार्ड प्रकाशित हो गया');toast('🎉 कार्ड प्रकाशित हो गया!','ok');window.scrollTo(0,0)};
 }
 
 /* ---------- start ---------- */
 $('undo').onclick=function(){go(-1)};$('redo').onclick=function(){go(1)};
-$('save').onclick=function(){if(!dirty){state('सब कुछ सेव है');return}save()};
+$('save').onclick=async function(){var b=this;if(!dirty){state('सब कुछ सेव है');toast('✓ सब कुछ सेव है','ok');return}
+  var old=b.textContent;b.disabled=true;b.textContent='⏳';toast('सेव हो रहा है…');
+  await save();b.disabled=false;b.textContent=old;
+  if(!dirty)toast('✅ सेव हो गया','ok');else toast('सेव नहीं हुआ। इंटरनेट जाँचें और दोबारा दबाएँ।','bad')};
 $('fullbtn').onclick=function(){$('full').hidden=false;R.render($('fullpv'),D.product_type,cfg(),C,{demo:true,play:true})};
 $('fullx').onclick=function(){$('full').hidden=true};
 window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue=''}});
