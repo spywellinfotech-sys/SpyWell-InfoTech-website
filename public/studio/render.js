@@ -26,6 +26,7 @@
       ['time', 'शादी का समय', 'time', 5],
       ['venue', 'विवाह स्थल का नाम', 'text', 100],
       ['address', 'स्थल का पता', 'area', 200],
+      ['maplink', 'लोकेशन लिंक (Google Maps)', 'url', 300],
       ['message', 'निमंत्रण संदेश', 'area', 500],
       ['c1_name', 'संपर्क 1 का नाम', 'text', 50],
       ['c1_phone', 'संपर्क 1 का मोबाइल', 'tel', 15],
@@ -41,6 +42,7 @@
       ['whatsapp', 'WhatsApp नंबर', 'tel', 15],
       ['email', 'ईमेल', 'email', 100],
       ['address', 'व्यवसाय का पता', 'area', 200],
+      ['maplink', 'लोकेशन लिंक (Google Maps)', 'url', 300],
       ['website', 'वेबसाइट', 'url', 150],
       ['about', 'व्यवसाय के बारे में', 'area', 400],
       ['facebook', 'Facebook लिंक', 'url', 200],
@@ -53,8 +55,33 @@
     invitation: [['couple', 'जोड़े की फ़ोटो', 150], ['family', 'परिवार की फ़ोटो', 280], ['bg', 'बैकग्राउंड फ़ोटो', 0]],
     visiting: [['logo', 'लोगो', 56], ['photo', 'प्रोफ़ाइल फ़ोटो', 108]]
   };
-  var EVENT_PRESETS = ['सगाई', 'हल्दी', 'मेहंदी', 'संगीत', 'शादी', 'रिसेप्शन'];
+  var EVENT_PRESETS_W = ['सगाई', 'हल्दी', 'मेहंदी', 'संगीत', 'शादी', 'रिसेप्शन'], EVENT_PRESETS = EVENT_PRESETS_W;
   var MAX_EVENTS = 8, MAX_SERVICES = 12;
+  var OCCASIONS = {
+    wedding: { name: 'विवाह', presets: EVENT_PRESETS_W },
+    engagement: { name: 'सगाई / रोका', presets: ['रोका', 'सगाई', 'रिंग सेरेमनी', 'भोज'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'पहला नाम', bride_parents: 'परिवार / परिचय (पहले नाम के लिए)', groom: 'दूसरा नाम', groom_parents: 'परिवार / परिचय (दूसरे नाम के लिए)', date: 'कार्यक्रम की तारीख', time: 'कार्यक्रम का समय', venue: 'कार्यक्रम स्थल का नाम', address: 'स्थल का पता' },
+      sample: { heading: '॥ सगाई समारोह ॥', bride: 'प्रिया', bride_parents: 'सुपुत्री श्री रमेश शर्मा', groom: 'राहुल', groom_parents: 'सुपुत्र श्री सुरेश वर्मा', message: 'हमारे बच्चों की सगाई में पधारकर आशीर्वाद दें।' } },
+    birthday: { name: 'जन्मदिन', presets: ['केक कटिंग', 'डिनर'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'जन्मदिन किसका है (नाम)', bride_parents: 'उम्र / परिचय (जैसे "पहला जन्मदिन")', date: 'जन्मदिन की तारीख', time: 'समय', venue: 'स्थल का नाम', address: 'स्थल का पता', message: 'बुलावा संदेश' },
+      sample: { heading: '🎂 जन्मदिन की पार्टी 🎂', bride: 'आरव', bride_parents: 'पहला जन्मदिन', message: 'हमारे लाडले के जन्मदिन पर आप सपरिवार आमंत्रित हैं।' } },
+    anniversary: { name: 'वर्षगाँठ', presets: ['पूजा', 'केक कटिंग', 'डिनर'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'पहला नाम', bride_parents: 'परिचय (जैसे "25वीं वर्षगाँठ")', groom: 'दूसरा नाम', groom_parents: 'परिचय', date: 'कार्यक्रम की तारीख' },
+      sample: { heading: '💞 शादी की वर्षगाँठ 💞', bride: 'सुनीता', bride_parents: '25वीं वर्षगाँठ', groom: 'अनिल', message: 'हमारी खुशी में शामिल होकर इसे यादगार बनाएँ।' } },
+    griha: { name: 'गृह प्रवेश', presets: ['हवन', 'पूजा', 'भोज'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'परिवार / गृह स्वामी का नाम', bride_parents: 'परिचय / नए घर का नाम', date: 'गृह प्रवेश की तारीख', time: 'मुहूर्त / समय', venue: 'नए घर का नाम', address: 'नए घर का पता', message: 'बुलावा संदेश' },
+      sample: { heading: '॥ श्री गणेशाय नमः ॥', bride: 'श्री रमेश शर्मा परिवार', bride_parents: 'गृह प्रवेश', message: 'हमारे नए घर के गृह प्रवेश पर आप सपरिवार पधारें।' } },
+    baby: { name: 'नामकरण / मुंडन / बेबी शावर', presets: ['पूजा', 'भोज'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'बच्चे का नाम (या कार्यक्रम)', bride_parents: 'माता-पिता / परिचय', date: 'कार्यक्रम की तारीख', venue: 'स्थल का नाम', message: 'बुलावा संदेश' },
+      sample: { heading: '🍼 नामकरण संस्कार', bride: 'नन्हा आरव', bride_parents: 'सुपुत्र श्री अमित एवं श्रीमती नेहा', message: 'हमारे नन्हे मेहमान के नामकरण पर आशीर्वाद देने पधारें।' } },
+    puja: { name: 'पूजा / जागरण / कथा', presets: ['कलश यात्रा', 'कथा', 'आरती', 'भंडारा'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'कार्यक्रम का नाम (जैसे श्री सत्यनारायण कथा)', bride_parents: 'आयोजक परिवार', date: 'कार्यक्रम की तारीख', venue: 'स्थल का नाम', message: 'बुलावा संदेश' },
+      sample: { heading: '॥ जय श्री राम ॥', bride: 'श्री सत्यनारायण कथा', bride_parents: 'आयोजक: श्री रमेश शर्मा परिवार', message: 'कथा श्रवण और प्रसाद ग्रहण करने पधारें।' } },
+    opening: { name: 'उद्घाटन', presets: ['रिबन कटिंग', 'पूजा', 'भोज'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'दुकान / संस्था का नाम', bride_parents: 'विवरण (जैसे "शुभ उद्घाटन")', date: 'उद्घाटन की तारीख', venue: 'दुकान का नाम / स्थल', address: 'पता', message: 'बुलावा संदेश' },
+      sample: { heading: '॥ शुभ उद्घाटन ॥', bride: 'शर्मा इलेक्ट्रॉनिक्स', bride_parents: 'हमारे नए शोरूम का उद्घाटन', message: 'आप सभी सादर आमंत्रित हैं।' } },
+    party: { name: 'पार्टी / अन्य कार्यक्रम', presets: ['स्वागत', 'डिनर'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'कार्यक्रम का नाम', bride_parents: 'आयोजक', date: 'कार्यक्रम की तारीख', venue: 'स्थल का नाम', message: 'बुलावा संदेश' },
+      sample: { heading: '✨ आप आमंत्रित हैं ✨', bride: 'गेट-टुगेदर पार्टी', bride_parents: 'आयोजक: शर्मा परिवार', message: 'आपके आने से रौनक बढ़ जाएगी।' } }
+  };
+  function occ(cfg) { var k = cfg && typeof cfg === 'object' ? cfg.occasion : ''; return OCCASIONS[k] || OCCASIONS.wedding; }
+  function fieldsFor(type, cfg) {
+    var base = FIELDS[type] || []; if (type !== 'invitation') return base; var o = occ(cfg); if (!o.labels && !o.hide) return base;
+    return base.filter(function (d) { return !(o.hide && o.hide.indexOf(d[0]) >= 0); }).map(function (d) { return o.labels && o.labels[d[0]] ? [d[0], o.labels[d[0]], d[2], d[3]] : d; });
+  }
+  function presetsFor(cfg) { return occ(cfg).presets || EVENT_PRESETS_W; }
   var SAMPLE = {
     invitation: {
       fields: { heading: '॥ शुभ विवाह ॥', bride: 'प्रिया', bride_parents: 'सुपुत्री श्री रमेश शर्मा', groom: 'राहुल', groom_parents: 'सुपुत्र श्री सुरेश वर्मा',
@@ -143,9 +170,9 @@
     if (f.message) box.appendChild(el('div', 'sr-msg', f.message));
     var dt = [fmtDate(f.date), fmtTime(f.time)].filter(Boolean);
     if (dt.length) { var b = el('div', 'sr-dt'); dt.forEach(function (x) { b.appendChild(el('div', '', x)); }); box.appendChild(b); }
-    if (f.venue || f.address) {
+    if (f.venue || f.address || V.url(f.maplink)) {
       var v = el('div', 'sr-ven'); if (f.venue) v.appendChild(el('b', '', f.venue)); if (f.address) v.appendChild(el('div', '', f.address));
-      v.appendChild(link('sr-btn', 'मैप में देखें', maps([f.venue, f.address].filter(Boolean).join(', ')))); box.appendChild(v);
+      v.appendChild(link('sr-btn', '\uD83D\uDCCD मैप में देखें', V.url(f.maplink) || maps([f.venue, f.address].filter(Boolean).join(', ')))); box.appendChild(v);
     }
     if (d.events.length) {
       var ev = el('div', 'sr-evs'); ev.appendChild(el('div', 'sr-sub', 'कार्यक्रम'));
@@ -163,6 +190,34 @@
     root.appendChild(box);
   }
 
+  function vesc(v) { return String(v || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/([,;])/g, '\\$1'); }
+  function vcardText(f, compact) {
+    var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), nm = f.name || f.business || '';
+    if (!nm && !tel) return '';
+    var L = ['BEGIN:VCARD', 'VERSION:3.0', 'N:' + vesc(nm) + ';;;;', 'FN:' + vesc(nm)];
+    if (f.business) L.push('ORG:' + vesc(f.business));
+    if (f.designation) L.push('TITLE:' + vesc(f.designation));
+    if (tel) L.push('TEL;TYPE=CELL:+91' + tel);
+    if (wa && wa !== tel) L.push('TEL;TYPE=WORK:+91' + wa);
+    if (em) L.push('EMAIL:' + vesc(em));
+    if (web) L.push('URL:' + web);
+    if (f.address && !compact) L.push('ADR;TYPE=WORK:;;' + vesc(f.address) + ';;;;');
+    L.push('END:VCARD'); return L.join('\r\n');
+  }
+  function saveVcard(f) {
+    var t = vcardText(f, false); if (!t) return;
+    var nm = (f.name || f.business || 'contact').replace(/[^\w\u0900-\u097F ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'contact';
+    try {
+      var b = new Blob([t], { type: 'text/vcard;charset=utf-8' }), a = document.createElement('a');
+      a.href = URL.createObjectURL(b); a.download = nm + '.vcf'; document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    } catch (e) { location.href = 'data:text/vcard;charset=utf-8,' + encodeURIComponent(t); }
+  }
+  function qrImage(f) {
+    var t = vcardText(f, true); if (!t || !window.StudioQR) return null;
+    try { var cv = document.createElement('canvas'); window.StudioQR.draw(cv, unescape(encodeURIComponent(t)), 320);
+      var im = el('img', 'sr-qrimg'); im.src = cv.toDataURL('image/png'); im.alt = 'कॉन्टैक्ट QR कोड'; im.width = 160; im.height = 160; return im; } catch (e) { return null; }
+  }
   function buildVisiting(root, d) {
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd');
     if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hd.appendChild(lg); }
@@ -177,7 +232,8 @@
     if (wa) act.appendChild(link('', 'WhatsApp', 'https://wa.me/91' + wa));
     if (em) act.appendChild(link('', 'ईमेल', 'mailto:' + em));
     if (web) act.appendChild(link('', 'वेबसाइट', web));
-    if (f.address) act.appendChild(link('', 'मैप', maps([f.business, f.address].filter(Boolean).join(', '))));
+    if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', '\uD83D\uDCC7 कॉन्टैक्ट सेव करें'); sv0.type = 'button'; sv0.onclick = function () { saveVcard(f); }; act.appendChild(sv0); }
+    if (f.address || V.url(f.maplink)) act.appendChild(link('', '\uD83D\uDCCD लोकेशन', V.url(f.maplink) || maps([f.business, f.address].filter(Boolean).join(', '))));
     if (act.children.length) bd.appendChild(act);
     if (d.services.length) { var sv = el('div', 'sr-svs'); sv.appendChild(el('div', 'sr-sub', 'सेवाएँ')); d.services.forEach(function (s) { sv.appendChild(el('span', 'sr-chip', s)); }); bd.appendChild(sv); }
     [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
@@ -186,6 +242,7 @@
     var soc = el('div', 'sr-soc');
     [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (s) { var u = V.url(s[1]); if (u) soc.appendChild(link('', s[0], u)); });
     if (soc.children.length) bd.appendChild(soc);
+    var qi = qrImage(f); if (qi) { var qw = el('div', 'sr-qr'); qw.appendChild(qi); qw.appendChild(el('div', 'sr-qrt', 'स्कैन करें और कॉन्टैक्ट सेव करें')); bd.appendChild(qw); }
     root.appendChild(bd);
   }
 
@@ -194,7 +251,7 @@
     opts = opts || {}; var t = tplConfig && typeof tplConfig === 'object' ? tplConfig : {}; var pal = t.palette || {};
     type = type === 'visiting' ? 'visiting' : 'invitation';
     var src = content;
-    if (opts.demo && isEmpty(type, content)) { src = JSON.parse(JSON.stringify(SAMPLE[type])); src.style = (content && content.style) || {}; src.images = (content && content.images) || {}; }
+    if (opts.demo && isEmpty(type, content)) { src = JSON.parse(JSON.stringify(SAMPLE[type])); if (type === 'invitation' && occ(t).sample) { var os = occ(t).sample; src.fields = Object.assign({}, src.fields, { groom: '', groom_parents: '' }, os); src.events = []; } src.style = (content && content.style) || {}; src.images = (content && content.images) || {}; }
     var d = normalize(type, src), s = d.style;
     var bg = s.bg || col(pal.bg, '#ffffff'), fg = s.fg || col(pal.fg, '#222222'), ac = s.ac || col(pal.ac, '#8b1a2b');
     var layout = s.layout ? s.layout : ['frame', 'double', 'arch', 'plain', 'band', 'wave', 'side'].indexOf(t.layout) >= 0 ? t.layout : (type === 'visiting' ? 'band' : 'frame');
@@ -267,6 +324,10 @@
     '.sr-an .sr-amp{animation:srpop .9s ease forwards;animation-delay:calc(var(--i,0)*.14s)}' +
     '.sr-an.sr-inv .sr-nm{background:linear-gradient(100deg,var(--ac) 40%,#fff8 50%,var(--ac) 60%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:srup .8s ease forwards,srshine 4.5s ease-in-out 1.4s infinite}' +
     '.sr-an .sr-nm{animation:srup .8s ease forwards;animation-delay:calc(var(--i,0)*.14s)}' +
+    '.sr-act .sr-save{grid-column:1/-1;font:inherit;font-weight:700;font-size:1.02em;padding:.75em 1em;border:2px solid var(--ac);border-radius:2em;background:transparent;color:var(--ac);cursor:pointer}' +
+    '.sr-qr{margin:1.4em auto .4em;text-align:center}.sr-qrimg{width:10em;height:10em;margin:0 auto;padding:.5em;background:#fff;border:2px solid var(--ac);border-radius:14px;box-shadow:0 3px 10px rgba(0,0,0,.12)}' +
+    '.sr-qrt{font-size:.8em;opacity:.75;margin-top:.5em}' +
+    '.sr-an .sr-save{animation:srup .8s ease forwards}.sr-an .sr-qr{animation:srpop .9s ease forwards;animation-delay:calc(var(--i,0) * .12s + .2s);opacity:0}.sr-an-rich .sr-qrimg{animation:srflt 3.2s ease-in-out 1.5s infinite}' +
     '.sr-an .sr-call{animation:srup .8s ease forwards,srpls 2s ease-out 1.4s infinite}' +
     '@media (prefers-reduced-motion:reduce){.sr-an *,.sr-pw{animation:none!important;opacity:1!important;transform:none!important}.sr-pw{display:none}}';
   var assetsDone = false;
@@ -278,6 +339,6 @@
     document.head.appendChild(l);
   }
 
-  window.StudioRender = { render: render, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
+  window.StudioRender = { fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
     FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, BUCKET: BUCKET };
 })();

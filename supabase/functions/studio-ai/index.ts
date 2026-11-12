@@ -41,20 +41,29 @@ function magicOk(type: string, b64: string) {
   return false;
 }
 
-function prompt(type: string, mode: string, templates: { id: string; name: string; config: any }[]) {
+const OCC: Record<string, string> = {
+  engagement: "engagement / roka ceremony", birthday: "birthday party", anniversary: "wedding anniversary", griha: "griha pravesh (housewarming)",
+  baby: "naamkaran / mundan / baby shower", puja: "puja / jagran / katha", opening: "shop or office opening (udghatan)", party: "party or other function",
+};
+
+function prompt(type: string, mode: string, templates: { id: string; name: string; config: any }[], occasion = "wedding") {
+  const occName = OCC[occasion] || "";
   const keys = type === "invitation"
     ? `fields: heading (top line such as a blessing, exactly as printed), bride, bride_parents, groom, groom_parents, date (wedding date as YYYY-MM-DD), time (24-hour HH:MM), venue, address, message (invitation wording), c1_name, c1_phone (10 digits), c2_name, c2_phone, extra
 events: array (max 8) of {title, date (YYYY-MM-DD), time (HH:MM), place} for functions such as सगाई, हल्दी, मेंहदी, संगीत, शादी, रिसेप्शन`
     : `fields: name (person), business, designation, mobile (10 digits), whatsapp (10 digits, only if marked as WhatsApp), email, address, website, about (one or two sentences describing the business, only from what is printed), facebook, instagram, youtube, linkedin
 services: array (max 12) of short strings`;
-  const tpl = templates.map((t) => `${t.id}: ${t.config?.style || ""}, layout ${t.config?.layout || ""}, colours bg ${t.config?.palette?.bg} text ${t.config?.palette?.fg} accent ${t.config?.palette?.ac}`).join("\n");
+  const tpl = templates.filter((t) => type !== "invitation" || (t.config?.occasion || "wedding") === (OCC[occasion] ? occasion : "wedding")).map((t) => `${t.id}: ${t.config?.style || ""}, layout ${t.config?.layout || ""}, colours bg ${t.config?.palette?.bg} text ${t.config?.palette?.fg} accent ${t.config?.palette?.ac}`).join("\n");
   const L = LAYOUTS[type].join(", ");
   const design = mode === "creative"
     ? `DESIGN (AI Creative): the customer already chose a base template; improve on it with a fresh, tasteful ANIMATED look for this content. Choose every design value yourself:
 - template_id (keep the chosen base unless another clearly suits better), layout (${L}), bg / fg / ac colours (hex; text must have strong contrast on bg, accent must stand out), font and nameFont, ornament (${ORNAMENTS.join(" ")}), anim (rich = falling decorations + shimmer, soft = gentle fade only, none), petal (falling decoration: ${PETALS.join(" ")}), align (left, center or right).
 Match the mood of the content (traditional red and gold, floral pink, modern navy, and so on). If the card has no ${type === "invitation" ? "invitation message" : "business description"}, you may write one short, warm line in the same language as the card and put it in ${type === "invitation" ? "message" : "about"}.`
     : `DESIGN: none. The customer already chose the template and its design; read the content only. Return "design":{}.`;
-  return `You are reading a ${type === "invitation" ? "wedding invitation card" : "business / visiting card"} from India. The image(s) are pages or photos of ONE card.
+  const occNote = type === "invitation" && occName
+    ? `\nThis is an invitation for a ${occName}, not a wedding. Reuse the same keys: put the main person or event title in "bride", their short description in "bride_parents", and a second person (if the card has one, such as in an engagement or anniversary) in "groom" and "groom_parents". "date" is the date of this function.`
+    : "";
+  return `You are reading a ${type === "invitation" ? (occName ? "invitation card" : "wedding invitation card") : "business / visiting card"} from India.${occNote} The image(s) are pages or photos of ONE card.
 
 Return ONLY one JSON object, no other words, with this shape:
 {"fields":{...},${type === "invitation" ? '"events":[...]' : '"services":[...]'},"design":${mode === "creative" ? '{"template_id":"...","layout":"...","bg":"#rrggbb","fg":"#rrggbb","ac":"#rrggbb","font":"...","nameFont":"...","ornament":"...","anim":"...","petal":"...","align":"..."}' : "{}"}}
@@ -88,6 +97,7 @@ Deno.serve(async (req) => {
   try { body = JSON.parse(raw); } catch { return json({ code: "bad_request" }, 400); }
   const type = body?.product_type === "visiting" ? "visiting" : body?.product_type === "invitation" ? "invitation" : "";
   const mode = body?.mode === "creative" ? "creative" : "content";
+  const occasion = typeof body?.occasion === "string" && OCC[body.occasion] ? body.occasion : "wedding";
   const files = Array.isArray(body?.files) ? body.files : [];
   if (!type || files.length < 1 || files.length > 4) return json({ code: "bad_request" }, 400);
   for (const f of files) {
@@ -134,7 +144,7 @@ Deno.serve(async (req) => {
         model, max_tokens: 2500,
         messages: [{ role: "user", content: [
           ...files.map((f: any) => ({ type: "image", source: { type: "base64", media_type: f.media_type, data: f.data } })),
-          { type: "text", text: prompt(type, mode, templates) },
+          { type: "text", text: prompt(type, mode, templates, occasion) },
         ] }],
       }),
     });

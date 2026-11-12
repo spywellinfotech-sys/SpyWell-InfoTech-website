@@ -97,7 +97,7 @@ function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo
 
 function pInfo(p){
   var bad=R.invalid(D.product_type,C);
-  R.FIELDS[D.product_type].forEach(function(d){
+  R.fieldsFor(D.product_type,cfg()).forEach(function(d){
     var k=d[0],typ=d[2],inp;
     if(typ==='area')inp=h('textarea',{maxlength:d[3]});
     else inp=h('input',{type:typ==='tel'?'tel':typ==='email'?'email':typ==='url'?'url':typ,maxlength:d[3],inputmode:typ==='tel'?'numeric':null});
@@ -122,7 +122,7 @@ function pList(p){
     });
     if(C.events.length<R.MAX_EVENTS){
       var ch=h('div',{class:'chips'});
-      R.EVENT_PRESETS.forEach(function(n){ch.appendChild(h('button',{text:'+ '+n,onclick:function(){C.events.push({title:n,date:'',time:'',place:''});panel();changed()}}))});
+      R.presetsFor(cfg()).forEach(function(n){ch.appendChild(h('button',{text:'+ '+n,onclick:function(){C.events.push({title:n,date:'',time:'',place:''});panel();changed()}}))});
       p.appendChild(ch);
       p.appendChild(h('button',{class:'btn alt',text:'+ दूसरा कार्यक्रम जोड़ें',onclick:function(){C.events.push({title:'',date:'',time:'',place:''});panel();changed()}}));
     }
@@ -198,9 +198,16 @@ function pDesign(p){
   rb.onclick=function(){if(!resetArmed){resetArmed=true;rb.textContent='पक्का? रंग, लिखावट और आकार के बदलाव हट जाएँगे। हाँ, वापस करें';rb.className='btn danger';return}C.style={};panel();changed()};
   p.appendChild(rb);p.appendChild(h('div',{class:'k',text:'आपकी लिखी जानकारी और फ़ोटो नहीं हटेंगी।'}));
 }
+var tplOcc='';
 function pTpl(p){
+  if(D.product_type==='invitation'){
+    var chips=h('div',{class:'chips'});
+    [['','सभी']].concat(Object.keys(R.OCCASIONS).map(function(k){return [k,R.OCCASIONS[k].name]})).forEach(function(o){
+      chips.appendChild(h('button',{class:tplOcc===o[0]?'on':'',text:o[1],onclick:function(){tplOcc=o[0];panel()}}))});
+    p.appendChild(chips);
+  }
   var g=h('div',{class:'grid'});
-  T.forEach(function(t){
+  T.filter(function(t){return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
     var inner=h('div',{class:'in2'});R.render(inner,D.product_type,t.config,C,{demo:true});
     g.appendChild(h('button',{class:'mini'+(t.id===D.template_id?' on':''),onclick:function(){if(t.id===D.template_id)return;D.template_id=t.id;panel();changed()}},
       [h('div',{class:'box'},[inner]),h('div',{class:'cap'},[document.createTextNode(t.name),h('span',{text:(t.config&&t.config.style)||''})])]));
@@ -280,7 +287,7 @@ function pAI(p){
     aiBusy=true;go1.disabled=true;msg.className='k';msg.textContent=warn+'कार्ड पढ़ा जा रहा है… 20-40 सेकंड लग सकते हैं।';
     try{
       var imgs=await filesToImages(Array.prototype.slice.call(file.files));
-      var j=await fnCall('studio-ai',{product_type:D.product_type,mode:aiMode,files:imgs});
+      var j=await fnCall('studio-ai',{product_type:D.product_type,mode:aiMode,files:imgs,occasion:(cfg().occasion||'wedding')});
       pushHist();
       var n=shape(j.content);n.images=C.images;if(aiMode==='content')n.style=C.style;C=n;
       if(aiMode==='creative'&&j.template_id)D.template_id=j.template_id;
@@ -312,6 +319,16 @@ function pPub(p){
     p.appendChild(h('button',{class:'btn alt',text:'लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(url);info.className='k';info.textContent='लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें और कॉपी करें।'}}}));
     p.appendChild(h('button',{class:'btn alt',text:'कार्ड खोलकर देखें',onclick:function(){window.open(url,'_blank','noopener')}}));
     p.appendChild(h('button',{class:'btn alt',text:'QR कोड डाउनलोड करें',onclick:function(){var a=h('a',{href:cv.toDataURL('image/png'),download:'qr-'+D.slug+'.png'});document.body.appendChild(a);a.click();a.remove()}}));
+    var ik=h('div',{class:'item'},[h('b',{text:'📊 इनसाइट लिंक'}),h('div',{class:'k',text:'इस लिंक पर देख सकते हैं कि कार्ड कितनी बार खुला। लिंक जिसके पास होगा वही देख पाएगा।'})]);
+    var ikb=h('button',{class:'btn alt',text:'इनसाइट लिंक दिखाएँ'});ik.appendChild(ikb);
+    ikb.onclick=async function(){ikb.disabled=true;var r=await sb.rpc('studio_insights_link',{p_design:D.id});ikb.disabled=false;
+      if(r.error||!r.data){info.className='e';info.textContent='इनसाइट लिंक नहीं बना। दोबारा कोशिश करें।';return}
+      var iu=location.origin+'/studio/insights/?k='+r.data;ikb.remove();
+      ik.appendChild(h('div',{class:'k',text:iu,style:'word-break:break-all;margin-top:6px'}));
+      ik.appendChild(h('button',{class:'btn alt',text:'इनसाइट खोलें',onclick:function(){window.open(iu,'_blank','noopener')}}));
+      ik.appendChild(h('button',{class:'btn alt',text:'इनसाइट लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(iu);info.className='k';info.textContent='इनसाइट लिंक कॉपी हो गया।'}catch(e2){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें।'}}}));
+      ik.appendChild(h('button',{class:'btn alt',text:'WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('कार्ड के इनसाइट: '+iu),'_blank','noopener')}}))};
+    p.appendChild(ik);
     var ub=h('button',{class:'btn danger',text:'प्रकाशन बंद करें'});
     ub.onclick=async function(){if(!ub.dataset.a){ub.dataset.a='1';ub.textContent='पक्का? लिंक खुलना बंद हो जाएगा। हाँ, बंद करें';return}
       if(dirty)await save();var r=await sb.from('studio_designs').update({status:'unpublished'}).eq('id',D.id).select('status').single();

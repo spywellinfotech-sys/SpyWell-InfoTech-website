@@ -8,6 +8,7 @@
 <div id="sheet"><div class="msg">लोड हो रहा है…</div></div>
 <div class="foot" id="foot" hidden>SpyWell Digital Studio से बनाया गया · <a href="/studio/">अपना कार्ड बनाएँ</a></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/studio/qr.js"></script>
 <script src="/studio/render.js"></script>
 <script>
 (function(){
@@ -27,6 +28,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},r.data.content_json||{},{});
   document.title=window.StudioRender.title(t,r.data.content_json||{})+' | SpyWell Digital Studio';
   document.getElementById('foot').hidden=false;
+  try{var tk='sv_'+t+s;if(!sessionStorage.getItem(tk)){sessionStorage.setItem(tk,'1');sb.rpc('studio_track_view',{p_slug:s,p_type:t}).then(function(){},function(){})}}catch(e){}
 })();
 })();
 </script></body></html>

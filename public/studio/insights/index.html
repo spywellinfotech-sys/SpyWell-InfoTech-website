@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>कार्ड इनसाइट | SpyWell Digital Studio</title><meta name="robots" content="noindex"><link rel="icon" href="/favicon.png">
+<style>body{margin:0;background:#f3ead6;font:16px/1.5 Hind,Poppins,system-ui,sans-serif;color:#2b1a14}
+.w{max-width:460px;margin:0 auto;padding:16px}h1{font-size:20px;margin:6px 0 2px;color:#8b1a2b}small{color:#7a6248}
+.g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0}.c{background:#fff;border:1px solid #e8d5ad;border-radius:12px;padding:12px 6px;text-align:center}
+.c b{display:block;font-size:26px;color:#8b1a2b}.box{background:#fff;border:1px solid #e8d5ad;border-radius:12px;padding:12px;margin-top:10px}
+.bars{display:flex;align-items:flex-end;gap:4px;height:120px;margin-top:8px}.bars div{flex:1;background:#8b1a2b;border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.lb{display:flex;gap:4px;font-size:10px;color:#7a6248;margin-top:2px}.lb span{flex:1;text-align:center}
+.msg{padding:50px 20px;text-align:center}a{color:#8b1a2b}</style></head><body><div class="w" id="m"><div class="msg">लोड हो रहा है…</div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
+var k=(new URLSearchParams(location.search).get('k')||'').toLowerCase(),m=document.getElementById('m');
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function bad(a,b){m.textContent='';var d=el('div','msg');d.appendChild(el('b','',a));d.appendChild(el('div','',b||''));m.appendChild(d)}
+if(!/^[0-9a-f]{32}$/.test(k)){bad('यह लिंक सही नहीं है','भेजने वाले से पूरा इनसाइट लिंक दोबारा माँगें।');return}
+if(!window.supabase){bad('पेज लोड नहीं हो पाया','इंटरनेट जाँचकर दोबारा खोलें।');return}
+var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshToken:false}});
+sb.rpc('studio_insights',{p_key:k}).then(function(r){
+  if(r.error){bad('अभी इनसाइट नहीं खुल पाए','थोड़ी देर बाद दोबारा कोशिश करें।');return}
+  var d=r.data;if(!d){bad('यह इनसाइट लिंक उपलब्ध नहीं है','');return}
+  m.textContent='';
+  m.appendChild(el('small','',d.type==='invitation'?'निमंत्रण कार्ड':'विज़िटिंग कार्ड'));m.appendChild(el('h1','',d.title||'आपका कार्ड'));
+  m.appendChild(el('small','',d.status==='published'?'🟢 कार्ड लाइव है':'⚪ कार्ड अभी बंद है'));
+  var g=el('div','g');[['कुल बार खुला',d.total],['आज',d.today],['पिछले 7 दिन',d.last7]].forEach(function(x){var c=el('div','c');c.appendChild(el('b','',x[1]));c.appendChild(el('small','',x[0]));g.appendChild(c)});m.appendChild(g);
+  var bx=el('div','box');bx.appendChild(el('b','','पिछले 14 दिन'));var mx=Math.max.apply(null,d.days.map(function(x){return x.n}).concat([1]));
+  var bars=el('div','bars'),lb=el('div','lb');d.days.forEach(function(x){var b=el('div');b.style.height=Math.round(x.n/mx*100)+'%';b.title=x.d+': '+x.n;bars.appendChild(b);lb.appendChild(el('span','',x.d.slice(8)))});
+  bx.appendChild(bars);bx.appendChild(lb);m.appendChild(bx);
+  if(d.last_viewed){var t=new Date(d.last_viewed);m.appendChild(el('small','','आख़िरी बार खुला: '+t.toLocaleString('hi-IN',{timeZone:'Asia/Kolkata'})))}
+  m.appendChild(el('div','',''));
+  var f=el('small','','हर व्यक्ति का एक ही सत्र एक बार गिना जाता है।');m.appendChild(f)
+});
+})();
+</script></body></html>
