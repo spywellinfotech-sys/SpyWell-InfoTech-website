@@ -46,3 +46,25 @@ create or replace function public.studio_my_block(p_design uuid) returns jsonb l
   select coalesce((select jsonb_build_object('card_off',b.card_off,'site_off',b.site_off,'note',b.note) from studio_blocks b join studio_designs d on d.id=b.design_id where b.design_id=p_design and (d.user_id=auth.uid() or studio_is_admin())),'{}'::jsonb) $$;
 revoke all on function public.studio_my_block(uuid) from public, anon;
 grant execute on function public.studio_my_block(uuid) to authenticated;
+
+-- Mini website goes live only with the website plan; the card itself needs just the card plan.
+create or replace function public.studio_sub_required(p_id uuid) returns text language sql stable security definer set search_path=public as $$
+  select case when product_type='visiting' then 'card' end from studio_designs where id=p_id $$;
+
+create or replace function public.studio_pub_live(p_slug text, p_type text, p_site boolean) returns jsonb
+language plpgsql stable security definer set search_path=public as $$
+declare d record; st text; b record; sp text;
+begin
+  select id into d from studio_designs where slug=p_slug and product_type=p_type and status='published';
+  if not found then return jsonb_build_object('live',false,'state','missing'); end if;
+  select * into b from studio_blocks where design_id=d.id;
+  if found and ((p_site and b.site_off) or (not p_site and b.card_off)) then return jsonb_build_object('live',false,'state','blocked','note',b.note); end if;
+  st := studio_sub_state(d.id);
+  if st not in ('free','active','grace') then return jsonb_build_object('live',false,'state',st); end if;
+  if p_site and studio_sub_enabled() then
+    select plan into sp from studio_subs where design_id=d.id;
+    if studio_plan_rank(sp) < 2 then return jsonb_build_object('live',false,'state','site_upgrade'); end if;
+  end if;
+  return jsonb_build_object('live',true,'state',st);
+end $$;
+grant execute on function public.studio_pub_live(text,text,boolean) to anon, authenticated;

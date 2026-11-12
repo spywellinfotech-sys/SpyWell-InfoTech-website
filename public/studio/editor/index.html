@@ -527,6 +527,7 @@ function planBox(p){
     if(s.state==='upgrade')line+='\n⚠️ मिनी वेबसाइट के लिए अपग्रेड ज़रूरी है, तब तक लिंक बंद रहेगा।';
     box.appendChild(h('div',{class:'k',style:'margin-top:6px;white-space:pre-line',text:line}));
     var live=s.plan&&new Date(s.paid_until)>new Date();
+    if(C.style.site===true&&(!s.plan||s.plan==='card'))box.appendChild(h('div',{class:'k',style:'margin-top:6px;font-weight:700;color:#8b1a2b',text:'🌐 आपकी मिनी वेबसाइट अभी बंद है। मिनी वेबसाइट प्लान लेते ही लाइव हो जाएगी।'}));
     sb.from('studio_manual_pays').select('amount').eq('design_id',D.id).eq('status','pending').maybeSingle().then(function(q){if(q&&q.data)box.insertBefore(h('div',{class:'k',style:'font-weight:700;color:#8a5a00',text:'⏳ ₹'+q.data.amount+' का भुगतान जाँच में है। मंज़ूरी के बाद प्लान चालू होगा।'}),box.children[1]||null)});
     function go(plan,label,after,amount){var b=h('button',{class:'btn alt',text:label});b.style.marginTop='8px';
       b.onclick=async function(){b.disabled=true;var ok=await payPlan(plan,amount);if(ok){if(after)await after();toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b)}
