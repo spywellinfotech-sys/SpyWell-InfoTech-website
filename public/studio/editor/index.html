@@ -54,6 +54,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 <div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/studio/render.js"></script>
+<script src="/studio/qr.js"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -89,10 +90,10 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
   else timer=setTimeout(save,1500)}
 
 /* ---------- panels ---------- */
-var TABS=[['info','जानकारी'],['list',''],['photo','फ़ोटो'],['design','डिज़ाइन'],['tpl','टेम्पलेट']];
+var TABS=[['info','जानकारी'],['list',''],['photo','फ़ोटो'],['design','डिज़ाइन'],['tpl','टेम्पलेट'],['ai','AI से भरें'],['pub','प्रकाशित करें']];
 function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
-function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl})[tab](p)}
+function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub})[tab](p)}
 
 function pInfo(p){
   var bad=R.invalid(D.product_type,C);
@@ -200,6 +201,108 @@ function pTpl(p){
   p.appendChild(g);if(!T.length)p.appendChild(h('div',{class:'k',text:'कोई टेम्पलेट उपलब्ध नहीं है।'}));
 }
 
+/* ---------- AI ---------- */
+var aiMode='original',aiBusy=false;
+var AIERR={unauthorized:'लॉगिन पूरा नहीं है। पेज दोबारा खोलकर लॉगिन करें।',limit:'आज की AI सीमा पूरी हो गई। कल फिर कोशिश करें।',not_configured:'AI सेवा अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।',ai_key:'AI सेवा अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।',ai_credit:'AI सेवा अभी उपलब्ध नहीं है। कृपया बाद में कोशिश करें।',ai_busy:'AI अभी व्यस्त है। एक मिनट बाद दोबारा कोशिश करें।',ai_timeout:'AI ने जवाब देने में बहुत समय लिया। दोबारा कोशिश करें।',ai_bad_output:'AI कार्ड समझ नहीं पाया। साफ़ और सीधी फ़ोटो से दोबारा कोशिश करें।',bad_file:'फ़ाइल सही नहीं है। JPG, PNG, WEBP फ़ोटो या PDF दें।',too_big:'फ़ाइल बहुत बड़ी है।'};
+function toB64(blob){return new Promise(function(res,rej){var f=new FileReader();f.onload=function(){res(String(f.result).split(',')[1])};f.onerror=rej;f.readAsDataURL(blob)})}
+function loadPdfJs(){return new Promise(function(res,rej){if(window.pdfjsLib)return res(window.pdfjsLib);var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  sc.onload=function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';res(window.pdfjsLib)};sc.onerror=rej;document.head.appendChild(sc)})}
+function canvasB64(c){return new Promise(function(res){c.toBlob(function(b){toB64(b).then(res)},'image/jpeg',0.82)})}
+async function filesToImages(files){
+  var out=[];
+  for(var i=0;i<files.length&&out.length<4;i++){var f=files[i];
+    if(f.type==='application/pdf'){
+      if(f.size>15*1024*1024)throw new Error('pdfbig');
+      var lib=await loadPdfJs(),doc=await lib.getDocument({data:await f.arrayBuffer()}).promise;
+      for(var p=1;p<=Math.min(doc.numPages,4-out.length);p++){var pg=await doc.getPage(p),vp0=pg.getViewport({scale:1}),sc=Math.min(2,1500/Math.max(vp0.width,vp0.height)),vp=pg.getViewport({scale:sc}),c=document.createElement('canvas');
+        c.width=Math.round(vp.width);c.height=Math.round(vp.height);await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;out.push({media_type:'image/jpeg',data:await canvasB64(c)})}
+    }else if(/^image\/(jpeg|png|webp)$/.test(f.type)){
+      if(f.size>10*1024*1024)throw new Error('imgbig');
+      var b=await shrink(f,false);if(!b)throw new Error('imgopen');out.push({media_type:'image/jpeg',data:await toB64(b)})
+    }else throw new Error('type')}
+  return out}
+function pAI(p){
+  p.appendChild(h('div',{class:'k',text:'अपने पुराने कार्ड की फ़ोटो या PDF दें। AI उसे पढ़कर जानकारी और डिज़ाइन अपने आप भर देगा। फिर आप सब कुछ बदल सकते हैं। रोज़ सीमित बार (आमतौर पर 10) चलता है।'}));
+  var seg=h('div',{class:'seg'});[['original','Original Style (कार्ड जैसा)'],['creative','AI Creative (नया डिज़ाइन)']].forEach(function(a){
+    seg.appendChild(h('button',{class:aiMode===a[0]?'on':'',text:a[1],onclick:function(){aiMode=a[0];panel()}}))});
+  p.appendChild(h('label',{text:'मोड'}));p.appendChild(seg);
+  var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp,application/pdf',multiple:'multiple'});
+  p.appendChild(h('label',{text:'कार्ड की फ़ोटो या PDF (अधिकतम 4 पेज)'}));p.appendChild(file);
+  var msg=h('div',{class:'k',id:'aimsg'});
+  var go1=h('button',{class:'btn',text:'AI से भरें'});
+  go1.onclick=async function(){
+    if(aiBusy)return;if(!file.files.length){msg.className='e';msg.textContent='पहले फ़ोटो या PDF चुनें।';return}
+    var warn=(C.fields&&Object.keys(C.fields).some(function(k){return C.fields[k]}))?'ध्यान दें: इससे अभी की भरी हुई जानकारी बदल जाएगी (Undo ↶ से वापस आ सकती है)। ':'';
+    aiBusy=true;go1.disabled=true;msg.className='k';msg.textContent=warn+'कार्ड पढ़ा जा रहा है… 20-40 सेकंड लग सकते हैं।';
+    try{
+      var imgs=await filesToImages(Array.prototype.slice.call(file.files));
+      var ss=await sb.auth.getSession();if(!ss.data.session)throw new Error('unauthorized');
+      var r=await fetch(B+'/functions/v1/studio-ai',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+ss.data.session.access_token},body:JSON.stringify({product_type:D.product_type,mode:aiMode,files:imgs})});
+      var j=await r.json().catch(function(){return{}});
+      if(!r.ok)throw new Error(j.code||'ai_error');
+      pushHist();
+      var n=shape(j.content);n.images=C.images;C=n;
+      if(j.template_id)D.template_id=j.template_id;
+      changed();pushHist();panel();
+      var m2=$('aimsg');if(m2){m2.className='k';m2.textContent='हो गया। जानकारी जाँच लें और ज़रूरत हो तो बदलें। आज '+j.used+'/'+j.limit+' बार इस्तेमाल हुआ।'}
+    }catch(e){var m=$('aimsg')||msg;m.className='e';
+      m.textContent=e.message==='pdfbig'?'PDF 15 MB से छोटी होनी चाहिए।':e.message==='imgbig'?'फ़ोटो 10 MB से छोटी होनी चाहिए।':e.message==='imgopen'?'यह फ़ोटो खुल नहीं पाई।':e.message==='type'?'सिर्फ JPG, PNG, WEBP या PDF चलेगी।':(AIERR[e.message]||'AI अभी काम नहीं कर पाया। थोड़ी देर बाद दोबारा कोशिश करें।')}
+    aiBusy=false;go1.disabled=false};
+  p.appendChild(go1);p.appendChild(msg);
+  p.appendChild(h('div',{class:'k',text:'कार्ड की फ़ोटो आपकी जानकारी पढ़ने के लिए Anthropic Claude को भेजी जाती है। कार्ड में वह फ़ोटो अपने आप नहीं लगती; चाहें तो "फ़ोटो" टैब से जोड़ें।'}));
+}
+
+/* ---------- publish ---------- */
+var SLUG=/^[a-z0-9]+(-[a-z0-9]+)*$/;
+function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'i':'v')+'/'+slug}
+function slugify(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)}
+function pPub(p){
+  var live=D.status==='published';
+  if(live){
+    var url=pubUrl(D.slug);
+    p.appendChild(h('div',{class:'item'},[h('b',{text:'✅ आपका कार्ड लाइव है'}),h('div',{class:'k',text:url,style:'word-break:break-all;margin-top:6px'})]));
+    var cv=h('canvas');cv.style.cssText='width:200px;height:200px;display:block;margin:12px auto;border:1px solid #e8d5ad';
+    p.appendChild(cv);try{window.StudioQR.draw(cv,url,600)}catch(e){}
+    var info=h('div',{class:'k',id:'pubmsg'});
+    p.appendChild(h('button',{class:'btn',text:'WhatsApp पर भेजें',onclick:function(){var t=(D.product_type==='invitation'?'हमारे विवाह का निमंत्रण: ':'हमारा डिजिटल विज़िटिंग कार्ड: ')+url;window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener')}}));
+    p.appendChild(h('button',{class:'btn alt',text:'लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(url);info.className='k';info.textContent='लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें और कॉपी करें।'}}}));
+    p.appendChild(h('button',{class:'btn alt',text:'कार्ड खोलकर देखें',onclick:function(){window.open(url,'_blank','noopener')}}));
+    p.appendChild(h('button',{class:'btn alt',text:'QR कोड डाउनलोड करें',onclick:function(){var a=h('a',{href:cv.toDataURL('image/png'),download:'qr-'+D.slug+'.png'});document.body.appendChild(a);a.click();a.remove()}}));
+    var ub=h('button',{class:'btn danger',text:'प्रकाशन बंद करें'});
+    ub.onclick=async function(){if(!ub.dataset.a){ub.dataset.a='1';ub.textContent='पक्का? लिंक खुलना बंद हो जाएगा। हाँ, बंद करें';return}
+      if(dirty)await save();var r=await sb.from('studio_designs').update({status:'unpublished'}).eq('id',D.id).select('status').single();
+      if(r.error){info.className='e';info.textContent='बंद नहीं हुआ। दोबारा कोशिश करें।';return}D.status='unpublished';panel();state('प्रकाशन बंद कर दिया गया')};
+    p.appendChild(ub);p.appendChild(info);
+    p.appendChild(h('div',{class:'k',text:'कार्ड में बदलाव सेव होते ही लाइव लिंक पर दिखेंगे। लिंक का नाम बदलने के लिए पहले प्रकाशन बंद करें।'}));
+    return}
+  p.appendChild(h('div',{class:'k',text:D.status==='unpublished'?'यह कार्ड अभी बंद है। दोबारा प्रकाशित करने के लिए लिंक चुनें।':'प्रकाशित करने पर आपका कार्ड एक लिंक और QR कोड से सबके लिए खुल जाएगा।'}));
+  p.appendChild(h('label',{text:'कार्ड का लिंक (अंग्रेज़ी छोटे अक्षर, अंक और -)'}));
+  var inp=h('input',{type:'text',maxlength:60,autocapitalize:'none',autocomplete:'off',spellcheck:'false'});
+  inp.value=D.slug||slugify(R.title(D.product_type,C));p.appendChild(inp);
+  var pre=h('div',{class:'k',style:'word-break:break-all'});p.appendChild(pre);
+  var er=h('div',{class:'e'});p.appendChild(er);
+  var pb=h('button',{class:'btn',text:'प्रकाशित करें'});p.appendChild(pb);
+  var tm=null,ok=false,seq=0;
+  async function check(){var v=inp.value.trim().toLowerCase();pre.textContent=v?pubUrl(v):'';ok=false;er.className='e';
+    if(!v){er.textContent='लिंक का नाम लिखें';return}
+    if(v.length<3||v.length>60||!SLUG.test(v)){er.textContent='3 से 60 अक्षर; सिर्फ a-z, 0-9 और बीच में -';return}
+    er.className='k';er.textContent='जाँच रहे हैं…';var me=++seq;
+    var r=await sb.rpc('studio_slug_free',{p_slug:v,p_id:D.id});if(me!==seq)return;
+    if(r.error){er.className='e';er.textContent='जाँच नहीं हो पाई, दोबारा कोशिश करें';return}
+    if(r.data===true){ok=true;er.className='k';er.textContent='✓ यह लिंक उपलब्ध है'}else{er.className='e';er.textContent='यह नाम कोई और ले चुका है, दूसरा चुनें'}}
+  inp.oninput=function(){clearTimeout(tm);tm=setTimeout(check,400)};check();
+  var needs=R.isEmpty(D.product_type,C);
+  if(needs){er.className='e';er.textContent='पहले कार्ड में कुछ जानकारी भरें।'}
+  pb.onclick=async function(){
+    if(R.isEmpty(D.product_type,C)){er.className='e';er.textContent='पहले कार्ड में कुछ जानकारी भरें।';return}
+    await check();if(!ok)return;pb.disabled=true;if(dirty)await save();
+    var v=inp.value.trim().toLowerCase();
+    var r=await sb.from('studio_designs').update({slug:v,status:'published'}).eq('id',D.id).select('slug,status').single();
+    pb.disabled=false;
+    if(r.error||!r.data){er.className='e';er.textContent='प्रकाशित नहीं हुआ। नाम दूसरा चुनकर दोबारा कोशिश करें।';return}
+    D.slug=r.data.slug;D.status='published';panel();state('कार्ड प्रकाशित हो गया')};
+}
+
 /* ---------- start ---------- */
 $('undo').onclick=function(){go(-1)};$('redo').onclick=function(){go(1)};
 $('save').onclick=function(){if(!dirty){state('सब कुछ सेव है');return}save()};
@@ -213,7 +316,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   if(!s.data.session){location.replace('/studio/');return}
   UID=s.data.session.user.id;
   if(!/^[0-9a-f-]{36}$/i.test(ID)){state('यह डिज़ाइन नहीं मिला।',true);return}
-  var r=await sb.from('studio_designs').select('id,user_id,template_id,product_type,title,status,content_json,updated_at').eq('id',ID).maybeSingle();
+  var r=await sb.from('studio_designs').select('id,user_id,template_id,product_type,title,slug,status,content_json,updated_at').eq('id',ID).maybeSingle();
   if(r.error||!r.data){state('यह डिज़ाइन नहीं मिला, या आपको इसे खोलने की अनुमति नहीं है।',true);return}
   D=r.data;C=shape(D.content_json);
   var t=await sb.from('studio_templates').select('id,name,config,sort').eq('product_type',D.product_type).order('sort',{ascending:true});

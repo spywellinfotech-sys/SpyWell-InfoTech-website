@@ -26,7 +26,7 @@ jobs:
       - name: Build
         env:
           VITE_SITE_URL: https://spywell.in
-        run: npm run build -- --base=/ && cp dist/index.html dist/404.html
+        run: npm run build -- --base=/ && node scripts/make404.cjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

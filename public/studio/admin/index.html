@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>एडमिन | SpyWell Digital Studio</title><meta name="robots" content="noindex"><link rel="icon" href="/favicon.png">
+<style>:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
+.top{background:var(--wine);color:#fff;padding:10px 12px;display:flex;gap:8px;align-items:center}.top b{flex:1}.top a{color:#fff;font-size:14px}
+.wrap{max-width:760px;margin:auto;padding:12px}.msg{padding:30px 10px;text-align:center;color:var(--mut)}.msg.bad{color:#b00020}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}.stat b{display:block;font-size:22px;color:var(--wine)}.stat span{font-size:12px;color:var(--mut)}
+.tabs{display:flex;gap:6px;margin:12px 0}.tabs button{flex:1;padding:9px;border-radius:20px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;cursor:pointer}.tabs button.on{background:var(--wine);color:#fff}
+input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);font:inherit;margin-bottom:8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}.card .k{font-size:13px;color:var(--mut);word-break:break-all}
+.btn{padding:7px 12px;border-radius:8px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;font-size:14px;margin:6px 6px 0 0;cursor:pointer;text-decoration:none;display:inline-block}.btn.d{background:#b00020;color:#fff;border-color:#b00020}
+.st{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;background:#eee}.st.published{background:#1b6e3c;color:#fff}[hidden]{display:none!important}</style></head><body>
+<div class="top"><b>SpyWell Studio · एडमिन</b><a href="/studio/">← Studio</a></div>
+<div class="wrap" id="app"><div class="msg">लोड हो रहा है…</div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
+var app=document.getElementById('app');
+function h(t,p,k){var e=document.createElement(t);for(var a in p||{}){if(a==='class')e.className=p[a];else if(a==='text')e.textContent=p[a];else if(a.slice(0,2)==='on')e[a]=p[a];else if(p[a]!=null)e.setAttribute(a,p[a])}(k||[]).forEach(function(c){if(c)e.appendChild(c)});return e}
+function say(t,bad){app.textContent='';app.appendChild(h('div',{class:'msg'+(bad?' bad':''),text:t}))}
+if(!window.supabase){say('लोड नहीं हो पाया',true);return}
+var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
+var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'शादी का कार्ड',visiting:'विज़िटिंग कार्ड'};
+var tab='cust',body,sel=null;
+function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):''}
+(async function(){
+  var s=await sb.auth.getSession();if(!s.data.session){location.replace('/studio/');return}
+  var a=await sb.rpc('studio_is_admin');
+  if(a.error||a.data!==true){say('इस पेज को खोलने की अनुमति नहीं है।',true);return}
+  var st=await sb.rpc('studio_admin_stats');app.textContent='';
+  if(!st.error&&st.data){var g=h('div',{class:'stats'});[['customers','ग्राहक'],['invitations','शादी कार्ड'],['visiting','विज़िटिंग'],['published','प्रकाशित'],['drafts','ड्राफ़्ट'],['ai_calls_7d','AI (7 दिन)']].forEach(function(x){g.appendChild(h('div',{class:'stat'},[h('b',{text:String(st.data[x[0]]==null?0:st.data[x[0]])}),h('span',{text:x[1]})]))});app.appendChild(g)}
+  var tabs=h('div',{class:'tabs'});app.appendChild(tabs);body=h('div');app.appendChild(body);
+  function draw(){tabs.textContent='';[['cust','ग्राहक'],['tpl','टेम्पलेट']].forEach(function(t){tabs.appendChild(h('button',{class:tab===t[0]?'on':'',text:t[1],onclick:function(){tab=t[0];sel=null;draw()}}))});body.textContent='';(tab==='cust'?(sel?cardsView:custView):tplView)()}
+  window.__draw=draw;draw();
+})();
+function custView(){
+  var q=h('input',{type:'search',placeholder:'नाम, फ़ोन या ईमेल से खोजें'}),list=h('div'),tm;body.appendChild(q);body.appendChild(list);
+  async function load(){list.textContent='';list.appendChild(h('div',{class:'msg',text:'लोड हो रहा है…'}));
+    var r=await sb.rpc('studio_admin_customers',{p_search:q.value.trim()});list.textContent='';
+    if(r.error){list.appendChild(h('div',{class:'msg bad',text:'सूची नहीं आई'}));return}
+    if(!r.data.length)list.appendChild(h('div',{class:'msg',text:'कोई ग्राहक नहीं मिला'}));
+    r.data.forEach(function(c){list.appendChild(h('div',{class:'card'},[h('b',{text:c.full_name||'(नाम नहीं)'}),h('div',{class:'k',text:[c.phone,c.email].filter(Boolean).join(' · ')}),
+      h('div',{class:'k',text:'कार्ड: '+c.designs+' · प्रकाशित: '+c.published+' · जुड़े: '+dt(c.created_at)}),
+      h('button',{class:'btn',text:'कार्ड देखें',onclick:function(){sel=c;window.__draw()}})]))})}
+  q.oninput=function(){clearTimeout(tm);tm=setTimeout(load,350)};load()}
+async function cardsView(){
+  var c=sel;body.appendChild(h('button',{class:'btn',text:'← वापस',onclick:function(){sel=null;window.__draw()}}));
+  body.appendChild(h('div',{class:'card'},[h('b',{text:c.full_name||'(नाम नहीं)'}),h('div',{class:'k',text:[c.phone,c.email].filter(Boolean).join(' · ')})]));
+  var list=h('div');body.appendChild(list);
+  var r=await sb.from('studio_designs').select('id,title,status,product_type,slug,updated_at').eq('user_id',c.id).order('updated_at',{ascending:false});
+  if(r.error){list.appendChild(h('div',{class:'msg bad',text:'कार्ड नहीं आए'}));return}
+  if(!r.data.length)list.appendChild(h('div',{class:'msg',text:'इस ग्राहक का कोई कार्ड नहीं'}));
+  r.data.forEach(function(d){
+    var m=h('div',{class:'k'}),pub=d.status==='published',url=location.origin+'/'+(d.product_type==='invitation'?'i':'v')+'/'+d.slug;
+    var del=h('button',{class:'btn d',text:'मिटाएँ'});
+    del.onclick=async function(){if(!del.dataset.a){del.dataset.a='1';del.textContent='पक्का मिटाएँ? वापस नहीं आएगा';return}
+      var x=await sb.from('studio_designs').delete().eq('id',d.id).select('id');if(x.error||!x.data.length){m.textContent='मिटाया नहीं जा सका';return}window.__draw()};
+    var row=h('div',{class:'card'},[h('b',{text:d.title||'बिना नाम'}),h('span',{class:'st '+d.status,text:STN[d.status]||d.status,style:'margin-left:6px'}),
+      h('div',{class:'k',text:(TYN[d.product_type]||'')+' · '+dt(d.updated_at)+(pub?' · '+url:'')}),
+      pub?h('a',{class:'btn',text:'लाइव खोलें',href:url,target:'_blank',rel:'noopener'}):null,
+      h('a',{class:'btn',text:'एडिटर में खोलें',href:'/studio/editor/?id='+d.id}),
+      pub?h('button',{class:'btn',text:'प्रकाशन बंद करें',onclick:async function(){var x=await sb.from('studio_designs').update({status:'unpublished'}).eq('id',d.id).select('id');if(x.error||!x.data.length){m.textContent='बंद नहीं हुआ';return}window.__draw()}}):null,
+      del,m]);list.appendChild(row)})}
+async function tplView(){
+  var list=h('div');body.appendChild(list);var r=await sb.from('studio_templates').select('id,name,product_type,active,sort').order('product_type').order('sort');
+  if(r.error){list.appendChild(h('div',{class:'msg bad',text:'टेम्पलेट नहीं आए'}));return}
+  r.data.forEach(function(t){var b=h('button',{class:'btn',text:t.active?'चालू · बंद करें':'बंद · चालू करें'});
+    b.onclick=async function(){var x=await sb.from('studio_templates').update({active:!t.active}).eq('id',t.id).select('id');if(x.error||!x.data.length){b.textContent='बदला नहीं जा सका';return}window.__draw()};
+    list.appendChild(h('div',{class:'card'},[h('b',{text:t.name}),h('div',{class:'k',text:(TYN[t.product_type]||'')+' · '+t.id}),b]))})}
+})();
+</script></body></html>

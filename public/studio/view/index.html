@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SpyWell Digital Studio</title><link rel="icon" href="/favicon.png">
+<style>body{margin:0;background:#f3ead6;font:16px/1.5 Hind,Poppins,system-ui,sans-serif;color:#2b1a14}
+#sheet{max-width:440px;margin:0 auto;background:#fff;min-height:100vh}
+.msg{padding:60px 24px;text-align:center}.msg b{display:block;font-size:20px;margin-bottom:8px}
+.foot{max-width:440px;margin:0 auto;text-align:center;font-size:12px;padding:12px;color:#7a6248}.foot a{color:#8b1a2b}</style></head><body>
+<div id="sheet"><div class="msg">लोड हो रहा है…</div></div>
+<div class="foot" id="foot" hidden>SpyWell Digital Studio से बनाया गया · <a href="/studio/">अपना कार्ड बनाएँ</a></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/studio/render.js"></script>
+<script>
+(function(){
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
+var q=new URLSearchParams(location.search),t=q.get('t')==='i'?'invitation':q.get('t')==='v'?'visiting':'',s=(q.get('s')||'').toLowerCase();
+var box=document.getElementById('sheet');
+function msg(a,b){box.textContent='';var d=document.createElement('div');d.className='msg';var x=document.createElement('b');x.textContent=a;d.appendChild(x);d.appendChild(document.createTextNode(b||''));box.appendChild(d)}
+if(!t||!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(s)||s.length<3||s.length>60){msg('यह लिंक सही नहीं है','कृपया भेजने वाले से पूरा लिंक दोबारा माँगें।');return}
+if(!window.supabase||!window.StudioRender){msg('पेज लोड नहीं हो पाया','इंटरनेट जाँचकर दोबारा खोलें।');return}
+var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshToken:false}});
+(async function(){
+  var r=await sb.from('studio_designs').select('template_id,product_type,title,content_json').eq('slug',s).eq('status','published').eq('product_type',t).maybeSingle();
+  if(r.error){msg('अभी कार्ड नहीं खुल पाया','थोड़ी देर बाद दोबारा कोशिश करें।');return}
+  if(!r.data){msg('यह कार्ड उपलब्ध नहीं है','हो सकता है यह हटा दिया गया हो या अभी प्रकाशित न हो।');return}
+  var tp=await sb.from('studio_templates').select('config').eq('id',r.data.template_id).maybeSingle();
+  box.textContent='';
+  window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},r.data.content_json||{},{});
+  document.title=window.StudioRender.title(t,r.data.content_json||{})+' | SpyWell Digital Studio';
+  document.getElementById('foot').hidden=false;
+})();
+})();
+</script></body></html>
