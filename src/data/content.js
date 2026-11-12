@@ -158,21 +158,21 @@ export const services = [
     },
   },
   {
-    slug: 'digital-wedding-cards',
+    slug: 'live-cards-mini-websites',
     icon: 'Gem',
-    demo: '/wedding-card/',
-    title: { en: 'Digital Wedding Cards', hi: 'डिजिटल वेडिंग कार्ड' },
+    demo: '/studio/promo/',
+    title: { en: 'Live Cards & Mini Websites', hi: 'लाइव कार्ड और मिनी वेबसाइट' },
     short: {
-      en: 'Shareable wedding invitations with Maps, call buttons and PDF.',
-      hi: 'Maps, कॉल बटन और PDF के साथ शेयर होने वाले शादी के निमंत्रण कार्ड।',
+      en: 'Online live invitation cards, visiting cards and mini websites with one shareable link.',
+      hi: 'एक लिंक में शेयर होने वाले ऑनलाइन लाइव इनविटेशन कार्ड, विज़िटिंग कार्ड और मिनी वेबसाइट।',
     },
     description: {
-      en: 'We design animated digital wedding invitations in your family style. Guests get one WhatsApp link with events, venue on Google Maps and tap-to-call numbers. You also get a PDF and photo to save, and a private page showing how many people opened the card.',
-      hi: 'हम आपके परिवार की पसंद के अनुसार एनिमेटेड डिजिटल वेडिंग कार्ड बनाते हैं। मेहमानों को WhatsApp पर एक लिंक मिलता है जिसमें कार्यक्रम, Google Maps पर विवाह स्थल और एक टैप में कॉल करने वाले नंबर होते हैं। आपको PDF और फ़ोटो भी मिलती है, और एक निजी पेज जिसमें दिखता है कि कितने लोगों ने कार्ड खोला।',
+      en: 'Make online live cards for weddings, birthdays, pujas and every function, plus live visiting cards and one-page mini websites, all from your phone with SpyWell Live Studio. Share one WhatsApp link with events, Google Maps and tap-to-call numbers. Change the details any time and the same link shows the new card. AI can fill the details from a photo of an old card, and you can see how many people opened it.',
+      hi: 'SpyWell Live Studio से शादी, जन्मदिन, पूजा और हर अवसर के ऑनलाइन लाइव कार्ड, साथ में लाइव विज़िटिंग कार्ड और एक पेज की मिनी वेबसाइट, सब अपने फ़ोन से बनाइए। WhatsApp पर एक लिंक भेजिए जिसमें कार्यक्रम, Google Maps और एक टैप में कॉल करने वाले नंबर होते हैं। जानकारी कभी भी बदलिए, वही लिंक नया कार्ड दिखाएगा। AI पुराने कार्ड की फ़ोटो से जानकारी भर सकता है, और आप देख सकते हैं कि कितनों ने कार्ड खोला।',
     },
     points: {
-      en: ['Animated card with your names and photos', 'Google Maps venue link', 'Tap-to-call family numbers', 'PDF, photo and WhatsApp sharing', 'Private view and click insights'],
-      hi: ['आपके नाम और फ़ोटो के साथ एनिमेटेड कार्ड', 'Google Maps पर विवाह स्थल', 'एक टैप में कॉल वाले पारिवारिक नंबर', 'PDF, फ़ोटो और WhatsApp शेयर', 'निजी व्यू और क्लिक इनसाइट'],
+      en: ['Live invitation cards for every occasion', 'Visiting card that upgrades to a mini website', 'Custom domain and full website on request', 'Free car call QR sticker', 'AI fills details from a photo or PDF'],
+      hi: ['हर अवसर के लिए लाइव इनविटेशन कार्ड', 'विज़िटिंग कार्ड जो मिनी वेबसाइट में बदल जाए', 'ज़रूरत पर अपना डोमेन और पूरी वेबसाइट', 'मुफ़्त कार कॉल QR स्टिकर', 'AI फ़ोटो या PDF से जानकारी भरता है'],
     },
   },
 ];
