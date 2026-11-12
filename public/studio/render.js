@@ -426,6 +426,14 @@
     ci.appendChild(tools);
     var qi = qrImage(f); if (qi) { var qw = el('div', 'sr-qr'); qw.appendChild(qi); qw.appendChild(el('div', 'sr-qrt', T('स्कैन करें और कॉन्टैक्ट सेव करें'))); ci.appendChild(qw); }
     if (typeof opts.onAct === 'function') root.addEventListener('click', function (ev) { var x = ev.target.closest ? ev.target.closest('[data-act]') : null; if (x) { try { opts.onAct(x.getAttribute('data-act')); } catch (e) { } } });
+    var wan = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich');
+    if (wan !== 'none' && !opts.demo && 'IntersectionObserver' in window) {
+      root.className += ' ws-an';
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('ws-on'); io.unobserve(e.target); } }); }, { threshold: 0.12 });
+      Array.prototype.forEach.call(root.querySelectorAll('.ws-sec .ws-in'), function (x) { x.classList.add('ws-rv'); io.observe(x); });
+      Array.prototype.forEach.call(root.querySelectorAll('.ws-card,.sr-chip,.sr-qr'), function (x, i) { x.style.setProperty('--k', i % 6); });
+      if (wan === 'rich') { var bl = el('div', 'ws-bl'); for (var n = 0; n < 6; n++) { var b = el('i'); b.style.cssText = 'left:' + (8 + n * 16) + '%;width:' + (30 + (n * 17) % 40) + 'px;height:' + (30 + (n * 17) % 40) + 'px;animation-delay:' + (-n * 1.6) + 's;animation-duration:' + (9 + n * 2) + 's'; bl.appendChild(b); } root.querySelector('.ws-hero').appendChild(bl); }
+    }
     mount.textContent = ''; mount.appendChild(root); return root;
   }
   CSS += '.sr[dir=rtl] .sr-row{text-align:right}.sr[dir=rtl] .sr-save,.sr[dir=rtl] .sr-act a{direction:rtl}' +
@@ -438,7 +446,17 @@
     '.ws-sec{padding:1.8em 0;border-bottom:1px solid var(--soft)}.ws-sec h2{font-family:var(--nf);font-size:1.35em;margin-bottom:.7em;color:var(--ac)}' +
     '.ws-about{max-width:34em;margin:0 auto;white-space:pre-line}.ws-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.7em}' +
     '.ws-card{background:var(--soft);border-radius:12px;padding:.9em;font-weight:600}.ws-card small{display:block;opacity:.65;font-weight:400;margin-bottom:.2em}' +
-    '.ws-card a{text-decoration:none;word-break:break-all}';
+    '.ws-card a{text-decoration:none;word-break:break-all}' +
+    '.ws-hero{position:relative;overflow:hidden}.ws-hero .ws-in{position:relative;z-index:1}' +
+    '.ws-an .ws-hero{background-image:linear-gradient(120deg,var(--ac),color-mix(in srgb,var(--ac) 60%,#fff),var(--ac));background-size:300% 100%;animation:sraur 12s ease-in-out infinite}' +
+    '.ws-an .ws-hero .ws-in>*{opacity:0;animation:srup .8s ease forwards}.ws-an .ws-hero .ws-in>*:nth-child(2){animation-delay:.15s}.ws-an .ws-hero .ws-in>*:nth-child(3){animation-delay:.3s}.ws-an .ws-hero .ws-in>*:nth-child(4){animation-delay:.45s}.ws-an .ws-hero .ws-in>*:nth-child(5){animation-delay:.6s}' +
+    '.ws-an .ws-hero .ph{animation-name:srpop}.ws-an .ws-hero .sr-call{animation:srup .8s ease forwards,srpls 2s ease-out 1.4s infinite}' +
+    '.ws-bl{position:absolute;inset:0;pointer-events:none}.ws-bl i{position:absolute;bottom:-60px;border-radius:50%;background:rgba(255,255,255,.14);animation:wsbl linear infinite}@keyframes wsbl{to{transform:translateY(-340px);opacity:0}}' +
+    '.ws-rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}.ws-rv.ws-on{opacity:1;transform:none}' +
+    '.ws-an .ws-card,.ws-an .sr-chip{opacity:0;transform:scale(.92)}.ws-an .ws-on .ws-card,.ws-an .ws-on .sr-chip{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease,box-shadow .2s;transition-delay:calc(var(--k,0)*.08s)}' +
+    '.ws-an .ws-card:hover{box-shadow:0 6px 16px rgba(0,0,0,.14);transform:translateY(-3px)}' +
+    '.ws-an .ws-navbtn{animation:srpls 2s ease-out 1.5s infinite}' +
+    '@media (prefers-reduced-motion:reduce){.ws-an .ws-hero,.ws-an .ws-hero .ws-in>*,.ws-rv,.ws-an .ws-card,.ws-an .sr-chip{animation:none!important;opacity:1!important;transform:none!important;transition:none!important}.ws-bl{display:none}}';
 
   function ensureAssets() {
     if (assetsDone) return; assetsDone = true;
