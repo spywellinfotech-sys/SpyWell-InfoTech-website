@@ -76,7 +76,7 @@
   function picker() {
     if (document.getElementById('sp-lang') || window.I18N_PICKER === false) return;
     var s = document.createElement('select'); s.id = 'sp-lang'; s.className = 'notranslate'; s.setAttribute('aria-label', 'Language');
-    s.style.cssText = 'position:fixed;right:10px;bottom:10px;z-index:99999;width:auto;max-width:130px;margin:0;padding:6px 8px;border:1px solid #c9a227;border-radius:20px;background:#fff;color:#8b1a2b;font:600 13px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.2)';
+    s.style.cssText = 'position:fixed;right:10px;bottom:calc(10px + var(--i18n-lift,0px));z-index:99999;width:auto;max-width:130px;margin:0;padding:6px 8px;border:1px solid #c9a227;border-radius:20px;background:#fff;color:#8b1a2b;font:600 13px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.2)';
     Object.keys(LANGS).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = LANGS[k][0]; s.appendChild(o); });
     s.value = cur; s.onchange = function () { setLang(s.value); }; document.body.appendChild(s);
   }
