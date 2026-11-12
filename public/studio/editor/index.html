@@ -222,20 +222,23 @@ function pTpl(p){
 }
 
 /* ---------- AI ---------- */
-var aiMode='content',aiBusy=false,CR={bal:null,admin:false,info:null,loaded:false};
-var AIERR={no_credit:'AI से पढ़ने के लिए पहले भुगतान करें।',unauthorized:'लॉगिन पूरा नहीं है। पेज दोबारा खोलकर लॉगिन करें।',limit:'आज की AI सीमा पूरी हो गई। कल फिर कोशिश करें।',not_configured:'AI सेवा अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।',ai_key:'AI सेवा अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।',ai_credit:'AI सेवा अभी उपलब्ध नहीं है। कृपया बाद में कोशिश करें।',ai_busy:'AI अभी व्यस्त है। एक मिनट बाद दोबारा कोशिश करें।',ai_timeout:'AI ने जवाब देने में बहुत समय लिया। दोबारा कोशिश करें।',ai_bad_output:'AI कार्ड समझ नहीं पाया। साफ़ और सीधी फ़ोटो से दोबारा कोशिश करें।',bad_file:'फ़ाइल सही नहीं है। JPG, PNG, WEBP फ़ोटो या PDF दें।',too_big:'फ़ाइल बहुत बड़ी है।'};
+var AIR=null,AIDOCS={},aiMode='content',aiBusy=false,CR={bal:null,admin:false,info:null,loaded:false};
+var AIERR={ai_off:'AI अभी बंद है। थोड़ी देर बाद कोशिश करें।',no_credit:'AI से पढ़ने के लिए पहले भुगतान करें।',unauthorized:'लॉगिन पूरा नहीं है। पेज दोबारा खोलकर लॉगिन करें।',limit:'आज की AI सीमा पूरी हो गई। कल फिर कोशिश करें।',not_configured:'AI सेवा अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।',ai_key:'AI सेवा अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।',ai_credit:'AI सेवा अभी उपलब्ध नहीं है। कृपया बाद में कोशिश करें।',ai_busy:'AI अभी व्यस्त है। एक मिनट बाद दोबारा कोशिश करें।',ai_timeout:'AI ने जवाब देने में बहुत समय लिया। दोबारा कोशिश करें।',ai_bad_output:'AI कार्ड समझ नहीं पाया। साफ़ और सीधी फ़ोटो से दोबारा कोशिश करें।',bad_file:'फ़ाइल सही नहीं है। JPG, PNG, WEBP फ़ोटो या PDF दें।',too_big:'फ़ाइल बहुत बड़ी है।'};
 function toB64(blob){return new Promise(function(res,rej){var f=new FileReader();f.onload=function(){res(String(f.result).split(',')[1])};f.onerror=rej;f.readAsDataURL(blob)})}
 function loadPdfJs(){return new Promise(function(res,rej){if(window.pdfjsLib)return res(window.pdfjsLib);var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
   sc.onload=function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';res(window.pdfjsLib)};sc.onerror=rej;document.head.appendChild(sc)})}
 function canvasB64(c){return new Promise(function(res){c.toBlob(function(b){toB64(b).then(res)},'image/jpeg',0.82)})}
-async function filesToImages(files){
-  var out=[];
+async function pdfDoc(f){var k=f.name+'|'+f.size+'|'+f.lastModified;if(AIDOCS[k])return AIDOCS[k];if(f.size>15*1024*1024)throw new Error('pdfbig');
+  var lib=await loadPdfJs(),doc=await lib.getDocument({data:await f.arrayBuffer()}).promise;AIDOCS[k]=doc;return doc}
+async function pdfPageCanvas(doc,p,maxPx){var pg=await doc.getPage(p),vp0=pg.getViewport({scale:1}),sc=Math.min(2,maxPx/Math.max(vp0.width,vp0.height)),vp=pg.getViewport({scale:sc}),c=document.createElement('canvas');
+  c.width=Math.round(vp.width);c.height=Math.round(vp.height);await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;return c}
+async function filesToImages(files,pick){
+  var out=[];pick=pick||{};
   for(var i=0;i<files.length&&out.length<4;i++){var f=files[i];
     if(f.type==='application/pdf'){
-      if(f.size>15*1024*1024)throw new Error('pdfbig');
-      var lib=await loadPdfJs(),doc=await lib.getDocument({data:await f.arrayBuffer()}).promise;
-      for(var p=1;p<=Math.min(doc.numPages,4-out.length);p++){var pg=await doc.getPage(p),vp0=pg.getViewport({scale:1}),sc=Math.min(2,1500/Math.max(vp0.width,vp0.height)),vp=pg.getViewport({scale:sc}),c=document.createElement('canvas');
-        c.width=Math.round(vp.width);c.height=Math.round(vp.height);await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;out.push({media_type:'image/jpeg',data:await canvasB64(c)})}
+      var doc=await pdfDoc(f),k=f.name+'|'+f.size+'|'+f.lastModified,pages=(pick[k]&&pick[k].length)?pick[k].slice(0,4-out.length):[];
+      if(!pages.length)for(var q=1;q<=Math.min(doc.numPages,4-out.length);q++)pages.push(q);
+      for(var z=0;z<pages.length&&out.length<4;z++){out.push({media_type:'image/jpeg',data:await canvasB64(await pdfPageCanvas(doc,pages[z],1500))})}
     }else if(/^image\/(jpeg|png|webp)$/.test(f.type)){
       if(f.size>10*1024*1024)throw new Error('imgbig');
       var b=await shrink(f,false);if(!b)throw new Error('imgopen');out.push({media_type:'image/jpeg',data:await toB64(b)})
@@ -266,7 +269,27 @@ async function buy(msg){
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
     panel();var m2=$('aimsg');if(m2){m2.className='k';m2.textContent='भुगतान हो गया। अब कार्ड की फ़ोटो या PDF दें।'}
   }catch(e){msg.className='e';msg.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।':'भुगतान पूरा नहीं हो पाया। अगर पैसे कट गए हों तो पेज दोबारा खोलें, क्रेडिट अपने-आप जुड़ जाएगा।'}}
+function aiReview(p){
+  var j=AIR.j,c=j.content||{},fl=c.fields||{},unc=j.uncertain||[],defs=R.fieldsFor(D.product_type,cfg()),ed={};
+  p.appendChild(h('div',{class:'item'},[h('b',{text:'AI ने ये जानकारी पढ़ी है। भरने से पहले जाँच लीजिए'}),h('div',{class:'k',text:(j.cached?'यह फ़ोटो पहले पढ़ी जा चुकी है, इसलिए इस बार क्रेडिट नहीं कटा। ':'')+'पीले निशान वाले हिस्से AI को साफ़ नहीं दिखे, उन्हें ज़रूर देखें। गलत हो तो यहीं सुधारिए।'})]));
+  var any=false;
+  defs.forEach(function(d){var k=d[0];if(d[2]==='select'||fl[k]==null||fl[k]==='')return;any=true;var isU=unc.indexOf(k)>=0;
+    var inp=d[2]==='area'?h('textarea',{maxlength:d[3]}):h('input',{type:'text',maxlength:d[3]});inp.value=fl[k];if(isU)inp.style.background='#fff6c9';ed[k]=inp;
+    p.appendChild(h('label',{text:d[1]+(isU?'  ⚠️ जाँचें':'')}));p.appendChild(inp)});
+  if(!any)p.appendChild(h('div',{class:'e',text:'AI को फ़ोटो में कोई जानकारी साफ़ नहीं मिली। ज़्यादा साफ़ फ़ोटो से कोशिश करें।'}));
+  if(c.events&&c.events.length)p.appendChild(h('div',{class:'k',text:'कार्यक्रम मिले: '+c.events.map(function(x){return x.title||''}).filter(Boolean).join(', ')+' (भरने के बाद "कार्यक्रम" टैब में बदल सकते हैं)'}));
+  if(c.services&&c.services.length)p.appendChild(h('div',{class:'k',text:'सेवाएँ मिलीं: '+c.services.join(', ')}));
+  if(j.mode==='creative'&&j.template_id)p.appendChild(h('div',{class:'k',text:'AI Creative ने डिज़ाइन भी चुना है, वह भी लागू होगा।'}));
+  var hasOld=C.fields&&Object.keys(C.fields).some(function(k){return C.fields[k]});
+  if(hasOld)p.appendChild(h('div',{class:'k',style:'color:#b45309',text:'ध्यान दें: भरने पर अभी की जानकारी बदल जाएगी (Undo ↶ से वापस आ सकती है)।'}));
+  p.appendChild(h('button',{class:'btn',text:'✅ कार्ड में भरें',onclick:function(){
+    pushHist();var cc=JSON.parse(JSON.stringify(c));cc.fields=cc.fields||{};Object.keys(ed).forEach(function(k){cc.fields[k]=ed[k].value.trim()});
+    var n=shape(cc);n.images=C.images;if(j.mode==='content')n.style=C.style;C=n;if(j.mode==='creative'&&j.template_id)D.template_id=j.template_id;
+    AIR=null;tab='info';changed();pushHist();tabs();panel();draw()}}));
+  p.appendChild(h('button',{class:'btn alt',text:'रद्द करें (कुछ नहीं बदलेगा)',onclick:function(){AIR=null;panel()}}));
+}
 function pAI(p){
+  if(AIR){aiReview(p);return}
   if(!CR.loaded){p.appendChild(h('div',{class:'k',text:'लोड हो रहा है…'}));loadCredits(true).then(function(){if(tab==='ai')panel()});return}
   var t=T.filter(function(x){return x.id===D.template_id})[0];
   p.appendChild(h('div',{class:'item'},[h('b',{text:'चुना हुआ टेम्पलेट: '+(t?t.name:'')}),h('div',{class:'k',text:'AI आपके कार्ड की जानकारी इसी टेम्पलेट में भर देगा। टेम्पलेट बदलना हो तो "टेम्पलेट" टैब में बदलें।'})]));
@@ -286,23 +309,37 @@ function pAI(p){
   p.appendChild(h('div',{class:'k',text:aiMode==='content'?'आपका चुना टेम्पलेट और डिज़ाइन वैसा ही रहेगा, सिर्फ़ जानकारी भरेगी।':'AI जानकारी भरने के साथ रंग, बनावट, एनिमेशन और सजावट भी खुद चुनेगा।'}));
   var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp,application/pdf',multiple:'multiple'});
   p.appendChild(h('label',{text:'कार्ड की फ़ोटो या PDF (अधिकतम 4 पेज)'}));p.appendChild(file);
-  var go1=h('button',{class:'btn',text:'AI से भरें'});
+  var pick={},prev=h('div',{class:'k'});p.appendChild(prev);
+  file.onchange=async function(){
+    prev.textContent='';pick={};var fs=Array.prototype.slice.call(file.files);
+    for(var fi=0;fi<fs.length;fi++){(function(f){
+      if(/^image\//.test(f.type)){var im=h('img',{style:'max-height:90px;margin:4px;border:1px solid #e8d5ad;border-radius:6px'});try{im.src=URL.createObjectURL(f)}catch(x){}prev.appendChild(im);return}
+      if(f.type!=='application/pdf')return;
+      var key=f.name+'|'+f.size+'|'+f.lastModified,box=h('div',{style:'margin-top:6px'},[h('div',{text:'PDF लोड हो रहा है…'})]);prev.appendChild(box);
+      pdfDoc(f).then(async function(doc){
+        box.textContent='';var n=doc.numPages,sel=[];for(var q=1;q<=Math.min(n,4);q++)sel.push(q);pick[key]=sel;
+        var info=h('div',{text:'PDF में '+n+' पेज हैं। जो पेज AI को भेजने हैं उन्हें चुनें (अधिकतम 4)।'+(n>12?' पहले 12 पेज दिख रहे हैं।':'')});box.appendChild(info);
+        var row=h('div',{style:'display:flex;flex-wrap:wrap;gap:6px;margin-top:4px'});box.appendChild(row);
+        for(var pn=1;pn<=Math.min(n,12);pn++){(function(pn){
+          var cb=h('input',{type:'checkbox',style:'width:auto;margin:0'});cb.checked=sel.indexOf(pn)>=0;
+          var cv=h('canvas',{style:'max-width:90px;border:1px solid #e8d5ad;border-radius:4px;display:block'});
+          var cell=h('label',{style:'display:block;text-align:center;font-size:12px;margin:0'},[cv,cb,document.createTextNode(' पेज '+pn)]);row.appendChild(cell);
+          cb.onchange=function(){var cur=pick[key];if(cb.checked){if(cur.length>=4){cb.checked=false;return}cur.push(pn)}else pick[key]=cur.filter(function(x){return x!==pn})};
+          pdfPageCanvas(doc,pn,160).then(function(c){cv.width=c.width;cv.height=c.height;cv.getContext('2d').drawImage(c,0,0)}).catch(function(){})})(pn)}
+      }).catch(function(er){box.textContent=er.message==='pdfbig'?'PDF 15 MB से छोटी होनी चाहिए।':'यह PDF खुल नहीं पाई (खराब या पासवर्ड वाली हो सकती है)।'})})(fs[fi])}};
+  var go1=h('button',{class:'btn',text:'AI से पढ़ें'});
   go1.onclick=async function(){
     if(aiBusy)return;if(!file.files.length){msg.className='e';msg.textContent='पहले फ़ोटो या PDF चुनें।';return}
-    var warn=(C.fields&&Object.keys(C.fields).some(function(k){return C.fields[k]}))?'ध्यान दें: इससे अभी की भरी हुई जानकारी बदल जाएगी (Undo ↶ से वापस आ सकती है)। ':'';
-    aiBusy=true;go1.disabled=true;msg.className='k';msg.textContent=warn+'कार्ड पढ़ा जा रहा है… 20-40 सेकंड लग सकते हैं।';
+    aiBusy=true;go1.disabled=true;msg.className='k';msg.textContent='कार्ड पढ़ा जा रहा है… 20-40 सेकंड लग सकते हैं। (पढ़ने के बाद आपको जानकारी जाँचने का मौका मिलेगा)';
     try{
-      var imgs=await filesToImages(Array.prototype.slice.call(file.files));
+      var imgs=await filesToImages(Array.prototype.slice.call(file.files),pick);
+      if(!imgs.length)throw new Error('type');
       var j=await fnCall('studio-ai',{product_type:D.product_type,mode:aiMode,files:imgs,occasion:(cfg().occasion||'wedding')});
-      pushHist();
-      var n=shape(j.content);n.images=C.images;if(aiMode==='content')n.style=C.style;C=n;
-      if(aiMode==='creative'&&j.template_id)D.template_id=j.template_id;
-      if(!j.free&&CR.bal!=null)CR.bal=Math.max(0,CR.bal-1);
-      changed();pushHist();panel();
-      var m2=$('aimsg');if(m2){m2.className='k';m2.textContent='हो गया। जानकारी जाँच लें और ज़रूरत हो तो बदलें।'}
+      if(!j.free&&!j.cached&&CR.bal!=null)CR.bal=Math.max(0,CR.bal-1);
+      AIR={j:j,mode:aiMode};panel();return
     }catch(e){var m=$('aimsg')||msg;m.className='e';
       if(e.message==='no_credit'){CR.bal=0}
-      m.textContent=e.message==='pdfbig'?'PDF 15 MB से छोटी होनी चाहिए।':e.message==='imgbig'?'फ़ोटो 10 MB से छोटी होनी चाहिए।':e.message==='imgopen'?'यह फ़ोटो खुल नहीं पाई।':e.message==='type'?'सिर्फ JPG, PNG, WEBP या PDF चलेगी।':(AIERR[e.message]||'AI अभी काम नहीं कर पाया। आपका क्रेडिट वापस है, थोड़ी देर बाद दोबारा कोशिश करें।');
+      m.textContent=e.message==='pdfbig'?'PDF 15 MB से छोटी होनी चाहिए।':e.message==='imgbig'?'फ़ोटो 10 MB से छोटी होनी चाहिए।':e.message==='imgopen'?'यह फ़ोटो खुल नहीं पाई। दूसरी फ़ोटो चुनें।':e.message==='type'?'सिर्फ़ JPG, PNG, WEBP फ़ोटो या PDF चुनें।':(AIERR[e.message]||AIERR[e.code]||'AI अभी काम नहीं कर पाया। थोड़ी देर बाद दोबारा कोशिश करें।');
       if(e.message==='no_credit')setTimeout(function(){if(tab==='ai')panel()},1500)}
     aiBusy=false;go1.disabled=false};
   p.appendChild(go1);p.appendChild(msg);

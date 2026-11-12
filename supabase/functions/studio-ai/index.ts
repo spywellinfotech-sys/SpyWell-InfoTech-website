@@ -66,9 +66,10 @@ Match the mood of the content (traditional red and gold, floral pink, modern nav
   return `You are reading a ${type === "invitation" ? (occName ? "invitation card" : "wedding invitation card") : "business / visiting card"} from India.${occNote} The image(s) are pages or photos of ONE card.
 
 Return ONLY one JSON object, no other words, with this shape:
-{"fields":{...},${type === "invitation" ? '"events":[...]' : '"services":[...]'},"design":${mode === "creative" ? '{"template_id":"...","layout":"...","bg":"#rrggbb","fg":"#rrggbb","ac":"#rrggbb","font":"...","nameFont":"...","ornament":"...","anim":"...","petal":"...","align":"..."}' : "{}"}}
+{"uncertain":[...],"fields":{...},${type === "invitation" ? '"events":[...]' : '"services":[...]'},"design":${mode === "creative" ? '{"template_id":"...","layout":"...","bg":"#rrggbb","fg":"#rrggbb","ac":"#rrggbb","font":"...","nameFont":"...","ornament":"...","anim":"...","petal":"...","align":"..."}' : "{}"}}
 
 CONTENT rules:
+- "uncertain": list the field keys (from the list below) whose text you could not read clearly (blurry, cut off, handwritten, very small) or are unsure about. Empty array when everything is clear.
 - Copy text exactly as printed. Keep Hindi in Devanagari and English in English. Do not translate and do not guess.
 - Anything not on the card is an empty string "" (or an empty array).
 - Phone numbers: digits only.
@@ -107,6 +108,16 @@ Deno.serve(async (req) => {
 
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) return json({ code: "not_configured" }, 503);
+  const { data: sw } = await sb.from("studio_settings").select("v").eq("k", "ai_enabled").maybeSingle();
+  if (sw?.v === "0") return json({ code: "ai_off" }, 503);
+
+  // Cache: the same upload with the same settings is never paid for twice (kept 30 days, per user).
+  const modelName = Deno.env.get("STUDIO_CLAUDE_MODEL") || "claude-sonnet-5-5";
+  const sha = async (t: string) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))).map((x) => x.toString(16).padStart(2, "0")).join("");
+  const cacheKey = await sha([type, mode, occasion, modelName, ...files.map((f: any) => f.data)].join("|"));
+  const cutoff = new Date(Date.now() - 30 * 86400000).toISOString();
+  const { data: hit } = await sb.from("studio_ai_cache").select("result").eq("user_id", user.id).eq("hash", cacheKey).gte("created_at", cutoff).maybeSingle();
+  if (hit?.result) return json({ ...(hit.result as object), cached: true, free: true });
 
   const limit = Math.max(1, parseInt(Deno.env.get("STUDIO_AI_DAILY_LIMIT") || "10") || 10);
   const IST = 5.5 * 3600 * 1000;
@@ -128,7 +139,7 @@ Deno.serve(async (req) => {
   }
   const refund = async () => { if (taken) { taken = false; await sb.rpc("studio_credit_add", { p_user: user.id, p_n: 1 }); } };
 
-  const model = Deno.env.get("STUDIO_CLAUDE_MODEL") || "claude-sonnet-5-5";
+  const model = modelName;
   const { data: row } = await sb.from("studio_ai_usage").insert({ user_id: user.id, product_type: type, mode, model }).select("id").single();
   const finish = async (patch: Record<string, unknown>) => { if (row?.id) await sb.from("studio_ai_usage").update(patch).eq("id", row.id); };
 
@@ -197,6 +208,12 @@ Deno.serve(async (req) => {
   content.style = style;
   const template_id = templates.some((t) => t.id === d.template_id) ? d.template_id : null;
 
+  const uncertain = (Array.isArray(o.uncertain) ? o.uncertain : []).filter((k: unknown) => typeof k === "string" && k in FIELDS[type]).slice(0, 20);
+  const result = { content, template_id, mode, uncertain };
   await finish({ status: "ok", ...usage });
-  return json({ content, template_id, mode, used: used + 1, limit, free });
+  try {
+    await sb.from("studio_ai_cache").upsert({ user_id: user.id, hash: cacheKey, result, created_at: new Date().toISOString() });
+    await sb.from("studio_ai_cache").delete().eq("user_id", user.id).lt("created_at", cutoff);
+  } catch { /* cache is best-effort */ }
+  return json({ ...result, used: used + 1, limit, free });
 });

@@ -36,6 +36,7 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
   if(!vc.error){var g2=h('div',{class:'stats'});[[tv,'कुल कार्ड व्यू'],[tc,'कुल बटन क्लिक']].forEach(function(x){g2.appendChild(h('div',{class:'stat'},[h('b',{text:String(x[0])}),h('span',{text:x[1]})]))});app.appendChild(g2)}
   var bp=h('div');app.appendChild(bp);balPanel(bp);
   var pp=h('div');app.appendChild(pp);payPanel(pp);
+  var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
   var ip=h('div');app.appendChild(ip);indPanel(ip);
   var tabs=h('div',{class:'tabs'});app.appendChild(tabs);body=h('div');app.appendChild(body);
   function draw(){tabs.textContent='';[['cust','ग्राहक'],['tpl','टेम्पलेट']].forEach(function(t){tabs.appendChild(h('button',{class:tab===t[0]?'on':'',text:t[1],onclick:function(){tab=t[0];sel=null;draw()}}))});body.textContent='';(tab==='cust'?(sel?cardsView:custView):tplView)()}
@@ -43,6 +44,17 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
 })();
 var VC={};
 
+async function aiPanel(box){
+  var r=await sb.rpc('studio_ai_flag');box.textContent='';if(r.error)return;var on=r.data===true,c=h('div',{class:'card',style:on?'':'border:2px solid #b00020'});
+  c.appendChild(h('b',{text:'🤖 AI सेटिंग'}));
+  var cb=h('input',{type:'checkbox'});cb.checked=on;
+  c.appendChild(h('label',{style:'display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700'},[cb,h('span',{text:'AI से कार्ड पढ़ना चालू है'})]));
+  c.appendChild(h('div',{class:'k',text:on?'चालू: users AI से कार्ड पढ़ सकते हैं।':'⚠️ बंद: कोई भी AI से कार्ड नहीं पढ़ सकता, और बंद रहने पर क्रेडिट भी नहीं कटते।'}));
+  c.appendChild(h('div',{class:'k',text:'एक ही फ़ोटो दोबारा पढ़ने पर पहले का नतीजा 30 दिन तक दिखता है और पैसा/क्रेडिट नहीं कटता। Claude की चाबी यहाँ कभी नहीं दिखती।'}));
+  var m=h('div',{class:'k'});
+  c.appendChild(h('button',{class:'btn',text:'सेव करें',onclick:async function(){var e=await sb.rpc('studio_admin_set_ai',{p_enabled:cb.checked});if(e.error){m.className='e';m.textContent='सेव नहीं हुआ';return}aiPanel(box)}}));
+  c.appendChild(m);box.appendChild(c);
+}
 async function indPanel(box){
   var r=await sb.rpc('studio_industry_stats'),ir=await sb.from('studio_industries').select('id,name_hi'),nm={};(ir.data||[]).forEach(function(o){nm[o.id]=o.name_hi});
   box.textContent='';if(r.error||!r.data)return;var c=h('div',{class:'card'});c.appendChild(h('b',{text:'🏭 Industry-wise विज़िटिंग कार्ड'}));
