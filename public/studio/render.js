@@ -294,9 +294,9 @@
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('💬 मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (em) act.appendChild(actA(link('', T('ईमेल'), 'mailto:' + em), 'email'));
     if (web) act.appendChild(actA(link('', T('वेबसाइट'), web), 'website'));
+    if (f.address || V.url(f.maplink)) act.appendChild(actA(link('', T('\uD83D\uDCCD लोकेशन'), V.url(f.maplink) || maps([f.business, f.address].filter(Boolean).join(', '))), 'map'));
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('\uD83D\uDCC7 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; act.appendChild(sv0); }
     act.appendChild(saveCardBtn(root, f));
-    if (f.address || V.url(f.maplink)) act.appendChild(actA(link('', T('\uD83D\uDCCD लोकेशन'), V.url(f.maplink) || maps([f.business, f.address].filter(Boolean).join(', '))), 'map'));
     if (act.children.length) bd.appendChild(act);
     if (d.services.length) { var sv = el('div', 'sr-svs'); sv.appendChild(el('div', 'sr-sub', T('सेवाएँ'))); d.services.forEach(function (s) { sv.appendChild(el('span', 'sr-chip', svName(s))); }); bd.appendChild(sv); }
     [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
