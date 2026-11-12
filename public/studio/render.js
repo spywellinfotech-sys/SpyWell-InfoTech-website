@@ -370,8 +370,8 @@
     '.sr-vc .bd{padding:0 1.1em 1.6em}.sr-vc .bd.noph{padding-top:1.2em;margin-top:-2.4em;background:var(--bg);border-radius:18px 18px 0 0}' +
     '.sr-vc .ph{border-radius:50%;object-fit:cover;border:4px solid var(--bg);background:var(--bg);margin-top:-3.4em;margin-bottom:.5em}' +
     '.sr-vc .sr-nm{font-family:var(--nf);font-size:1.5em;font-weight:700}.sr-des{opacity:.75;font-size:.9em}' +
-    '.sr-act{display:grid;grid-template-columns:repeat(auto-fit,minmax(4.6em,1fr));gap:.5em;margin:1em 0}' +
-    '.sr-act a{background:var(--ac);color:var(--bg)!important;border-radius:10px;padding:.65em .2em;text-decoration:none;font-size:.82em;font-weight:600;text-align:center}' +
+    '.sr-act{display:flex;flex-wrap:wrap;gap:.5em;margin:1em 0}' +
+    '.sr-act a{flex:1 1 6.2em;min-width:0;box-sizing:border-box;display:flex;align-items:center;justify-content:center;min-height:2.9em;background:var(--ac);color:var(--bg)!important;border-radius:10px;padding:.55em .6em;text-decoration:none;font-size:.82em;font-weight:600;text-align:center;line-height:1.25}' +
     '.sr-svs{margin:1em 0}.sr-chip{display:inline-block;border:1px solid var(--ac);color:var(--ac);border-radius:2em;padding:.15em .7em;margin:.2em;font-size:.82em}' +
     '.sr-row{text-align:left;padding:.6em 0;border-top:1px solid var(--soft);font-size:.9em}.sr-row small{display:block;opacity:.6;font-size:.75em}' +
     '.sr-soc{margin-top:.8em}.sr-soc a{display:inline-block;margin:.2em;padding:.3em .8em;border-radius:2em;border:1px solid var(--soft);text-decoration:none;font-size:.8em}' +
@@ -389,7 +389,7 @@
     '.sr-vc.l-card{border:2px solid var(--ac);outline:1px solid var(--ac);outline-offset:-9px}.sr-vc.l-card .hd{background:none;color:var(--ac);padding:1.7em 1.1em .6em;border-bottom:1px solid var(--soft);margin:0 1.1em;text-transform:uppercase;letter-spacing:.16em}' +
     '.sr-vc.l-card .ph{margin-top:1em;border-radius:6px;border-width:0}.sr-vc.l-card .bd,.sr-vc.l-card .bd.noph{margin-top:0;padding-top:.8em;border-radius:0;background:none}.sr-vc.l-card .sr-nm{letter-spacing:.06em}' +
     '.sr-call{display:block;margin:.6em 0 0;padding:.8em 1em;border-radius:2em;background:#1f8f4e;color:#fff!important;text-decoration:none;font-weight:700;font-size:1.05em;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.18)}' +
-    '.sr-act a.sr-call{grid-column:1/-1;border-radius:2em;font-size:1.05em;padding:.8em 1em}' +
+    '.sr-act a.sr-call{flex:1 1 100%;border-radius:2em;font-size:1.05em;padding:.8em 1em}' +
     '.sr{position:relative}.sr-pw{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}' +
     '.sr-pw span{position:absolute;top:-8%;color:var(--ac);opacity:0;animation:srfall linear infinite}' +
     '@keyframes srfall{0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}10%{opacity:.8}100%{opacity:.5;transform:translate3d(var(--dx),115vh,0) rotate(540deg)}}' +
@@ -404,7 +404,7 @@
     '.sr-an .sr-amp{animation:srpop .9s ease forwards;animation-delay:calc(var(--i,0)*.14s)}' +
     '.sr-an.sr-inv .sr-nm{background:linear-gradient(100deg,var(--ac) 40%,#fff8 50%,var(--ac) 60%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:srup .8s ease forwards,srshine 4.5s ease-in-out 1.4s infinite}' +
     '.sr-an .sr-nm{animation:srup .8s ease forwards;animation-delay:calc(var(--i,0)*.14s)}' +
-    '.sr-act .sr-save{grid-column:1/-1;font:inherit;font-weight:700;font-size:1.02em;padding:.75em 1em;border:2px solid var(--ac);border-radius:2em;background:transparent;color:var(--ac);cursor:pointer}' +
+    '.sr-act .sr-save{flex:1 1 100%;box-sizing:border-box;font:inherit;font-weight:700;font-size:1.02em;padding:.75em 1em;border:2px solid var(--ac);border-radius:2em;background:transparent;color:var(--ac);cursor:pointer}' +
     '.sr-qr{margin:1.4em auto .4em;text-align:center}.sr-qrimg{width:10em;height:10em;margin:0 auto;padding:.5em;background:#fff;border:2px solid var(--ac);border-radius:14px;box-shadow:0 3px 10px rgba(0,0,0,.12)}' +
     '.sr-qrt{font-size:.8em;opacity:.75;margin-top:.5em}' +
     '.sr-an .sr-save{animation:srup .8s ease forwards}.sr-an .sr-qr{animation:srpop .9s ease forwards;animation-delay:calc(var(--i,0) * .12s + .2s);opacity:0}.sr-an-rich .sr-qrimg{animation:srflt 3.2s ease-in-out 1.5s infinite}' +
