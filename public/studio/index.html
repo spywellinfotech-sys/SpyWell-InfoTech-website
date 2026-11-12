@@ -110,6 +110,9 @@ button{min-height:48px;border-radius:12px}
 <h1>नमस्ते, <span id="d-name"></span><span class="badge" id="d-admin" hidden>Admin</span></h1>
 <div class="k" id="d-mail"></div>
 </div>
+<div class="card" id="c-welcome" hidden style="background:linear-gradient(135deg,#06133f,#12307f);color:#fff"><b style="font-size:18px">🎉 स्वागत है! अपना डिजिटल कार्ड बनाइए</b>
+<div style="margin-top:8px;font-size:15px">1️⃣ अपनी जानकारी भरें<br>2️⃣ कार्ड प्रकाशित करें<br>3️⃣ WhatsApp पर शेयर करें और QR बाँटें</div>
+<button type="button" id="wl-go" style="background:#f59a1a;color:#06133f;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
 <div class="qa" id="c-qa"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button><button type="button" data-tab="mine"><i>🎨</i>मेरे कार्ड / वेबसाइट</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-new">
@@ -252,7 +255,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=d.data||[];drawList();loadSubs();
+  LIST=d.data||[];drawList();loadSubs();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){var t=document.querySelector('[data-new=visiting]');if(t)t.click()};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -391,7 +394,7 @@ $('vo-stop').onclick=function(){try{speechSynthesis.cancel()}catch(e){}};
 var TABMAP=null;
 function setTab(t){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'home'],[$('c-qa'),'home'],[$('c-note'),'home'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list').parentNode,'mine'],[$('d-act').parentNode,'mine'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-note'),'home'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list').parentNode,'mine'],[$('d-act').parentNode,'mine'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','saved','mine','me'].indexOf(t)<0)t='home';if(t==='disc'){discFill();if(!$('dres').childNodes.length)discGo(false)}
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});

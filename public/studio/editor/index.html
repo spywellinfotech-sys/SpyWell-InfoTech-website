@@ -1,9 +1,13 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>कार्ड एडिटर | SpyWell Live Studio</title>
+<title>कार्ड एडिटर | Vi-card</title>
 <meta name="robots" content="noindex"><link rel="icon" href="/favicon.png">
 <style>
-:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}
+:root{--wine:#12307f;--ink:#14203d;--bg:#f2f6fd;--line:#d5def2;--mut:#5a6a8c}
+.top{background:linear-gradient(135deg,#06133f,#12307f)!important}.panel{box-shadow:0 2px 10px rgba(18,48,127,.07);border-radius:16px}
+.step{background:#eef3ff;border:1px solid #cfdbf7;border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:14px;color:#14306e}.step b{display:block;margin-bottom:2px}
+.navrow{display:flex;gap:8px;margin-top:16px}.navrow .btn{margin-top:0}
+input,textarea,select{min-height:46px}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
 .top{background:var(--wine);color:#fff;padding:8px 10px;display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:5}
 .top b{flex:1;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -96,10 +100,19 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
   else timer=setTimeout(save,1500)}
 
 /* ---------- panels ---------- */
-var TABS=[['info','जानकारी'],['list',''],['photo','फ़ोटो'],['design','डिज़ाइन'],['tpl','टेम्पलेट'],['ai','AI से भरें'],['pub','प्रकाशित करें'],['ins','📊 इनसाइट']];
+var TABS=[['info','1 · जानकारी'],['list',''],['photo','फ़ोटो'],['design','रंग-रूप'],['tpl','टेम्पलेट'],['ai','🤖 AI से भरें'],['pub','🚀 प्रकाशित करें'],['ins','📊 इनसाइट']];
+var HINT={info:['अपनी जानकारी भरें','नाम, मोबाइल नंबर और व्यवसाय लिखें। बाकी खाने बाद में भी भर सकते हैं। ऊपर कार्ड का नमूना साथ-साथ बदलता दिखेगा।'],list:['सेवाएँ / कार्यक्रम जोड़ें','जो सेवाएँ देते हैं वे जोड़ें। नहीं हैं तो सीधे "अगला" दबाएँ।'],photo:['फ़ोटो और लोगो','अपनी फ़ोटो और लोगो लगाएँ। यह ज़रूरी नहीं है।'],design:['रंग और अक्षर','पसंद का रंग चुनें।'],tpl:['टेम्पलेट बदलें','कार्ड का दूसरा डिज़ाइन चुनना हो तो यहाँ से चुनें।'],ai:['AI की मदद लें','AI आपके व्यवसाय के बारे में लिखकर दे सकता है।'],pub:['प्रकाशित करें और शेयर करें','कार्ड लाइव करें, लिंक और QR पाएँ, WhatsApp पर भेजें।'],ins:['इनसाइट','कितने लोगों ने कार्ड देखा।']};
+var ORDER=['info','list','photo','design','tpl','ai','pub'];
 function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
-function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p);pubBar()}
+function panel(){var p=$('panel');p.textContent='';resetArmed=false;
+  var hn=HINT[tab];if(hn)p.appendChild(h('div',{class:'step'},[h('b',{text:hn[0]}),document.createTextNode(hn[1])]));
+  ({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p);
+  var ix=ORDER.indexOf(tab);if(ix>=0){var row=h('div',{class:'navrow'});
+    if(ix>0)row.appendChild(h('button',{class:'btn alt',text:'⬅ पिछला',onclick:function(){tab=ORDER[ix-1];tabs();panel();window.scrollTo(0,0)}}));
+    if(ix<ORDER.length-1)row.appendChild(h('button',{class:'btn',text:'अगला ➡',onclick:function(){tab=ORDER[ix+1];tabs();panel();window.scrollTo(0,0)}}));
+    p.appendChild(row)}
+  pubBar()}
 function pubBar(){var b=$('pubbar'),bt=$('pubbtn');if(!b||!bt)return;var live=D&&D.status==='published';b.hidden=!D||$('main').hidden||(live&&tab==='ins');bt.textContent=live?'📊 इनसाइट देखें':'🚀 प्रकाशित करें';var pn=$('pinbtn');if(pn)pn.hidden=!live;document.documentElement.style.setProperty('--i18n-lift',b.hidden?'0px':'72px')}
 (function(){var pn=document.getElementById('pinbtn');if(pn)pn.onclick=function(){tab='ins';tabs();panel();setTimeout(function(){var x=document.getElementById('pinbox');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},150)};var bt=document.getElementById('pubbtn');if(bt)bt.onclick=function(){if(D&&D.status==='published'){tab='ins';tabs();panel();window.scrollTo(0,0);return}if(tab!=='pub'){tab='pub';tabs();panel();window.scrollTo(0,0);toast('लिंक का नाम चुनें, फिर दोबारा "प्रकाशित करें" दबाएँ');return}var g=document.getElementById('pubgo');if(g)g.click()}})();
 
