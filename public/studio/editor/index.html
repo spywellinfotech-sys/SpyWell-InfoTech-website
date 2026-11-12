@@ -37,7 +37,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 .mini.on{border-color:var(--wine);box-shadow:0 0 0 2px var(--wine)}
 .mini .box{height:215px;overflow:hidden}.mini .in2{width:360px;transform:scale(.4056);transform-origin:0 0;pointer-events:none}
 .mini .cap{font-size:12px;padding:5px 7px;border-top:1px solid var(--line)}.mini .cap span{color:var(--mut);display:block}
-.seg{display:flex;gap:6px}.seg button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.seg button.on{background:var(--wine);color:#fff;border-color:var(--wine)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{flex:1 1 40%;padding:9px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.seg button.on{background:var(--wine);color:#fff;border-color:var(--wine)}
 #full{position:fixed;inset:0;background:#000a;z-index:20;overflow:auto;padding:46px 0 20px}#full .sheet{max-width:440px;margin:auto;background:#fff}
 #full .x{position:fixed;top:8px;right:10px;width:auto;margin:0;padding:6px 14px;border-radius:20px;border:0;background:#fff;color:var(--wine);font-weight:700;cursor:pointer}
 .k{font-size:13px;color:var(--mut)}
@@ -323,6 +323,15 @@ function aiReview(p){
     AIR=null;tab='info';changed();pushHist();tabs();panel();draw()}}));
   p.appendChild(h('button',{class:'btn alt',text:'रद्द करें (कुछ नहीं बदलेगा)',onclick:function(){AIR=null;panel()}}));
 }
+function cardPalette(b64,mt){return new Promise(function(res){var im=new Image();im.onload=function(){try{
+  var W=64,H=Math.max(8,Math.round(64*im.height/im.width)),c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');x.drawImage(im,0,0,W,H);var d=x.getImageData(0,0,W,H).data,B={},E={};
+  function hx(r,g,b){return '#'+[r,g,b].map(function(v){return ('0'+v.toString(16)).slice(-2)}).join('')}
+  for(var i=0;i<W*H;i++){var r=d[i*4],g=d[i*4+1],b=d[i*4+2],a=d[i*4+3];if(a<200)continue;var q=[r,g,b].map(function(v){return Math.min(255,Math.round(v/32)*32)}),k=q.join(','),px=i%W,py=(i/W)|0;
+    B[k]=(B[k]||0)+1;if(px<4||py<4||px>W-5||py>H-5)E[k]=(E[k]||0)+1}
+  function top(o,n){return Object.keys(o).sort(function(a,b){return o[b]-o[a]}).slice(0,n)}
+  var bgk=top(E,1)[0]||top(B,1)[0],out=[];if(bgk){var p=bgk.split(',').map(Number);out.push(hx(p[0],p[1],p[2]))}
+  top(B,12).forEach(function(k){if(out.length>=5)return;var p=k.split(',').map(Number),h=hx(p[0],p[1],p[2]);if(out.indexOf(h)<0){var near=out.some(function(o){var a=parseInt(o.slice(1),16),b=parseInt(h.slice(1),16);return Math.abs((a>>16)-(b>>16))+Math.abs(((a>>8)&255)-((b>>8)&255))+Math.abs((a&255)-(b&255))<70});if(!near)out.push(h)}});
+  res(out)}catch(e){res([])}};im.onerror=function(){res([])};im.src='data:'+mt+';base64,'+b64})}
 var AILIM={pages:4,mb:10};
 sb.from('studio_settings').select('k,v').in('k',['ai_max_pages','ai_max_file_mb']).then(function(r){(r.data||[]).forEach(function(x){var n=parseInt(x.v);if(!n)return;if(x.k==='ai_max_pages')AILIM.pages=Math.min(4,Math.max(1,n));else AILIM.mb=Math.min(15,Math.max(1,n))})});
 function pAI(p){
@@ -340,10 +349,10 @@ function pAI(p){
         h('button',{class:'btn',text:'₹'+inf.price+' का भुगतान करें',onclick:function(){buy(msg)}})]));
     }else p.appendChild(h('div',{class:'e',text:'भुगतान अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।'}));
     p.appendChild(msg);return}
-  var seg=h('div',{class:'seg'});[['content','सिर्फ़ जानकारी भरें'],['creative','AI Creative (डिज़ाइन भी)']].forEach(function(a){
+  var seg=h('div',{class:'seg'});[['content','सिर्फ़ जानकारी भरें'],['creative','AI Creative (डिज़ाइन भी)'],['original','🎯 Original Style (मेरे कार्ड जैसा लुक)']].forEach(function(a){
     seg.appendChild(h('button',{class:aiMode===a[0]?'on':'',text:a[1],onclick:function(){aiMode=a[0];panel()}}))});
   p.appendChild(h('label',{text:'मोड'}));p.appendChild(seg);
-  p.appendChild(h('div',{class:'k',text:aiMode==='content'?'आपका चुना टेम्पलेट और डिज़ाइन वैसा ही रहेगा, सिर्फ़ जानकारी भरेगी।':'AI जानकारी भरने के साथ रंग, बनावट, एनिमेशन और सजावट भी खुद चुनेगा।'}));
+  p.appendChild(h('div',{class:'k',text:aiMode==='content'?'आपका चुना टेम्पलेट और डिज़ाइन वैसा ही रहेगा, सिर्फ़ जानकारी भरेगी।':aiMode==='original'?'AI आपके अपलोड किए कार्ड के रंग, फ़ॉन्ट, बनावट और सजावट देखकर उसी जैसा लुक बनाएगा। हू-ब-हू नक़ल नहीं हो सकती: हमारे डिज़ाइन विकल्पों में से सबसे क़रीब वाला चुना जाता है। नतीजा देखकर आप रंग और फ़ॉन्ट खुद बदल सकते हैं।':'AI जानकारी भरने के साथ रंग, बनावट, एनिमेशन और सजावट भी खुद चुनेगा।'}));
   var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp,application/pdf',multiple:'multiple'});
   p.appendChild(h('label',{text:'कार्ड की फ़ोटो या PDF (अधिकतम 4 पेज)'}));p.appendChild(file);
   var pick={},prev=h('div',{class:'k'});p.appendChild(prev);
@@ -371,7 +380,8 @@ function pAI(p){
     try{
       var imgs=await filesToImages(Array.prototype.slice.call(file.files),pick);
       if(!imgs.length)throw new Error('type');
-      var j=await fnCall('studio-ai',{product_type:D.product_type,mode:aiMode,files:imgs,occasion:(cfg().occasion||'wedding')});
+      var hints=aiMode==='original'?await cardPalette(imgs[0].data,imgs[0].media_type):[];
+      var j=await fnCall('studio-ai',{product_type:D.product_type,mode:aiMode,files:imgs,hints:hints,occasion:(cfg().occasion||'wedding')});
       if(!j.free&&!j.cached&&CR.bal!=null)CR.bal=Math.max(0,CR.bal-1);
       AIR={j:j,mode:aiMode};panel();return
     }catch(e){var m=$('aimsg')||msg;m.className='e';

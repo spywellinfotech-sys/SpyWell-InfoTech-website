@@ -46,7 +46,7 @@ const OCC: Record<string, string> = {
   baby: "naamkaran / mundan / baby shower", puja: "puja / jagran / katha", opening: "shop or office opening (udghatan)", party: "party or other function", terahvi: "terahvi / rasm pagdi / condolence prayer meet (the main person is the departed; keep a respectful tone)",
 };
 
-function prompt(type: string, mode: string, templates: { id: string; name: string; config: any }[], occasion = "wedding") {
+function prompt(type: string, mode: string, templates: { id: string; name: string; config: any }[], occasion = "wedding", hints: string[] = []) {
   const occName = OCC[occasion] || "";
   const keys = type === "invitation"
     ? `fields: heading (top line such as a blessing, exactly as printed), bride, bride_parents, groom, groom_parents, date (wedding date as YYYY-MM-DD), time (24-hour HH:MM), venue, address, message (invitation wording), c1_name, c1_phone (10 digits), c2_name, c2_phone, extra
@@ -55,10 +55,13 @@ events: array (max 8) of {title, date (YYYY-MM-DD), time (HH:MM), place} for fun
 services: array (max 12) of short strings`;
   const tpl = templates.filter((t) => type !== "invitation" || (t.config?.occasion || "wedding") === (OCC[occasion] ? occasion : "wedding")).map((t) => `${t.id}: ${t.config?.style || ""}, layout ${t.config?.layout || ""}, colours bg ${t.config?.palette?.bg} text ${t.config?.palette?.fg} accent ${t.config?.palette?.ac}`).join("\n");
   const L = LAYOUTS[type].join(", ");
-  const design = mode === "creative"
-    ? `DESIGN (AI Creative): the customer already chose a base template; improve on it with a fresh, tasteful ANIMATED look for this content. Choose every design value yourself:
+  const origNote = mode === "original"
+    ? `DESIGN (Original Style): recreate the LOOK of the uploaded card as closely as the available options allow. Study the image: its background colour, text colour, accent / border / ornament colour, the font mood (script, serif, bold sans, Devanagari style), where the text sits (left, centre, right), the border or frame style, and the decorations (flowers, paisley, lights, geometric patterns, temple, ॐ, hearts). Then choose the closest options below. Do NOT invent a different style and do not "improve" it: fidelity to the uploaded card matters most. Keep text colour readable on the background.${hints.length ? ` Measured dominant colours of the image (most common first): ${hints.join(", ")}. Prefer these for bg / fg / ac, adjusting only if contrast is poor.` : ""}\nChoose every design value yourself:`
+    : "";
+  const design = mode !== "content"
+    ? `${origNote || "DESIGN (AI Creative): the customer already chose a base template; improve on it with a fresh, tasteful ANIMATED look for this content. Choose every design value yourself:"}
 - template_id (keep the chosen base unless another clearly suits better), layout (${L}), bg / fg / ac colours (hex; text must have strong contrast on bg, accent must stand out), font and nameFont, ornament (${ORNAMENTS.join(" ")}), anim (rich = falling decorations + shimmer, soft = gentle fade only, none), petal (falling decoration: ${PETALS.join(" ")}), align (left, center or right).
-Match the mood of the content (traditional red and gold, floral pink, modern navy, and so on). If the card has no ${type === "invitation" ? "invitation message" : "business description"}, you may write one short, warm line in the same language as the card and put it in ${type === "invitation" ? "message" : "about"}.`
+${mode === "creative" ? `Match the mood of the content (traditional red and gold, floral pink, modern navy, and so on). If the card has no ${type === "invitation" ? "invitation message" : "business description"}, you may write one short, warm line in the same language as the card and put it in ${type === "invitation" ? "message" : "about"}.` : "Do not add any text that is not on the card."}`
     : `DESIGN: none. The customer already chose the template and its design; read the content only. Return "design":{}.`;
   const occNote = type === "invitation" && occName
     ? `\nThis is an invitation for a ${occName}, not a wedding. Reuse the same keys: put the main person or event title in "bride", their short description in "bride_parents", and a second person (if the card has one, such as in an engagement or anniversary) in "groom" and "groom_parents". "date" is the date of this function.`
@@ -66,7 +69,7 @@ Match the mood of the content (traditional red and gold, floral pink, modern nav
   return `You are reading a ${type === "invitation" ? (occName ? "invitation card" : "wedding invitation card") : "business / visiting card"} from India.${occNote} The image(s) are pages or photos of ONE card.
 
 Return ONLY one JSON object, no other words, with this shape:
-{"uncertain":[...],"fields":{...},${type === "invitation" ? '"events":[...]' : '"services":[...]'},"design":${mode === "creative" ? '{"template_id":"...","layout":"...","bg":"#rrggbb","fg":"#rrggbb","ac":"#rrggbb","font":"...","nameFont":"...","ornament":"...","anim":"...","petal":"...","align":"..."}' : "{}"}}
+{"uncertain":[...],"fields":{...},${type === "invitation" ? '"events":[...]' : '"services":[...]'},"design":${mode !== "content" ? '{"template_id":"...","layout":"...","bg":"#rrggbb","fg":"#rrggbb","ac":"#rrggbb","font":"...","nameFont":"...","ornament":"...","anim":"...","petal":"...","align":"..."}' : "{}"}}
 
 CONTENT rules:
 - "uncertain": list the field keys (from the list below) whose text you could not read clearly (blurry, cut off, handwritten, very small) or are unsure about. Empty array when everything is clear.
@@ -75,7 +78,7 @@ CONTENT rules:
 - Phone numbers: digits only.
 ${keys}
 
-${design}${mode === "creative" ? `
+${design}${mode !== "content" ? `
 template_id must be one of:
 ${tpl}
 font and nameFont must each be one of: ${FONTS.join(", ")} (hind, mukta, tiro and yatra suit Hindi; vibes is a script font for names; playfair is an elegant serif).` : ""}`;
@@ -103,7 +106,8 @@ Deno.serve(async (req) => {
   let body: any;
   try { body = JSON.parse(raw); } catch { return json({ code: "bad_request" }, 400); }
   const type = body?.product_type === "visiting" ? "visiting" : body?.product_type === "invitation" ? "invitation" : "";
-  const mode = body?.mode === "creative" ? "creative" : "content";
+  const mode = body?.mode === "creative" ? "creative" : body?.mode === "original" ? "original" : "content";
+  const hints: string[] = (Array.isArray(body?.hints) ? body.hints : []).filter((x: unknown) => typeof x === "string" && /^#[0-9a-fA-F]{6}$/.test(x)).slice(0, 6).map((x: string) => x.toLowerCase());
   const occasion = typeof body?.occasion === "string" && OCC[body.occasion] ? body.occasion : "wedding";
   const files = Array.isArray(body?.files) ? body.files : [];
   if (!type || files.length < 1 || files.length > maxPages) return json({ code: "bad_request" }, 400);
@@ -161,7 +165,7 @@ Deno.serve(async (req) => {
         model, max_tokens: 2500,
         messages: [{ role: "user", content: [
           ...files.map((f: any) => ({ type: "image", source: { type: "base64", media_type: f.media_type, data: f.data } })),
-          { type: "text", text: prompt(type, mode, templates, occasion) },
+          { type: "text", text: prompt(type, mode, templates, occasion, hints) },
         ] }],
       }),
     });
@@ -199,7 +203,7 @@ Deno.serve(async (req) => {
   } else {
     content.services = (Array.isArray(o.services) ? o.services : []).slice(0, 12).map((s: unknown) => str(s, 60)).filter(Boolean);
   }
-  const d = mode === "creative" && o.design && typeof o.design === "object" ? o.design : {};
+  const d = mode !== "content" && o.design && typeof o.design === "object" ? o.design : {};
   const style: Record<string, string> = {};
   const bg = hex(d.bg), fg = hex(d.fg), ac = hex(d.ac);
   if (bg && fg && contrast(bg, fg) >= 4.5) { style.bg = bg; style.fg = fg; if (ac && contrast(bg, ac) >= 2.5) style.ac = ac; }
@@ -214,7 +218,7 @@ Deno.serve(async (req) => {
   const template_id = templates.some((t) => t.id === d.template_id) ? d.template_id : null;
 
   const uncertain = (Array.isArray(o.uncertain) ? o.uncertain : []).filter((k: unknown) => typeof k === "string" && k in FIELDS[type]).slice(0, 20);
-  const result = { content, template_id, mode, uncertain };
+  const result = { content, template_id, mode: mode === "original" ? "creative" : mode, original: mode === "original", uncertain };
   await finish({ status: "ok", ...usage });
   try {
     await sb.from("studio_ai_cache").upsert({ user_id: user.id, hash: cacheKey, result, created_at: new Date().toISOString() });
