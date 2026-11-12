@@ -479,8 +479,36 @@ function pExtra(p){
 var DOMERR={bad_domain:'डोमेन सही नहीं है। ऐसे लिखें: aapkanaam.com',domain_taken:'यह डोमेन किसी और के नाम से जुड़ चुका है।',forbidden:'यह कार्ड आपका नहीं है।'};
 var PLN={card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'फ़ुल वेबसाइट + अपना डोमेन'};
 function fmtD(x){try{return new Date(x).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}}
-async function payPlan(plan){
+var MANERR={bad_utr:'UTR/ट्रांज़ैक्शन नंबर सही नहीं है (8 से 30 अक्षर/अंक)।',utr_used:'यह UTR पहले इस्तेमाल हो चुका है।',already_pending:'इस कार्ड का भुगतान पहले से जाँच में है।',bad_plan:'प्लान सही नहीं है।',free:'इसके लिए भुगतान की ज़रूरत नहीं है।'};
+async function manualPay(plan,amount){
+  var r=await sb.from('studio_settings').select('k,v').in('k',['manual_pay','upi_id','upi_name']),S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});
+  if(S.manual_pay!=='1'||!S.upi_id)return null;
+  var uri='upi://pay?pa='+encodeURIComponent(S.upi_id)+'&pn='+encodeURIComponent(S.upi_name||'SpyWell InfoTech')+'&am='+amount+'&cu=INR&tn='+encodeURIComponent('SpyWell Studio '+(PLN[plan]||'कार्ड'));
+  return new Promise(function(res){
+    var ov=h('div',{style:'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:flex-end;justify-content:center'});
+    var bx=h('div',{style:'background:#fff;width:100%;max-width:460px;border-radius:16px 16px 0 0;padding:16px;max-height:92vh;overflow:auto'});ov.appendChild(bx);
+    bx.appendChild(h('b',{text:'💳 UPI से भुगतान · ₹'+amount,style:'font-size:18px'}));
+    bx.appendChild(h('div',{class:'k',text:(PLN[plan]||'कार्ड प्रकाशन')+(plan?' (1 साल)':'')+'। नीचे के बटन से UPI ऐप खोलें या QR स्कैन करें, भुगतान के बाद UTR/ट्रांज़ैक्शन नंबर यहाँ डालें। हमारी टीम जाँचकर प्लान चालू कर देगी।',style:'margin-top:6px'}));
+    var cv=h('canvas');cv.style.cssText='width:190px;height:190px;display:block;margin:10px auto;border:1px solid #e8d5ad';bx.appendChild(cv);try{window.StudioQR.draw(cv,uri,500)}catch(e){}
+    bx.appendChild(h('div',{style:'text-align:center;font-weight:700;word-break:break-all',text:S.upi_id}));
+    var ap=h('a',{class:'btn',href:uri,text:'📲 UPI ऐप खोलें',style:'display:block;text-align:center;margin-top:10px;text-decoration:none'});bx.appendChild(ap);
+    bx.appendChild(h('label',{text:'UTR / ट्रांज़ैक्शन नंबर (भुगतान के बाद)',style:'display:block;margin-top:12px;font-weight:600'}));
+    var ut=h('input',{type:'text',maxlength:30,placeholder:'जैसे 412345678901',autocomplete:'off'});bx.appendChild(ut);
+    var er=h('div',{class:'e'});bx.appendChild(er);
+    var sb2=h('button',{class:'btn',text:'✅ भुगतान हो गया, जमा करें',style:'margin-top:8px'}),cb=h('button',{class:'btn alt',text:'रद्द करें',style:'margin-top:6px'});bx.appendChild(sb2);bx.appendChild(cb);
+    function close(v){ov.remove();res(v)}
+    cb.onclick=function(){close(false)};
+    sb2.onclick=async function(){er.textContent='';sb2.disabled=true;
+      var q=await sb.rpc('studio_manual_pay_create',{p_design:D.id,p_plan:plan||null,p_utr:ut.value});
+      sb2.disabled=false;
+      if(q.error){var m=q.error.message||'';var k=Object.keys(MANERR).filter(function(x){return m.indexOf(x)>=0})[0];er.textContent=k?MANERR[k]:'जमा नहीं हुआ। दोबारा कोशिश करें।';return}
+      toast('⏳ भुगतान जमा हुआ। जाँच के बाद प्लान चालू होगा।','ok');
+      try{window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मैंने SpyWell Studio के लिए ₹'+amount+' UPI से भेजे हैं। UTR: '+ut.value.trim()),'_blank','noopener')}catch(e){}
+      close(true)};
+    document.body.appendChild(ov)})}
+async function payPlan(plan,amount){
   try{
+    var mp=await manualPay(plan,amount);if(mp!==null){if(mp)panel();return false}
     var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await loadRzp();
     await new Promise(function(res,rej){
       var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:PLN[plan]+' (1 साल)',
@@ -499,11 +527,12 @@ function planBox(p){
     if(s.state==='upgrade')line+='\n⚠️ मिनी वेबसाइट के लिए अपग्रेड ज़रूरी है, तब तक लिंक बंद रहेगा।';
     box.appendChild(h('div',{class:'k',style:'margin-top:6px;white-space:pre-line',text:line}));
     var live=s.plan&&new Date(s.paid_until)>new Date();
-    function go(plan,label,after){var b=h('button',{class:'btn alt',text:label});b.style.marginTop='8px';
-      b.onclick=async function(){b.disabled=true;var ok=await payPlan(plan);if(ok){if(after)await after();toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b)}
-    if(s.plan)go(s.plan,'🔁 1 साल के लिए नवीनीकरण ₹'+s.prices[s.plan]);
+    sb.from('studio_manual_pays').select('amount').eq('design_id',D.id).eq('status','pending').maybeSingle().then(function(q){if(q&&q.data)box.insertBefore(h('div',{class:'k',style:'font-weight:700;color:#8a5a00',text:'⏳ ₹'+q.data.amount+' का भुगतान जाँच में है। मंज़ूरी के बाद प्लान चालू होगा।'}),box.children[1]||null)});
+    function go(plan,label,after,amount){var b=h('button',{class:'btn alt',text:label});b.style.marginTop='8px';
+      b.onclick=async function(){b.disabled=true;var ok=await payPlan(plan,amount);if(ok){if(after)await after();toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b)}
+    if(s.plan)go(s.plan,'🔁 1 साल के लिए नवीनीकरण ₹'+s.prices[s.plan],null,s.prices[s.plan]);
     if(!s.plan||s.plan==='card'){var amt=(s.plan==='card'&&live)?s.prices.site-s.prices.card:s.prices.site;
-      go('site','🌐 मिनी वेबसाइट पर अपग्रेड ₹'+amt+((s.plan==='card'&&live)?' (सिर्फ़ फ़र्क़)':''),async function(){C.style.site=true;changed();await save()})}
+      go('site','🌐 मिनी वेबसाइट पर अपग्रेड ₹'+amt+((s.plan==='card'&&live)?' (सिर्फ़ फ़र्क़)':''),async function(){C.style.site=true;changed();await save()},amt)}
   })}
 function domainBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
@@ -511,7 +540,7 @@ function domainBox(p){
     if(s&&s.enabled&&s.plan!=='domain'){box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
       box.appendChild(h('div',{class:'k',text:'अपने डोमेन (जैसे www.aapkanaam.com) पर वेबसाइट चलाने के लिए "फ़ुल वेबसाइट + अपना डोमेन" प्लान लें। मिनी वेबसाइट से अपग्रेड पर सिर्फ़ फ़र्क़ देना होगा।'}));
       var b=h('button',{class:'btn alt',text:'⬆️ फ़ुल वेबसाइट प्लान ₹'+s.domain_amount+(s.domain_kind==='upgrade'?' (सिर्फ़ फ़र्क़)':'')});b.style.marginTop='8px';
-      b.onclick=async function(){b.disabled=true;if(await payPlan('domain')){toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b);return}
+      b.onclick=async function(){b.disabled=true;if(await payPlan('domain',s.domain_amount)){toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b);return}
     domainForm(box)})}
 function domainForm(box){box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
   var st=h('div',{class:'k',style:'margin-top:6px'}),msg=h('div',{class:'k'});
@@ -623,6 +652,7 @@ function pPub(p){
   (async function(){if(D.status!=='published'){try{await fnCall('studio-pay',{action:'pub_sync'})}catch(e){}}await pubInfo()})();
   async function payPub(){
     er.className='k';er.textContent='भुगतान तैयार हो रहा है…';
+    var mp=await manualPay((PI&&PI.sub&&PI.sub.next_plan)||null,PI&&PI.price);if(mp!==null){er.className='k';er.textContent=mp?'भुगतान जाँच में है। मंज़ूरी के बाद आप प्रकाशित कर पाएँगे।':'भुगतान रद्द हुआ।';return false}
     try{
       var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:(PI&&PI.sub&&PI.sub.next_plan)||undefined});await loadRzp();
       await new Promise(function(res,rej){
