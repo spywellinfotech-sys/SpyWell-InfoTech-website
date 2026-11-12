@@ -90,10 +90,10 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
   else timer=setTimeout(save,1500)}
 
 /* ---------- panels ---------- */
-var TABS=[['info','जानकारी'],['list',''],['photo','फ़ोटो'],['design','डिज़ाइन'],['tpl','टेम्पलेट'],['ai','AI से भरें'],['pub','प्रकाशित करें']];
+var TABS=[['info','जानकारी'],['list',''],['photo','फ़ोटो'],['design','डिज़ाइन'],['tpl','टेम्पलेट'],['ai','AI से भरें'],['pub','प्रकाशित करें'],['ins','📊 इनसाइट']];
 function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
-function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub})[tab](p)}
+function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p)}
 
 function pInfo(p){
   var bad=R.invalid(D.product_type,C);
@@ -303,6 +303,42 @@ function pAI(p){
   p.appendChild(h('div',{class:'k',text:'कार्ड की फ़ोटो आपकी जानकारी पढ़ने के लिए Anthropic Claude को भेजी जाती है। कार्ड में वह फ़ोटो अपने आप नहीं लगती; चाहें तो "फ़ोटो" टैब से जोड़ें।'}));
 }
 
+/* ---------- insights (link + PIN) ---------- */
+var INS=null;
+function insUrl(k){return location.origin+'/studio/insights/?k='+k}
+function pinKey(){return 'spi_'+D.id}
+function copyTxt(t,msg,ok){navigator.clipboard.writeText(t).then(function(){msg.className='k';msg.textContent=ok},function(){msg.className='e';msg.textContent='कॉपी नहीं हुआ। दबाकर रखें और कॉपी करें।'})}
+async function pIns(p){
+  p.appendChild(h('div',{class:'k',text:'इस लिंक और PIN से आप (या जिसे आप दें) देख सकते हैं कि कार्ड कितने लोगों ने खोला और किन बटनों पर क्लिक किया।'}));
+  var msg=h('div',{class:'k'});
+  if(!INS||INS.id!==D.id){
+    p.appendChild(h('div',{class:'k',text:'लोड हो रहा है…'}));
+    var r=await sb.rpc('studio_insights_setup',{p_design:D.id});
+    if(r.error||!r.data){p.textContent='';p.appendChild(h('div',{class:'e',text:'इनसाइट अभी तैयार नहीं हो पाई। दोबारा कोशिश करें।'}));return}
+    INS={id:D.id,key:r.data.key};
+    if(r.data.pin){try{localStorage.setItem(pinKey(),r.data.pin)}catch(e){}}
+    if(tab!=='ins')return;p.textContent='';
+    p.appendChild(h('div',{class:'k',text:'इस लिंक और PIN से आप (या जिसे आप दें) देख सकते हैं कि कार्ड कितने लोगों ने खोला और किन बटनों पर क्लिक किया।'}));
+  }
+  var url=insUrl(INS.key),pin='';try{pin=localStorage.getItem(pinKey())||''}catch(e){}
+  p.appendChild(h('div',{class:'item'},[h('b',{text:'इनसाइट लिंक'}),h('div',{class:'k',text:url,style:'word-break:break-all;margin-top:6px'})]));
+  p.appendChild(h('button',{class:'btn',text:'लिंक कॉपी करें',onclick:function(){copyTxt(url,msg,'इनसाइट लिंक कॉपी हो गया।')}}));
+  var pb=h('div',{class:'item'},[h('b',{text:'इनसाइट PIN'})]);
+  if(pin){pb.appendChild(h('div',{style:'font-size:30px;letter-spacing:.3em;font-weight:700;color:#8b1a2b;margin-top:6px',text:pin}));
+    p.appendChild(pb);
+    p.appendChild(h('button',{class:'btn',text:'PIN कॉपी करें',onclick:function(){copyTxt(pin,msg,'PIN कॉपी हो गया।')}}));
+    p.appendChild(h('button',{class:'btn alt',text:'लिंक + PIN WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('कार्ड के इनसाइट देखें:\n'+url+'\nPIN: '+pin),'_blank','noopener')}}));
+  }else{pb.appendChild(h('div',{class:'k',text:'सुरक्षा के लिए PIN इस फ़ोन में सेव नहीं है। भूल गए हों तो नया PIN बनाएँ।'}));p.appendChild(pb)}
+  p.appendChild(h('button',{class:'btn alt',text:'इनसाइट खोलकर देखें',onclick:function(){window.open(url,'_blank','noopener')}}));
+  var rs=h('button',{class:'btn danger',text:'नया PIN बनाएँ (PIN रीसेट)'});
+  rs.onclick=async function(){if(!rs.dataset.a){rs.dataset.a='1';rs.textContent='पक्का? पुराना PIN बंद हो जाएगा। हाँ, नया PIN बनाएँ';return}
+    rs.disabled=true;var r2=await sb.rpc('studio_insights_reset',{p_design:D.id});rs.disabled=false;
+    if(r2.error||!r2.data){msg.className='e';msg.textContent='PIN रीसेट नहीं हुआ। दोबारा कोशिश करें।';return}
+    try{localStorage.setItem(pinKey(),r2.data)}catch(e){}panel()};
+  p.appendChild(rs);p.appendChild(msg);
+  p.appendChild(h('div',{class:'k',text:'लगातार 5 बार गलत PIN डालने पर इनसाइट 15 मिनट के लिए बंद हो जाती है।'}));
+}
+
 /* ---------- publish ---------- */
 var SLUG=/^[a-z0-9]+(-[a-z0-9]+)*$/;
 function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'i':'v')+'/'+slug}
@@ -319,16 +355,7 @@ function pPub(p){
     p.appendChild(h('button',{class:'btn alt',text:'लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(url);info.className='k';info.textContent='लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें और कॉपी करें।'}}}));
     p.appendChild(h('button',{class:'btn alt',text:'कार्ड खोलकर देखें',onclick:function(){window.open(url,'_blank','noopener')}}));
     p.appendChild(h('button',{class:'btn alt',text:'QR कोड डाउनलोड करें',onclick:function(){var a=h('a',{href:cv.toDataURL('image/png'),download:'qr-'+D.slug+'.png'});document.body.appendChild(a);a.click();a.remove()}}));
-    var ik=h('div',{class:'item'},[h('b',{text:'📊 इनसाइट लिंक'}),h('div',{class:'k',text:'इस लिंक पर देख सकते हैं कि कार्ड कितनी बार खुला। लिंक जिसके पास होगा वही देख पाएगा।'})]);
-    var ikb=h('button',{class:'btn alt',text:'इनसाइट लिंक दिखाएँ'});ik.appendChild(ikb);
-    ikb.onclick=async function(){ikb.disabled=true;var r=await sb.rpc('studio_insights_link',{p_design:D.id});ikb.disabled=false;
-      if(r.error||!r.data){info.className='e';info.textContent='इनसाइट लिंक नहीं बना। दोबारा कोशिश करें।';return}
-      var iu=location.origin+'/studio/insights/?k='+r.data;ikb.remove();
-      ik.appendChild(h('div',{class:'k',text:iu,style:'word-break:break-all;margin-top:6px'}));
-      ik.appendChild(h('button',{class:'btn alt',text:'इनसाइट खोलें',onclick:function(){window.open(iu,'_blank','noopener')}}));
-      ik.appendChild(h('button',{class:'btn alt',text:'इनसाइट लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(iu);info.className='k';info.textContent='इनसाइट लिंक कॉपी हो गया।'}catch(e2){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें।'}}}));
-      ik.appendChild(h('button',{class:'btn alt',text:'WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('कार्ड के इनसाइट: '+iu),'_blank','noopener')}}))};
-    p.appendChild(ik);
+    p.appendChild(h('button',{class:'btn alt',text:'📊 इनसाइट लिंक और PIN',onclick:function(){tab='ins';tabs();panel()}}));
     var ub=h('button',{class:'btn danger',text:'प्रकाशन बंद करें'});
     ub.onclick=async function(){if(!ub.dataset.a){ub.dataset.a='1';ub.textContent='पक्का? लिंक खुलना बंद हो जाएगा। हाँ, बंद करें';return}
       if(dirty)await save();var r=await sb.from('studio_designs').update({status:'unpublished'}).eq('id',D.id).select('status').single();
@@ -386,6 +413,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   try{var b=JSON.parse(localStorage.getItem(LS)||'null');if(b&&b.at>new Date(D.updated_at).getTime()){C=shape(b.c);if(b.t)D.template_id=b.t;restored=true}}catch(e){}
   if(R.isEmpty(D.product_type,C)&&!restored)tab='ai';
   $('main').hidden=false;tabs();panel();draw();pushHist();
+  sb.rpc('studio_insights_setup',{p_design:D.id}).then(function(r){if(r.error||!r.data)return;INS={id:D.id,key:r.data.key};if(r.data.pin){try{localStorage.setItem(pinKey(),r.data.pin)}catch(x){}state('📊 इनसाइट लिंक और PIN तैयार हैं। "📊 इनसाइट" टैब से कॉपी करें।')}},function(){});
   if(restored){dirty=true;state('पिछली बार के बिना सेव बदलाव वापस लाए गए हैं, सेव हो रहे हैं…');timer=setTimeout(save,800)}
   else state((D.status==='published'?'यह कार्ड प्रकाशित है; बदलाव सेव होते ही लाइव कार्ड में दिखेंगे · ':'')+'आख़िरी बदलाव: '+new Date(D.updated_at).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
 })();

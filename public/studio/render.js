@@ -117,6 +117,8 @@
     ORNAMENTS = ['', 'none', '❖', '❁', '❋', '✦', '❀', '❦', 'ॐ', '❤'];
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function link(cls, text, href) { var a = el('a', cls, text); a.href = href; if (/^https?:/.test(href)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; } return a; }
+  function act(e, k) { e.setAttribute('data-act', k); return e; }
+  var actA = act;
   function rgba(hex, a) { var n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
   function fmtDate(v) { if (!V.date(v)) return ''; var p = v.split('-'); try { return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('hi-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return p[2] + '-' + p[1] + '-' + p[0]; } }
   function fmtTime(v) { if (!V.time(v)) return ''; var h = +v.slice(0, 2), m = v.slice(3); var s = h < 12 ? 'सुबह' : h < 16 ? 'दोपहर' : h < 19 ? 'शाम' : 'रात'; return s + ' ' + ((h % 12) || 12) + ':' + m + ' बजे'; }
@@ -174,7 +176,7 @@
     if (dt.length) { var b = el('div', 'sr-dt'); dt.forEach(function (x) { b.appendChild(el('div', '', x)); }); box.appendChild(b); }
     if (f.venue || f.address || V.url(f.maplink)) {
       var v = el('div', 'sr-ven'); if (f.venue) v.appendChild(el('b', '', f.venue)); if (f.address) v.appendChild(el('div', '', f.address));
-      v.appendChild(link('sr-btn', '\uD83D\uDCCD मैप में देखें', V.url(f.maplink) || maps([f.venue, f.address].filter(Boolean).join(', ')))); box.appendChild(v);
+      v.appendChild(act(link('sr-btn', '\uD83D\uDCCD मैप में देखें', V.url(f.maplink) || maps([f.venue, f.address].filter(Boolean).join(', '))), 'map')); box.appendChild(v);
     }
     if (d.events.length) {
       var ev = el('div', 'sr-evs'); ev.appendChild(el('div', 'sr-sub', 'कार्यक्रम'));
@@ -188,7 +190,8 @@
     if (d.images.family) box.appendChild(picture('sr-fam', d.images.family, 'wide'));
     if (f.extra) box.appendChild(el('div', 'sr-msg', f.extra));
     var cs = [[f.c1_name, V.tel(f.c1_phone)], [f.c2_name, V.tel(f.c2_phone)]].filter(function (x) { return x[1]; });
-    if (cs.length) { var cw = el('div', 'sr-cs'); cw.appendChild(el('div', 'sr-sub', 'संपर्क')); cs.forEach(function (x) { cw.appendChild(link('sr-call', '📞 ' + (x[0] ? x[0] + ' : ' : '') + x[1].slice(0, 5) + ' ' + x[1].slice(5), 'tel:+91' + x[1])); }); box.appendChild(cw); }
+    if (cs.length) { var cw = el('div', 'sr-cs'); cw.appendChild(el('div', 'sr-sub', 'संपर्क')); cs.forEach(function (x) { cw.appendChild(act(link('sr-call', '📞 ' + (x[0] ? x[0] + ' : ' : '') + x[1].slice(0, 5) + ' ' + x[1].slice(5), 'tel:+91' + x[1]), 'call')); }); box.appendChild(cw); }
+    var sw = el('div', 'sr-cs'); sw.appendChild(saveCardBtn(root, f)); box.appendChild(sw);
     root.appendChild(box);
   }
 
@@ -220,6 +223,25 @@
     try { var cv = document.createElement('canvas'); window.StudioQR.draw(cv, unescape(encodeURIComponent(t)), 320);
       var im = el('img', 'sr-qrimg'); im.src = cv.toDataURL('image/png'); im.alt = 'कॉन्टैक्ट QR कोड'; im.width = 160; im.height = 160; return im; } catch (e) { return null; }
   }
+  function saveCardImage(root, f, btn) {
+    var old = btn.textContent; btn.textContent = 'तैयार हो रहा है…'; btn.disabled = true;
+    function done() { btn.textContent = old; btn.disabled = false; }
+    function go() {
+      try {
+        window.html2canvas(root, { useCORS: true, scale: 2, backgroundColor: null, ignoreElements: function (n) { return n.classList && (n.classList.contains('sr-pw') || n.classList.contains('sr-save')); } }).then(function (cv) {
+          cv.toBlob(function (b) {
+            if (!b) { done(); return; }
+            var nm = (f.name || f.business || f.bride || 'card').replace(/[^\w\u0900-\u097F ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'card';
+            var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = nm + '.png'; document.body.appendChild(a); a.click();
+            setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); done();
+          }, 'image/png');
+        }, done);
+      } catch (e) { done(); }
+    }
+    if (window.html2canvas) { go(); return; }
+    var sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'; sc.onload = go; sc.onerror = done; document.head.appendChild(sc);
+  }
+  function saveCardBtn(root, f) { var b = el('button', 'sr-save sr-savecard', '\uD83D\uDDBC कार्ड फ़ोटो सेव करें'); b.type = 'button'; b.setAttribute('data-act', 'savecard'); b.onclick = function () { saveCardImage(root, f, b); }; return b; }
   function buildVisiting(root, d) {
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd');
     if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hd.appendChild(lg); }
@@ -230,16 +252,17 @@
     if (f.designation) bd.appendChild(el('div', 'sr-des', f.designation));
     if (f.about) bd.appendChild(el('div', 'sr-msg', f.about));
     var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), act = el('div', 'sr-act');
-    if (tel) act.appendChild(link('sr-call', '📞 कॉल करें : ' + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel));
-    if (wa) act.appendChild(link('', 'WhatsApp', 'https://wa.me/91' + wa));
-    if (em) act.appendChild(link('', 'ईमेल', 'mailto:' + em));
-    if (web) act.appendChild(link('', 'वेबसाइट', web));
-    if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', '\uD83D\uDCC7 कॉन्टैक्ट सेव करें'); sv0.type = 'button'; sv0.onclick = function () { saveVcard(f); }; act.appendChild(sv0); }
-    if (f.address || V.url(f.maplink)) act.appendChild(link('', '\uD83D\uDCCD लोकेशन', V.url(f.maplink) || maps([f.business, f.address].filter(Boolean).join(', '))));
+    if (tel) act.appendChild(actA(link('sr-call', '📞 कॉल करें : ' + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
+    if (wa) act.appendChild(actA(link('', 'WhatsApp', 'https://wa.me/91' + wa), 'whatsapp'));
+    if (em) act.appendChild(actA(link('', 'ईमेल', 'mailto:' + em), 'email'));
+    if (web) act.appendChild(actA(link('', 'वेबसाइट', web), 'website'));
+    if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', '\uD83D\uDCC7 कॉन्टैक्ट सेव करें'); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; act.appendChild(sv0); }
+    act.appendChild(saveCardBtn(root, f));
+    if (f.address || V.url(f.maplink)) act.appendChild(actA(link('', '\uD83D\uDCCD लोकेशन', V.url(f.maplink) || maps([f.business, f.address].filter(Boolean).join(', '))), 'map'));
     if (act.children.length) bd.appendChild(act);
     if (d.services.length) { var sv = el('div', 'sr-svs'); sv.appendChild(el('div', 'sr-sub', 'सेवाएँ')); d.services.forEach(function (s) { sv.appendChild(el('span', 'sr-chip', s)); }); bd.appendChild(sv); }
     [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
-      if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', r[0])); if (r[0] === 'मोबाइल') row.appendChild(link('', r[1], 'tel:+91' + tel)); else row.appendChild(el('div', '', r[1])); bd.appendChild(row);
+      if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', r[0])); if (r[0] === 'मोबाइल') row.appendChild(actA(link('', r[1], 'tel:+91' + tel), 'call')); else row.appendChild(el('div', '', r[1])); bd.appendChild(row);
     });
     var soc = el('div', 'sr-soc');
     [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (s) { var u = V.url(s[1]); if (u) soc.appendChild(link('', s[0], u)); });
@@ -277,6 +300,7 @@
         root.appendChild(pw);
       }
     }
+    if (typeof opts.onAct === 'function') root.addEventListener('click', function (ev) { var t = ev.target.closest ? ev.target.closest('[data-act]') : null; if (t) { try { opts.onAct(t.getAttribute('data-act')); } catch (e) { /* ignore */ } } });
     mount.textContent = ''; mount.appendChild(root); return root;
   }
 

@@ -25,10 +25,14 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   if(!r.data){msg('यह कार्ड उपलब्ध नहीं है','हो सकता है यह हटा दिया गया हो या अभी प्रकाशित न हो।');return}
   var tp=await sb.from('studio_templates').select('config').eq('id',r.data.template_id).maybeSingle();
   box.textContent='';
-  window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},r.data.content_json||{},{});
+  var vid='';try{vid=localStorage.getItem('sv_vid')||'';if(!vid){vid=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now()).replace(/-/g,'').slice(0,32);localStorage.setItem('sv_vid',vid)}}catch(e){vid=''}
+  function track(kind){try{var dev=/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',src='';
+    try{var ref=document.referrer?new URL(document.referrer).hostname.replace(/^www\./,''):'';src=new URLSearchParams(location.search).get('src')||ref||'direct'}catch(e){src='direct'}
+    sb.rpc('studio_track',{p_slug:s,p_type:t,p_kind:kind,p_visitor:vid,p_device:dev,p_src:src}).then(function(){},function(){})}catch(e){}}
+  window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},r.data.content_json||{},{onAct:track});
   document.title=window.StudioRender.title(t,r.data.content_json||{})+' | SpyWell Digital Studio';
   document.getElementById('foot').hidden=false;
-  try{var tk='sv_'+t+s;if(!sessionStorage.getItem(tk)){sessionStorage.setItem(tk,'1');sb.rpc('studio_track_view',{p_slug:s,p_type:t}).then(function(){},function(){})}}catch(e){}
+  try{var tk='sv_'+t+s;if(!sessionStorage.getItem(tk)){sessionStorage.setItem(tk,'1');track('view')}}catch(e){}
 })();
 })();
 </script></body></html>
