@@ -25,10 +25,26 @@ const clip = (v: unknown, n: number) => String(v ?? "").trim().slice(0, n);
 const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
 async function settings() {
-  const { data } = await sb.from("studio_settings").select("k,v").in("k", ["ai_price_inr", "ai_pack_credits"]);
+  const { data } = await sb.from("studio_settings").select("k,v").in("k", ["ai_price_inr", "ai_pack_credits", "pub_price_invitation", "pub_price_visiting", "pay_bypass"]);
   const m: Record<string, string> = {}; (data || []).forEach((r: any) => (m[r.k] = r.v));
   const price = parseInt(m.ai_price_inr || "0") || 0, credits = parseInt(m.ai_pack_credits || "0") || 0;
-  return { price, credits };
+  const pub: Record<string, number> = { invitation: parseInt(m.pub_price_invitation || "0") || 0, visiting: parseInt(m.pub_price_visiting || "0") || 0 };
+  return { price, credits, pub, bypass: m.pay_bypass === "1" };
+}
+
+// Mark a design as paid-for-publishing exactly once.
+async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> {
+  const claim = await sb.from("studio_pub_orders")
+    .update({ status: "paid", rzp_payment_id: paymentId, paid_at: new Date().toISOString() })
+    .eq("rzp_order_id", orderId).eq("status", "created").select("design_id");
+  if (claim.error) return false;
+  if (!claim.data || claim.data.length === 0) {
+    const { data: o } = await sb.from("studio_pub_orders").select("status").eq("rzp_order_id", orderId).maybeSingle();
+    return o?.status === "paid";
+  }
+  const ins = await sb.from("studio_pub_paid").upsert({ design_id: (claim.data[0] as any).design_id, source: "paid" }, { onConflict: "design_id", ignoreDuplicates: true });
+  if (ins.error) { await sb.from("studio_pub_orders").update({ status: "created", paid_at: null }).eq("rzp_order_id", orderId); return false; }
+  return true;
 }
 
 // Add the credits for a paid order exactly once.
@@ -65,7 +81,7 @@ Deno.serve(async (req) => {
       const ev = JSON.parse(raw);
       if (ev.event === "payment.captured" || ev.event === "order.paid") {
         const p = ev.payload?.payment?.entity;
-        if (p?.order_id) await fulfill(p.order_id, p.id);
+        if (p?.order_id) { const f = await fulfill(p.order_id, p.id); if (!f.ok) await fulfillPub(p.order_id, p.id); }
       }
     } catch { /* ignore */ }
     return json({ ok: true });
@@ -83,6 +99,50 @@ Deno.serve(async (req) => {
   const configured = !!(keyId && keySecret) && st.price >= 1 && st.credits >= 1;
 
   if (b.action === "info") return json({ configured, price: st.price, credits: st.credits });
+
+  // ---- paid publishing ----
+  if (b.action === "pub_create" || b.action === "pub_verify") {
+    if (b.action === "pub_create") {
+      const did = clip(b.design_id, 60);
+      const { data: d } = await sb.from("studio_designs").select("user_id,product_type").eq("id", did).maybeSingle();
+      if (!d || d.user_id !== user.id) return json({ code: "design_not_found" }, 404);
+      const price = st.pub[d.product_type] || 0;
+      if (price < 1 || st.bypass) return json({ code: "free" }, 400);
+      if (!keyId || !keySecret) return json({ code: "not_configured" }, 503);
+      const { data: paid } = await sb.from("studio_pub_paid").select("design_id").eq("design_id", did).maybeSingle();
+      if (paid) return json({ code: "already_paid" }, 400);
+      const amount = price * 100;
+      const r = await fetch("https://api.razorpay.com/v1/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Basic " + btoa(`${keyId}:${keySecret}`) },
+        body: JSON.stringify({ amount, currency: "INR", receipt: "spb_" + crypto.randomUUID().slice(0, 8), notes: { user: user.id, design: did } }),
+      });
+      const ro = await r.json();
+      if (!r.ok || !ro.id) return json({ code: "order_failed" }, 502);
+      const ins = await sb.from("studio_pub_orders").insert({ rzp_order_id: ro.id, user_id: user.id, design_id: did, amount_paise: amount });
+      if (ins.error) return json({ code: "db" }, 500);
+      return json({ order_id: ro.id, key_id: keyId, amount });
+    }
+    const oid = clip(b.order_id, 60), pid = clip(b.payment_id, 60), sig = clip(b.signature, 100);
+    if (!oid || !pid || !sig || !keySecret) return json({ code: "bad_request" }, 400);
+    const { data: own } = await sb.from("studio_pub_orders").select("user_id").eq("rzp_order_id", oid).maybeSingle();
+    if (!own || own.user_id !== user.id) return json({ code: "order_not_found" }, 404);
+    if (!same(await hmac(keySecret, `${oid}|${pid}`), sig)) return json({ code: "not_verified" }, 400);
+    if (!(await fulfillPub(oid, pid))) return json({ code: "fulfill_failed" }, 500);
+    return json({ ok: true });
+  }
+  if (b.action === "pub_sync") {
+    if (!keyId || !keySecret) return json({ ok: true });
+    const { data: pend } = await sb.from("studio_pub_orders").select("rzp_order_id").eq("user_id", user.id).eq("status", "created")
+      .gte("created_at", new Date(Date.now() - 3 * 86400000).toISOString()).limit(5);
+    for (const o of pend || []) {
+      const r = await fetch(`https://api.razorpay.com/v1/orders/${o.rzp_order_id}/payments`, { headers: { Authorization: "Basic " + btoa(`${keyId}:${keySecret}`) } });
+      if (!r.ok) continue;
+      const cap = ((await r.json()).items || []).find((p: any) => p.status === "captured");
+      if (cap) await fulfillPub(o.rzp_order_id, cap.id);
+    }
+    return json({ ok: true });
+  }
   if (!configured) return json({ code: "not_configured" }, 503);
 
   if (b.action === "create") {

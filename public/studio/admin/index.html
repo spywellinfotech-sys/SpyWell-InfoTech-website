@@ -35,12 +35,29 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
   var vc=await sb.rpc('studio_admin_view_counts');VC={};var tv=0,tc=0;(vc.data||[]).forEach(function(x){VC[x.design_id]=x;tv+=Number(x.views);tc+=Number(x.clicks)});
   if(!vc.error){var g2=h('div',{class:'stats'});[[tv,'कुल कार्ड व्यू'],[tc,'कुल बटन क्लिक']].forEach(function(x){g2.appendChild(h('div',{class:'stat'},[h('b',{text:String(x[0])}),h('span',{text:x[1]})]))});app.appendChild(g2)}
   var bp=h('div');app.appendChild(bp);balPanel(bp);
+  var pp=h('div');app.appendChild(pp);payPanel(pp);
   var tabs=h('div',{class:'tabs'});app.appendChild(tabs);body=h('div');app.appendChild(body);
   function draw(){tabs.textContent='';[['cust','ग्राहक'],['tpl','टेम्पलेट']].forEach(function(t){tabs.appendChild(h('button',{class:tab===t[0]?'on':'',text:t[1],onclick:function(){tab=t[0];sel=null;draw()}}))});body.textContent='';(tab==='cust'?(sel?cardsView:custView):tplView)()}
   window.__draw=draw;draw();
 })();
 var VC={};
 
+async function payPanel(box){
+  var r=await sb.rpc('studio_pay_config');box.textContent='';if(r.error||!r.data)return;
+  var x=r.data,c=h('div',{class:'card',style:x.bypass?'border:2px solid #e67e22':''});
+  c.appendChild(h('b',{text:'💳 पेमेंट सेटिंग'}));
+  var cb=h('input',{type:'checkbox'});cb.checked=!!x.bypass;
+  c.appendChild(h('label',{style:'display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700'},[cb,h('span',{text:'🔓 पेमेंट बाईपास (सबके लिए मुफ़्त)'})]));
+  c.appendChild(h('div',{class:'k',text:x.bypass?'⚠️ अभी बाईपास चालू है: कार्ड प्रकाशित करना और AI से पढ़ना किसी से पैसे नहीं माँगता।':'बाईपास बंद है: नीचे की कीमतें लागू हैं। 0 डालने पर वह चीज़ मुफ़्त रहती है।'}));
+  function num(label,val){var i=h('input',{type:'number',min:'0',step:'1'});i.value=val;i.style.cssText='display:block;width:100%;margin-top:6px';c.appendChild(h('label',{class:'k',style:'display:block;margin-top:8px',text:label}));c.appendChild(i);return i}
+  var pi=num('इनविटेशन कार्ड प्रकाशित करने की कीमत (₹, हर कार्ड पर एक बार)',x.pub_invitation),pv=num('विज़िटिंग कार्ड प्रकाशित करने की कीमत (₹, हर कार्ड पर एक बार)',x.pub_visiting),ap=num('AI से पढ़ने के पैक की कीमत (₹)',x.ai_price),ac=num('एक पैक में AI क्रेडिट',x.ai_credits);
+  var m=h('div',{class:'k'});
+  c.appendChild(h('button',{class:'btn',text:'सेव करें',onclick:async function(){
+    var e=await sb.rpc('studio_admin_set_payments',{p_bypass:cb.checked,p_pub_inv:parseInt(pi.value)||0,p_pub_vis:parseInt(pv.value)||0,p_ai_price:parseInt(ap.value)||0,p_ai_credits:parseInt(ac.value)||0});
+    if(e.error){m.className='e';m.textContent='सेव नहीं हुआ';return}payPanel(box)}}));
+  c.appendChild(m);c.appendChild(h('div',{class:'k',text:'पहले से प्रकाशित कार्ड मुफ़्त रहते हैं। कार QR हमेशा मुफ़्त है। Razorpay की चाबियाँ चालू होना ज़रूरी है, वरना भुगतान वाला कार्ड प्रकाशित नहीं होगा।'}));
+  box.appendChild(c);
+}
 async function balPanel(box){
   var r=await sb.rpc('studio_admin_ai_cost');box.textContent='';
   if(r.error||!r.data){return}

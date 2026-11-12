@@ -117,7 +117,8 @@ Deno.serve(async (req) => {
 
   // Payment gate: one credit per read, taken atomically BEFORE the AI is called; refunded on any failure.
   const { data: adm } = await sb.from("studio_roles").select("user_id").eq("user_id", user.id).maybeSingle();
-  const free = !!adm;
+  const { data: byp } = await sb.from("studio_settings").select("v").eq("k", "pay_bypass").maybeSingle();
+  const free = !!adm || byp?.v === "1";
   let taken = false;
   if (!free) {
     const { data: ok, error: ce } = await sb.rpc("studio_credit_take", { p_user: user.id });

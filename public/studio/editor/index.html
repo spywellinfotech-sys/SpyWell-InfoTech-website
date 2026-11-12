@@ -464,13 +464,32 @@ function pPub(p){
   inp.oninput=function(){clearTimeout(tm);tm=setTimeout(check,400)};check();
   var needs=R.isEmpty(D.product_type,C);
   if(needs){er.className='e';er.textContent='पहले कार्ड में कुछ जानकारी भरें।'}
+  var PI=null;
+  async function pubInfo(){try{var q=await sb.rpc('studio_pub_info',{p_id:D.id});PI=q.data||null}catch(e){PI=null}
+    if(PI&&!PI.paid&&PI.price>0){pb.textContent='₹'+PI.price+' का भुगतान करके प्रकाशित करें'}else pb.textContent='प्रकाशित करें'}
+  (async function(){if(D.status!=='published'){try{await fnCall('studio-pay',{action:'pub_sync'})}catch(e){}}await pubInfo()})();
+  async function payPub(){
+    er.className='k';er.textContent='भुगतान तैयार हो रहा है…';
+    try{
+      var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id});await loadRzp();
+      await new Promise(function(res,rej){
+        var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:'कार्ड प्रकाशित करना',
+          handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
+          modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
+        rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
+      return true
+    }catch(e){er.className='e';er.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।':e.code==='free'||e.code==='already_paid'?'':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, अपने-आप जुड़ जाएगा।';
+      return e.code==='free'||e.code==='already_paid'}}
   pb.onclick=async function(){
     if(R.isEmpty(D.product_type,C)){er.className='e';er.textContent='पहले कार्ड में कुछ जानकारी भरें।';return}
-    await check();if(!ok)return;pb.disabled=true;if(dirty)await save();
+    await check();if(!ok)return;pb.disabled=true;
+    await pubInfo();
+    if(PI&&!PI.paid&&PI.price>0){var paidOk=await payPub();if(!paidOk){pb.disabled=false;return}await pubInfo()}
+    if(dirty)await save();
     var v=inp.value.trim().toLowerCase();
     var r=await sb.from('studio_designs').update({slug:v,status:'published'}).eq('id',D.id).select('slug,status').single();
     pb.disabled=false;
-    if(r.error||!r.data){er.className='e';er.textContent='प्रकाशित नहीं हुआ। नाम दूसरा चुनकर दोबारा कोशिश करें।';return}
+    if(r.error||!r.data){er.className='e';er.textContent=(r.error&&/payment_required/.test(r.error.message||''))?'पहले भुगतान ज़रूरी है।':'प्रकाशित नहीं हुआ। नाम दूसरा चुनकर दोबारा कोशिश करें।';return}
     D.slug=r.data.slug;D.status='published';panel();state('कार्ड प्रकाशित हो गया')};
 }
 
