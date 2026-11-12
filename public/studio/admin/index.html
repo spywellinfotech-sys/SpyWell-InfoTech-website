@@ -58,7 +58,7 @@ async function balPanel(box){
     var e=await sb.rpc('studio_admin_set_anthropic',{p_balance:b,p_low:parseFloat(lw.value)||0,p_in:parseFloat(pi.value),p_out:parseFloat(po.value)});
     if(e.error){m.textContent='सेव नहीं हुआ';return}balPanel(box)}});
   [bal,lw,pi,po].forEach(function(i){i.style.cssText='display:block;width:100%;margin-top:6px'});
-  c.appendChild(bal);c.appendChild(lw);c.appendChild(pi);c.appendChild(po);c.appendChild(sv);c.appendChild(m);
+  [['कंसोल में अभी बैलेंस ($)',bal],['चेतावनी: बैलेंस इससे कम होने पर ($)',lw],['इनपुट कीमत ($ प्रति 10 लाख टोकन)',pi],['आउटपुट कीमत ($ प्रति 10 लाख टोकन)',po]].forEach(function(z){c.appendChild(h('div',{class:'k',style:'margin-top:10px;font-weight:600',text:z[0]}));c.appendChild(z[1])});c.appendChild(sv);c.appendChild(m);
   c.appendChild(h('div',{class:'k',text:'नोट: Anthropic असली बैलेंस नहीं बताता, इसलिए यह टोकन खपत और ऊपर की कीमतों से अनुमान है। कीमतें Anthropic की प्राइसिंग पेज से मिलाकर सही रखें। कभी-कभी कंसोल से मिलान करके बैलेंस दोबारा भरें।'}));
   box.appendChild(c);
 }
