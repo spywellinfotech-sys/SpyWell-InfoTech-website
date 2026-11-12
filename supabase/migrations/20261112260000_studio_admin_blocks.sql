@@ -68,3 +68,38 @@ begin
   return jsonb_build_object('live',true,'state',st);
 end $$;
 grant execute on function public.studio_pub_live(text,text,boolean) to anon, authenticated;
+
+-- Super admin: give / change / remove a plan (any length, 0 days = lifetime) on any visiting card.
+create or replace function public.studio_admin_set_plan(p_design uuid, p_plan text, p_days int) returns void
+language plpgsql security definer set search_path=public as $$
+declare u timestamptz;
+begin
+  if not studio_is_admin() then raise exception 'forbidden' using errcode='42501'; end if;
+  if not exists(select 1 from studio_designs where id=p_design and product_type='visiting') then raise exception 'not_visiting'; end if;
+  if p_plan is null or p_plan = '' then
+    delete from studio_subs where design_id=p_design;
+  else
+    if studio_plan_rank(p_plan)=0 then raise exception 'bad_plan'; end if;
+    u := case when coalesce(p_days,0) <= 0 then timestamptz '2099-12-31 23:59:59+00' else now() + make_interval(days=>least(p_days,36500)) end;
+    insert into studio_subs(design_id,plan,paid_until) values (p_design,p_plan,u)
+      on conflict (design_id) do update set plan=excluded.plan, paid_until=excluded.paid_until, updated_at=now();
+  end if;
+  insert into studio_audit(admin_id,action,target,detail) values (auth.uid(),'set_plan',p_design::text,jsonb_build_object('plan',p_plan,'days',p_days));
+end $$;
+revoke all on function public.studio_admin_set_plan(uuid,text,int) from public, anon;
+grant execute on function public.studio_admin_set_plan(uuid,text,int) to authenticated;
+
+create or replace function public.studio_admin_subs() returns table(design_id uuid, plan text, paid_until timestamptz)
+language plpgsql security definer set search_path=public as $$
+begin
+  if not studio_is_admin() then raise exception 'forbidden' using errcode='42501'; end if;
+  return query select s.design_id, s.plan, s.paid_until from studio_subs s;
+end $$;
+revoke all on function public.studio_admin_subs() from public, anon;
+grant execute on function public.studio_admin_subs() to authenticated;
+
+-- Super admin accounts get every feature free (cards, mini website, own domain).
+create or replace function public.studio_owner_is_admin(p_id uuid) returns boolean language sql stable security definer set search_path=public as $$
+  select exists(select 1 from studio_designs d join studio_roles r on r.user_id=d.user_id and r.role='admin' where d.id=p_id) $$;
+revoke all on function public.studio_owner_is_admin(uuid) from public, anon, authenticated;
+-- studio_sub_state / studio_pub_live / studio_sub_info / studio_request_domain were updated to honour it (see live database).

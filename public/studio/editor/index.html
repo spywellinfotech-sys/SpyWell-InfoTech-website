@@ -518,6 +518,7 @@ async function payPlan(plan,amount){
 function planBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
   sb.rpc('studio_sub_info',{p_id:D.id}).then(function(r){var s=r&&r.data;if(!s||!s.enabled||!s.required)return;
+    if(s.is_admin){box.appendChild(h('b',{text:'👑 सुपर एडमिन'}));box.appendChild(h('div',{class:'k',style:'margin-top:6px',text:'आपके खाते पर सभी सुविधाएँ (कार्ड, मिनी वेबसाइट, अपना डोमेन) बिना भुगतान चालू हैं।'}));return}
     box.appendChild(h('b',{text:'🗓️ आपका प्लान'}));
     var line=s.plan?PLN[s.plan]+' · '+fmtD(s.paid_until)+' तक':'अभी कोई चालू प्लान नहीं';
     if(s.state==='grace')line+='\n⚠️ अवधि पूरी हो गई। '+s.grace_days+' दिन की छूट चल रही है, फिर लिंक बंद हो जाएगा।';
@@ -536,7 +537,7 @@ function planBox(p){
 function domainBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
   sb.rpc('studio_sub_info',{p_id:D.id}).then(function(r){var s=r&&r.data;
-    if(s&&s.enabled&&s.plan!=='domain'){box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
+    if(s&&s.enabled&&!s.is_admin&&s.plan!=='domain'){box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
       box.appendChild(h('div',{class:'k',text:'अपने डोमेन (जैसे www.aapkanaam.com) पर वेबसाइट चलाने के लिए "फ़ुल वेबसाइट + अपना डोमेन" प्लान लें। मिनी वेबसाइट से अपग्रेड पर सिर्फ़ फ़र्क़ देना होगा।'}));
       var b=h('button',{class:'btn alt',text:'⬆️ फ़ुल वेबसाइट प्लान ₹'+s.domain_amount+(s.domain_kind==='upgrade'?' (सिर्फ़ फ़र्क़)':'')});b.style.marginTop='8px';
       b.onclick=async function(){b.disabled=true;if(await payPlan('domain',s.domain_amount)){toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b);return}
