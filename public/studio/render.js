@@ -266,18 +266,79 @@
     try { var cv = document.createElement('canvas'); window.StudioQR.draw(cv, unescape(encodeURIComponent(t)), 320);
       var im = el('img', 'sr-qrimg'); im.src = cv.toDataURL('image/png'); im.alt = 'कॉन्टैक्ट QR कोड'; im.width = 160; im.height = 160; return im; } catch (e) { return null; }
   }
+  function deliverImage(blob, nm, done) {
+    function fallbackOverlay() {
+      var u = URL.createObjectURL(blob), ov = el('div', ''); ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px';
+      var im = document.createElement('img'); im.src = u; im.style.cssText = 'max-width:100%;max-height:70vh;border-radius:10px;background:#fff';
+      var tx = el('div', '', T('फ़ोटो को दबाकर रखें और "इमेज सेव करें" चुनें')); tx.style.cssText = 'color:#fff;font-size:14px;text-align:center';
+      var cl = el('button', '', T('बंद करें')); cl.type = 'button'; cl.style.cssText = 'padding:10px 22px;border-radius:10px;border:0;background:#fff;font-weight:600';
+      cl.onclick = function () { ov.remove(); URL.revokeObjectURL(u); }; ov.appendChild(im); ov.appendChild(tx); ov.appendChild(cl); document.body.appendChild(ov);
+    }
+    function viaAnchor() {
+      try { var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nm + '.png'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); } catch (e) { fallbackOverlay(); }
+    }
+    var C = window.Capacitor, P = C && C.Plugins;
+    if (P && P.Filesystem && P.Share) {
+      var rd = new FileReader();
+      rd.onload = function () {
+        var b64 = String(rd.result).split(',')[1];
+        P.Filesystem.writeFile({ path: nm + '.png', data: b64, directory: 'CACHE' }).then(function (r) { return P.Share.share({ title: nm, files: [r.uri], dialogTitle: T('कार्ड फ़ोटो सेव / शेयर करें') }); }).then(done, function () { fallbackOverlay(); done(); });
+      };
+      rd.onerror = function () { fallbackOverlay(); done(); }; rd.readAsDataURL(blob); return;
+    }
+    try {
+      var file = new File([blob], nm + '.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) { navigator.share({ files: [file], title: nm }).then(done, function () { viaAnchor(); done(); }); return; }
+    } catch (e) { }
+    viaAnchor(); done();
+  }
+  function loadImg(src) { return new Promise(function (ok) { if (!src) return ok(null); var im = new Image(); im.crossOrigin = 'anonymous'; im.onload = function () { ok(im); }; im.onerror = function () { ok(null); }; im.src = src; }); }
+  function wrapText(x, t, mx, font, maxLines) {
+    x.font = font; var words = String(t).split(/\s+/), lines = [], cur = '';
+    words.forEach(function (w) { var tt = cur ? cur + ' ' + w : w; if (x.measureText(tt).width > mx && cur) { lines.push(cur); cur = w; } else cur = tt; });
+    if (cur) lines.push(cur); if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[maxLines - 1] = lines[maxLines - 1].replace(/.{1,2}$/, '…'); } return lines;
+  }
+  function drawVisitingImage(root, f) {
+    var hdEl = root.querySelector('.hd'), cs = hdEl ? getComputedStyle(hdEl) : null, ac = (cs && cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)') ? cs.backgroundColor : '#12307f', fg = (cs && cs.color) || '#ffffff';
+    var lgEl = root.querySelector('img.sr-lg'), phEl = root.querySelector('.ph img, img.ph');
+    var slug = ''; try { slug = new URLSearchParams(location.search).get('s') || ''; } catch (e) { }
+    var url = slug ? location.origin + '/v/' + slug : location.href.split('#')[0];
+    return Promise.all([loadImg(phEl && phEl.src), loadImg(lgEl && lgEl.src)]).then(function (im) {
+      var W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d');
+      var FF = '"Hind","Noto Sans Devanagari",system-ui,sans-serif';
+      x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H); x.fillStyle = ac; x.fillRect(0, 0, W, 340);
+      x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+      var y = (im[1] ? 50 : 105);
+      if (im[1]) { var lh = 90, lw = Math.min(360, im[1].width * lh / im[1].height); x.drawImage(im[1], (W - lw) / 2, y, lw, lh); y += lh + 20; }
+      x.fillStyle = fg;
+      var biz = f.business || f.name || ''; var bl = wrapText(x, biz, 900, '700 60px ' + FF, 2); bl.forEach(function (l, i) { x.font = '700 60px ' + FF; x.fillText(l, W / 2, y + 60 + i * 68); });
+      var cx = W / 2, cy = 340, r = 130;
+      x.fillStyle = '#ffffff'; x.beginPath(); x.arc(cx, cy, r + 12, 0, Math.PI * 2); x.fill();
+      if (im[0]) { x.save(); x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.clip(); var s = Math.max(2 * r / im[0].width, 2 * r / im[0].height); x.drawImage(im[0], cx - im[0].width * s / 2, cy - im[0].height * s / 2, im[0].width * s, im[0].height * s); x.restore(); }
+      else { x.fillStyle = ac; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill(); x.fillStyle = fg; x.font = '700 120px ' + FF; x.fillText(String(f.name || f.business || '?').trim().charAt(0).toUpperCase(), cx, cy + 42); }
+      var ty = cy + r + 85; x.fillStyle = '#14203d';
+      if (f.name) { x.font = '700 64px ' + FF; x.fillText(String(f.name).slice(0, 40), W / 2, ty); ty += 62; }
+      if (f.designation) { x.fillStyle = '#5a6a8c'; x.font = '400 38px ' + FF; x.fillText(String(f.designation).slice(0, 50), W / 2, ty); ty += 30; }
+      ty += 40; x.textAlign = 'left'; x.fillStyle = '#14203d';
+      var rows = []; var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website);
+      if (tel) rows.push(['📞', '+91 ' + tel.slice(0, 5) + ' ' + tel.slice(5)]); if (wa && wa !== tel) rows.push(['💬', 'WhatsApp +91 ' + wa]);
+      if (em) rows.push(['✉️', em]); if (web) rows.push(['🌐', String(web).replace(/^https?:\/\//, '').slice(0, 40)]);
+      if (f.address) wrapText(x, f.address, 620, '400 36px ' + FF, 3).forEach(function (l, i) { rows.push([i ? '' : '📍', l]); });
+      rows.forEach(function (rw) { if (ty > H - 120) return; x.font = '400 40px ' + FF; x.fillText(rw[0], 90, ty); x.font = '400 40px ' + FF; x.fillText(rw[1], 160, ty); ty += 62; });
+      try { var qc = document.createElement('canvas'); window.StudioQR.draw(qc, unescape(encodeURIComponent(url)), 360); x.fillStyle = '#fff'; x.fillRect(W - 290, H - 290, 230, 230); x.drawImage(qc, W - 285, H - 285, 220, 220); } catch (e) { }
+      x.fillStyle = '#5a6a8c'; x.font = '400 30px ' + FF; x.textAlign = 'left'; x.fillText('Vi-card', 90, H - 70);
+      return new Promise(function (ok) { cv.toBlob(function (b) { ok(b); }, 'image/png'); });
+    });
+  }
   function saveCardImage(root, f, btn) {
     var old = btn.textContent; btn.textContent = T('तैयार हो रहा है…'); btn.disabled = true;
     function done() { btn.textContent = old; btn.disabled = false; }
+    var nm = (f.name || f.business || f.bride || 'card').replace(/[^\wऀ-ॿ ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'card';
+    if (!(f.bride || f.groom)) { drawVisitingImage(root, f).then(function (b) { if (!b) { done(); return; } deliverImage(b, nm, done); }, done); return; }
     function go() {
       try {
         window.html2canvas(root, { useCORS: true, scale: 2, backgroundColor: null, ignoreElements: function (n) { return n.classList && (n.classList.contains('sr-pw') || n.classList.contains('sr-save')); } }).then(function (cv) {
-          cv.toBlob(function (b) {
-            if (!b) { done(); return; }
-            var nm = (f.name || f.business || f.bride || 'card').replace(/[^\w\u0900-\u097F ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'card';
-            var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = nm + '.png'; document.body.appendChild(a); a.click();
-            setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); done();
-          }, 'image/png');
+          cv.toBlob(function (b) { if (!b) { done(); return; } deliverImage(b, nm, done); }, 'image/png');
         }, done);
       } catch (e) { done(); }
     }
