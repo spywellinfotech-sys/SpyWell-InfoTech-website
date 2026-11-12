@@ -476,6 +476,23 @@
     tools.appendChild(saveCardBtn(root, f));
     ci.appendChild(tools);
     if (tel || wa) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
+    if (typeof opts.onEnquiry === 'function') {
+      var es = el('div', 'ws-sec'), ei = el('div', 'ws-in'); ei.appendChild(el('h2', '', T('पूछताछ भेजें'))); ei.appendChild(el('div', 'ws-bar'));
+      var en = el('input', 'sr-eq'), em = el('input', 'sr-eq'), ex = el('textarea', 'sr-eq'), eb = el('button', 'sr-save', T('📩 पूछताछ भेजें')), er = el('div', 'sr-eqm');
+      en.placeholder = T('आपका नाम'); en.maxLength = 60; em.placeholder = T('मोबाइल नंबर'); em.maxLength = 12; em.type = 'tel'; em.inputMode = 'numeric'; ex.placeholder = T('आप क्या जानना चाहते हैं?'); ex.maxLength = 500; ex.rows = 3; eb.type = 'button';
+      eb.onclick = function () {
+        var nm = en.value.trim(), mb = em.value.replace(/\D/g, '').slice(-10), ms = ex.value.trim();
+        if (!nm || !/^[6-9][0-9]{9}$/.test(mb) || !ms) { er.textContent = T('नाम, सही मोबाइल नंबर और संदेश भरें।'); return; }
+        eb.disabled = true; er.textContent = T('भेजा जा रहा है…');
+        Promise.resolve(opts.onEnquiry(nm, mb, ms)).then(function (r) {
+          eb.disabled = false;
+          if (r === 'ok') { er.textContent = T('✓ आपकी पूछताछ भेज दी गई। जल्द जवाब मिलेगा।'); en.value = em.value = ex.value = ''; }
+          else if (r === 'limit') er.textContent = T('बहुत ज़्यादा संदेश भेजे गए, थोड़ी देर बाद कोशिश करें।');
+          else er.textContent = T('अभी नहीं भेजा जा सका। दोबारा कोशिश करें।');
+        }, function () { eb.disabled = false; er.textContent = T('अभी नहीं भेजा जा सका। दोबारा कोशिश करें।'); });
+      };
+      [en, em, ex, eb, er].forEach(function (x) { ei.appendChild(x); }); es.appendChild(ei); root.appendChild(es);
+    }
     var shs = el('div', 'ws-sec'), shi = el('div', 'ws-in'); shi.appendChild(shareBar(f, opts)); shs.appendChild(shi); root.appendChild(shs);
     root.appendChild(el('div', 'ws-foot', '© ' + new Date().getFullYear() + ' ' + (f.business || f.name || '')));
     if (typeof opts.onAct === 'function') root.addEventListener('click', function (ev) { var x = ev.target.closest ? ev.target.closest('[data-act]') : null; if (x) { try { opts.onAct(x.getAttribute('data-act')); } catch (e) { } } });
@@ -510,7 +527,7 @@
     '.ws-gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(9em,1fr));gap:.6em}.ws-gal .ws-gp{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;display:block}' +
     '.ws-map{width:100%;height:14em;border:0;border-radius:12px;margin:.8em 0}.ws-mapbtn{display:inline-block}' +
     '.ws-cta{background:var(--ac);color:var(--bg);padding:2em 0}.ws-cta h2{font-family:var(--nf);margin-bottom:.7em}.ws-cta .ws-act{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.ws-cta .ws-act a{background:var(--bg);color:var(--ac)!important}' +
-    '.ws-foot{padding:1.2em;font-size:.8em;opacity:.65}' +
+    '.sr-eq{display:block;width:100%;box-sizing:border-box;margin:.5em 0;padding:.8em;border:1px solid rgba(0,0,0,.2);border-radius:10px;font:inherit}.sr-eqm{font-size:.9em;margin-top:.5em;min-height:1.2em}.ws-foot{padding:1.2em;font-size:.8em;opacity:.65}' +
     '.ws-hero{padding-bottom:3.2em}.ws-wave{position:absolute;left:0;right:0;bottom:-1px;height:2.2em;line-height:0}.ws-wave svg{width:100%;height:100%;display:block}' +
     '.ws-bar{width:3.2em;height:4px;border-radius:4px;background:var(--ac);margin:-.3em auto 1em;opacity:.8}' +
     '.ws-ic{width:2.8em;height:2.8em;border-radius:50%;background:color-mix(in srgb,var(--ac) 16%,var(--bg));display:flex;align-items:center;justify-content:center;font-size:1.4em;margin:0 auto .5em}.ws-ic2{background:var(--ac);color:var(--bg);font-size:1.1em;font-weight:700}' +

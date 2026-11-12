@@ -115,6 +115,9 @@ button{min-height:48px;border-radius:12px}
 <button type="button" id="wl-go" style="background:#f59a1a;color:#06133f;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
 <div class="qa" id="c-qa"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button><button type="button" data-tab="mine"><i>🎨</i>मेरे कार्ड / वेबसाइट</button></div>
 <div class="card" id="c-note" hidden></div>
+<div class="card" id="c-my" hidden></div>
+<div class="card" id="c-enq" hidden></div>
+
 <div class="card" id="c-new">
 <b>नया बनाएँ</b>
 <div class="grid ig" style="margin-top:10px">
@@ -219,7 +222,7 @@ async function loadSaved(){
   var a=await sb.from('studio_saved_cards').select('id,product_type,slug,title,subtitle,industry,mobile,whatsapp,created_at,fav,coll').eq('user_id',ME.id).order('created_at',{ascending:false});
   var b=await sb.from('studio_contacts').select('id,name,business,mobile,industry,created_at,fav,coll').eq('user_id',ME.id).order('created_at',{ascending:false});
   if(a.error&&b.error){$('sv-list').textContent='सूची लोड नहीं हुई।';return}
-  CT=[];(a.data||[]).forEach(function(x){CT.push({src:'card',fav:x.fav,coll:x.coll,id:x.id,title:x.title||x.slug,sub:x.subtitle,ind:x.industry,mob:x.mobile,wa:x.whatsapp,href:'/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug,ico:x.product_type==='invitation'?'💌 ':'📇 ',t:x.created_at})});
+  CT=[];(a.data||[]).forEach(function(x){CT.push({src:'card',slug:x.slug,pt:x.product_type,fav:x.fav,coll:x.coll,id:x.id,title:x.title||x.slug,sub:x.subtitle,ind:x.industry,mob:x.mobile,wa:x.whatsapp,href:'/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug,ico:x.product_type==='invitation'?'💌 ':'📇 ',t:x.created_at})});
   (b.data||[]).forEach(function(x){CT.push({src:'man',fav:x.fav,coll:x.coll,id:x.id,title:x.name,sub:x.business,ind:x.industry,mob:x.mobile,wa:x.mobile,ico:'👤 ',t:x.created_at})});
   CT.sort(function(p,q){return String(q.t).localeCompare(String(p.t))});var tn=$('tb-n');if(tn){tn.textContent=CT.length>99?'99+':CT.length;tn.hidden=!CT.length}drawContacts()}
 var COLS=['सप्लायर','ग्राहक','डीलर','बिज़नेस पार्टनर','सर्विस प्रोवाइडर','पर्सनल'];
@@ -239,7 +242,7 @@ function drawContacts(){
     var meta=[x.sub,x.ind?(INDN[x.ind]||x.ind):'',x.mob?('+91 '+x.mob):''].filter(Boolean).join(' · ');if(meta)row.appendChild(mk('div','k',meta));
     var ac=mk('div','acts');
     if(x.mob){var c=mk('a','','📞 कॉल');c.href='tel:+91'+x.mob;ac.appendChild(c);var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+(x.wa||x.mob);w.target='_blank';w.rel='noopener';ac.appendChild(w)}
-    if(x.href){var o=mk('a','','कार्ड खोलें');o.href=x.href;o.target='_blank';o.rel='noopener';ac.appendChild(o)}
+    if(x.href){var o=mk('button','','कार्ड खोलें');o.type='button';o.style.cssText='background:var(--wine);color:#fff;border:0';o.onclick=function(){openVw(x.slug,x.pt,x.title)};ac.appendChild(o);t.style.cursor='pointer';t.onclick=o.onclick}
     var fb=mk('button','',x.fav?'★ पसंदीदा हटाएँ':'☆ पसंदीदा');fb.type='button';fb.onclick=async function(){fb.disabled=true;await sb.rpc('studio_lib_set',{p_src:x.src,p_id:x.id,p_fav:!x.fav});loadSaved()};ac.appendChild(fb);
     var cl=mk('select');cl.style.cssText='width:auto;margin:0;padding:6px';var c0=mk('option','','📁 कलेक्शन');c0.value='';cl.appendChild(c0);COLS.concat(x.coll&&COLS.indexOf(x.coll)<0?[x.coll]:[]).forEach(function(k){var o=mk('option','',k);o.value=k;cl.appendChild(o)});var cn=mk('option','','➕ नया कलेक्शन…');cn.value='__new';cl.appendChild(cn);cl.value=x.coll||'';
     cl.onchange=async function(){var v=cl.value;if(v==='__new'){v=(prompt('कलेक्शन का नाम')||'').trim().slice(0,30);if(!v){cl.value=x.coll||'';return}}await sb.rpc('studio_lib_set',{p_src:x.src,p_id:x.id,p_coll:v});loadSaved()};ac.appendChild(cl);
@@ -255,7 +258,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=d.data||[];drawList();loadSubs();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){var t=document.querySelector('[data-new=visiting]');if(t)t.click()};
+  LIST=d.data||[];drawList();loadSubs();myHome();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){var t=document.querySelector('[data-new=visiting]');if(t)t.click()};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -391,10 +394,63 @@ $('vo-on').onchange=function(){VO.on=this.checked;voSave();if(VO.on&&!window.spe
 $('vo-lang').onchange=function(){VO.lang=this.value;voSave();noteDraw()};$('vo-rate').onchange=function(){VO.rate=+this.value;voSave()};
 $('vo-say').onclick=function(){var ev=subEvents();voSpeak(ev.length?ev.map(function(e){return e[VO.lang]}).join(' '):(VO.lang==='en'?'You have no subscription alerts right now.':'अभी कोई सब्सक्रिप्शन सूचना नहीं है।'))};
 $('vo-stop').onclick=function(){try{speechSynthesis.cancel()}catch(e){}};
+
+var VWO=null;
+function openVw(slug,pt,title){
+  closeVw(true);var o=document.createElement('div');o.id='vw';o.style.cssText='position:fixed;inset:0;z-index:200;background:#fff;display:flex;flex-direction:column';
+  var hd=document.createElement('div');hd.style.cssText='background:#06133f;color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px';
+  var bk=mk('button','','⬅ वापस');bk.type='button';bk.style.cssText='width:auto;margin:0;min-height:40px;padding:6px 12px;background:#fff;color:#12307f';bk.onclick=function(){history.back()};hd.appendChild(bk);
+  var tt=mk('b','',(title||'कार्ड').slice(0,28));tt.style.cssText='flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';hd.appendChild(tt);o.appendChild(hd);
+  var fr=document.createElement('iframe');fr.style.cssText='flex:1;border:0;width:100%;background:#fff';
+  var base=pt==='invitation'?'/inv/':'/v/';fr.src=base+encodeURIComponent(slug);
+  if(pt!=='invitation'){var sg=document.createElement('div');sg.style.cssText='display:flex;gap:6px;padding:6px 10px;background:#eef3ff';
+    [['c','📇 कार्ड','/v/'],['w','🌐 मिनी वेबसाइट','/web/']].forEach(function(z,i){var b=mk('button','',z[1]);b.type='button';b.style.cssText='margin:0;min-height:38px;padding:6px;font-size:14px;flex:1;'+(i?'background:#fff;color:#12307f;border:1px solid #12307f':'');b.dataset.k=z[0];
+      b.onclick=function(){fr.src=z[2]+encodeURIComponent(slug);sg.querySelectorAll('button').forEach(function(q){var on=q===b;q.style.background=on?'#12307f':'#fff';q.style.color=on?'#fff':'#12307f'})};sg.appendChild(b)});o.appendChild(sg)}
+  o.appendChild(fr);document.body.appendChild(o);VWO=o;try{history.pushState({vw:1},'')}catch(e){}}
+function closeVw(silent){var o=document.getElementById('vw');if(o)o.remove();VWO=null}
+window.addEventListener('popstate',function(){if(document.getElementById('vw'))closeVw(true)});
+
+function mtile(a,b){var d=mk('div','');d.style.cssText='background:#eef3ff;border-radius:10px;padding:8px;text-align:center;flex:1';var x=mk('b','',String(a));x.style.cssText='display:block;font-size:18px;color:#12307f';d.appendChild(x);var y=mk('span','',b);y.style.cssText='font-size:11px;color:var(--mut)';d.appendChild(y);return d}
+function statRow(title,u){var w=mk('div','');w.style.marginTop='10px';var t=mk('div','k',title);t.style.fontWeight='600';w.appendChild(t);
+  var r=mk('div','');r.style.cssText='display:flex;gap:8px;margin-top:4px';var c=u.clicks||{},act=(c.call||0)+(c.whatsapp||0);
+  r.appendChild(mtile(u.total||0,'कुल व्यू'));r.appendChild(mtile(u.today||0,'आज'));r.appendChild(mtile(act,'कॉल / WhatsApp'));w.appendChild(r);return w}
+async function myHome(){
+  var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
+  if(!vis.length){box.hidden=true;return}
+  var x=vis.filter(function(v){return v.status==='published'})[0]||vis[0];box.hidden=false;box.textContent='';
+  box.appendChild(mk('b','','🪪 मेरा कार्ड'));
+  var hd=mk('div','k',(x.title||'बिना नाम')+' · '+STN[x.status]);hd.style.margin='4px 0 8px';box.appendChild(hd);
+  if(x.status==='published'&&x.slug){var fw=mk('div','');fw.style.cssText='width:100%;height:230px;overflow:hidden;border:1px solid var(--line);border-radius:12px;position:relative';
+    var fr=document.createElement('iframe');fr.src='/v/'+x.slug;fr.loading='lazy';fr.style.cssText='border:0;width:400px;height:560px;transform:scale(.58);transform-origin:0 0;pointer-events:none';fw.appendChild(fr);box.appendChild(fw);
+    fw.onclick=function(){openVw(x.slug,'visiting',x.title)};fw.style.cursor='pointer'}
+  var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:10px';
+  var e1=mk('a','','✏️ कार्ड एडिट');e1.href='/studio/editor/?id='+x.id;var e2=mk('a','','🌐 वेबसाइट एडिट');e2.href='/studio/editor/?id='+x.id+'&tab=info';
+  [e1,e2].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#12307f;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px';rw.appendChild(a)});box.appendChild(rw);
+  if(x.status==='published'&&x.slug){var r2=mk('div','');r2.style.cssText='display:flex;gap:8px;margin-top:8px';var u=location.origin+'/v/'+x.slug;
+    var cp=mk('button','alt','🔗 लिंक');cp.type='button';cp.style.cssText='margin:0;flex:1';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक'},2000)};
+    var wa=mk('a','','WhatsApp');wa.href='https://wa.me/?text='+encodeURIComponent('मेरा डिजिटल कार्ड: '+u);wa.target='_blank';wa.rel='noopener';
+    var qr=mk('a','','QR');qr.href='/studio/editor/?id='+x.id+'&tab=pub';
+    [wa,qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'});r2.appendChild(cp);r2.appendChild(wa);r2.appendChild(qr);box.appendChild(r2)}
+  var st=await sb.rpc('studio_my_stats',{p_design:x.id});
+  if(!st.error&&st.data){box.appendChild(statRow('📇 कार्ड की इनसाइट',st.data.card||{}));
+    var pl=SUBI[x.id]&&SUBI[x.id].plan;if(st.data.site&&((st.data.site.total||0)>0||pl==='site'||pl==='domain'))box.appendChild(statRow('🌐 वेबसाइट की इनसाइट',st.data.site));
+    var il=mk('a','','📊 पूरी इनसाइट देखें');il.href='/studio/editor/?id='+x.id+'&tab=ins';il.style.cssText='display:block;margin-top:10px;color:var(--wine);font-weight:600;text-decoration:none';box.appendChild(il)}
+  loadEnq()}
+async function loadEnq(){
+  var r=await sb.rpc('studio_my_enquiries',{p_limit:50}),box=$('c-enq'),tb=$('tb-h');
+  if(r.error||!r.data){box.hidden=true;return}var rows=r.data.rows||[],un=r.data.unread||0;
+  if(tb){tb.textContent=un>99?'99+':un;tb.hidden=!un}
+  box.textContent='';if(!rows.length){box.hidden=false;box.appendChild(mk('b','','📩 पूछताछ'));box.appendChild(mk('div','k','वेबसाइट के फ़ॉर्म से आई पूछताछ यहाँ दिखेगी।'));return}
+  box.hidden=false;var h=mk('b','','📩 पूछताछ'+(un?' · '+un+' नई':''));box.appendChild(h);
+  rows.slice(0,20).forEach(function(q){var d=mk('div','des');d.style.opacity=q.read?'.6':'1';
+    d.appendChild(mk('b','',(q.read?'':'🔵 ')+q.name+' · '+q.mobile));d.appendChild(mk('div','',q.message));d.appendChild(mk('div','k',(q.title||'')+' · '+when(q.at)));
+    var ac=mk('div','acts'),c=mk('a','','📞 कॉल');c.href='tel:+91'+q.mobile;var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+q.mobile;w.target='_blank';w.rel='noopener';ac.appendChild(c);ac.appendChild(w);
+    if(!q.read){var m=mk('button','','✓ देख लिया');m.type='button';m.onclick=async function(){m.disabled=true;await sb.rpc('studio_enquiry_mark',{p_id:q.id,p_read:true});loadEnq()};ac.appendChild(m)}
+    d.appendChild(ac);box.appendChild(d)})}
 var TABMAP=null;
 function setTab(t){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-note'),'home'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list').parentNode,'mine'],[$('d-act').parentNode,'mine'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-enq'),'home'],[$('c-note'),'home'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list').parentNode,'mine'],[$('d-act').parentNode,'mine'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','saved','mine','me'].indexOf(t)<0)t='home';if(t==='disc'){discFill();if(!$('dres').childNodes.length)discGo(false)}
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
@@ -463,5 +519,5 @@ sb.auth.onAuthStateChange(function(ev,session){
 });
 })();
 </script>
-<nav id="tabbar" hidden><button type="button" data-tab="home"><i>🏠</i>होम</button><button type="button" data-tab="disc"><i>🔍</i>खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव कार्ड<b id="tb-n" hidden></b></button><button type="button" data-tab="mine"><i>🎨</i>मेरे डिज़ाइन</button><button type="button" data-tab="me"><i>👤</i>प्रोफ़ाइल</button></nav>
+<nav id="tabbar" hidden><button type="button" data-tab="home"><i>🏠</i>होम<b id="tb-h" hidden></b></button><button type="button" data-tab="disc"><i>🔍</i>खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव कार्ड<b id="tb-n" hidden></b></button><button type="button" data-tab="mine"><i>🎨</i>मेरे डिज़ाइन</button><button type="button" data-tab="me"><i>👤</i>प्रोफ़ाइल</button></nav>
 </body></html>
