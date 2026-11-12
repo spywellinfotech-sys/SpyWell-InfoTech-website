@@ -37,6 +37,7 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
   var bp=h('div');app.appendChild(bp);balPanel(bp);
   var pp=h('div');app.appendChild(pp);payPanel(pp);
   var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
+  var py=h('div');app.appendChild(py);payPanel(py);
   var cf=h('div');app.appendChild(cf);cfgPanel(cf);
   var dm=h('div');app.appendChild(dm);domPanel(dm);
   var ip=h('div');app.appendChild(ip);indPanel(ip);
@@ -58,17 +59,38 @@ async function aiPanel(box){
   c.appendChild(h('button',{class:'btn',text:'सेव करें',onclick:async function(){var e=await sb.rpc('studio_admin_set_ai',{p_enabled:cb.checked});if(e.error){m.className='e';m.textContent='सेव नहीं हुआ';return}aiPanel(box)}}));
   c.appendChild(m);box.appendChild(c);
 }
+async function payPanel(box){
+  var r=await sb.from('studio_settings').select('k,v').in('k',['pay_bypass','sub_price_card','sub_price_site','sub_price_domain','sub_grace_days','pub_price_invitation']);box.textContent='';if(r.error)return;
+  var S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});var on=S.pay_bypass==='0';
+  var c=h('div',{class:'card'});c.appendChild(h('b',{text:'💳 साल के प्लान और भुगतान'}));
+  c.appendChild(h('div',{style:'margin-top:6px;font-weight:700;color:'+(on?'#0a7a2f':'#8b1a2b'),text:on?'✅ भुगतान चालू है':'⛔ भुगतान बंद है (सब कुछ फ़्री)'}));
+  function row(l,v,t){var i=h('input',{type:'number',value:v||'',placeholder:t||''});c.appendChild(h('label',{text:l,style:'display:block;margin-top:8px;font-weight:600'}));c.appendChild(i);return i}
+  var pc=row('विज़िटिंग कार्ड ₹ / साल',S.sub_price_card),ps=row('मिनी वेबसाइट ₹ / साल',S.sub_price_site),pd=row('फ़ुल वेबसाइट + अपना डोमेन ₹ / साल',S.sub_price_domain),
+      gr=row('बंद होने से पहले छूट के दिन',S.sub_grace_days),pi=row('इन्विटेशन कार्ड ₹ (एक बार)',S.pub_price_invitation);
+  c.appendChild(h('div',{class:'k',text:'अपग्रेड पर सिर्फ़ फ़र्क़ लगता है और साल की आख़िरी तारीख़ वही रहती है। ख़त्म होने पर छूट के दिन बाद लिंक बंद होता है; डेटा सुरक्षित रहता है और भुगतान करते ही लिंक फिर चालू।'}));
+  var m=h('div',{class:'k'});
+  c.appendChild(h('button',{class:'btn',style:'margin-top:10px',text:'कीमतें सेव करें',onclick:async function(){
+    var rows=[['sub_price_card',pc],['sub_price_site',ps],['sub_price_domain',pd],['sub_grace_days',gr],['pub_price_invitation',pi]],bad=false;
+    for(var i=0;i<rows.length;i++){var v=parseInt(rows[i][1].value);if(!(v>=0&&v<=1000000)){bad=true;break}}
+    if(bad){m.className='e';m.textContent='हर खाने में 0 या उससे बड़ी संख्या भरें।';return}
+    for(var j=0;j<rows.length;j++){var e=await sb.from('studio_settings').update({v:String(parseInt(rows[j][1].value))}).eq('k',rows[j][0]);if(e.error){m.className='e';m.textContent='सेव नहीं हुआ।';return}}
+    await sb.from('studio_settings').update({v:String(parseInt(pd.value))}).eq('k','domain_price_inr');
+    m.className='k';m.textContent='कीमतें सेव हो गईं।'}}));
+  var tb=h('button',{class:'btn '+(on?'danger':'alt'),style:'margin-top:10px',text:on?'भुगतान बंद करें (सब फ़्री)':'भुगतान चालू करें'});
+  tb.onclick=async function(){if(!tb.dataset.a){tb.dataset.a='1';tb.textContent=on?'पक्का? नए प्रकाशन फ़्री हो जाएँगे। हाँ, बंद करें':'पक्का? पहले से लाइव कार्ड/वेबसाइट को 30 दिन मिलेंगे, फिर भुगतान लगेगा। हाँ, चालू करें';return}
+    tb.disabled=true;var e=await sb.rpc('studio_admin_set_payments',{p_on:!on});if(e.error){m.className='e';m.textContent='बदला नहीं जा सका।';tb.disabled=false;return}payPanel(box)};
+  c.appendChild(tb);c.appendChild(m);
+  c.appendChild(h('div',{class:'k',text:'ध्यान: असली भुगतान तभी चलेगा जब Razorpay की चाबियाँ लगी हों।'}));
+  box.appendChild(c)}
 async function cfgPanel(box){
   var r=await sb.from('studio_settings').select('k,v').in('k',['ai_model','ai_daily_limit','ai_max_pages','ai_max_file_mb','domain_price_inr']);box.textContent='';if(r.error)return;
   var S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});
   var c=h('div',{class:'card'});c.appendChild(h('b',{text:'⚙️ AI की सीमाएँ और डोमेन शुल्क'}));
   function row(l,v,ph,t){var i=h('input',{type:t||'text',value:v||'',placeholder:ph||''});c.appendChild(h('label',{text:l,style:'display:block;margin-top:8px;font-weight:600'}));c.appendChild(i);return i}
   var mo=row('Claude मॉडल (खाली = डिफ़ॉल्ट)',S.ai_model,'जैसे claude-sonnet-5-5'),li=row('हर user की रोज़ की AI सीमा (1–1000)',S.ai_daily_limit,'','number'),pg=row('PDF/फ़ोटो के ज़्यादा से ज़्यादा पेज (1–4)',S.ai_max_pages,'','number'),mb=row('फ़ाइल का अधिकतम साइज़ MB (1–15)',S.ai_max_file_mb,'','number');
-  var dp=row('डोमेन अपग्रेड शुल्क ₹ (खाली = टीम बताएगी)',S.domain_price_inr,'जैसे 999','number');
   var m=h('div',{class:'k'});
   c.appendChild(h('button',{class:'btn',style:'margin-top:10px',text:'सेव करें',onclick:async function(){
     var e=await sb.rpc('studio_admin_set_ai_config',{p_model:mo.value.trim(),p_limit:parseInt(li.value)||0,p_pages:parseInt(pg.value)||0,p_mb:parseInt(mb.value)||0});
-    if(!e.error){var d=dp.value.trim();e=await sb.from('studio_settings').update({v:d}).eq('k','domain_price_inr')}
     if(e.error){m.className='e';m.textContent='सेव नहीं हुआ। मान सही सीमा में रखें (मॉडल का नाम छोटे अक्षर/अंक/बिंदु/हाइफ़न में)।';return}
     m.className='k';m.textContent='सेव हो गया। नई सीमाएँ अगली AI रीडिंग से लागू।'}}));
   c.appendChild(m);box.appendChild(c)}

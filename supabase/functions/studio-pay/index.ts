@@ -32,18 +32,28 @@ async function settings() {
   return { price, credits, pub, bypass: m.pay_bypass === "1" };
 }
 
-// Mark a design as paid-for-publishing exactly once.
+// Mark an order paid exactly once: yearly plan (studio_subs) or one-time publish fee (studio_pub_paid).
+const RANK: Record<string, number> = { card: 1, site: 2, domain: 3 };
 async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> {
   const claim = await sb.from("studio_pub_orders")
     .update({ status: "paid", rzp_payment_id: paymentId, paid_at: new Date().toISOString() })
-    .eq("rzp_order_id", orderId).eq("status", "created").select("design_id");
+    .eq("rzp_order_id", orderId).eq("status", "created").select("design_id,plan,new_until");
   if (claim.error) return false;
   if (!claim.data || claim.data.length === 0) {
     const { data: o } = await sb.from("studio_pub_orders").select("status").eq("rzp_order_id", orderId).maybeSingle();
     return o?.status === "paid";
   }
-  const ins = await sb.from("studio_pub_paid").upsert({ design_id: (claim.data[0] as any).design_id, source: "paid" }, { onConflict: "design_id", ignoreDuplicates: true });
-  if (ins.error) { await sb.from("studio_pub_orders").update({ status: "created", paid_at: null }).eq("rzp_order_id", orderId); return false; }
+  const o = claim.data[0] as any;
+  let err: unknown = null;
+  if (o.plan) {
+    const { data: cur } = await sb.from("studio_subs").select("plan,paid_until").eq("design_id", o.design_id).maybeSingle();
+    const plan = cur && (RANK[cur.plan] || 0) > (RANK[o.plan] || 0) ? cur.plan : o.plan;
+    const until = cur && new Date(cur.paid_until) > new Date(o.new_until) ? cur.paid_until : o.new_until;
+    err = (await sb.from("studio_subs").upsert({ design_id: o.design_id, plan, paid_until: until, updated_at: new Date().toISOString() }, { onConflict: "design_id" })).error;
+  } else {
+    err = (await sb.from("studio_pub_paid").upsert({ design_id: o.design_id, source: "paid" }, { onConflict: "design_id", ignoreDuplicates: true })).error;
+  }
+  if (err) { await sb.from("studio_pub_orders").update({ status: "created", paid_at: null }).eq("rzp_order_id", orderId); return false; }
   return true;
 }
 
@@ -106,20 +116,30 @@ Deno.serve(async (req) => {
       const did = clip(b.design_id, 60);
       const { data: d } = await sb.from("studio_designs").select("user_id,product_type").eq("id", did).maybeSingle();
       if (!d || d.user_id !== user.id) return json({ code: "design_not_found" }, 404);
-      const price = st.pub[d.product_type] || 0;
-      if (price < 1 || st.bypass) return json({ code: "free" }, 400);
+      let price = st.pub[d.product_type] || 0, plan: string | null = null, newUntil: string | null = null;
+      if (st.bypass) return json({ code: "free" }, 400);
+      if (d.product_type === "visiting") {
+        const req = (await sb.rpc("studio_sub_required", { p_id: did })).data as string | null;
+        const target = RANK[clip(b.plan, 10)] ? clip(b.plan, 10) : req;
+        if (!req || !target || RANK[target] < RANK[req]) return json({ code: "bad_plan" }, 400);
+        const q = (await sb.rpc("studio_sub_quote", { p_id: did, p_target: target })).data as any;
+        if (!q || q.kind === "none" || !(q.amount >= 1)) return json({ code: "free" }, 400);
+        price = q.amount; plan = target; newUntil = q.until;
+      } else {
+        if (price < 1) return json({ code: "free" }, 400);
+        const { data: paid } = await sb.from("studio_pub_paid").select("design_id").eq("design_id", did).maybeSingle();
+        if (paid) return json({ code: "already_paid" }, 400);
+      }
       if (!keyId || !keySecret) return json({ code: "not_configured" }, 503);
-      const { data: paid } = await sb.from("studio_pub_paid").select("design_id").eq("design_id", did).maybeSingle();
-      if (paid) return json({ code: "already_paid" }, 400);
       const amount = price * 100;
       const r = await fetch("https://api.razorpay.com/v1/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: "Basic " + btoa(`${keyId}:${keySecret}`) },
-        body: JSON.stringify({ amount, currency: "INR", receipt: "spb_" + crypto.randomUUID().slice(0, 8), notes: { user: user.id, design: did } }),
+        body: JSON.stringify({ amount, currency: "INR", receipt: "spb_" + crypto.randomUUID().slice(0, 8), notes: { user: user.id, design: did, plan: plan || "invitation" } }),
       });
       const ro = await r.json();
       if (!r.ok || !ro.id) return json({ code: "order_failed" }, 502);
-      const ins = await sb.from("studio_pub_orders").insert({ rzp_order_id: ro.id, user_id: user.id, design_id: did, amount_paise: amount });
+      const ins = await sb.from("studio_pub_orders").insert({ rzp_order_id: ro.id, user_id: user.id, design_id: did, amount_paise: amount, plan, new_until: newUntil });
       if (ins.error) return json({ code: "db" }, 500);
       return json({ order_id: ro.id, key_id: keyId, amount });
     }

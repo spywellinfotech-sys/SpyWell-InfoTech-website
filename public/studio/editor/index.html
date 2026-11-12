@@ -477,8 +477,43 @@ function pExtra(p){
 }
 
 var DOMERR={bad_domain:'डोमेन सही नहीं है। ऐसे लिखें: aapkanaam.com',domain_taken:'यह डोमेन किसी और के नाम से जुड़ चुका है।',forbidden:'यह कार्ड आपका नहीं है।'};
+var PLN={card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'फ़ुल वेबसाइट + अपना डोमेन'};
+function fmtD(x){try{return new Date(x).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}}
+async function payPlan(plan){
+  try{
+    var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await loadRzp();
+    await new Promise(function(res,rej){
+      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:PLN[plan]+' (1 साल)',
+        handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
+        modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
+      rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
+    return true
+  }catch(e){toast(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। SpyWell टीम से संपर्क करें।':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, प्लान अपने आप चालू हो जाएगा।','bad');return false}}
+function planBox(p){
+  var box=h('div',{class:'item'});p.appendChild(box);
+  sb.rpc('studio_sub_info',{p_id:D.id}).then(function(r){var s=r&&r.data;if(!s||!s.enabled||!s.required)return;
+    box.appendChild(h('b',{text:'🗓️ आपका प्लान'}));
+    var line=s.plan?PLN[s.plan]+' · '+fmtD(s.paid_until)+' तक':'अभी कोई चालू प्लान नहीं';
+    if(s.state==='grace')line+='\n⚠️ अवधि पूरी हो गई। '+s.grace_days+' दिन की छूट चल रही है, फिर लिंक बंद हो जाएगा।';
+    if(s.state==='expired')line+='\n❌ प्लान ख़त्म हो गया, लिंक बंद है। आपका डेटा सुरक्षित है, नवीनीकरण करते ही लिंक फिर चालू हो जाएगा।';
+    if(s.state==='upgrade')line+='\n⚠️ मिनी वेबसाइट के लिए अपग्रेड ज़रूरी है, तब तक लिंक बंद रहेगा।';
+    box.appendChild(h('div',{class:'k',style:'margin-top:6px;white-space:pre-line',text:line}));
+    var live=s.plan&&new Date(s.paid_until)>new Date();
+    function go(plan,label,after){var b=h('button',{class:'btn alt',text:label});b.style.marginTop='8px';
+      b.onclick=async function(){b.disabled=true;var ok=await payPlan(plan);if(ok){if(after)await after();toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b)}
+    if(s.plan)go(s.plan,'🔁 1 साल के लिए नवीनीकरण ₹'+s.prices[s.plan]);
+    if(!s.plan||s.plan==='card'){var amt=(s.plan==='card'&&live)?s.prices.site-s.prices.card:s.prices.site;
+      go('site','🌐 मिनी वेबसाइट पर अपग्रेड ₹'+amt+((s.plan==='card'&&live)?' (सिर्फ़ फ़र्क़)':''),async function(){C.style.site=true;changed();await save()})}
+  })}
 function domainBox(p){
-  var box=h('div',{class:'item'});p.appendChild(box);box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
+  var box=h('div',{class:'item'});p.appendChild(box);
+  sb.rpc('studio_sub_info',{p_id:D.id}).then(function(r){var s=r&&r.data;
+    if(s&&s.enabled&&s.plan!=='domain'){box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
+      box.appendChild(h('div',{class:'k',text:'अपने डोमेन (जैसे www.aapkanaam.com) पर वेबसाइट चलाने के लिए "फ़ुल वेबसाइट + अपना डोमेन" प्लान लें। मिनी वेबसाइट से अपग्रेड पर सिर्फ़ फ़र्क़ देना होगा।'}));
+      var b=h('button',{class:'btn alt',text:'⬆️ फ़ुल वेबसाइट प्लान ₹'+s.domain_amount+(s.domain_kind==='upgrade'?' (सिर्फ़ फ़र्क़)':'')});b.style.marginTop='8px';
+      b.onclick=async function(){b.disabled=true;if(await payPlan('domain')){toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b);return}
+    domainForm(box)})}
+function domainForm(box){box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
   var st=h('div',{class:'k',style:'margin-top:6px'}),msg=h('div',{class:'k'});
   var inp=h('input',{type:'text',maxlength:120,placeholder:'आपका डोमेन, जैसे aapkanaam.com'});inp.style.marginTop='8px';
   var b=h('button',{class:'btn alt',text:'डोमेन के लिए अनुरोध भेजें'});
@@ -490,7 +525,7 @@ function domainBox(p){
   b.onclick=async function(){var v=inp.value.trim();if(!v){msg.className='e';msg.textContent='पहले डोमेन लिखें।';return}
     b.disabled=true;msg.className='k';msg.textContent='भेजा जा रहा है…';
     var r=await sb.rpc('studio_request_domain',{p_design:D.id,p_domain:v});
-    if(r.error){msg.className='e';var m=(r.error.message||'');msg.textContent=m.indexOf('bad_domain')>=0?DOMERR.bad_domain:m.indexOf('domain_taken')>=0?DOMERR.domain_taken:m.indexOf('forbidden')>=0?DOMERR.forbidden:'अनुरोध नहीं गया। दोबारा कोशिश करें।'}
+    if(r.error){msg.className='e';var m=(r.error.message||'');msg.textContent=m.indexOf('bad_domain')>=0?DOMERR.bad_domain:m.indexOf('domain_taken')>=0?DOMERR.domain_taken:m.indexOf('forbidden')>=0?DOMERR.forbidden:m.indexOf('upgrade_required')>=0?'पहले फ़ुल वेबसाइट प्लान लें।':'अनुरोध नहीं गया। दोबारा कोशिश करें।'}
     else{msg.className='k';msg.textContent='अनुरोध भेज दिया गया।';st.textContent='⏳ अनुरोध भेजा गया: '+r.data.domain+'। टीम जल्द संपर्क करेगी।';inp.value=r.data.domain;
       window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मुझे अपनी मिनी वेबसाइट पर अपना डोमेन '+r.data.domain+' जोड़ना है (SpyWell Studio)।'),'_blank','noopener')}
     b.disabled=false};
@@ -509,6 +544,7 @@ function pPub(p){
         h('button',{class:'btn alt',text:'वेबसाइट खोलें',onclick:function(){window.open(wu,'_blank','noopener')}}),
         h('button',{class:'btn alt',text:'वेबसाइट लिंक कॉपी',onclick:async function(){try{await navigator.clipboard.writeText(wu);info.className='k';info.textContent='वेबसाइट लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ।'}}}),
         h('button',{class:'btn alt',text:'वेबसाइट WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('हमारी वेबसाइट: '+wu),'_blank','noopener')}})]))}
+    if(D.product_type==='visiting')planBox(p);
     if(D.product_type==='visiting'&&C.style.site===true)domainBox(p);
     else if(D.product_type==='visiting')p.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
     if(D.product_type==='visiting'){
@@ -588,7 +624,7 @@ function pPub(p){
   async function payPub(){
     er.className='k';er.textContent='भुगतान तैयार हो रहा है…';
     try{
-      var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id});await loadRzp();
+      var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:(PI&&PI.sub&&PI.sub.next_plan)||undefined});await loadRzp();
       await new Promise(function(res,rej){
         var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:'कार्ड प्रकाशित करना',
           handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
