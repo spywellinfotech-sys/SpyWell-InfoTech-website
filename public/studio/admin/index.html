@@ -34,11 +34,34 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
   if(!st.error&&st.data){var g=h('div',{class:'stats'});[['customers','ग्राहक'],['invitations','शादी कार्ड'],['visiting','विज़िटिंग'],['published','प्रकाशित'],['drafts','ड्राफ़्ट'],['ai_calls_7d','AI (7 दिन)']].forEach(function(x){g.appendChild(h('div',{class:'stat'},[h('b',{text:String(st.data[x[0]]==null?0:st.data[x[0]])}),h('span',{text:x[1]})]))});app.appendChild(g)}
   var vc=await sb.rpc('studio_admin_view_counts');VC={};var tv=0,tc=0;(vc.data||[]).forEach(function(x){VC[x.design_id]=x;tv+=Number(x.views);tc+=Number(x.clicks)});
   if(!vc.error){var g2=h('div',{class:'stats'});[[tv,'कुल कार्ड व्यू'],[tc,'कुल बटन क्लिक']].forEach(function(x){g2.appendChild(h('div',{class:'stat'},[h('b',{text:String(x[0])}),h('span',{text:x[1]})]))});app.appendChild(g2)}
+  var bp=h('div');app.appendChild(bp);balPanel(bp);
   var tabs=h('div',{class:'tabs'});app.appendChild(tabs);body=h('div');app.appendChild(body);
   function draw(){tabs.textContent='';[['cust','ग्राहक'],['tpl','टेम्पलेट']].forEach(function(t){tabs.appendChild(h('button',{class:tab===t[0]?'on':'',text:t[1],onclick:function(){tab=t[0];sel=null;draw()}}))});body.textContent='';(tab==='cust'?(sel?cardsView:custView):tplView)()}
   window.__draw=draw;draw();
 })();
 var VC={};
+
+async function balPanel(box){
+  var r=await sb.rpc('studio_admin_ai_cost');box.textContent='';
+  if(r.error||!r.data){return}
+  var x=r.data,rem=x.remaining_usd,low=rem!=null&&rem<=Number(x.low_usd);
+  var c=h('div',{class:'card',style:low?'border:2px solid #c0392b':''});
+  c.appendChild(h('b',{text:'🤖 Anthropic AI बैलेंस (अनुमानित)'}));
+  if(rem==null)c.appendChild(h('div',{class:'k',text:'अभी बैलेंस भरा नहीं है। नीचे Anthropic कंसोल का बैलेंस डालें।'}));
+  else c.appendChild(h('div',{style:'font-size:26px;font-weight:700;margin:6px 0;color:'+(low?'#c0392b':'#1b7a3a'),text:'$'+Number(rem).toFixed(2)}));
+  if(low)c.appendChild(h('div',{class:'k',style:'color:#c0392b;font-weight:700',text:'⚠️ बैलेंस कम है! console.anthropic.com पर क्रेडिट जोड़ें, नहीं तो AI सेवा रुक जाएगी।'}));
+  c.appendChild(h('div',{class:'k',text:'अब तक AI कॉल: '+x.total_calls+' (सफल '+x.ok_calls+') · कुल अनुमानित खर्च: $'+x.total_spent_usd+(x.base_at?' · बैलेंस भरने के बाद खर्च: $'+x.spent_since_usd:'')}));
+  var bal=h('input',{type:'number',step:'0.01',min:'0',placeholder:'कंसोल में अभी बैलेंस ($)'}),lw=h('input',{type:'number',step:'0.5',min:'0',placeholder:'चेतावनी इस राशि से कम पर ($)'}),pi=h('input',{type:'number',step:'0.01',min:'0.01',placeholder:'इनपुट कीमत $/10 लाख टोकन'}),po=h('input',{type:'number',step:'0.01',min:'0.01',placeholder:'आउटपुट कीमत $/10 लाख टोकन'});
+  lw.value=x.low_usd;pi.value=x.price_in;po.value=x.price_out;
+  var m=h('div',{class:'k'});
+  var sv=h('button',{class:'btn',text:'बैलेंस सेव करें',onclick:async function(){var b=parseFloat(bal.value);if(!(b>=0)){m.textContent='बैलेंस डालें';return}
+    var e=await sb.rpc('studio_admin_set_anthropic',{p_balance:b,p_low:parseFloat(lw.value)||0,p_in:parseFloat(pi.value),p_out:parseFloat(po.value)});
+    if(e.error){m.textContent='सेव नहीं हुआ';return}balPanel(box)}});
+  [bal,lw,pi,po].forEach(function(i){i.style.cssText='display:block;width:100%;margin-top:6px'});
+  c.appendChild(bal);c.appendChild(lw);c.appendChild(pi);c.appendChild(po);c.appendChild(sv);c.appendChild(m);
+  c.appendChild(h('div',{class:'k',text:'नोट: Anthropic असली बैलेंस नहीं बताता, इसलिए यह टोकन खपत और ऊपर की कीमतों से अनुमान है। कीमतें Anthropic की प्राइसिंग पेज से मिलाकर सही रखें। कभी-कभी कंसोल से मिलान करके बैलेंस दोबारा भरें।'}));
+  box.appendChild(c);
+}
 function custView(){
   var q=h('input',{type:'search',placeholder:'नाम, फ़ोन या ईमेल से खोजें'}),list=h('div'),tm;body.appendChild(q);body.appendChild(list);
   async function load(){list.textContent='';list.appendChild(h('div',{class:'msg',text:'लोड हो रहा है…'}));
