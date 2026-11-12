@@ -42,7 +42,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 .k{font-size:13px;color:var(--mut)}
 [hidden]{display:none!important}
 @media(min-width:860px){.cols{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}#pvbox{max-height:calc(100vh - 130px)}.left{position:sticky;top:60px}}
-</style></head><body>
+</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n.js"></script></head><body>
 <div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
 <button id="undo" disabled title="Undo">↶</button><button id="redo" disabled title="Redo">↷</button><button id="save">सेव</button></div>
 <div class="wrap">
@@ -188,6 +188,8 @@ function pDesign(p){
   var lays=D.product_type==='invitation'?[['frame','फ्रेम'],['double','दोहरा फ्रेम'],['arch','मेहराब'],['plain','सादा']]:[['band','पट्टी'],['wave','लहर'],['side','साइड लाइन'],['diag','तिरछी पट्टी'],['ring','गोल फ़ोटो रिंग'],['dots','बिंदी वाली पट्टी'],['ribbon','रिबन नाम'],['card','बॉर्डर कार्ड']];
   var cl=s.layout||t.layout||lays[0][0];if(!lays.some(function(x){return x[0]===cl}))cl=lays[0][0];
   p.appendChild(sel('कार्ड की बनावट','layout',lays,cl));
+  p.appendChild(sel('कार्ड की भाषा','lang',[['','हिन्दी'],['en','English'],['pa','ਪੰਜਾਬੀ'],['mr','मराठी'],['gu','ગુજરાતી'],['ur','اردو']],s.lang||''));
+  p.appendChild(h('div',{class:'k',text:'कार्ड के बटन, तारीख़ और समय इसी भाषा में दिखेंगे। आपका लिखा मैटर वैसा ही रहेगा।'}));
   if(D.product_type==='invitation')p.appendChild(sel('सजावटी चिह्न','ornament',[['none','कोई नहीं'],['❖','❖'],['❁','❁'],['❋','❋'],['✦','✦'],['❀','❀'],['❦','❦'],['ॐ','ॐ'],['❤','❤']],s.ornament||t.ornament||'none'));
   var seg=h('div',{class:'seg'});[['left','बाएँ'],['center','बीच में'],['right','दाएँ']].forEach(function(a){
     seg.appendChild(h('button',{class:s.align===a[0]?'on':'',text:a[1],onclick:function(){s.align=a[0];panel();changed()}}))});
@@ -342,6 +344,7 @@ async function pIns(p){
 /* ---------- publish ---------- */
 var SLUG=/^[a-z0-9]+(-[a-z0-9]+)*$/;
 function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'inv':'v')+'/'+slug}
+function shareText(){return D.product_type==='invitation'?'आप सादर आमंत्रित हैं: ':'हमारा डिजिटल विज़िटिंग कार्ड: '}
 function webUrl(slug){return location.origin+'/web/'+slug}
 function mobSlug(){var f=C.fields||{},m=String(D.product_type==='invitation'?(f.c1_phone||f.c2_phone):f.mobile).replace(/\D/g,'');if(m.length>=10)m=m.slice(-10);return m.length>=3?m:''}
 function slugify(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)}
@@ -391,7 +394,10 @@ function pPub(p){
         h('button',{class:'btn alt',text:'वेबसाइट लिंक कॉपी',onclick:async function(){try{await navigator.clipboard.writeText(wu);info.className='k';info.textContent='वेबसाइट लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ।'}}}),
         h('button',{class:'btn alt',text:'वेबसाइट WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('हमारी वेबसाइट: '+wu),'_blank','noopener')}})]))}
     else if(D.product_type==='visiting')p.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
-    p.appendChild(h('button',{class:'btn',text:'WhatsApp पर भेजें',onclick:function(){var t=(D.product_type==='invitation'?'हमारे विवाह का निमंत्रण: ':'हमारा डिजिटल विज़िटिंग कार्ड: ')+url;window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener')}}));
+    p.appendChild(h('button',{class:'btn',text:'WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent(shareText()+url),'_blank','noopener')}}));
+    var wn=h('input',{type:'tel',placeholder:'मोबाइल नंबर (10 अंक)',maxlength:15,inputmode:'numeric'});wn.style.marginTop='10px';
+    p.appendChild(wn);
+    p.appendChild(h('button',{class:'btn',text:'📲 इस नंबर पर WhatsApp भेजें',onclick:function(){var n=wn.value.replace(/\D/g,'').slice(-10);if(n.length!==10){info.className='e';info.textContent='10 अंक का सही मोबाइल नंबर डालें';return}info.textContent='';window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(shareText()+url),'_blank','noopener')}}));
     p.appendChild(h('button',{class:'btn alt',text:'लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(url);info.className='k';info.textContent='लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें और कॉपी करें।'}}}));
     p.appendChild(h('button',{class:'btn alt',text:'कार्ड खोलकर देखें',onclick:function(){window.open(url,'_blank','noopener')}}));
     p.appendChild(h('button',{class:'btn alt',text:'QR कोड डाउनलोड करें',onclick:function(){var a=h('a',{href:cv.toDataURL('image/png'),download:'qr-'+D.slug+'.png'});document.body.appendChild(a);a.click();a.remove()}}));

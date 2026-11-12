@@ -33,7 +33,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 .mini .cap{font-size:12px;padding:5px 7px;border-top:1px solid var(--line)}.mini .cap span{color:var(--mut);display:block}
 @media(min-width:700px){.wrap{max-width:760px}}
 [hidden]{display:none!important}
-</style></head><body>
+</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n.js"></script></head><body>
 <div class="top"><b>SpyWell Digital Studio</b><button id="out" hidden>लॉगआउट</button></div>
 <div class="wrap">
 
@@ -165,6 +165,8 @@ function drawList(){
     r.appendChild(mk('div','k',TYN[x.product_type]+' · आख़िरी बदलाव '+when(x.updated_at)));
     var a=mk('div','acts'),e=mk('a','','खोलें / बदलें');e.href='/studio/editor/?id='+x.id;a.appendChild(e);
     var n=mk('a','','📊 इनसाइट');n.href='/studio/editor/?id='+x.id+'&tab=ins';a.appendChild(n);
+    if(x.status==='published'&&x.slug){var u=location.origin+'/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug,cp=mk('button','','🔗 लिंक कॉपी');cp.type='button';
+      cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent=u}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2500)};a.appendChild(cp)}
     var c=mk('button','','कॉपी बनाएँ');c.type='button';c.onclick=function(){dup(x.id,c)};a.appendChild(c);
     var d=mk('button',armed===x.id?'danger':'',armed===x.id?'पक्का मिटाएँ?':'मिटाएँ');d.type='button';
     d.onclick=function(){if(armed!==x.id){armed=x.id;drawList();return}del(x.id,d)};a.appendChild(d);
@@ -187,7 +189,7 @@ function pickOcc(){
 }
 function pick(type){
   if(type==='invitation'&&!OCCSEL){pickOcc();return}
-  $('c-new').hidden=true;$('c-pick').hidden=false;$('pk-err').textContent='';$('pk-title').textContent=(type==='invitation'?R.OCCASIONS[OCCSEL].name+' का':TYN[type])+' टेम्पलेट चुनें';
+  $('c-new').hidden=true;$('c-pick').hidden=false;$('pk-err').textContent='';$('pk-title').textContent=(type==='invitation'?R.OCCASIONS[OCCSEL].name+' · ':TYN[type]+' · ')+'टेम्पलेट चुनें';
   var g=$('pk-grid');g.textContent='';var rows=TPL.filter(function(t){return t.product_type===type&&(type!=='invitation'||((t.config&&t.config.occasion)||'wedding')===OCCSEL)});
   if(!rows.length)g.appendChild(mk('div','k','अभी कोई टेम्पलेट उपलब्ध नहीं है।'));
   rows.forEach(function(t){
