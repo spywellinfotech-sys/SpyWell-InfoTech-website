@@ -32,7 +32,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     sb.rpc('studio_track',{p_slug:s,p_type:t,p_kind:kind,p_visitor:vid,p_device:dev,p_src:src}).then(function(){},function(){})}catch(e){}}
   var cj=r.data.content_json||{},sty=(cj.style&&typeof cj.style==='object')?cj.style:{},isSite=asWeb&&sty.site===true;
   if(asWeb&&!isSite){msg('यह मिनी वेबसाइट अभी चालू नहीं है','कार्ड का मालिक एडिटर में "मिनी वेबसाइट मोड" चालू करे। तब तक सीधा कार्ड देखें: /v/'+s);return}
-  if(false&&sty.gate===true){ // gate disabled by owner
+  if(sty.gate===true){
     try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
     var gk='sv_lead_'+t+s,got='';try{got=localStorage.getItem(gk)||''}catch(e){}
     if(!got){
