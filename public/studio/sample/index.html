@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>मिनी वेबसाइट सैंपल | SpyWell Digital Studio</title><link rel="icon" href="/favicon.png">
+<meta name="robots" content="noindex">
+<style>body{margin:0;background:#fff;font-family:Hind,system-ui,sans-serif}
+.bn{background:#111;color:#fff;text-align:center;font-size:13px;padding:7px 10px}
+.cta{max-width:820px;margin:0 auto;text-align:center;padding:26px 16px 40px;background:#fdf6e8}
+.cta b{display:block;font-size:19px;color:#8b1a2b;margin-bottom:6px}.cta p{margin:0 0 14px;color:#4a3a2e;font-size:15px}
+.cta a{display:inline-block;background:#8b1a2b;color:#fff;text-decoration:none;padding:12px 24px;border-radius:30px;font-weight:700;margin:4px}
+.cta a.o{background:#fff;color:#8b1a2b;border:2px solid #8b1a2b}</style></head><body>
+<div class="bn">यह एक सैंपल मिनी वेबसाइट है। नाम, नंबर और पता काल्पनिक हैं।</div>
+<div id="m"></div>
+<div class="cta"><b>आपकी विज़िटिंग कार्ड ही बन जाए पूरी वेबसाइट</b><p>वही लिंक, वही QR। बस "मिनी वेबसाइट मोड" चालू कीजिए।</p>
+<a href="/studio/">अपना कार्ड बनाएँ</a><a class="o" href="/studio/promo/">पूरी जानकारी देखें</a></div>
+<script src="/studio/qr.js"></script><script src="/studio/render.js"></script>
+<script>
+StudioRender.site(document.getElementById('m'),
+ {palette:{bg:'#fff8ec',fg:'#2b1a14',ac:'#c2410c'},font:'hind',nameFont:'yatra'},
+ {fields:{business:'शर्मा इलेक्ट्रिकल्स और सोलर',name:'राजेश शर्मा',designation:'प्रोपराइटर · 15 साल का अनुभव',
+  about:'घर, दुकान और फ़ैक्ट्री की वायरिंग, इन्वर्टर, सोलर पैनल और CCTV लगाने का भरोसेमंद काम। समय पर काम, साफ़ हिसाब और बिक्री के बाद सर्विस हमारी पहचान है।',
+  mobile:'9876543210',whatsapp:'9876543210',email:'sharma.electricals@example.com',address:'मेन बाज़ार, सहारनपुर, उत्तर प्रदेश',
+  website:'https://spywell.in/studio/sample/',instagram:'https://instagram.com/',facebook:'https://facebook.com/'},
+  services:['घर की वायरिंग','सोलर पैनल','इन्वर्टर और बैटरी','CCTV कैमरा','पंखे और लाइट','मरम्मत और AMC'],style:{site:true},images:{}},{});
+document.title='शर्मा इलेक्ट्रिकल्स | मिनी वेबसाइट सैंपल';
+</script></body></html>
