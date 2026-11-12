@@ -103,3 +103,20 @@ grant execute on function public.studio_insights(text, text) to anon, authentica
 
 revoke select on public.studio_insight_keys from authenticated;
 grant select (design_id, key, created_at) on public.studio_insight_keys to authenticated;
+
+-- Super admin: per-card counts and full insights (no PIN needed), admin only
+create or replace function public.studio_admin_view_counts()
+returns table(design_id uuid, views bigint, uniq bigint, clicks bigint)
+language plpgsql security definer set search_path = public as $$
+begin
+  if not studio_is_admin() then raise exception 'not_allowed'; end if;
+  return query
+    select d.id,
+      (select count(*) from studio_views v where v.design_id = d.id),
+      (select count(distinct v.visitor) from studio_views v where v.design_id = d.id and v.visitor is not null),
+      (select count(*) from studio_clicks c where c.design_id = d.id)
+    from studio_designs d;
+end $$;
+revoke all on function public.studio_admin_view_counts() from public, anon;
+grant execute on function public.studio_admin_view_counts() to authenticated;
+-- studio_admin_insights(uuid): same stats as studio_insights, gated by studio_is_admin() (see live DB)

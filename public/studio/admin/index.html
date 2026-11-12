@@ -31,10 +31,13 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
   if(a.error||a.data!==true){say('इस पेज को खोलने की अनुमति नहीं है।',true);return}
   var st=await sb.rpc('studio_admin_stats');app.textContent='';
   if(!st.error&&st.data){var g=h('div',{class:'stats'});[['customers','ग्राहक'],['invitations','शादी कार्ड'],['visiting','विज़िटिंग'],['published','प्रकाशित'],['drafts','ड्राफ़्ट'],['ai_calls_7d','AI (7 दिन)']].forEach(function(x){g.appendChild(h('div',{class:'stat'},[h('b',{text:String(st.data[x[0]]==null?0:st.data[x[0]])}),h('span',{text:x[1]})]))});app.appendChild(g)}
+  var vc=await sb.rpc('studio_admin_view_counts');VC={};var tv=0,tc=0;(vc.data||[]).forEach(function(x){VC[x.design_id]=x;tv+=Number(x.views);tc+=Number(x.clicks)});
+  if(!vc.error){var g2=h('div',{class:'stats'});[[tv,'कुल कार्ड व्यू'],[tc,'कुल बटन क्लिक']].forEach(function(x){g2.appendChild(h('div',{class:'stat'},[h('b',{text:String(x[0])}),h('span',{text:x[1]})]))});app.appendChild(g2)}
   var tabs=h('div',{class:'tabs'});app.appendChild(tabs);body=h('div');app.appendChild(body);
   function draw(){tabs.textContent='';[['cust','ग्राहक'],['tpl','टेम्पलेट']].forEach(function(t){tabs.appendChild(h('button',{class:tab===t[0]?'on':'',text:t[1],onclick:function(){tab=t[0];sel=null;draw()}}))});body.textContent='';(tab==='cust'?(sel?cardsView:custView):tplView)()}
   window.__draw=draw;draw();
 })();
+var VC={};
 function custView(){
   var q=h('input',{type:'search',placeholder:'नाम, फ़ोन या ईमेल से खोजें'}),list=h('div'),tm;body.appendChild(q);body.appendChild(list);
   async function load(){list.textContent='';list.appendChild(h('div',{class:'msg',text:'लोड हो रहा है…'}));
@@ -64,6 +67,18 @@ async function cardsView(){
       pub?h('a',{class:'btn',text:'लाइव खोलें',href:url,target:'_blank',rel:'noopener'}):null,
       h('a',{class:'btn',text:'एडिटर में खोलें',href:'/studio/editor/?id='+d.id}),
       pub?h('button',{class:'btn',text:'प्रकाशन बंद करें',onclick:async function(){var x=await sb.from('studio_designs').update({status:'unpublished'}).eq('id',d.id).select('id');if(x.error||!x.data.length){m.textContent='बंद नहीं हुआ';return}window.__draw()}}):null,
+      h('div',{class:'k',text:'👁 '+((VC[d.id]&&VC[d.id].views)||0)+' बार खुला · '+((VC[d.id]&&VC[d.id].uniq)||0)+' अलग लोग · '+((VC[d.id]&&VC[d.id].clicks)||0)+' क्लिक'}),
+      h('button',{class:'btn',text:'📊 इनसाइट देखें',onclick:async function(){
+        var box=document.getElementById('ins-'+d.id);if(box.textContent){box.textContent='';return}
+        var r2=await sb.rpc('studio_admin_insights',{p_design:d.id});if(r2.error||!r2.data){box.textContent='इनसाइट नहीं आई';return}
+        var x=r2.data,LB={view:'कार्ड खुला',call:'कॉल क्लिक',whatsapp:'WhatsApp क्लिक',map:'लोकेशन क्लिक',savecontact:'कॉन्टैक्ट सेव',savecard:'कार्ड फ़ोटो सेव',email:'ईमेल क्लिक',website:'वेबसाइट क्लिक',share:'शेयर'};
+        function ln(t){box.appendChild(h('div',{class:'k',text:t}))}
+        ln('कुल '+x.total+' · अलग लोग '+x.unique+' · आज '+x.today+' · 7 दिन '+x.last7);
+        Object.keys(x.clicks||{}).forEach(function(k){ln((LB[k]||k)+': '+x.clicks[k])});
+        Object.keys(x.devices||{}).forEach(function(k){ln((k==='mobile'?'फ़ोन':'कंप्यूटर')+': '+x.devices[k])});
+        Object.keys(x.sources||{}).forEach(function(k){ln('स्रोत '+(k==='direct'?'सीधा लिंक / WhatsApp':k)+': '+x.sources[k])});
+        ln('पिछले 14 दिन: '+x.days.map(function(z){return z.n}).join(' · '))}}),
+      h('div',{id:'ins-'+d.id,style:'margin-top:6px'}),
       del,m]);list.appendChild(row)})}
 async function tplView(){
   var list=h('div');body.appendChild(list);var r=await sb.from('studio_templates').select('id,name,product_type,active,sort').order('product_type').order('sort');
