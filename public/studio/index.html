@@ -314,12 +314,12 @@ async function discGo(more){
   if(DBUSY)return;DBUSY=true;if(!more){DOFF=0;$('dres').textContent='खोज रहे हैं…'}
   var r=await sb.rpc('studio_discover',{p_q:$('dq').value.trim(),p_ind:$('dind').value,p_off:DOFF,p_lim:12,p_sort:$('dsort').value});DBUSY=false;
   var B=$('dres');if(!more)B.textContent='';
-  if(r.error||!r.data||r.data.error){B.textContent='खोज अभी नहीं हो पाई। दोबारा कोशिश करें।';return}
+  if(r.error||!r.data||r.data.error){B.textContent=(r.data&&r.data.error==='rate')?'बहुत तेज़ खोज हो रही है, एक मिनट रुककर कोशिश करें।':'खोज अभी नहीं हो पाई। दोबारा कोशिश करें।';return}
   DTOT=r.data.total;var rows=r.data.rows||[];
   if(!rows.length&&!more){B.appendChild(mk('div','k','कोई बिज़नेस नहीं मिला। (सिर्फ़ वही कार्ड दिखते हैं जिन्हें मालिक ने सार्वजनिक किया हो।)'));$('dmore').hidden=true;return}
-  rows.forEach(function(x){var row=mk('div','des'),t=mk('b','',(x.featured?'⭐ ':'')+(x.business||x.name||'बिज़नेस'));if(x.verified){var v=mk('span','st published','✅ Verified');t.appendChild(v)}row.appendChild(t);
+  rows.forEach(function(x){var row=mk('div','des');if(x.img){var im=document.createElement('img');im.loading='lazy';im.alt='';im.src=x.img;im.style.cssText='width:48px;height:48px;object-fit:cover;border-radius:50%;float:right;margin:0 0 6px 8px';row.appendChild(im)}var t=mk('b','',(x.featured?'⭐ ':'')+(x.business||x.name||'बिज़नेस'));if(x.verified){var v=mk('span','st published','✅ Verified');t.appendChild(v)}row.appendChild(t);
     var meta=[x.name,x.designation,x.industry_name].filter(Boolean).join(' · ');if(meta)row.appendChild(mk('div','k',meta));
-    if(x.about)row.appendChild(mk('div','',x.about));if(x.address)row.appendChild(mk('div','k','📍 '+x.address));
+    if(x.about)row.appendChild(mk('div','',x.about));var loc=[x.city,x.state].filter(Boolean).join(', ')||x.address;if(loc)row.appendChild(mk('div','k','📍 '+loc));
     var ac=mk('div','acts'),o=mk('a','','कार्ड देखें');o.href='/v/'+x.slug;o.target='_blank';o.rel='noopener';ac.appendChild(o);
     var sv=mk('button','','💾 सेव करें');sv.type='button';sv.onclick=async function(){sv.disabled=true;var q=await sb.rpc('studio_save_card',{p_type:'visiting',p_slug:x.slug});sv.disabled=false;
       sv.textContent=q.error?'दोबारा कोशिश करें':q.data==='ok'?'✓ सेव हो गया':q.data==='own'?'आपका अपना कार्ड':q.data==='limit'?'सीमा पूरी':'हो गया';if(!q.error&&q.data==='ok')loadSaved()};ac.appendChild(sv);
