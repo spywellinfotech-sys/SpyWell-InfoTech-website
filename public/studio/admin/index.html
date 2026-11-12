@@ -209,7 +209,13 @@ async function cardsView(){
       ap.onclick=async function(){if(!ap.dataset.a){ap.dataset.a='1';ap.textContent='पक्का? प्लान लागू करें';return}ap.disabled=true;var e=await sb.rpc('studio_admin_set_plan',{p_design:d.id,p_plan:ps.value,p_days:parseInt(pd.value)});if(e.error){ap.textContent='नहीं हुआ';return}window.__draw()};
       var rm=h('button',{class:'btn d',style:'margin:8px 0 0',text:'प्लान हटाएँ'});
       rm.onclick=async function(){if(!rm.dataset.a){rm.dataset.a='1';rm.textContent='पक्का? हटाने पर लिंक बंद हो जाएगा';return}rm.disabled=true;var e=await sb.rpc('studio_admin_set_plan',{p_design:d.id,p_plan:'',p_days:0});if(e.error){rm.textContent='नहीं हुआ';return}window.__draw()};
-      plRow.appendChild(ap);if(sp)plRow.appendChild(rm)}
+      plRow.appendChild(ap);if(sp)plRow.appendChild(rm)
+      var dr=h('div',{style:'margin-top:8px;border-top:1px dashed #e8d5ad;padding-top:8px'});plRow.appendChild(dr);
+      (async function(){var g=await sb.rpc('studio_dir_get',{p_design:d.id});if(g.error||!g.data)return;var st=g.data;
+        dr.appendChild(h('div',{style:'font-weight:700',text:'🔍 डायरेक्टरी: '+(st.is_public?'सार्वजनिक':'निजी')+(st.verified?' · ✅ Verified':'')+(st.featured?' · ⭐ Featured':'')+(st.suspended?' · ⛔ हटाया गया':'')}));
+        function db(label,key){var on=!!st[key],bt=h('button',{class:'btn '+(on?'':'d'),style:'margin:6px 6px 0 0',text:(on?'हटाएँ: ':'करें: ')+label});
+          bt.onclick=async function(){bt.disabled=true;var a={p_design:d.id};a['p_'+key]=!on;var e=await sb.rpc('studio_admin_dir_set',a);if(e.error||e.data!=='ok'){bt.textContent='नहीं हुआ';return}window.__draw()};return bt}
+        dr.appendChild(db('Verified','verified'));dr.appendChild(db('Featured','featured'));dr.appendChild(db('डायरेक्टरी से सस्पेंड','suspended'))})()}
     var bkRow=h('div',{class:'k',style:'margin-top:6px'});
     bkRow.appendChild(h('div',{text:(bk.card_off?'⛔ कार्ड बंद। ':'')+(bk.site_off?'⛔ वेबसाइट बंद।':'')}));
     bkRow.appendChild(blkBtn(d.product_type==='invitation'?'इन्विटेशन कार्ड':'विज़िटिंग कार्ड','card_off'));

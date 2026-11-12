@@ -579,6 +579,18 @@ function domainForm(box){box.appendChild(h('b',{text:'🌍 अपना डो�
       window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मुझे अपनी मिनी वेबसाइट पर अपना डोमेन '+r.data.domain+' जोड़ना है (SpyWell Studio)।'),'_blank','noopener')}
     b.disabled=false};
   box.appendChild(inp);b.style.marginTop='8px';box.appendChild(b);box.appendChild(msg)}
+function dirBox(p){
+  var box=h('div',{class:'item'});p.appendChild(box);
+  box.appendChild(h('b',{text:'🔍 Vi-card डायरेक्टरी (Discover)'}));
+  var st=h('div',{class:'k',style:'margin-top:6px',text:'लोड हो रहा है…'}),m=h('div',{class:'k'});box.appendChild(st);
+  (async function(){
+    var r=await sb.rpc('studio_dir_get',{p_design:D.id});if(r.error||!r.data){st.textContent='अभी उपलब्ध नहीं।';return}
+    var pub=r.data.is_public;
+    function draw(){st.textContent=(pub?'🌐 सार्वजनिक: बाकी Vi-card यूज़र आपका कार्ड "खोजें" में ढूँढ सकते हैं।':'🔒 निजी: आपका कार्ड डायरेक्टरी में नहीं दिखता। सिर्फ़ लिंक वाले ही देख सकते हैं।')+(r.data.verified?' ✅ Verified':'')+(r.data.suspended?' ⛔ एडमिन ने डायरेक्टरी से हटाया है':'')}
+    draw();
+    var b=h('button',{class:'btn alt',text:'',onclick:async function(){b.disabled=true;var x=await sb.rpc('studio_dir_set_public',{p_design:D.id,p_public:!pub});b.disabled=false;
+      if(x.error||x.data!=='ok'){m.className='e';m.textContent='बदला नहीं जा सका।';return}pub=!pub;m.className='k';m.textContent='सेव हो गया ✓';draw();b.textContent=pub?'डायरेक्टरी से हटाएँ':'डायरेक्टरी में दिखाएँ'}});
+    b.textContent=pub?'डायरेक्टरी से हटाएँ':'डायरेक्टरी में दिखाएँ';box.appendChild(b);box.appendChild(m)})()}
 function insBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
   box.appendChild(h('b',{text:'📊 इनसाइट लिंक'+(D.product_type==='visiting'&&C.style.site===true?' (कार्ड और वेबसाइट दोनों के लिए)':'')}));
@@ -607,6 +619,7 @@ function pPub(p){
         h('button',{class:'btn alt',text:'वेबसाइट लिंक कॉपी',onclick:async function(){try{await navigator.clipboard.writeText(wu);info.className='k';info.textContent='वेबसाइट लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ।'}}}),
         h('button',{class:'btn alt',text:'वेबसाइट WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('हमारी वेबसाइट: '+wu),'_blank','noopener')}})]))}
     insBox(p);
+    if(D.product_type==='visiting')dirBox(p);
     if(D.product_type==='visiting')planBox(p);
     if(D.product_type==='visiting'&&C.style.site===true)domainBox(p);
     else if(D.product_type==='visiting')p.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
