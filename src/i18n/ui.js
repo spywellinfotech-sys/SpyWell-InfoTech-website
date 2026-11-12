@@ -90,7 +90,7 @@ export const ui = {
     footer: {
       about: 'Smart software, apps and automation for businesses in India and worldwide.',
       company: 'Company', services: 'Services', contact: 'Contact',
-      rights: 'All rights reserved.', privacy: 'Privacy Policy', terms: 'Terms and Conditions',
+      rights: 'All rights reserved.', privacy: 'Privacy Policy', terms: 'Terms and Conditions', refund: 'Refund Policy',
     },
     notFound: { title: 'Page not found', text: 'The page you are looking for does not exist or has moved.' },
     seo: {
@@ -103,6 +103,7 @@ export const ui = {
       contact: { title: 'Contact | Get a Free Consultation', description: 'Contact SpyWell InfoTech in Saharanpur, India by email, WhatsApp or the project enquiry form for a free consultation.' },
       privacy: { title: 'Privacy Policy | SpyWell InfoTech', description: 'Privacy policy template for the SpyWell InfoTech website.' },
       terms: { title: 'Terms and Conditions | SpyWell InfoTech', description: 'Terms and conditions template for the SpyWell InfoTech website.' },
+      refund: { title: 'Refund and Cancellation Policy | SpyWell InfoTech', description: 'Refund and cancellation policy for SpyWell Live Studio payments: AI credits and card publishing fees.' },
       notFound: { title: 'Page not found | SpyWell InfoTech', description: 'This page could not be found.' },
     },
   },
@@ -197,7 +198,7 @@ export const ui = {
     footer: {
       about: 'भारत और दुनिया भर के बिज़नेस के लिए स्मार्ट सॉफ़्टवेयर, ऐप और ऑटोमेशन।',
       company: 'कंपनी', services: 'सेवाएँ', contact: 'संपर्क',
-      rights: 'सर्वाधिकार सुरक्षित।', privacy: 'गोपनीयता नीति', terms: 'नियम और शर्तें',
+      rights: 'सर्वाधिकार सुरक्षित।', privacy: 'गोपनीयता नीति', terms: 'नियम और शर्तें', refund: 'रिफंड नीति',
     },
     notFound: { title: 'पेज नहीं मिला', text: 'आप जो पेज खोज रहे हैं वह मौजूद नहीं है या हट गया है।' },
     seo: {
@@ -210,6 +211,7 @@ export const ui = {
       contact: { title: 'संपर्क | मुफ़्त परामर्श लें', description: 'सहारनपुर, भारत में स्पाईवेल इन्फोटेक से ईमेल, व्हाट्सऐप या प्रोजेक्ट फ़ॉर्म द्वारा मुफ़्त परामर्श के लिए संपर्क करें।' },
       privacy: { title: 'गोपनीयता नीति | स्पाईवेल इन्फोटेक', description: 'स्पाईवेल इन्फोटेक वेबसाइट के लिए गोपनीयता नीति टेम्पलेट।' },
       terms: { title: 'नियम और शर्तें | स्पाईवेल इन्फोटेक', description: 'स्पाईवेल इन्फोटेक वेबसाइट के लिए नियम और शर्तें टेम्पलेट।' },
+      refund: { title: 'रिफंड और रद्दीकरण नीति | स्पाईवेल इन्फोटेक', description: 'SpyWell Live Studio के भुगतानों (AI क्रेडिट और कार्ड प्रकाशन फ़ीस) की रिफंड और रद्दीकरण नीति।' },
       notFound: { title: 'पेज नहीं मिला | स्पाईवेल इन्फोटेक', description: 'यह पेज नहीं मिला।' },
     },
   },
@@ -233,6 +235,26 @@ export const legal = {
       ['तृतीय-पक्ष सेवाएँ', 'यह वेबसाइट फ़ॉर्म हैंडलिंग प्रदाता, होस्टिंग प्रदाता या एनालिटिक्स टूल जैसी तृतीय-पक्ष सेवाओं का उपयोग कर सकती है। वे प्रदाता अपनी नीतियों के अनुसार डेटा प्रोसेस करते हैं। यहाँ वही सेवाएँ लिखें जो आप वास्तव में उपयोग करते हैं।'],
       ['डेटा प्रतिधारण और आपके विकल्प', 'हम पूछताछ की जानकारी केवल उतने समय तक रखते हैं जितनी उस उद्देश्य के लिए ज़रूरी हो। आप हमसे संपर्क करके अपनी जानकारी देखने, सुधारने या हटाने का अनुरोध कर सकते हैं।'],
       ['संपर्क', 'गोपनीयता संबंधी प्रश्नों के लिए {email} पर ईमेल करें। स्थान: {location}।'],
+    ],
+  },
+  refund: {
+    en: [
+      ['Scope', 'This policy covers payments made on SpyWell Live Studio (spywell.in/studio): AI credit packs and the fee to publish a digital card or mini website. It is a template and should be reviewed before you rely on it.'],
+      ['Digital services, no shipping', 'Everything we sell here is digital and delivered instantly online. Nothing is shipped, so there is no shipping or delivery charge.'],
+      ['AI credits', 'One credit is used each time the AI reads a card. If the AI fails to return a result, the credit is returned automatically. Credits that have been used successfully are not refundable. Unused credits can be refunded within 7 days of purchase on request.'],
+      ['Publishing fee', 'The publishing fee is charged once per card. If you were charged but the card was not published, or you were charged twice for the same card, we refund the extra or failed payment in full.'],
+      ['How to request a refund', 'Write to {email} within 7 days of the payment with your registered email, the payment ID and the reason. Eligible refunds are processed within 5 to 7 working days to the original payment method.'],
+      ['Cancellation', 'You can unpublish or delete a card at any time. Cancelling after a card is published and delivered does not entitle you to a refund of the publishing fee, except as stated above. Free features such as design and car QR codes are never charged.'],
+      ['Contact', 'Questions about payments or refunds: {email}. Location: {location}.'],
+    ],
+    hi: [
+      ['दायरा', 'यह नीति SpyWell Live Studio (spywell.in/studio) पर किए गए भुगतानों पर लागू है: AI क्रेडिट पैक और डिजिटल कार्ड या मिनी वेबसाइट प्रकाशित करने की फ़ीस। यह एक टेम्पलेट है, इस पर निर्भर होने से पहले इसकी समीक्षा करवाएँ।'],
+      ['डिजिटल सेवाएँ, कोई शिपिंग नहीं', 'यहाँ जो कुछ बिकता है वह डिजिटल है और ऑनलाइन तुरंत मिल जाता है। कुछ भी डाक से नहीं भेजा जाता, इसलिए कोई शिपिंग या डिलीवरी शुल्क नहीं है।'],
+      ['AI क्रेडिट', 'AI जब भी कार्ड पढ़ता है तो एक क्रेडिट लगता है। अगर AI नतीजा न दे पाए तो क्रेडिट अपने-आप लौट जाता है। सफलतापूर्वक इस्तेमाल हो चुके क्रेडिट वापस नहीं होते। खरीद के 7 दिन के भीतर अनुरोध करने पर बिना इस्तेमाल किए क्रेडिट का रिफंड मिल सकता है।'],
+      ['प्रकाशन फ़ीस', 'प्रकाशन फ़ीस हर कार्ड पर एक बार लगती है। अगर पैसा कटा पर कार्ड प्रकाशित नहीं हुआ, या एक ही कार्ड के लिए दो बार पैसा कटा, तो अतिरिक्त या असफल भुगतान पूरा लौटाया जाता है।'],
+      ['रिफंड कैसे माँगें', 'भुगतान के 7 दिन के भीतर {email} पर अपना रजिस्टर्ड ईमेल, पेमेंट ID और कारण लिखकर भेजें। पात्र रिफंड 5 से 7 कामकाजी दिन में मूल भुगतान माध्यम में लौटाया जाता है।'],
+      ['रद्द करना', 'आप किसी भी समय कार्ड को अप्रकाशित या डिलीट कर सकते हैं। कार्ड प्रकाशित और मिल जाने के बाद रद्द करने पर प्रकाशन फ़ीस का रिफंड नहीं मिलता, सिवाय ऊपर बताए मामलों के। डिज़ाइन और कार QR जैसी मुफ़्त सुविधाओं का कभी पैसा नहीं लगता।'],
+      ['संपर्क', 'भुगतान या रिफंड के प्रश्न: {email}। स्थान: {location}।'],
     ],
   },
   terms: {

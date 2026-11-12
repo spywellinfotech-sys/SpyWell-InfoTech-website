@@ -67,6 +67,7 @@ export default function Footer() {
             <button type="button" className="hover:text-white" onClick={openStudio}>✨ SpyWell {t('nav.studio')}</button>
             <Link className="hover:text-white" to="/privacy">{t('footer.privacy')}</Link>
             <Link className="hover:text-white" to="/terms">{t('footer.terms')}</Link>
+            <Link className="hover:text-white" to="/refund">{t('footer.refund')}</Link>
           </p>
         </div>
       </div>

@@ -27,6 +27,7 @@ export default function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="privacy" element={<Legal kind="privacy" />} />
           <Route path="terms" element={<Legal kind="terms" />} />
+          <Route path="refund" element={<Legal kind="refund" />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
