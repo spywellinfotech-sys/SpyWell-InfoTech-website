@@ -73,6 +73,8 @@
       sample: { heading: '॥ जय श्री राम ॥', bride: 'श्री सत्यनारायण कथा', bride_parents: 'आयोजक: श्री रमेश शर्मा परिवार', message: 'कथा श्रवण और प्रसाद ग्रहण करने पधारें।' } },
     opening: { name: 'उद्घाटन', presets: ['रिबन कटिंग', 'पूजा', 'भोज'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'दुकान / संस्था का नाम', bride_parents: 'विवरण (जैसे "शुभ उद्घाटन")', date: 'उद्घाटन की तारीख', venue: 'दुकान का नाम / स्थल', address: 'पता', message: 'बुलावा संदेश' },
       sample: { heading: '॥ शुभ उद्घाटन ॥', bride: 'शर्मा इलेक्ट्रॉनिक्स', bride_parents: 'हमारे नए शोरूम का उद्घाटन', message: 'आप सभी सादर आमंत्रित हैं।' } },
+    terahvi: { name: 'तेरहवीं / रस्म पगड़ी / शोक सभा', presets: ['पाठ / भजन', 'रस्म पगड़ी', 'भोज'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'स्वर्गीय का नाम', bride_parents: 'परिचय (जैसे "आयु 78 वर्ष")', date: 'कार्यक्रम की तारीख', time: 'समय', venue: 'स्थल का नाम', address: 'स्थल का पता', message: 'श्रद्धांजलि संदेश' },
+      sample: { heading: '॥ श्रद्धांजलि सभा ॥', bride: 'स्वर्गीय श्री रामप्रकाश शर्मा', bride_parents: 'जन्म 1949 · देहावसान 2026', message: 'ईश्वर उनकी आत्मा को शांति दें। तेरहवीं एवं रस्म पगड़ी में पधारकर श्रद्धा-सुमन अर्पित करें।' } },
     party: { name: 'पार्टी / अन्य कार्यक्रम', presets: ['स्वागत', 'डिनर'], hide: ['groom', 'groom_parents'], labels: { heading: 'सबसे ऊपर की पंक्ति', bride: 'कार्यक्रम का नाम', bride_parents: 'आयोजक', date: 'कार्यक्रम की तारीख', venue: 'स्थल का नाम', message: 'बुलावा संदेश' },
       sample: { heading: '✨ आप आमंत्रित हैं ✨', bride: 'गेट-टुगेदर पार्टी', bride_parents: 'आयोजक: शर्मा परिवार', message: 'आपके आने से रौनक बढ़ जाएगी।' } }
   };
@@ -263,7 +265,7 @@
     var align = s.align || (layout === 'side' || (type === 'invitation' && layout === 'plain' && t.align === 'left') ? 'left' : 'center');
     root.className += ' a-' + align;
     if (type === 'invitation' && d.images.bg) { st.backgroundImage = 'url("' + d.images.bg.url + '")'; st.backgroundPosition = '50% ' + d.images.bg.pos + '%'; st.setProperty('--pane', rgba(bg, 0.88)); } else st.setProperty('--pane', 'transparent');
-    if (type === 'visiting') buildVisiting(root, d); else buildInvitation(root, d, { ornament: s.ornament === 'none' ? '' : (s.ornament || txt(t.ornament, 4)) });
+    if (type === 'visiting') buildVisiting(root, d); else buildInvitation(root, d, { ornament: s.ornament === 'none' ? '' : (s.ornament || (t.ornament === 'none' ? '' : txt(t.ornament, 4))) });
     var anim = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich'), play = !!opts.play || !opts.demo;
     if (anim !== 'none' && play) {
       root.className += ' sr-an sr-an-' + anim;

@@ -43,7 +43,7 @@ function magicOk(type: string, b64: string) {
 
 const OCC: Record<string, string> = {
   engagement: "engagement / roka ceremony", birthday: "birthday party", anniversary: "wedding anniversary", griha: "griha pravesh (housewarming)",
-  baby: "naamkaran / mundan / baby shower", puja: "puja / jagran / katha", opening: "shop or office opening (udghatan)", party: "party or other function",
+  baby: "naamkaran / mundan / baby shower", puja: "puja / jagran / katha", opening: "shop or office opening (udghatan)", party: "party or other function", terahvi: "terahvi / rasm pagdi / condolence prayer meet (the main person is the departed; keep a respectful tone)",
 };
 
 function prompt(type: string, mode: string, templates: { id: string; name: string; config: any }[], occasion = "wedding") {

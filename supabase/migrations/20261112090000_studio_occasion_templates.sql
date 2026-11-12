@@ -11,3 +11,9 @@ insert into public.studio_templates(id,product_type,name,description,config,acti
 ('inv-22','invitation','Grand Opening','opening','{"anim": "rich", "font": "poppins", "petal": "✦", "style": "Modern", "layout": "double", "palette": {"ac": "#f2c14e", "bg": "#101d3d", "fg": "#f3ead2"}, "nameFont": "playfair", "ornament": "✦", "occasion": "opening"}'::jsonb,true,22),
 ('inv-23','invitation','Party Night','party','{"anim": "rich", "font": "poppins", "petal": "★", "style": "Modern", "layout": "plain", "palette": {"ac": "#ff6b9d", "bg": "#1a1033", "fg": "#f4ecff"}, "nameFont": "yatra", "ornament": "✦", "occasion": "party"}'::jsonb,true,23)
 on conflict (id) do nothing;
+
+-- terahvi / rasm pagdi
+insert into public.studio_templates(id,product_type,name,description,config,active,sort) values
+('inv-24','invitation','Shraddhanjali White','terahvi','{"anim": "soft", "font": "tiro", "petal": "none", "style": "Shraddhanjali", "layout": "plain", "palette": {"ac": "#555555", "bg": "#ffffff", "fg": "#222222"}, "nameFont": "tiro", "ornament": "", "occasion": "terahvi"}'::jsonb,true,24),
+('inv-25','invitation','Rasm Pagdi Cream','terahvi','{"anim": "soft", "font": "hind", "petal": "none", "style": "Shraddhanjali", "layout": "frame", "palette": {"ac": "#7a5c2e", "bg": "#f7f1e3", "fg": "#2b2418"}, "nameFont": "tiro", "ornament": "", "occasion": "terahvi"}'::jsonb,true,25)
+on conflict (id) do nothing;
