@@ -294,7 +294,6 @@
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('💬 मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (em) act.appendChild(actA(link('', T('ईमेल'), 'mailto:' + em), 'email'));
     if (web) act.appendChild(actA(link('', T('वेबसाइट'), web), 'website'));
-    if (f.address || V.url(f.maplink)) act.appendChild(actA(link('', T('\uD83D\uDCCD लोकेशन'), V.url(f.maplink) || maps([f.business, f.address].filter(Boolean).join(', '))), 'map'));
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('\uD83D\uDCC7 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; act.appendChild(sv0); }
     act.appendChild(saveCardBtn(root, f));
     if (act.children.length) bd.appendChild(act);
@@ -441,7 +440,7 @@
     if (f.designation) hin.appendChild(el('div', 'sr-des', f.designation));
     if (f.tagline) hin.appendChild(el('p', 'ws-tag', f.tagline));
     var act = el('div', 'sr-act ws-act');
-    if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call'));
+    if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
     if (wa) act.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (act.children.length) hin.appendChild(act);
@@ -467,7 +466,7 @@
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('📇 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; tools.appendChild(sv0); }
     tools.appendChild(saveCardBtn(root, f));
     ci.appendChild(tools);
-    if (tel || wa) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
+    if (tel || wa) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
     var shs = el('div', 'ws-sec'), shi = el('div', 'ws-in'); shi.appendChild(shareBar(f, opts)); shs.appendChild(shi); root.appendChild(shs);
     root.appendChild(el('div', 'ws-foot', '© ' + new Date().getFullYear() + ' ' + (f.business || f.name || '')));
     if (typeof opts.onAct === 'function') root.addEventListener('click', function (ev) { var x = ev.target.closest ? ev.target.closest('[data-act]') : null; if (x) { try { opts.onAct(x.getAttribute('data-act')); } catch (e) { } } });
@@ -487,7 +486,9 @@
     '.ws-navbtn{background:var(--ac);color:var(--bg)!important;text-decoration:none;padding:.4em .9em;border-radius:2em;font-size:.85em;font-weight:600}' +
     '.ws-hero{background:var(--ac);color:var(--bg);padding:2.2em 0 2.6em}.ws-hero .ph{border-radius:50%;object-fit:cover;border:4px solid var(--bg);margin:0 auto .7em}' +
     '.ws-hero .sr-nm{font-family:var(--nf);font-size:2em;font-weight:700}.ws-hero .sr-des{opacity:.85}.ws-hero .sr-lg{margin:0 auto .6em;object-fit:contain}' +
-    '.ws-hero .sr-act{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.ws-hero .sr-act a,.ws-hero .sr-act button{width:auto;margin:0;background:var(--bg);color:var(--ac)!important}' +
+    '.ws-hero .sr-act{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}' +
+    '.ws-hero .sr-act a,.ws-hero .sr-act button{width:auto;margin:0;background:var(--bg);color:var(--ac)!important}' +
+    '.ws-hero .sr-act a.sr-call,.ws-cta .ws-act a.sr-call{flex:1 1 100%;max-width:none;width:100%;box-sizing:border-box;font-size:1.05em;padding:.85em 1em;white-space:nowrap}' +
     '.ws-sec{padding:1.8em 0;border-bottom:1px solid var(--soft)}.ws-sec h2{font-family:var(--nf);font-size:1.35em;margin-bottom:.7em;color:var(--ac)}' +
     '.ws-about{max-width:34em;margin:0 auto;white-space:pre-line}.ws-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.7em}' +
     '.ws-card{background:var(--soft);border-radius:12px;padding:.9em;font-weight:600}.ws-card small{display:block;opacity:.65;font-weight:400;margin-bottom:.2em}' +
