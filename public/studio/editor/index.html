@@ -64,7 +64,7 @@ function state(t,bad){var s=$('state');s.textContent=t;s.className='state'+(bad?
 if(!window.supabase||!R){state('लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
 var ID=new URLSearchParams(location.search).get('id')||'';
-var D=null,T=[],C=null,UID='',tab='info',dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
+var D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
 var LS='studio-draft-'+ID;
 
 function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}

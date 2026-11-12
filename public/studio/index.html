@@ -164,6 +164,7 @@ function drawList(){
     var r=mk('div','des'),t=mk('b','',x.title||'बिना नाम');t.appendChild(mk('span','st '+x.status,STN[x.status]));r.appendChild(t);
     r.appendChild(mk('div','k',TYN[x.product_type]+' · आख़िरी बदलाव '+when(x.updated_at)));
     var a=mk('div','acts'),e=mk('a','','खोलें / बदलें');e.href='/studio/editor/?id='+x.id;a.appendChild(e);
+    var n=mk('a','','📊 इनसाइट');n.href='/studio/editor/?id='+x.id+'&tab=ins';a.appendChild(n);
     var c=mk('button','','कॉपी बनाएँ');c.type='button';c.onclick=function(){dup(x.id,c)};a.appendChild(c);
     var d=mk('button',armed===x.id?'danger':'',armed===x.id?'पक्का मिटाएँ?':'मिटाएँ');d.type='button';
     d.onclick=function(){if(armed!==x.id){armed=x.id;drawList();return}del(x.id,d)};a.appendChild(d);
