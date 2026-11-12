@@ -38,7 +38,7 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
   var pp=h('div');app.appendChild(pp);payPanel(pp);
   var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
   var mq=h('div');app.appendChild(mq);manPanel(mq);
-  var py=h('div');app.appendChild(py);payPanel(py);
+  var py=h('div');app.appendChild(py);subPanel(py);
   var cf=h('div');app.appendChild(cf);cfgPanel(cf);
   var dm=h('div');app.appendChild(dm);domPanel(dm);
   var ip=h('div');app.appendChild(ip);indPanel(ip);
@@ -73,7 +73,7 @@ async function manPanel(box){
       b.onclick=async function(){if(!b.dataset.a){b.dataset.a='1';b.textContent='पक्का? '+a[1];return}b.disabled=true;var e=await sb.rpc('studio_admin_manual_decide',{p_id:x.id,p_ok:a[0]});if(e.error){b.textContent='नहीं हुआ';return}manPanel(box)};it.appendChild(b)});
     c.appendChild(it)});
   box.appendChild(c)}
-async function payPanel(box){
+async function subPanel(box){
   var r=await sb.from('studio_settings').select('k,v').in('k',['pay_bypass','sub_price_card','sub_price_site','sub_price_domain','sub_grace_days','pub_price_invitation']);box.textContent='';if(r.error)return;
   var S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});var on=S.pay_bypass==='0';
   var c=h('div',{class:'card'});c.appendChild(h('b',{text:'💳 साल के प्लान और भुगतान'}));
@@ -92,7 +92,7 @@ async function payPanel(box){
     m.className='k';m.textContent='कीमतें सेव हो गईं।'}}));
   var tb=h('button',{class:'btn '+(on?'danger':'alt'),style:'margin-top:10px',text:on?'भुगतान बंद करें (सब फ़्री)':'भुगतान चालू करें'});
   tb.onclick=async function(){if(!tb.dataset.a){tb.dataset.a='1';tb.textContent=on?'पक्का? नए प्रकाशन फ़्री हो जाएँगे। हाँ, बंद करें':'पक्का? पहले से लाइव कार्ड/वेबसाइट को 30 दिन मिलेंगे, फिर भुगतान लगेगा। हाँ, चालू करें';return}
-    tb.disabled=true;var e=await sb.rpc('studio_admin_set_payments',{p_on:!on});if(e.error){m.className='e';m.textContent='बदला नहीं जा सका।';tb.disabled=false;return}payPanel(box)};
+    tb.disabled=true;var e=await sb.rpc('studio_admin_set_payments',{p_on:!on});if(e.error){m.className='e';m.textContent='बदला नहीं जा सका।';tb.disabled=false;return}subPanel(box)};
   c.appendChild(tb);c.appendChild(m);
   c.appendChild(h('div',{class:'k',text:'ध्यान: असली भुगतान तभी चलेगा जब Razorpay की चाबियाँ लगी हों।'}));
   box.appendChild(c)}
@@ -183,6 +183,7 @@ async function cardsView(){
   var c=sel;body.appendChild(h('button',{class:'btn',text:'← वापस',onclick:function(){sel=null;window.__draw()}}));
   body.appendChild(h('div',{class:'card'},[h('b',{text:c.full_name||'(नाम नहीं)'}),h('div',{class:'k',text:[c.phone,c.email].filter(Boolean).join(' · ')})]));
   var list=h('div');body.appendChild(list);
+  var BL={};try{var bq=await sb.rpc('studio_admin_blocks');(bq.data||[]).forEach(function(x){BL[x.design_id]=x})}catch(e){}
   var r=await sb.from('studio_designs').select('id,title,status,product_type,slug,updated_at,content_json').eq('user_id',c.id).order('updated_at',{ascending:false});
   if(r.error){list.appendChild(h('div',{class:'msg bad',text:'कार्ड नहीं आए'}));return}
   if(!r.data.length)list.appendChild(h('div',{class:'msg',text:'इस ग्राहक का कोई कार्ड नहीं'}));
@@ -191,6 +192,15 @@ async function cardsView(){
     var del=h('button',{class:'btn d',text:'मिटाएँ'});
     del.onclick=async function(){if(!del.dataset.a){del.dataset.a='1';del.textContent='पक्का मिटाएँ? वापस नहीं आएगा';return}
       var x=await sb.from('studio_designs').delete().eq('id',d.id).select('id');if(x.error||!x.data.length){m.textContent='मिटाया नहीं जा सका';return}window.__draw()};
+    var bk=BL[d.id]||{card_off:false,site_off:false,note:''};
+    function blkBtn(label,key){var on=!!bk[key],bt=h('button',{class:'btn '+(on?'':'d'),style:'margin:4px 6px 0 0',text:(on?'🟢 चालू करें: ':'🔴 बंद करें: ')+label});
+      bt.onclick=async function(){if(!bt.dataset.a){bt.dataset.a='1';bt.textContent='पक्का? '+(on?'चालू करें':'बंद करें')+': '+label;return}bt.disabled=true;
+        var nb={card_off:!!bk.card_off,site_off:!!bk.site_off};nb[key]=!on;
+        var e=await sb.rpc('studio_admin_set_block',{p_design:d.id,p_card:nb.card_off,p_site:nb.site_off,p_note:''});if(e.error){bt.textContent='नहीं हुआ';return}window.__draw()};return bt}
+    var bkRow=h('div',{class:'k',style:'margin-top:6px'});
+    bkRow.appendChild(h('div',{text:(bk.card_off?'⛔ कार्ड बंद। ':'')+(bk.site_off?'⛔ वेबसाइट बंद।':'')}));
+    bkRow.appendChild(blkBtn(d.product_type==='invitation'?'इन्विटेशन कार्ड':'विज़िटिंग कार्ड','card_off'));
+    if(d.product_type==='visiting')bkRow.appendChild(blkBtn('मिनी वेबसाइट','site_off'));
     var row=h('div',{class:'card'},[h('b',{text:d.title||'बिना नाम'}),h('span',{class:'st '+d.status,text:STN[d.status]||d.status,style:'margin-left:6px'}),
       h('div',{class:'k',text:(TYN[d.product_type]||'')+' · '+dt(d.updated_at)+(pub?' · '+url:'')}),
       pub?h('a',{class:'btn',text:'लाइव खोलें',href:url,target:'_blank',rel:'noopener'}):null,
@@ -219,7 +229,7 @@ async function cardsView(){
         if(!box.textContent)box.appendChild(h('div',{class:'k',text:'कार्ड में अभी कुछ भरा नहीं गया।'}))}}),
       h('div',{id:'dt-'+d.id,style:'margin-top:6px'}),
       h('div',{id:'ins-'+d.id,style:'margin-top:6px'}),
-      del,m]);list.appendChild(row)})}
+      del,m]);row.insertBefore(bkRow,del);list.appendChild(row)})}
 async function tplView(){
   var list=h('div');body.appendChild(list);var r=await sb.from('studio_templates').select('id,name,product_type,active,sort').order('product_type').order('sort');
   if(r.error){list.appendChild(h('div',{class:'msg bad',text:'टेम्पलेट नहीं आए'}));return}
