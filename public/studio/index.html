@@ -87,6 +87,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <div class="grid" style="margin-top:10px">
 <button type="button" class="tile" data-new="invitation"><b>इनविटेशन कार्ड</b><span>शादी, जन्मदिन, पूजा, गृह प्रवेश आदि</span></button>
 <button type="button" class="tile" data-new="visiting"><b>विज़िटिंग कार्ड</b><span>टेम्पलेट चुनें और बनाएँ</span></button>
+<button type="button" class="tile" id="t-car"><b>🚗 कार कॉल QR</b><span>गाड़ी पर लगाएँ, स्कैन से कॉल (मुफ़्त)</span></button>
 </div>
 </div>
 <div class="card" id="c-pick" hidden>
@@ -217,6 +218,7 @@ function pick(type){
     g.appendChild(b)});
   $('c-pick').scrollIntoView({block:'start'});
 }
+$('t-car').onclick=function(){var ph=(ME&&ME.user_metadata&&ME.user_metadata.phone)||'';location.href='/studio/carqr/'+(ph?'?m='+encodeURIComponent(ph):'')};
 document.querySelectorAll('[data-new]').forEach(function(b){b.onclick=function(){pick(b.getAttribute('data-new'))}});
 $('pk-back').onclick=function(){if(OCCSEL){OCCSEL='';pickOcc();return}$('c-pick').hidden=true;$('c-new').hidden=false};
 $('q').oninput=drawList;

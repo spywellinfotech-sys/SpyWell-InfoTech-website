@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>गाड़ी पर लगाने वाला कॉल QR | SpyWell Live Studio</title>
+<link rel="icon" href="/favicon.png">
+<style>
+:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
+.top{background:var(--wine);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}.top a{color:#fff;font-size:14px}
+.wrap{max-width:520px;margin:auto;padding:16px}h1{font-size:21px;color:var(--wine);margin:6px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+label{display:block;font-weight:600;margin:10px 0 4px;font-size:14px}input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;background:var(--wine);color:#fff;font:600 16px inherit;cursor:pointer}
+.k{font-size:13px;color:var(--mut);margin-top:6px}.e{color:#b00020;font-size:14px;margin-top:6px}
+img{width:100%;max-width:300px;display:block;margin:12px auto;border:1px solid var(--line);border-radius:8px}
+</style><script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n.js"></script></head><body>
+<div class="top"><b>🚗 कार कॉल QR</b><a href="/studio/">← Studio</a></div>
+<div class="wrap"><h1>गाड़ी पर लगाने वाला कॉल QR</h1>
+<div class="k">इसे स्कैन करते ही सीधा आपके नंबर पर कॉल लगता है। बिल्कुल मुफ़्त, कोई लॉगिन नहीं चाहिए। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।</div>
+<div class="card">
+<label>मोबाइल नंबर (10 अंक)</label><input id="m" type="tel" inputmode="numeric" maxlength="15" placeholder="9876543210">
+<label>स्टिकर पर लिखा वाक्य</label><input id="t" type="text" maxlength="40" value="गाड़ी हटवाने के लिए कॉल करें">
+<label>आपका नाम (खाली छोड़ सकते हैं)</label><input id="n" type="text" maxlength="30">
+<label>गाड़ी नंबर (खाली छोड़ सकते हैं)</label><input id="v" type="text" maxlength="14" placeholder="UP11 AB 1234">
+<label>QR का प्रकार</label><select id="w"><option value="c">सिर्फ़ कॉल QR</option><option value="cw">कॉल QR + WhatsApp QR (दो QR)</option></select>
+<div class="e" id="err"></div>
+<img id="pv" alt="कार QR स्टिकर" hidden>
+<button type="button" id="dl">⬇️ QR स्टिकर डाउनलोड करें</button>
+<div class="k">डाउनलोड न हो तो ऊपर की तस्वीर को देर तक दबाकर सेव करें, फिर प्रिंट करवाइए।</div>
+</div></div>
+<script src="/studio/qr.js"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},sc=document.createElement('canvas');
+var q=new URLSearchParams(location.search);try{if(q.get('m'))$('m').value=String(q.get('m')).replace(/\D/g,'').slice(-10);if(q.get('n'))$('n').value=String(q.get('n')).slice(0,30)}catch(e){}
+function num(){return $('m').value.replace(/\D/g,'').slice(-10)}
+function qr(text,px){var c=document.createElement('canvas');try{window.StudioQR.draw(c,text,px)}catch(e){}return c}
+function draw(){var cm=num();$('err').textContent='';
+  if(cm.length!==10){$('pv').hidden=true;if($('m').value)$('err').textContent='10 अंक का सही मोबाइल नंबर डालें';return}
+  var W=800,H=1000,x=sc.getContext('2d'),two=$('w').value==='cw';sc.width=W;sc.height=H;
+  x.fillStyle='#fff';x.fillRect(0,0,W,H);x.strokeStyle='#8b1a2b';x.lineWidth=14;x.strokeRect(14,14,W-28,H-28);
+  x.fillStyle='#8b1a2b';x.fillRect(14,14,W-28,150);x.fillStyle='#fff';x.textAlign='center';x.font='bold 70px sans-serif';x.fillText(two?'📞 CALL / WhatsApp':'📞 SCAN TO CALL',W/2,118,W-60);
+  if(two){x.drawImage(qr('tel:+91'+cm,330),40,215,330,330);x.drawImage(qr('https://wa.me/91'+cm,330),430,215,330,330);
+    x.fillStyle='#2b1a14';x.font='bold 36px sans-serif';x.fillText('📞 CALL',205,590);x.fillText('💬 WHATSAPP',595,590)}
+  else x.drawImage(qr('tel:+91'+cm,500),150,190,500,500);
+  x.fillStyle='#2b1a14';x.font='bold 46px sans-serif';x.fillText(($('t').value||'').trim().slice(0,40),W/2,two?680:740,W-80);
+  var line=[$('n').value.trim(),$('v').value.trim().toUpperCase()].filter(Boolean).join('  |  ');
+  x.font='34px sans-serif';if(line)x.fillText(line,W/2,two?740:800,W-80);
+  x.font='bold 62px sans-serif';x.fillText('+91 '+cm,W/2,two?850:890);
+  x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('SpyWell Live Studio',W/2,962);
+  try{$('pv').src=sc.toDataURL('image/png');$('pv').hidden=false}catch(e){}}
+['m','t','n','v'].forEach(function(i){$(i).oninput=draw});$('w').onchange=draw;
+$('dl').onclick=function(){var cm=num();if(cm.length!==10){$('err').textContent='पहले 10 अंक का मोबाइल नंबर डालें';return}draw();
+  sc.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='car-call-qr-'+cm+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)},'image/png')};
+draw();
+})();
+</script></body></html>
