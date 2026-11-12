@@ -45,6 +45,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <label>पासवर्ड</label><input id="li-p" type="password" autocomplete="current-password" required>
 <div class="err" id="li-err"></div>
 <button type="submit">लॉगिन करें</button>
+<button type="button" class="alt" id="g-btn">Google से लॉगिन करें</button>
 <button type="button" class="link" data-go="forgot">पासवर्ड भूल गए?</button>
 <button type="button" class="alt" data-go="reg">नया खाता बनाएँ</button>
 </form>
@@ -211,6 +212,9 @@ async function dash(user){
   await loadList();
 }
 
+$('g-btn').onclick=async function(){$('li-err').textContent='';
+  var r=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:HERE}});
+  if(r.error)$('li-err').textContent='Google लॉगिन अभी चालू नहीं है। ईमेल और पासवर्ड से लॉगिन करें।'};
 $('v-login').onsubmit=async function(e){e.preventDefault();$('li-err').textContent='';busy(this,true);
   var r=await sb.auth.signInWithPassword({email:$('li-e').value.trim(),password:$('li-p').value});
   busy(this,false);if(r.error)$('li-err').textContent=msg(r.error)};
