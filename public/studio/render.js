@@ -126,6 +126,10 @@
     var url = (opts && opts.shareUrl) || (opts && opts.demo ? 'https://spywell.in/studio/' : String(location.href).split('#')[0]);
     var nm = f.business || f.name || '', msg = (nm ? nm + ' - ' : '') + T('डिजिटल कार्ड') + ': ' + url, e = encodeURIComponent;
     var box = el('div', 'sr-sharebox'); box.appendChild(el('div', 'sr-sub', T('शेयर करें')));
+    var wr = el('div', 'sr-wanum'), wi = el('input'); wi.type = 'tel'; wi.setAttribute('inputmode', 'numeric'); wi.maxLength = 15; wi.placeholder = T('मोबाइल नंबर (सेव न हो तब भी)');
+    var wb = el('button', '', T('💬 इस नंबर पर भेजें')); wb.type = 'button'; wb.setAttribute('data-act', 'share-wa-number');
+    wb.onclick = function () { var n = wi.value.replace(/\D/g, '').slice(-10); if (n.length !== 10) { wi.style.borderColor = '#d33'; wi.placeholder = T('10 अंक का सही नंबर डालें'); wi.value = ''; return; } wi.style.borderColor = ''; window.open('https://wa.me/91' + n + '?text=' + e(msg), '_blank', 'noopener'); };
+    wr.appendChild(wi); wr.appendChild(wb); box.appendChild(wr);
     var g = el('div', 'sr-act sr-share');
     function sa(label, href, act) { g.appendChild(actA(link('', label, href), act)); }
     function sb(label, act, fn) { var a = link('', label, '#'); a.onclick = function (ev) { ev.preventDefault(); try { fn(a); } catch (x) { } }; a.setAttribute('role', 'button'); g.appendChild(actA(a, act)); }
@@ -348,6 +352,7 @@
     '.sr *{box-sizing:border-box;margin:0}.sr a{color:inherit}.sr img{display:block;max-width:100%}' +
     '.sr.a-left{text-align:left}.sr.a-center{text-align:center}.sr.a-right{text-align:right}' +
     '.sr.a-center img{margin-left:auto;margin-right:auto}.sr.a-right img{margin-left:auto}' +
+    '.sr-wanum{display:flex;gap:.5em;margin:.2em 0 .8em}.sr-wanum input{flex:1;min-width:0;padding:.7em .8em;border-radius:10px;border:2px solid var(--ac);background:rgba(255,255,255,.9);color:#222;font:inherit;font-size:.95em;box-sizing:border-box}.sr-wanum button{font:inherit;font-weight:700;font-size:.85em;padding:.6em .9em;border:0;border-radius:10px;background:#1f8f4e;color:#fff;cursor:pointer}' +
     '.sr-sub{font-size:.75em;letter-spacing:.12em;opacity:.7;margin-bottom:.5em;text-transform:uppercase}' +
     '.sr-btn{display:inline-block;margin:.5em .25em 0;padding:.55em 1em;border-radius:2em;background:var(--ac);color:var(--bg)!important;text-decoration:none;font-size:.85em;font-weight:600}' +
     '.sr-msg{margin:1.1em 0;font-size:.95em;white-space:pre-line}' +
