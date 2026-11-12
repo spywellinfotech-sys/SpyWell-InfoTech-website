@@ -401,17 +401,24 @@ function pPub(p){
       else{
         cbox.appendChild(h('div',{class:'k',text:'इसे स्कैन करते ही सीधा आपके नंबर '+cm+' पर कॉल लग जाता है। गाड़ी के शीशे या बाइक पर लगाइए। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।'}));
         var ttl=h('input',{type:'text',maxlength:40,value:'गाड़ी हटवाने के लिए कॉल करें',placeholder:'स्टिकर पर लिखा वाक्य'});ttl.style.marginTop='8px';cbox.appendChild(ttl);
+        var onm=h('input',{type:'text',maxlength:30,value:String((C.fields||{}).name||'').slice(0,30),placeholder:'आपका नाम (स्टिकर पर, खाली छोड़ सकते हैं)'});onm.style.marginTop='6px';cbox.appendChild(onm);
+        var vno=h('input',{type:'text',maxlength:14,placeholder:'गाड़ी नंबर, जैसे UP11 AB 1234 (खाली छोड़ सकते हैं)'});vno.style.marginTop='6px';cbox.appendChild(vno);
+        var wsel=h('select',{},[h('option',{value:'c',text:'सिर्फ़ कॉल QR'}),h('option',{value:'cw',text:'कॉल QR + WhatsApp QR (दो QR)'})]);wsel.style.marginTop='6px';cbox.appendChild(wsel);
         var sc=h('canvas'),pv=h('img',{alt:'कार QR स्टिकर'});pv.style.cssText='width:100%;max-width:260px;display:block;margin:10px auto;border:1px solid #e8d5ad;border-radius:8px';cbox.appendChild(pv);
-        function drawSticker(){var W=800,H=1000,x=sc.getContext('2d');sc.width=W;sc.height=H;
+        function drawSticker(){var W=800,H=1000,x=sc.getContext('2d'),two=wsel.value==='cw';sc.width=W;sc.height=H;
           x.fillStyle='#fff';x.fillRect(0,0,W,H);x.strokeStyle='#8b1a2b';x.lineWidth=14;x.strokeRect(14,14,W-28,H-28);
-          x.fillStyle='#8b1a2b';x.fillRect(14,14,W-28,150);x.fillStyle='#fff';x.textAlign='center';x.font='bold 70px sans-serif';x.fillText('📞 SCAN TO CALL',W/2,118);
-          var q=document.createElement('canvas');try{window.StudioQR.draw(q,'tel:+91'+cm,560)}catch(e){}
-          x.drawImage(q,(W-560)/2,200,560,560);
+          x.fillStyle='#8b1a2b';x.fillRect(14,14,W-28,150);x.fillStyle='#fff';x.textAlign='center';x.font='bold 70px sans-serif';x.fillText(two?'📞 CALL / WhatsApp':'📞 SCAN TO CALL',W/2,118,W-60);
+          function qr(text,px){var q=document.createElement('canvas');try{window.StudioQR.draw(q,text,px)}catch(e){}return q}
+          if(two){x.drawImage(qr('tel:+91'+cm,330),40,215,330,330);x.drawImage(qr('https://wa.me/91'+cm,330),430,215,330,330);
+            x.fillStyle='#2b1a14';x.font='bold 36px sans-serif';x.fillText('📞 CALL',205,590);x.fillText('💬 WHATSAPP',595,590)}
+          else x.drawImage(qr('tel:+91'+cm,500),150,190,500,500);
           x.fillStyle='#2b1a14';x.font='bold 46px sans-serif';
-          var t=(ttl.value||'').trim().slice(0,40);x.fillText(t,W/2,830,W-80);
-          x.font='bold 58px sans-serif';x.fillText('+91 '+cm,W/2,910);
+          var t=(ttl.value||'').trim().slice(0,40);x.fillText(t,W/2,two?680:740,W-80);
+          var nm=(onm.value||'').trim(),vn=(vno.value||'').trim().toUpperCase();
+          x.font='34px sans-serif';var line=[nm,vn].filter(Boolean).join('  |  ');if(line)x.fillText(line,W/2,two?740:800,W-80);
+          x.font='bold 62px sans-serif';x.fillStyle='#2b1a14';x.fillText('+91 '+cm,W/2,two?850:890);
           x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('SpyWell Live Studio',W/2,962);try{pv.src=sc.toDataURL('image/png')}catch(e){}}
-        drawSticker();ttl.oninput=drawSticker;
+        drawSticker();[ttl,onm,vno].forEach(function(i){i.oninput=drawSticker});wsel.onchange=drawSticker;
         cbox.appendChild(h('button',{class:'btn',text:'⬇️ QR स्टिकर डाउनलोड करें',onclick:function(){
           sc.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a2=document.createElement('a');a2.href=u;a2.download='car-call-qr-'+cm+'.png';document.body.appendChild(a2);a2.click();a2.remove();
             setTimeout(function(){URL.revokeObjectURL(u)},4000)},'image/png')}}));
