@@ -95,8 +95,25 @@ function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var na
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p)}
 
+var URLERR={bad_url:'यह वेबसाइट लिंक सही नहीं है। पूरा लिंक डालें (जैसे www.aapkidukan.com)।',fetch_failed:'यह वेबसाइट खुल नहीं पाई या इसमें पढ़ने लायक जानकारी नहीं मिली।',limit:'आज के लिए URL से भरने की सीमा पूरी हो गई। कल फिर कोशिश करें।',ai_off:'यह सुविधा अभी बंद है। थोड़ी देर बाद कोशिश करें।',unauthorized:'लॉगिन पूरा नहीं है। पेज दोबारा खोलकर लॉगिन करें।',ai_busy:'सर्वर व्यस्त है। थोड़ी देर बाद कोशिश करें।'};
+function urlBox(p){
+  var box=h('div',{class:'item'}),inp=h('input',{type:'url',maxlength:300,placeholder:'आपकी वेबसाइट का लिंक (जैसे www.aapkidukan.com)',id:'urlimp'});
+  var msg=h('div',{class:'k',style:'margin-top:6px'}),b=h('button',{class:'btn',text:'🔗 वेबसाइट से जानकारी भरें'});
+  b.onclick=async function(){var u=inp.value.trim();if(!u){msg.className='e';msg.textContent='पहले वेबसाइट का लिंक डालें।';return}
+    b.disabled=true;msg.className='k';msg.textContent='वेबसाइट पढ़ी जा रही है… (आधा मिनट तक लग सकता है)';
+    try{var j=await fnCall('studio-url',{url:u});pushHist();var n=0,F=C.fields||(C.fields={});
+      Object.keys(j.fields||{}).forEach(function(k){if(!String(F[k]||'').trim()){F[k]=j.fields[k];n++}});
+      if(Array.isArray(j.services)&&j.services.length&&!(C.services&&C.services.length)){C.services=j.services;n++}
+      changed();draw();msg.className='k';msg.textContent=n?n+' जानकारी अपने-आप भर गई। जो पहले से भरा था वह नहीं बदला। नीचे जाँच लें।':'कोई नई जानकारी नहीं मिली, या सब पहले से भरा है।';
+      if(n)setTimeout(panel,1200)}
+    catch(e){msg.className='e';msg.textContent=URLERR[e.code||e.message]||'कुछ गड़बड़ हुई। दोबारा कोशिश करें।'}
+    b.disabled=false};
+  box.appendChild(h('b',{text:'🔗 वेबसाइट का लिंक डालिए, जानकारी अपने-आप भरेगी'}));
+  box.appendChild(h('div',{class:'k',text:'अगर आपकी कोई वेबसाइट पहले से है तो नाम, मोबाइल, पता, सेवाएँ और सोशल लिंक सब उसी से भर जाएँगे। हाथ से भरने की ज़रूरत नहीं। (मुफ़्त)'}));
+  inp.style.marginTop='8px';box.appendChild(inp);b.style.marginTop='8px';box.appendChild(b);box.appendChild(msg);p.appendChild(box)}
 function pInfo(p){
   var bad=R.invalid(D.product_type,C);
+  if(D.product_type==='visiting')urlBox(p);
   R.fieldsFor(D.product_type,cfg()).forEach(function(d){
     var k=d[0],typ=d[2],inp;
     if(typ==='select'){inp=h('select');inp.appendChild(h('option',{value:'',text:'— सूची से चुनें —'}));IND.forEach(function(o){inp.appendChild(h('option',{value:o.id,text:o.name_hi}))});inp.value=C.fields[k]||'';inp.id='f-'+k;inp.onchange=function(){C.fields[k]=inp.value;changed()};p.appendChild(h('label',{text:d[1],for:'f-'+k}));p.appendChild(inp);return}
@@ -234,13 +251,13 @@ async function pdfPageCanvas(doc,p,maxPx){var pg=await doc.getPage(p),vp0=pg.get
   c.width=Math.round(vp.width);c.height=Math.round(vp.height);await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;return c}
 async function filesToImages(files,pick){
   var out=[];pick=pick||{};
-  for(var i=0;i<files.length&&out.length<4;i++){var f=files[i];
+  for(var i=0;i<files.length&&out.length<AILIM.pages;i++){var f=files[i];
     if(f.type==='application/pdf'){
       var doc=await pdfDoc(f),k=f.name+'|'+f.size+'|'+f.lastModified,pages=(pick[k]&&pick[k].length)?pick[k].slice(0,4-out.length):[];
       if(!pages.length)for(var q=1;q<=Math.min(doc.numPages,4-out.length);q++)pages.push(q);
       for(var z=0;z<pages.length&&out.length<4;z++){out.push({media_type:'image/jpeg',data:await canvasB64(await pdfPageCanvas(doc,pages[z],1500))})}
     }else if(/^image\/(jpeg|png|webp)$/.test(f.type)){
-      if(f.size>10*1024*1024)throw new Error('imgbig');
+      if(f.size>AILIM.mb*1024*1024)throw new Error('imgbig');
       var b=await shrink(f,false);if(!b)throw new Error('imgopen');out.push({media_type:'image/jpeg',data:await toB64(b)})
     }else throw new Error('type')}
   return out}
@@ -288,6 +305,8 @@ function aiReview(p){
     AIR=null;tab='info';changed();pushHist();tabs();panel();draw()}}));
   p.appendChild(h('button',{class:'btn alt',text:'रद्द करें (कुछ नहीं बदलेगा)',onclick:function(){AIR=null;panel()}}));
 }
+var AILIM={pages:4,mb:10};
+sb.from('studio_settings').select('k,v').in('k',['ai_max_pages','ai_max_file_mb']).then(function(r){(r.data||[]).forEach(function(x){var n=parseInt(x.v);if(!n)return;if(x.k==='ai_max_pages')AILIM.pages=Math.min(4,Math.max(1,n));else AILIM.mb=Math.min(15,Math.max(1,n))})});
 function pAI(p){
   if(AIR){aiReview(p);return}
   if(!CR.loaded){p.appendChild(h('div',{class:'k',text:'लोड हो रहा है…'}));loadCredits(true).then(function(){if(tab==='ai')panel()});return}
@@ -324,7 +343,7 @@ function pAI(p){
           var cb=h('input',{type:'checkbox',style:'width:auto;margin:0'});cb.checked=sel.indexOf(pn)>=0;
           var cv=h('canvas',{style:'max-width:90px;border:1px solid #e8d5ad;border-radius:4px;display:block'});
           var cell=h('label',{style:'display:block;text-align:center;font-size:12px;margin:0'},[cv,cb,document.createTextNode(' पेज '+pn)]);row.appendChild(cell);
-          cb.onchange=function(){var cur=pick[key];if(cb.checked){if(cur.length>=4){cb.checked=false;return}cur.push(pn)}else pick[key]=cur.filter(function(x){return x!==pn})};
+          cb.onchange=function(){var cur=pick[key];if(cb.checked){if(cur.length>=AILIM.pages){cb.checked=false;return}cur.push(pn)}else pick[key]=cur.filter(function(x){return x!==pn})};
           pdfPageCanvas(doc,pn,160).then(function(c){cv.width=c.width;cv.height=c.height;cv.getContext('2d').drawImage(c,0,0)}).catch(function(){})})(pn)}
       }).catch(function(er){box.textContent=er.message==='pdfbig'?'PDF 15 MB से छोटी होनी चाहिए।':'यह PDF खुल नहीं पाई (खराब या पासवर्ड वाली हो सकती है)।'})})(fs[fi])}};
   var go1=h('button',{class:'btn',text:'AI से पढ़ें'});
@@ -339,7 +358,7 @@ function pAI(p){
       AIR={j:j,mode:aiMode};panel();return
     }catch(e){var m=$('aimsg')||msg;m.className='e';
       if(e.message==='no_credit'){CR.bal=0}
-      m.textContent=e.message==='pdfbig'?'PDF 15 MB से छोटी होनी चाहिए।':e.message==='imgbig'?'फ़ोटो 10 MB से छोटी होनी चाहिए।':e.message==='imgopen'?'यह फ़ोटो खुल नहीं पाई। दूसरी फ़ोटो चुनें।':e.message==='type'?'सिर्फ़ JPG, PNG, WEBP फ़ोटो या PDF चुनें।':(AIERR[e.message]||AIERR[e.code]||'AI अभी काम नहीं कर पाया। थोड़ी देर बाद दोबारा कोशिश करें।');
+      m.textContent=e.message==='pdfbig'?'PDF 15 MB से छोटी होनी चाहिए।':e.message==='imgbig'?'फ़ोटो '+AILIM.mb+' MB से छोटी होनी चाहिए।':e.message==='imgopen'?'यह फ़ोटो खुल नहीं पाई। दूसरी फ़ोटो चुनें।':e.message==='type'?'सिर्फ़ JPG, PNG, WEBP फ़ोटो या PDF चुनें।':(AIERR[e.message]||AIERR[e.code]||'AI अभी काम नहीं कर पाया। थोड़ी देर बाद दोबारा कोशिश करें।');
       if(e.message==='no_credit')setTimeout(function(){if(tab==='ai')panel()},1500)}
     aiBusy=false;go1.disabled=false};
   p.appendChild(go1);p.appendChild(msg);
@@ -423,6 +442,25 @@ function pExtra(p){
   box.appendChild(nb);
 }
 
+var DOMERR={bad_domain:'डोमेन सही नहीं है। ऐसे लिखें: aapkanaam.com',domain_taken:'यह डोमेन किसी और के नाम से जुड़ चुका है।',forbidden:'यह कार्ड आपका नहीं है।'};
+function domainBox(p){
+  var box=h('div',{class:'item'});p.appendChild(box);box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
+  var st=h('div',{class:'k',style:'margin-top:6px'}),msg=h('div',{class:'k'});
+  var inp=h('input',{type:'text',maxlength:120,placeholder:'आपका डोमेन, जैसे aapkanaam.com'});inp.style.marginTop='8px';
+  var b=h('button',{class:'btn alt',text:'डोमेन के लिए अनुरोध भेजें'});
+  box.appendChild(h('div',{class:'k',text:'अपग्रेड करने पर आपकी मिनी वेबसाइट spywell.in/web/... के साथ आपके अपने डोमेन (जैसे www.aapkanaam.com) पर भी खुलेगी। डोमेन आपके नाम से होना चाहिए। अनुरोध के बाद हमारी टीम आपसे संपर्क करके सेटअप करवाएगी।'}));
+  box.appendChild(st);
+  sb.from('studio_settings').select('v').eq('k','domain_price_inr').maybeSingle().then(function(r){var v=r&&r.data&&String(r.data.v||'').trim();if(v&&v!=='0')box.insertBefore(h('div',{class:'k',style:'font-weight:600',text:'अपग्रेड शुल्क: ₹'+v+''}),st)});
+  sb.from('studio_domain_requests').select('domain,status,note').eq('design_id',D.id).maybeSingle().then(function(r){var q=r&&r.data;if(!q)return;
+    st.textContent=q.status==='active'?'✅ चालू: '+q.domain:q.status==='rejected'?'❌ अनुरोध नहीं हो पाया ('+q.domain+')'+(q.note?': '+q.note:''):'⏳ अनुरोध भेजा गया: '+q.domain+'। टीम जल्द संपर्क करेगी।';inp.value=q.domain});
+  b.onclick=async function(){var v=inp.value.trim();if(!v){msg.className='e';msg.textContent='पहले डोमेन लिखें।';return}
+    b.disabled=true;msg.className='k';msg.textContent='भेजा जा रहा है…';
+    var r=await sb.rpc('studio_request_domain',{p_design:D.id,p_domain:v});
+    if(r.error){msg.className='e';var m=(r.error.message||'');msg.textContent=m.indexOf('bad_domain')>=0?DOMERR.bad_domain:m.indexOf('domain_taken')>=0?DOMERR.domain_taken:m.indexOf('forbidden')>=0?DOMERR.forbidden:'अनुरोध नहीं गया। दोबारा कोशिश करें।'}
+    else{msg.className='k';msg.textContent='अनुरोध भेज दिया गया।';st.textContent='⏳ अनुरोध भेजा गया: '+r.data.domain+'। टीम जल्द संपर्क करेगी।';inp.value=r.data.domain;
+      window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मुझे अपनी मिनी वेबसाइट पर अपना डोमेन '+r.data.domain+' जोड़ना है (SpyWell Studio)।'),'_blank','noopener')}
+    b.disabled=false};
+  box.appendChild(inp);b.style.marginTop='8px';box.appendChild(b);box.appendChild(msg)}
 function pPub(p){
   pExtra(p);
   var live=D.status==='published';
@@ -437,6 +475,7 @@ function pPub(p){
         h('button',{class:'btn alt',text:'वेबसाइट खोलें',onclick:function(){window.open(wu,'_blank','noopener')}}),
         h('button',{class:'btn alt',text:'वेबसाइट लिंक कॉपी',onclick:async function(){try{await navigator.clipboard.writeText(wu);info.className='k';info.textContent='वेबसाइट लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ।'}}}),
         h('button',{class:'btn alt',text:'वेबसाइट WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('हमारी वेबसाइट: '+wu),'_blank','noopener')}})]))}
+    if(D.product_type==='visiting'&&C.style.site===true)domainBox(p);
     else if(D.product_type==='visiting')p.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
     if(D.product_type==='visiting'){
       var cm=String((C.fields||{}).mobile||'').replace(/\D/g,'').slice(-10),cbox=h('div',{class:'item'});

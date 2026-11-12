@@ -37,7 +37,10 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
   var bp=h('div');app.appendChild(bp);balPanel(bp);
   var pp=h('div');app.appendChild(pp);payPanel(pp);
   var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
+  var cf=h('div');app.appendChild(cf);cfgPanel(cf);
+  var dm=h('div');app.appendChild(dm);domPanel(dm);
   var ip=h('div');app.appendChild(ip);indPanel(ip);
+  var au=h('div');app.appendChild(au);auditPanel(au);
   var tabs=h('div',{class:'tabs'});app.appendChild(tabs);body=h('div');app.appendChild(body);
   function draw(){tabs.textContent='';[['cust','ग्राहक'],['tpl','टेम्पलेट']].forEach(function(t){tabs.appendChild(h('button',{class:tab===t[0]?'on':'',text:t[1],onclick:function(){tab=t[0];sel=null;draw()}}))});body.textContent='';(tab==='cust'?(sel?cardsView:custView):tplView)()}
   window.__draw=draw;draw();
@@ -55,6 +58,35 @@ async function aiPanel(box){
   c.appendChild(h('button',{class:'btn',text:'सेव करें',onclick:async function(){var e=await sb.rpc('studio_admin_set_ai',{p_enabled:cb.checked});if(e.error){m.className='e';m.textContent='सेव नहीं हुआ';return}aiPanel(box)}}));
   c.appendChild(m);box.appendChild(c);
 }
+async function cfgPanel(box){
+  var r=await sb.from('studio_settings').select('k,v').in('k',['ai_model','ai_daily_limit','ai_max_pages','ai_max_file_mb','domain_price_inr']);box.textContent='';if(r.error)return;
+  var S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});
+  var c=h('div',{class:'card'});c.appendChild(h('b',{text:'⚙️ AI की सीमाएँ और डोमेन शुल्क'}));
+  function row(l,v,ph,t){var i=h('input',{type:t||'text',value:v||'',placeholder:ph||''});c.appendChild(h('label',{text:l,style:'display:block;margin-top:8px;font-weight:600'}));c.appendChild(i);return i}
+  var mo=row('Claude मॉडल (खाली = डिफ़ॉल्ट)',S.ai_model,'जैसे claude-sonnet-5-5'),li=row('हर user की रोज़ की AI सीमा (1–1000)',S.ai_daily_limit,'','number'),pg=row('PDF/फ़ोटो के ज़्यादा से ज़्यादा पेज (1–4)',S.ai_max_pages,'','number'),mb=row('फ़ाइल का अधिकतम साइज़ MB (1–15)',S.ai_max_file_mb,'','number');
+  var dp=row('डोमेन अपग्रेड शुल्क ₹ (खाली = टीम बताएगी)',S.domain_price_inr,'जैसे 999','number');
+  var m=h('div',{class:'k'});
+  c.appendChild(h('button',{class:'btn',style:'margin-top:10px',text:'सेव करें',onclick:async function(){
+    var e=await sb.rpc('studio_admin_set_ai_config',{p_model:mo.value.trim(),p_limit:parseInt(li.value)||0,p_pages:parseInt(pg.value)||0,p_mb:parseInt(mb.value)||0});
+    if(!e.error){var d=dp.value.trim();e=await sb.from('studio_settings').update({v:d}).eq('k','domain_price_inr')}
+    if(e.error){m.className='e';m.textContent='सेव नहीं हुआ। मान सही सीमा में रखें (मॉडल का नाम छोटे अक्षर/अंक/बिंदु/हाइफ़न में)।';return}
+    m.className='k';m.textContent='सेव हो गया। नई सीमाएँ अगली AI रीडिंग से लागू।'}}));
+  c.appendChild(m);box.appendChild(c)}
+async function domPanel(box){
+  var r=await sb.rpc('studio_admin_domains');box.textContent='';if(r.error)return;var c=h('div',{class:'card'});c.appendChild(h('b',{text:'🌍 डोमेन अनुरोध'}));
+  if(!(r.data||[]).length)c.appendChild(h('div',{class:'k',text:'अभी कोई अनुरोध नहीं।'}));
+  (r.data||[]).forEach(function(x){var it=h('div',{style:'border-top:1px solid #e8d5ad;padding:8px 0'});
+    it.appendChild(h('div',{style:'font-weight:700;word-break:break-all',text:x.domain+'  ('+(x.status==='active'?'चालू':x.status==='rejected'?'अस्वीकृत':'लंबित')+')'}));
+    it.appendChild(h('div',{class:'k',text:(x.title||'')+' · /web/'+(x.slug||'-')+' · '+(x.email||'')}));
+    var nt=h('input',{type:'text',maxlength:300,placeholder:'नोट (वैकल्पिक)',value:x.note||''});it.appendChild(nt);
+    [['active','चालू करें'],['rejected','अस्वीकार'],['pending','लंबित']].forEach(function(a){it.appendChild(h('button',{class:'btn alt',style:'margin:6px 6px 0 0',text:a[1],onclick:async function(){var e=await sb.rpc('studio_admin_set_domain',{p_id:x.id,p_status:a[0],p_note:nt.value});if(!e.error)domPanel(box)}}))});
+    c.appendChild(it)});box.appendChild(c)}
+async function auditPanel(box){
+  var r=await sb.rpc('studio_admin_audit',{p_limit:40});box.textContent='';if(r.error)return;var c=h('div',{class:'card'});c.appendChild(h('b',{text:'📜 Admin के कामों का लॉग (ताज़ा 40)'}));
+  if(!(r.data||[]).length)c.appendChild(h('div',{class:'k',text:'अभी कोई एंट्री नहीं।'}));
+  (r.data||[]).forEach(function(x){var d=x.detail||{},t=Object.keys(d).map(function(k){return k+'='+(d[k]===null?'-':d[k])}).join(', ');
+    c.appendChild(h('div',{class:'k',style:'border-top:1px solid #e8d5ad;padding:5px 0;word-break:break-all'},[h('b',{text:x.action+' · '+x.target}),h('div',{text:t.slice(0,160)}),h('div',{text:new Date(x.created_at).toLocaleString('en-IN')})]))});
+  box.appendChild(c)}
 async function indPanel(box){
   var r=await sb.rpc('studio_industry_stats'),ir=await sb.from('studio_industries').select('id,name_hi'),nm={};(ir.data||[]).forEach(function(o){nm[o.id]=o.name_hi});
   box.textContent='';if(r.error||!r.data)return;var c=h('div',{class:'card'});c.appendChild(h('b',{text:'🏭 Industry-wise विज़िटिंग कार्ड'}));

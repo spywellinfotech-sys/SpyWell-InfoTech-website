@@ -92,6 +92,12 @@ Deno.serve(async (req) => {
   const user = au?.user;
   if (ae || !user) return json({ code: "unauthorized" }, 401);
 
+  const { data: cfgRows } = await sb.from("studio_settings").select("k,v").in("k", ["ai_enabled", "ai_model", "ai_daily_limit", "ai_max_pages", "ai_max_file_mb"]);
+  const cfg: Record<string, string> = {};
+  for (const r of cfgRows || []) cfg[(r as any).k] = String((r as any).v ?? "");
+  const maxPages = Math.min(4, Math.max(1, parseInt(cfg.ai_max_pages) || 4));
+  const maxFileB64 = Math.round(Math.min(15, Math.max(1, parseInt(cfg.ai_max_file_mb) || 10)) * 1_048_576 * 1.34);
+
   const raw = await req.text();
   if (raw.length > 9_000_000) return json({ code: "too_big" }, 413);
   let body: any;
@@ -100,29 +106,28 @@ Deno.serve(async (req) => {
   const mode = body?.mode === "creative" ? "creative" : "content";
   const occasion = typeof body?.occasion === "string" && OCC[body.occasion] ? body.occasion : "wedding";
   const files = Array.isArray(body?.files) ? body.files : [];
-  if (!type || files.length < 1 || files.length > 4) return json({ code: "bad_request" }, 400);
+  if (!type || files.length < 1 || files.length > maxPages) return json({ code: "bad_request" }, 400);
   for (const f of files) {
-    if (!f || !MEDIA.includes(f.media_type) || typeof f.data !== "string" || f.data.length < 100 || f.data.length > 3_000_000 || !magicOk(f.media_type, f.data))
+    if (!f || !MEDIA.includes(f.media_type) || typeof f.data !== "string" || f.data.length < 100 || f.data.length > Math.min(3_000_000, maxFileB64) || !magicOk(f.media_type, f.data))
       return json({ code: "bad_file" }, 400);
   }
 
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) return json({ code: "not_configured" }, 503);
-  const { data: sw } = await sb.from("studio_settings").select("v").eq("k", "ai_enabled").maybeSingle();
-  if (sw?.v === "0") return json({ code: "ai_off" }, 503);
+  if (cfg.ai_enabled === "0") return json({ code: "ai_off" }, 503);
 
   // Cache: the same upload with the same settings is never paid for twice (kept 30 days, per user).
-  const modelName = Deno.env.get("STUDIO_CLAUDE_MODEL") || "claude-sonnet-5-5";
+  const modelName = (/^[a-z0-9][a-z0-9.\-]{2,59}$/.test(cfg.ai_model || "") ? cfg.ai_model : "") || Deno.env.get("STUDIO_CLAUDE_MODEL") || "claude-sonnet-5-5";
   const sha = async (t: string) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))).map((x) => x.toString(16).padStart(2, "0")).join("");
   const cacheKey = await sha([type, mode, occasion, modelName, ...files.map((f: any) => f.data)].join("|"));
   const cutoff = new Date(Date.now() - 30 * 86400000).toISOString();
   const { data: hit } = await sb.from("studio_ai_cache").select("result").eq("user_id", user.id).eq("hash", cacheKey).gte("created_at", cutoff).maybeSingle();
   if (hit?.result) return json({ ...(hit.result as object), cached: true, free: true });
 
-  const limit = Math.max(1, parseInt(Deno.env.get("STUDIO_AI_DAILY_LIMIT") || "10") || 10);
+  const limit = Math.max(1, parseInt(cfg.ai_daily_limit) || parseInt(Deno.env.get("STUDIO_AI_DAILY_LIMIT") || "10") || 10);
   const IST = 5.5 * 3600 * 1000;
   const dayStart = new Date(Math.floor((Date.now() + IST) / 86400000) * 86400000 - IST);
-  const { count } = await sb.from("studio_ai_usage").select("id", { count: "exact", head: true }).eq("user_id", user.id).gte("created_at", dayStart.toISOString());
+  const { count } = await sb.from("studio_ai_usage").select("id", { count: "exact", head: true }).eq("user_id", user.id).neq("mode", "url").gte("created_at", dayStart.toISOString());
   const used = count || 0;
   if (used >= limit) return json({ code: "limit", used, limit }, 429);
 
