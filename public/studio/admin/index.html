@@ -38,12 +38,14 @@ function dt(x){return x?new Date(x).toLocaleDateString('hi-IN',{day:'numeric',mo
 function custView(){
   var q=h('input',{type:'search',placeholder:'नाम, फ़ोन या ईमेल से खोजें'}),list=h('div'),tm;body.appendChild(q);body.appendChild(list);
   async function load(){list.textContent='';list.appendChild(h('div',{class:'msg',text:'लोड हो रहा है…'}));
-    var r=await sb.rpc('studio_admin_customers',{p_search:q.value.trim()});list.textContent='';
+    var r=await sb.rpc('studio_admin_customers',{p_search:q.value.trim()});var cr=await sb.rpc('studio_admin_credits');var CRM={};(cr.data||[]).forEach(function(x){CRM[x.user_id]=x.balance});list.textContent='';
     if(r.error){list.appendChild(h('div',{class:'msg bad',text:'सूची नहीं आई'}));return}
     if(!r.data.length)list.appendChild(h('div',{class:'msg',text:'कोई ग्राहक नहीं मिला'}));
     r.data.forEach(function(c){list.appendChild(h('div',{class:'card'},[h('b',{text:c.full_name||'(नाम नहीं)'}),h('div',{class:'k',text:[c.phone,c.email].filter(Boolean).join(' · ')}),
       h('div',{class:'k',text:'कार्ड: '+c.designs+' · प्रकाशित: '+c.published+' · जुड़े: '+dt(c.created_at)}),
-      h('button',{class:'btn',text:'कार्ड देखें',onclick:function(){sel=c;window.__draw()}})]))})}
+      h('div',{class:'k',id:'cr-'+c.id,text:'AI क्रेडिट: '+(CRM[c.id]||0)}),
+      h('button',{class:'btn',text:'कार्ड देखें',onclick:function(){sel=c;window.__draw()}}),
+      h('button',{class:'btn',text:'+3 क्रेडिट दें',onclick:async function(){var x=await sb.rpc('studio_admin_grant',{p_user:c.id,p_n:3});var e=document.getElementById('cr-'+c.id);if(x.error){e.textContent='क्रेडिट नहीं जुड़ा';return}e.textContent='AI क्रेडिट: '+x.data}})]))})}
   q.oninput=function(){clearTimeout(tm);tm=setTimeout(load,350)};load()}
 async function cardsView(){
   var c=sel;body.appendChild(h('button',{class:'btn',text:'← वापस',onclick:function(){sel=null;window.__draw()}}));

@@ -84,6 +84,8 @@
   function img(u) { return typeof u === 'string' && u.indexOf(BUCKET) === 0 && u.indexOf('..') < 0 ? u : ''; }
   function txt(v, n) { return (v == null ? '' : String(v)).slice(0, n || 200).trim(); }
   function num(v, lo, hi, d) { v = Number(v); return isFinite(v) && v >= lo && v <= hi ? v : d; }
+  var PETALS = ['none', '❀', '❦', '✦', '❤', '★'], LAYOUTS = ['frame', 'double', 'arch', 'plain', 'band', 'wave', 'side'],
+    ORNAMENTS = ['', 'none', '❖', '❁', '❋', '✦', '❀', '❦', 'ॐ', '❤'];
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function link(cls, text, href) { var a = el('a', cls, text); a.href = href; if (/^https?:/.test(href)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; } return a; }
   function rgba(hex, a) { var n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
@@ -103,7 +105,9 @@
     var s = c.style && typeof c.style === 'object' ? c.style : {};
     out.style = { font: FONTS[s.font] ? s.font : '', nameFont: FONTS[s.nameFont] ? s.nameFont : '', size: num(s.size, 0.8, 1.4, 1),
       weight: [400, 500, 600, 700].indexOf(+s.weight) >= 0 ? +s.weight : 0, align: ['left', 'center', 'right'].indexOf(s.align) >= 0 ? s.align : '',
-      fg: col(s.fg, ''), bg: col(s.bg, ''), ac: col(s.ac, '') };
+      fg: col(s.fg, ''), bg: col(s.bg, ''), ac: col(s.ac, ''),
+      anim: ['rich', 'soft', 'none'].indexOf(s.anim) >= 0 ? s.anim : '', petal: PETALS.indexOf(s.petal) >= 0 ? s.petal : '',
+      layout: LAYOUTS.indexOf(s.layout) >= 0 ? s.layout : '', ornament: ORNAMENTS.indexOf(s.ornament) >= 0 ? s.ornament : '' };
     var im = c.images && typeof c.images === 'object' ? c.images : {};
     (IMAGES[type] || []).forEach(function (d) { var x = im[d[0]] && typeof im[d[0]] === 'object' ? im[d[0]] : {}; var u = img(x.url); if (u) out.images[d[0]] = { url: u, size: num(x.size, 40, 340, d[2]), pos: num(x.pos, 0, 100, 50) }; });
     return out;
@@ -155,7 +159,7 @@
     if (d.images.family) box.appendChild(picture('sr-fam', d.images.family, 'wide'));
     if (f.extra) box.appendChild(el('div', 'sr-msg', f.extra));
     var cs = [[f.c1_name, V.tel(f.c1_phone)], [f.c2_name, V.tel(f.c2_phone)]].filter(function (x) { return x[1]; });
-    if (cs.length) { var cw = el('div', 'sr-cs'); cw.appendChild(el('div', 'sr-sub', 'संपर्क')); cs.forEach(function (x) { cw.appendChild(link('sr-btn', (x[0] ? x[0] + ' · ' : '') + x[1], 'tel:+91' + x[1])); }); box.appendChild(cw); }
+    if (cs.length) { var cw = el('div', 'sr-cs'); cw.appendChild(el('div', 'sr-sub', 'संपर्क')); cs.forEach(function (x) { cw.appendChild(link('sr-call', '📞 ' + (x[0] ? x[0] + ' : ' : '') + x[1].slice(0, 5) + ' ' + x[1].slice(5), 'tel:+91' + x[1])); }); box.appendChild(cw); }
     root.appendChild(box);
   }
 
@@ -169,7 +173,7 @@
     if (f.designation) bd.appendChild(el('div', 'sr-des', f.designation));
     if (f.about) bd.appendChild(el('div', 'sr-msg', f.about));
     var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), act = el('div', 'sr-act');
-    if (tel) act.appendChild(link('', 'कॉल', 'tel:+91' + tel));
+    if (tel) act.appendChild(link('sr-call', '📞 कॉल करें : ' + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel));
     if (wa) act.appendChild(link('', 'WhatsApp', 'https://wa.me/91' + wa));
     if (em) act.appendChild(link('', 'ईमेल', 'mailto:' + em));
     if (web) act.appendChild(link('', 'वेबसाइट', web));
@@ -177,7 +181,7 @@
     if (act.children.length) bd.appendChild(act);
     if (d.services.length) { var sv = el('div', 'sr-svs'); sv.appendChild(el('div', 'sr-sub', 'सेवाएँ')); d.services.forEach(function (s) { sv.appendChild(el('span', 'sr-chip', s)); }); bd.appendChild(sv); }
     [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
-      if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', r[0])); row.appendChild(el('div', '', r[1])); bd.appendChild(row);
+      if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', r[0])); if (r[0] === 'मोबाइल') row.appendChild(link('', r[1], 'tel:+91' + tel)); else row.appendChild(el('div', '', r[1])); bd.appendChild(row);
     });
     var soc = el('div', 'sr-soc');
     [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (s) { var u = V.url(s[1]); if (u) soc.appendChild(link('', s[0], u)); });
@@ -193,7 +197,7 @@
     if (opts.demo && isEmpty(type, content)) { src = JSON.parse(JSON.stringify(SAMPLE[type])); src.style = (content && content.style) || {}; src.images = (content && content.images) || {}; }
     var d = normalize(type, src), s = d.style;
     var bg = s.bg || col(pal.bg, '#ffffff'), fg = s.fg || col(pal.fg, '#222222'), ac = s.ac || col(pal.ac, '#8b1a2b');
-    var layout = ['frame', 'double', 'arch', 'plain', 'band', 'wave', 'side'].indexOf(t.layout) >= 0 ? t.layout : (type === 'visiting' ? 'band' : 'frame');
+    var layout = s.layout ? s.layout : ['frame', 'double', 'arch', 'plain', 'band', 'wave', 'side'].indexOf(t.layout) >= 0 ? t.layout : (type === 'visiting' ? 'band' : 'frame');
     var root = el('div', 'sr ' + (type === 'visiting' ? 'sr-vc' : 'sr-inv') + ' l-' + layout);
     var st = root.style;
     st.setProperty('--bg', bg); st.setProperty('--fg', fg); st.setProperty('--ac', ac);
@@ -202,7 +206,18 @@
     var align = s.align || (layout === 'side' || (type === 'invitation' && layout === 'plain' && t.align === 'left') ? 'left' : 'center');
     root.className += ' a-' + align;
     if (type === 'invitation' && d.images.bg) { st.backgroundImage = 'url("' + d.images.bg.url + '")'; st.backgroundPosition = '50% ' + d.images.bg.pos + '%'; st.setProperty('--pane', rgba(bg, 0.88)); } else st.setProperty('--pane', 'transparent');
-    if (type === 'visiting') buildVisiting(root, d); else buildInvitation(root, d, { ornament: txt(t.ornament, 4) });
+    if (type === 'visiting') buildVisiting(root, d); else buildInvitation(root, d, { ornament: s.ornament === 'none' ? '' : (s.ornament || txt(t.ornament, 4)) });
+    var anim = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich'), play = !!opts.play || !opts.demo;
+    if (anim !== 'none' && play) {
+      root.className += ' sr-an sr-an-' + anim;
+      var kids = root.querySelector('.in') || root.querySelector('.bd'); if (kids) Array.prototype.forEach.call(kids.children, function (c, i) { c.style.setProperty('--i', Math.min(i, 14)); });
+      var pc = s.petal || (PETALS.indexOf(t.petal) >= 0 ? t.petal : type === 'invitation' ? '\u2740' : 'none');
+      if (anim === 'rich' && pc !== 'none') {
+        var pw = el('div', 'sr-pw'); for (var n = 0; n < 14; n++) { var q = el('span', '', pc); q.style.left = (4 + (n * 7.3) % 92) + '%'; q.style.fontSize = (12 + (n * 5) % 12) + 'px';
+          q.style.animationDuration = (9 + (n * 3) % 8) + 's'; q.style.animationDelay = (-(n * 1.7) % 12) + 's'; q.style.setProperty('--dx', (((n % 2) ? 1 : -1) * (20 + (n * 11) % 50)) + 'px'); pw.appendChild(q); }
+        root.appendChild(pw);
+      }
+    }
     mount.textContent = ''; mount.appendChild(root); return root;
   }
 
@@ -235,7 +250,25 @@
     '.sr-vc.l-wave .hd{border-radius:0 0 50% 50%/0 0 2.2em 2.2em;padding-bottom:4.6em}' +
     '.sr-vc.l-side .hd{background:none;color:var(--fg);border-left:6px solid var(--ac);padding:1.4em 1.1em .4em}.sr-vc.l-side .sr-biz{color:var(--ac)}' +
     '.sr-vc.l-side .bd,.sr-vc.l-side .bd.noph{border-left:6px solid var(--ac);margin-top:0;padding-top:.6em;border-radius:0;background:none}' +
-    '.sr-vc.l-side .ph{margin-top:0;border-radius:16px;border:0}';
+    '.sr-vc.l-side .ph{margin-top:0;border-radius:16px;border:0}' +
+    '.sr-call{display:block;margin:.6em 0 0;padding:.8em 1em;border-radius:2em;background:#1f8f4e;color:#fff!important;text-decoration:none;font-weight:700;font-size:1.05em;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.18)}' +
+    '.sr-act a.sr-call{grid-column:1/-1;border-radius:2em;font-size:1.05em;padding:.8em 1em}' +
+    '.sr{position:relative}.sr-pw{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}' +
+    '.sr-pw span{position:absolute;top:-8%;color:var(--ac);opacity:0;animation:srfall linear infinite}' +
+    '@keyframes srfall{0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}10%{opacity:.8}100%{opacity:.5;transform:translate3d(var(--dx),115vh,0) rotate(540deg)}}' +
+    '@keyframes srup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}' +
+    '@keyframes srpop{0%{opacity:0;transform:scale(.6)}70%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}' +
+    '@keyframes srflt{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}' +
+    '@keyframes srshine{0%{background-position:130% 0}60%,100%{background-position:-60% 0}}' +
+    '@keyframes srpls{0%,100%{box-shadow:0 0 0 0 rgba(31,143,78,.55)}70%{box-shadow:0 0 0 12px rgba(31,143,78,0)}}' +
+    '.sr-an .in>*,.sr-an .bd>*,.sr-an .hd>*{opacity:0;animation:srup .8s ease forwards;animation-delay:calc(var(--i,0)*.14s)}' +
+    '.sr-an .hd>*{animation-delay:.05s}.sr-an .sr-ph,.sr-an .ph{animation-name:srpop}' +
+    '.sr-an .sr-or{animation:srup .8s ease forwards,srflt 3.2s ease-in-out 1.2s infinite}' +
+    '.sr-an .sr-amp{animation:srpop .9s ease forwards;animation-delay:calc(var(--i,0)*.14s)}' +
+    '.sr-an.sr-inv .sr-nm{background:linear-gradient(100deg,var(--ac) 40%,#fff8 50%,var(--ac) 60%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:srup .8s ease forwards,srshine 4.5s ease-in-out 1.4s infinite}' +
+    '.sr-an .sr-nm{animation:srup .8s ease forwards;animation-delay:calc(var(--i,0)*.14s)}' +
+    '.sr-an .sr-call{animation:srup .8s ease forwards,srpls 2s ease-out 1.4s infinite}' +
+    '@media (prefers-reduced-motion:reduce){.sr-an *,.sr-pw{animation:none!important;opacity:1!important;transform:none!important}.sr-pw{display:none}}';
   var assetsDone = false;
   function ensureAssets() {
     if (assetsDone) return; assetsDone = true;
