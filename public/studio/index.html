@@ -96,6 +96,11 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 <div class="minis" id="pk-grid"></div>
 <button type="button" class="alt" id="pk-back">वापस</button>
 </div>
+<div class="card" id="c-saved">
+<b>💾 सेव किए हुए कार्ड</b>
+<div class="k">दूसरों के कार्ड खोलकर "सेव करें" दबाइए, वे यहाँ जमा होंगे।</div>
+<div id="sv-list" style="margin-top:8px"></div>
+</div>
 <div class="card">
 <b>मेरे डिज़ाइन</b>
 <input id="q" placeholder="नाम से खोजें" style="margin-top:10px">
@@ -144,6 +149,16 @@ var R=window.StudioRender,ME=null,TPL=[],LIST=[],FLT='all',armed='';
 var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'इनविटेशन कार्ड',visiting:'विज़िटिंग कार्ड'};
 function mk(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
 function when(d){return new Date(d).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+async function loadSaved(){
+  try{var pend=localStorage.getItem('sp_pending_save');if(pend){localStorage.removeItem('sp_pending_save');var pp=pend.split('|');if((pp[0]==='invitation'||pp[0]==='visiting')&&pp[1])await sb.rpc('studio_save_card',{p_type:pp[0],p_slug:pp[1]})}}catch(e){}
+  var box=$('sv-list');if(!box)return;
+  var r=await sb.from('studio_saved_cards').select('id,product_type,slug,title,subtitle').eq('user_id',ME.id).order('created_at',{ascending:false});
+  box.textContent='';if(r.error){box.textContent='सूची लोड नहीं हुई।';return}
+  if(!r.data||!r.data.length){box.appendChild(mk('div','k','अभी कोई कार्ड सेव नहीं है।'));return}
+  r.data.forEach(function(x){var row=mk('div','item');row.style.cssText='display:flex;align-items:center;gap:8px;margin-top:6px';
+    var a=mk('a','',(x.product_type==='invitation'?'💌 ':'📇 ')+(x.title||x.slug));a.href='/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug;a.target='_blank';a.rel='noopener';a.style.cssText='flex:1;font-weight:600;color:var(--wine);text-decoration:none';
+    row.appendChild(a);if(x.subtitle){var sb2=mk('span','k',x.subtitle);row.appendChild(sb2)}
+    var d=mk('button','alt','हटाएँ');d.type='button';d.style.cssText='width:auto;padding:4px 10px;margin:0';d.onclick=async function(){d.disabled=true;await sb.from('studio_saved_cards').delete().eq('id',x.id);loadSaved()};row.appendChild(d);box.appendChild(row)})}
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
@@ -223,6 +238,7 @@ async function dash(user){
   var t=await sb.from('studio_templates').select('id,product_type,name,config,sort').eq('active',true).order('sort',{ascending:true});
   TPL=t.data||[];
   await loadList();
+  loadSaved();
 }
 
 $('g-btn').onclick=async function(){$('li-err').textContent='';

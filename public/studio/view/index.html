@@ -42,6 +42,16 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   document.title=window.StudioRender.title(t,cj)+' | SpyWell Live Studio';
   try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
   document.getElementById('foot').hidden=false;
+  try{(function(){var ab=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+    var f=document.getElementById('foot'),bt=document.createElement('button');bt.type='button';bt.textContent='💾 यह कार्ड मेरे पास सेव करें';
+    bt.style.cssText='display:block;margin:0 auto 10px;padding:10px 18px;border:0;border-radius:22px;background:#8b1a2b;color:#fff;font:600 14px system-ui,sans-serif;cursor:pointer';
+    var note=document.createElement('div');note.style.cssText='margin-bottom:8px;font-size:13px';
+    f.insertBefore(note,f.firstChild);f.insertBefore(bt,f.firstChild);
+    bt.onclick=async function(){bt.disabled=true;var ss=await ab.auth.getSession();
+      if(!ss.data||!ss.data.session){try{localStorage.setItem('sp_pending_save',t+'|'+s)}catch(e){}location.href='/studio/';return}
+      var r2=await ab.rpc('studio_save_card',{p_type:t,p_slug:s});bt.disabled=false;
+      var m={ok:'सेव हो गया ✓ (Studio में "सेव किए कार्ड" में देखें)',own:'यह आपका अपना कार्ड है।',missing:'कार्ड नहीं मिला।',limit:'सेव की सीमा पूरी हो गई।',login:'पहले लॉगिन करें।'};
+      note.textContent=r2.error?'सेव नहीं हो पाया। दोबारा कोशिश करें।':(m[r2.data]||'हो गया');if(!r2.error&&r2.data==='ok')bt.textContent='✓ सेव हो गया'}})()}catch(e){}
   try{var tk='sv_'+t+s;if(!sessionStorage.getItem(tk)){sessionStorage.setItem(tk,'1');track('view')}}catch(e){}
 })();
 })();
