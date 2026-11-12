@@ -120,11 +120,31 @@ function urlBox(p){
   box.appendChild(h('b',{text:'🔗 वेबसाइट का लिंक डालिए, जानकारी अपने-आप भरेगी'}));
   box.appendChild(h('div',{class:'k',text:'अगर आपकी कोई वेबसाइट पहले से है तो नाम, मोबाइल, पता, सेवाएँ और सोशल लिंक सब उसी से भर जाएँगे। हाथ से भरने की ज़रूरत नहीं। (मुफ़्त)'}));
   inp.style.marginTop='8px';box.appendChild(inp);b.style.marginTop='8px';box.appendChild(b);box.appendChild(msg);p.appendChild(box)}
+function hoursPicker(p,d){
+  var k='hours',DAYS=['सोम','मंगल','बुध','गुरु','शुक्र','शनि','रवि'];
+  var wrap=h('div',{});wrap.appendChild(h('label',{text:d[1]}));
+  var pv=h('div',{class:'k',style:'font-weight:700;margin:4px 0'});
+  var pat=h('select',{},[h('option',{value:'ms',text:'सोम–शनि (रविवार बंद)'}),h('option',{value:'mu',text:'रोज़ खुला (सोम–रवि)'}),h('option',{value:'mf',text:'सोम–शुक्र'}),h('option',{value:'h24',text:'24 घंटे खुला'}),h('option',{value:'cu',text:'अलग-अलग दिन चुनें'})]);
+  var tw=h('div',{style:'display:flex;gap:8px;margin-top:6px;align-items:center'});
+  var t1=h('input',{type:'time',value:'10:00'}),t2=h('input',{type:'time',value:'19:00'});t1.style.flex=t2.style.flex='1';
+  tw.appendChild(t1);tw.appendChild(h('span',{text:'से'}));tw.appendChild(t2);
+  var dw=h('div',{style:'display:none;flex-wrap:wrap;gap:6px;margin-top:6px'}),cbs=DAYS.map(function(n,i){var c=h('input',{type:'checkbox'});c.checked=i<6;c.style.cssText='width:auto;margin-right:4px';var l=h('label',{style:'display:flex;align-items:center;font-weight:400'},[c,h('span',{text:n})]);dw.appendChild(l);return c});
+  function f12(t){var m=/^(\d{1,2}):(\d{2})$/.exec(t||'');if(!m)return'';var H=+m[1],ap=H>=12?'PM':'AM';H=H%12;if(H===0)H=12;return H+':'+m[2]+' '+ap}
+  function compose(){var v=pat.value,days=v==='ms'?'सोम–शनि':v==='mu'?'रोज़ (सोम–रवि)':v==='mf'?'सोम–शुक्र':v==='cu'?DAYS.filter(function(n,i){return cbs[i].checked}).join(', '):'';
+    if(v==='h24')return '24 घंटे खुला (रोज़)';
+    var tm=f12(t1.value)&&f12(t2.value)?f12(t1.value)+' – '+f12(t2.value):'';return (days+(days&&tm?' · ':'')+tm).slice(0,100)}
+  function upd(){var v=compose();dw.style.display=pat.value==='cu'?'flex':'none';tw.style.display=pat.value==='h24'?'none':'flex';C.fields[k]=v;pv.textContent=v?'✅ '+v:'';changed()}
+  [pat,t1,t2].forEach(function(e){e.onchange=upd;e.oninput=upd});cbs.forEach(function(c){c.onchange=upd});
+  wrap.appendChild(pat);wrap.appendChild(tw);wrap.appendChild(dw);wrap.appendChild(pv);
+  var cur=C.fields[k]||'';
+  if(!cur){var v0=compose();C.fields[k]=v0;pv.textContent='✅ '+v0;setTimeout(changed,0)}else pv.textContent='वर्तमान: '+cur+' (बदलने के लिए ऊपर चुनें)';
+  dw.style.display='none';p.appendChild(wrap)}
 function pInfo(p){
   var bad=R.invalid(D.product_type,C);
   if(D.product_type==='visiting')urlBox(p);
   R.fieldsFor(D.product_type,cfg()).forEach(function(d){
     var k=d[0],typ=d[2],inp;
+    if(k==='hours'){hoursPicker(p,d);return}
     if(k==='industry_other'){var iw=h('div',{id:'io-wrap'}),io=h('input',{type:'text',maxlength:40,id:'f-industry_other',placeholder:'जैसे: कोयला व्यापार, बैंड बाजा, ड्रोन सर्विस'});io.value=C.fields[k]||'';io.oninput=function(){C.fields[k]=io.value;changed()};iw.appendChild(h('label',{text:d[1],for:'f-industry_other'}));iw.appendChild(io);iw.style.display=C.fields.industry==='other'?'':'none';p.appendChild(iw);return}
     if(typ==='select'){inp=h('select');inp.appendChild(h('option',{value:'',text:'— सूची से चुनें —'}));IND.forEach(function(o){inp.appendChild(h('option',{value:o.id,text:o.name_hi}))});inp.value=C.fields[k]||'';inp.id='f-'+k;inp.onchange=function(){C.fields[k]=inp.value;var w=$('io-wrap');if(w)w.style.display=inp.value==='other'?'':'none';if(inp.value!=='other'){delete C.fields.industry_other;var q=$('f-industry_other');if(q)q.value=''}changed()};p.appendChild(h('label',{text:d[1],for:'f-'+k}));p.appendChild(inp);return}
     else if(typ==='area')inp=h('textarea',{maxlength:d[3]});
