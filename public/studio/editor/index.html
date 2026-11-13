@@ -471,6 +471,8 @@ var SLUG=/^[a-z0-9]+(-[a-z0-9]+)*$/;
 function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'inv':'v')+'/'+slug}
 function shareText(){return D.product_type==='invitation'?'आप सादर आमंत्रित हैं: ':'हमारा ऑनलाइन विज़िटिंग कार्ड: '}
 function webUrl(slug){return location.origin+'/web/'+slug}
+var PHONE='';
+function invSlug(){var m=mobSlug()||PHONE;if(!m)return slugify(R.title(D.product_type,C));var t=slugify(R.title(D.product_type,C)).replace(/^\d{10}-?/,'');return (m+(t?'-'+t:'')).slice(0,60).replace(/-+$/,'')}
 function mobSlug(){var f=C.fields||{},m=String(D.product_type==='invitation'?(f.c1_phone||f.c2_phone):f.mobile).replace(/\D/g,'');if(m.length>=10)m=m.slice(-10);return m.length>=3?m:''}
 function slugify(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)}
 
@@ -691,7 +693,7 @@ function pPub(p){
   p.appendChild(h('div',{class:'k',text:D.status==='unpublished'?'यह कार्ड अभी बंद है। दोबारा प्रकाशित करने के लिए लिंक चुनें।':'प्रकाशित करने पर आपका कार्ड एक लिंक और QR कोड से सबके लिए खुल जाएगा।'}));
   p.appendChild(h('label',{text:'कार्ड का लिंक (अंग्रेज़ी छोटे अक्षर, अंक और -)'}));
   var inp=h('input',{type:'text',maxlength:60,autocapitalize:'none',autocomplete:'off',spellcheck:'false'});
-  inp.value=D.slug||mobSlug()||slugify(R.title(D.product_type,C));p.appendChild(inp);
+  inp.value=D.slug||(D.product_type==='invitation'?invSlug():(mobSlug()||slugify(R.title(D.product_type,C))));p.appendChild(inp);
   var pre=h('div',{class:'k',style:'word-break:break-all'});p.appendChild(pre);
   var er=h('div',{class:'e'});p.appendChild(er);
   var pb=h('button',{class:'btn',text:'प्रकाशित करें',id:'pubgo'});p.appendChild(pb);
@@ -752,6 +754,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   if(!s.data.session){location.replace('/studio/');return}
   UID=s.data.session.user.id;
   if(!/^[0-9a-f-]{36}$/i.test(ID)){state('यह डिज़ाइन नहीं मिला।',true);return}
+  try{var pr=await sb.from('studio_profiles').select('phone').maybeSingle();var ph=String((pr.data&&pr.data.phone)||'').replace(/\D/g,'').slice(-10);if(ph.length===10)PHONE=ph}catch(e){}
   var r=await sb.from('studio_designs').select('id,user_id,template_id,product_type,title,slug,status,content_json,updated_at').eq('id',ID).maybeSingle();
   if(r.error||!r.data){state('यह डिज़ाइन नहीं मिला, या आपको इसे खोलने की अनुमति नहीं है।',true);return}
   D=r.data;C=shape(D.content_json);
