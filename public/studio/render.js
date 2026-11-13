@@ -552,7 +552,25 @@
           else er.textContent = T('अभी नहीं भेजा जा सका। दोबारा कोशिश करें।');
         }, function () { eb.disabled = false; er.textContent = T('अभी नहीं भेजा जा सका। दोबारा कोशिश करें।'); });
       };
-      [en, em, ex, eb, er].forEach(function (x) { ei.appendChild(x); }); es.appendChild(ei); root.appendChild(es);
+      [en, em, ex, eb, er].forEach(function (x) { ei.appendChild(x); }); es.appendChild(ei);
+      if (opts.demo) { root.appendChild(es); } else {
+        /* frozen enquiry: a fixed button + fixed bottom sheet, always in the same place */
+        var ac2 = getComputedStyle(root).getPropertyValue('--ac') || '#12307f';
+        var fab = el('button', '', T('📩 पूछताछ')); fab.type = 'button';
+        fab.style.cssText = 'position:fixed;right:14px;bottom:18px;z-index:9000;border:0;border-radius:999px;padding:13px 20px;font:600 15px/1 system-ui,sans-serif;color:#fff;background:' + (ac2.trim() || '#12307f') + ';box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:pointer';
+        var sh = el('div', ''); sh.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9001;display:none;max-height:85vh;overflow:auto;background:#fff;color:#14203d;border-radius:18px 18px 0 0;box-shadow:0 -8px 28px rgba(0,0,0,.35);padding:16px 16px 22px';
+        var hd2 = el('div', ''); hd2.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px';
+        var hb = el('b', '', T('पूछताछ भेजें')); hb.style.fontSize = '18px'; var cx = el('button', '', '✕'); cx.type = 'button'; cx.setAttribute('aria-label', 'close');
+        cx.style.cssText = 'border:0;background:#eef1f7;color:#14203d;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer';
+        hd2.appendChild(hb); hd2.appendChild(cx); sh.appendChild(hd2);
+        var h2 = ei.querySelector('h2'), bar = ei.querySelector('.ws-bar'); if (h2) h2.remove(); if (bar) bar.remove();
+        eb.style.cssText = 'display:block;width:100%;margin-top:10px;border:0;border-radius:12px;padding:14px;font:600 16px/1 system-ui,sans-serif;color:#fff;background:' + (ac2.trim() || '#12307f') + ';cursor:pointer';
+        sh.appendChild(ei);
+        function openSh() { sh.style.display = 'block'; fab.style.display = 'none'; }
+        function closeSh() { sh.style.display = 'none'; fab.style.display = ''; }
+        fab.onclick = openSh; cx.onclick = closeSh;
+        root.appendChild(fab); root.appendChild(sh);
+      }
     }
     var shs = el('div', 'ws-sec'), shi = el('div', 'ws-in'); shi.appendChild(shareBar(f, opts)); shs.appendChild(shi); root.appendChild(shs);
     root.appendChild(el('div', 'ws-foot', '© ' + new Date().getFullYear() + ' ' + (f.business || f.name || '')));
