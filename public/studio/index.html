@@ -455,7 +455,15 @@ async function loadEnq(){
     d.appendChild(mk('b','',(q.read?'':'🔵 ')+q.name+' · '+q.mobile));d.appendChild(mk('div','',q.message));d.appendChild(mk('div','k',(q.title||'')+' · '+when(q.at)));
     var ac=mk('div','acts'),c=mk('a','','📞 कॉल');c.href='tel:+91'+q.mobile;var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+q.mobile;w.target='_blank';w.rel='noopener';ac.appendChild(c);ac.appendChild(w);
     if(!q.read){var m=mk('button','','✓ देख लिया');m.type='button';m.onclick=async function(){m.disabled=true;await sb.rpc('studio_enquiry_mark',{p_id:q.id,p_read:true});loadEnq()};ac.appendChild(m)}
-    d.appendChild(ac);box.appendChild(d)})}
+    var vd=mk('button','alt','👁 View details');vd.type='button';ac.appendChild(vd);
+    var dt=mk('div','');dt.hidden=true;dt.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#f7f9ff';
+    function row(l,v,href){var r=mk('div','');r.style.cssText='display:flex;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line)';var a=mk('b','k',l);a.style.cssText='min-width:92px;flex:none';r.appendChild(a);var b=href?mk('a','',v):mk('span','',v);if(href){b.href=href;if(/^https?:/.test(href)){b.target='_blank';b.rel='noopener'}}b.style.cssText='flex:1;word-break:break-word';r.appendChild(b);dt.appendChild(r)}
+    row('👤 नाम',q.name);row('📞 मोबाइल','+91 '+q.mobile,'tel:+91'+q.mobile);
+    row('📍 शहर / गाँव',q.city||'दिया नहीं गया');
+    row('🗺 लोकेशन',q.loc?'मैप में देखें':'जोड़ी नहीं गई',q.loc||'');
+    row('💬 संदेश',q.message);row('🪪 कार्ड',q.title||'—');row('🕒 समय',when(q.at));
+    vd.onclick=function(){dt.hidden=!dt.hidden;vd.textContent=dt.hidden?'👁 View details':'🙈 Hide details'};
+    d.appendChild(ac);d.appendChild(dt);box.appendChild(d)})}
 setInterval(function(){if(!document.hidden&&ME&&$('c-enq'))loadEnq()},60000);document.addEventListener('visibilitychange',function(){if(!document.hidden&&ME&&$('c-enq'))loadEnq()});
 var TABMAP=null;
 var CURT=null;

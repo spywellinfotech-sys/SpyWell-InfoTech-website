@@ -60,7 +60,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   if(isSite){box.style.maxWidth='none';box.style.background='transparent'}
   var tabs=document.createElement('div');tabs.id='sets';tabs.style.cssText='max-width:'+(isSite?'820px':'440px')+';margin:0 auto;display:none;gap:6px;overflow-x:auto;padding:8px;background:#f3ead6;position:sticky;top:0;z-index:9';
   box.parentNode.insertBefore(tabs,box);
-  if(isSite)window.StudioRender.site(box,(tp.data&&tp.data.config)||{},cj,{onAct:track,onEnquiry:async function(n,m,msg){var x=await sb.rpc('studio_enquiry_add',{p_slug:s,p_name:n,p_mobile:m,p_message:msg,p_visitor:vid});return x.error?'err':x.data}});
+  if(isSite)window.StudioRender.site(box,(tp.data&&tp.data.config)||{},cj,{onAct:track,onEnquiry:async function(n,m,msg,c,l){var x=await sb.rpc('studio_enquiry_add',{p_slug:s,p_name:n,p_mobile:m,p_message:msg,p_visitor:vid,p_city:c||null,p_loc:l||null});return x.error?'err':x.data}});
   else window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},cj,{onAct:track});
   if(typeof sty.set==='string'&&/^[a-z0-9]{8,32}$/.test(sty.set)){
     var sr=await sb.from('studio_designs').select('slug,title,lbl:content_json->style->>setLabel,ord:created_at').eq('status','published').eq('product_type',t).eq('user_id',r.data.user_id).eq('content_json->style->>set',sty.set).order('created_at').limit(12);

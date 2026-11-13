@@ -544,20 +544,22 @@
     if (tel || wa) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
     if (typeof opts.onEnquiry === 'function') {
       var es = el('div', 'ws-sec'), ei = el('div', 'ws-in'); ei.appendChild(el('h2', '', T('पूछताछ भेजें'))); ei.appendChild(el('div', 'ws-bar'));
-      var en = el('input', 'sr-eq'), em = el('input', 'sr-eq'), ex = el('textarea', 'sr-eq'), eb = el('button', 'sr-save', T('📩 पूछताछ भेजें')), er = el('div', 'sr-eqm');
+      var en = el('input', 'sr-eq'), em = el('input', 'sr-eq'), ex = el('textarea', 'sr-eq'), eb = el('button', 'sr-save', T('📩 पूछताछ भेजें')), er = el('div', 'sr-eqm'), ec = el('input', 'sr-eq'), lb = el('button', 'sr-save', T('📍 मेरी लोकेशन जोड़ें')), locUrl = '';
+      ec.placeholder = T('आपका शहर / गाँव (ज़रूरी नहीं)'); ec.maxLength = 80; lb.type = 'button';
+      lb.onclick = function () { if (!navigator.geolocation) { er.textContent = T('इस फ़ोन में लोकेशन उपलब्ध नहीं है'); return; } lb.disabled = true; navigator.geolocation.getCurrentPosition(function (p) { lb.disabled = false; locUrl = 'https://www.google.com/maps?q=' + p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6); lb.textContent = T('✓ लोकेशन जुड़ गई'); }, function () { lb.disabled = false; er.textContent = T('लोकेशन नहीं मिली'); }, { timeout: 12000 }); };
       en.placeholder = T('आपका नाम'); en.maxLength = 60; em.placeholder = T('मोबाइल नंबर'); em.maxLength = 12; em.type = 'tel'; em.inputMode = 'numeric'; ex.placeholder = T('आप क्या जानना चाहते हैं?'); ex.maxLength = 500; ex.rows = 3; eb.type = 'button';
       eb.onclick = function () {
         var nm = en.value.trim(), mb = em.value.replace(/\D/g, '').slice(-10), ms = ex.value.trim();
         if (!nm || !/^[6-9][0-9]{9}$/.test(mb) || !ms) { er.textContent = T('नाम, सही मोबाइल नंबर और संदेश भरें।'); return; }
         eb.disabled = true; er.textContent = T('भेजा जा रहा है…');
-        Promise.resolve(opts.onEnquiry(nm, mb, ms)).then(function (r) {
+        Promise.resolve(opts.onEnquiry(nm, mb, ms, ec.value.trim(), locUrl)).then(function (r) {
           eb.disabled = false;
-          if (r === 'ok') { er.textContent = T('✓ आपकी पूछताछ भेज दी गई। जल्द जवाब मिलेगा।'); en.value = em.value = ex.value = ''; }
+          if (r === 'ok') { er.textContent = T('✓ आपकी पूछताछ भेज दी गई। जल्द जवाब मिलेगा।'); en.value = em.value = ex.value = ec.value = ''; locUrl = ''; lb.textContent = T('📍 मेरी लोकेशन जोड़ें'); }
           else if (r === 'limit') er.textContent = T('बहुत ज़्यादा संदेश भेजे गए, थोड़ी देर बाद कोशिश करें।');
           else er.textContent = T('अभी नहीं भेजा जा सका। दोबारा कोशिश करें।');
         }, function () { eb.disabled = false; er.textContent = T('अभी नहीं भेजा जा सका। दोबारा कोशिश करें।'); });
       };
-      [en, em, ex, eb, er].forEach(function (x) { ei.appendChild(x); }); es.appendChild(ei);
+      [en, em, ec, ex, lb, eb, er].forEach(function (x) { ei.appendChild(x); }); es.appendChild(ei);
       if (opts.demo) { root.appendChild(es); } else {
         /* frozen enquiry: a fixed button + fixed bottom sheet, always in the same place */
         var ac2 = getComputedStyle(root).getPropertyValue('--ac') || '#12307f';
