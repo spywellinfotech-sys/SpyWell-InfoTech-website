@@ -79,9 +79,11 @@ h2{font-size:29px;line-height:1.25;text-align:center;margin:0 0 8px;letter-spaci
 details{background:#fff;border:1px solid var(--l);border-radius:14px;margin:0 auto 10px;max-width:760px}summary{cursor:pointer;padding:14px 18px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px}summary::-webkit-details-marker{display:none}summary::after{content:"+";color:var(--r);font-size:22px;line-height:1}details[open] summary::after{content:"–"}details p{margin:0;padding:0 18px 16px;color:#444;font-size:15px}
 .fin{background:linear-gradient(135deg,var(--r),var(--rd));color:#fff;text-align:center;padding:54px 18px}.fin h2{color:#fff}.fin .sub{color:#ffe3e4}.fin .btn{background:#fff;color:var(--r);border-color:#fff}.fin .btn.o{background:transparent;color:#fff}
 footer{background:var(--k);color:#bbb;text-align:center;padding:26px 18px;font-size:14px}footer a{color:#fff}footer img{width:46px;height:46px;border-radius:50%;background:#fff}
+.lg-sel{border:1px solid var(--l);border-radius:20px;padding:6px 10px;font:600 13px inherit;font-family:inherit;background:#fff;color:var(--k);margin-left:auto;margin-right:8px;max-width:110px}[dir=rtl] .lg-sel{margin-left:8px;margin-right:auto}[dir=rtl] .ar{transform:scaleX(-1)}[dir=rtl] .fl{direction:rtl}
 a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #111;outline-offset:2px}
 </style></head><body>
 <header><div class="w"><a class="lg" href="#top"><img src="/dyname/logo.png" width="34" height="34" alt="DynaMe logo"><span>Dyna<b>Me</b></span></a>
+<select id="lg" aria-label="Language" class="lg-sel"></select>
 <button class="hb" id="hb" aria-label="Menu" aria-expanded="false">☰</button>
 <nav id="nv"><a href="#what">Features</a><a href="#card">Digital card</a><a href="#scan">Scan</a><a href="#faq">FAQ</a><a class="btn" style="padding:8px 18px;color:#fff" href="/studio/" data-t="nav_cta">Open app</a></nav></div></header>
 
@@ -148,9 +150,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #11
 <div class="ctr" style="margin-top:20px"><span class="bg b1">DynaMe</span><span class="bg b2">Scanned</span><span class="bg b3">Manually Added</span></div>
 <div class="note" style="text-align:center">Currently up to 30 scans per day.</div></div></section>
 
-<section id="dir"><div class="w"><h2>Discover Businesses <em>Around You.</em></h2><p class="sub">A city-based business directory, coming step by step.</p>
+<section id="dir"><div class="w"><h2>Discover Businesses <em>Around You.</em></h2><p class="sub">A city-based business directory for your area.</p>
 <div class="dir"><div class="card"><b>🔎 Search</b>By name, business or category</div><div class="card"><b>📇 Explore</b>Cards and mini websites</div><div class="card"><b>🏙 Your city</b>Businesses near you</div><div class="card"><b>💾 Save</b>Useful business contacts</div></div>
-<div class="note" style="text-align:center"><b>Businesses appear in the directory only after giving consent.</b><br>The Business Directory is being rolled out gradually and is not yet open to everyone.</div></div></section>
+<div class="note" style="text-align:center"><b>Businesses appear in the directory only after giving consent.</b><br>You only see businesses from your own city.</div></div></section>
 
 <section class="alt"><div class="w"><h2>Simple to Use. <em>Easy to Share.</em></h2><p class="sub">From sign-up to sharing in a few minutes.</p>
 <div class="steps"><div class="sp"><i>1</i><b>Create your profile</b><small>Add your basic details</small></div><div class="sp"><i>2</i><b>Build your digital card</b><small>Services, links, photo</small></div><div class="sp"><i>3</i><b>Share your link or QR</b><small>WhatsApp, SMS and more</small></div><div class="sp"><i>4</i><b>Stay connected</b><small>Insights and enquiries</small></div></div></div></section>
@@ -167,7 +169,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #11
 <details><summary>Can I create wedding invitation cards?</summary><p>Yes. You can create digital invitation cards for weddings, engagements, birthdays, anniversaries, family functions and other celebrations.</p></details>
 <details><summary>Can I save someone else's business card?</summary><p>Yes. Open a DynaMe card and tap Save, add a contact by hand, or scan a physical card.</p></details>
 <details><summary>What is the AI Card Scanner?</summary><p>You photograph a physical visiting card and AI fills in the details it can read. You review and save. Currently up to 30 scans per day.</p></details>
-<details><summary>Is my card automatically visible in the Business Directory?</summary><p>No. A card is listed only after you give consent. The directory is being rolled out gradually and is not yet open to everyone.</p></details>
+<details><summary>Is my card automatically visible in the Business Directory?</summary><p>No. A card is listed only after you give consent.</p></details>
 <details><summary>Does DynaMe support Android?</summary><p>Yes, DynaMe has an Android app (package com.spywell.vicard). The web version also works in your browser at spywell.in/studio.</p></details></div></section>
 
 <div class="fin"><div class="w"><h2>Make Your Identity More Than Just a Card.</h2><p class="sub">Create your digital identity and connect with people in a smarter way.</p>
@@ -183,4 +185,5 @@ var t=document.getElementById('trk');function mv(d){t.scrollBy({left:d*216,behav
 document.getElementById('pv').onclick=function(){mv(-1)};document.getElementById('nx').onclick=function(){mv(1)};
 document.addEventListener('click',function(e){var a=e.target.closest('[data-t]');if(a&&window.gtag)try{gtag('event',a.getAttribute('data-t'))}catch(_){}});
 })();
-</script></body></html>
+</script>
+<script src="/dyname/i18n.js" defer></script></body></html>
