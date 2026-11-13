@@ -137,7 +137,10 @@
     function sa(label, href, act) { g.appendChild(actA(link('', label, href), act)); }
     function sb(label, act, fn) { var a = link('', label, '#'); a.onclick = function (ev) { ev.preventDefault(); try { fn(a); } catch (x) { } }; a.setAttribute('role', 'button'); g.appendChild(actA(a, act)); }
     sa('💬 WhatsApp', 'https://wa.me/?text=' + e(msg), 'share-wa');
-    if (navigator.share) sb(T('📤 और विकल्प'), 'share-native', function () { navigator.share({ title: nm, text: nm, url: url }); });
+    var NV = null; try { NV = window.ViNative || (window.parent && window.parent !== window && window.parent.ViNative) || null; } catch (x) { }
+    if (NV && NV.openWa) sb('💼 WhatsApp Business', 'share-wab', function () { if (!NV.openWa('', msg, true)) NV.shareText(msg); });
+    if (NV && NV.shareText) sb(T('📤 और विकल्प'), 'share-native', function () { NV.shareText(msg); });
+    else if (navigator.share) sb(T('📤 और विकल्प'), 'share-native', function () { navigator.share({ title: nm, text: nm, url: url }); });
     sa('✈️ Telegram', 'https://t.me/share/url?url=' + e(url) + '&text=' + e(nm), 'share-tg');
     sa('✉️ SMS', 'sms:?&body=' + e(msg), 'share-sms');
     sa('📧 ' + T('ईमेल'), 'mailto:?subject=' + e(nm) + '&body=' + e(msg), 'share-mail');
