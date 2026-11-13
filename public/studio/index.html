@@ -515,11 +515,30 @@ async function myHome(){
   var x=vis.filter(function(v){return v.status==='published'})[0]||vis[0];box.hidden=false;box.textContent='';
   box.appendChild(mk('b','','🪪 मेरा कार्ड'));
   var hd=mk('div','k',(x.title||'बिना नाम')+' · '+STN[x.status]);hd.style.margin='4px 0 8px';box.appendChild(hd);
-  if(x.status==='published'&&x.slug){var fw=mk('button','');fw.type='button';fw.style.cssText='display:flex;align-items:center;gap:12px;width:100%;margin:0;text-align:left;background:#fff1f0;color:#7a0a10;border:1px solid var(--line);border-radius:14px;padding:12px;min-height:0';
-    var av=mk('div','',((x.title||'V').trim()[0]||'V').toUpperCase());av.style.cssText='width:48px;height:48px;border-radius:50%;background:#d4141c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;flex:none';
-    var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';var t1=mk('b','',x.title||'मेरा कार्ड');t1.style.cssText='display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';tx.appendChild(t1);tx.appendChild(mk('span','k','कार्ड और मिनी वेबसाइट देखने के लिए दबाएँ'));
-    fw.appendChild(av);fw.appendChild(tx);fw.appendChild(mk('span','','›')).style.cssText='font-size:26px;color:#d4141c';
-    fw.onclick=function(){openVw(x.slug,'visiting',x.title)};box.appendChild(fw)}
+  (function(){var pub=x.status==='published'&&!!x.slug,nm=(x.title||'मेरा कार्ड');
+    var hero=mk('div','');hero.style.cssText='background:linear-gradient(135deg,#7a0a10,#d4141c);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(212,20,28,.28)';
+    var row=mk('div','');row.style.cssText='display:flex;gap:12px;align-items:center';
+    var cd=mk('div','');cd.style.cssText='flex:none;width:118px;background:#fff;border-radius:12px;padding:10px;transform:rotate(-4deg);box-shadow:0 4px 12px rgba(0,0,0,.3)';
+    var ar=mk('div','');ar.style.cssText='display:flex;gap:6px;align-items:center';
+    var av=mk('div','',(nm.trim()[0]||'V').toUpperCase());av.style.cssText='width:28px;height:28px;border-radius:50%;background:#d4141c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:none';
+    var l1=mk('div','');l1.style.cssText='flex:1;height:7px;border-radius:4px;background:#e9d5d3';ar.appendChild(av);ar.appendChild(l1);cd.appendChild(ar);
+    [['90%','#f1e3e1'],['65%','#f1e3e1']].forEach(function(p){var l=mk('div','');l.style.cssText='height:6px;border-radius:3px;margin-top:7px;width:'+p[0]+';background:'+p[1];cd.appendChild(l)});
+    var qq=mk('div','','▦');qq.style.cssText='margin-top:8px;font-size:26px;line-height:1;color:#7a0a10;text-align:right';cd.appendChild(qq);
+    var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';
+    var t1=mk('b','',nm);t1.style.cssText='display:block;font-size:18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';tx.appendChild(t1);
+    var t2=mk('div','',pub?'आपका कार्ड लाइव है ✅':'कार्ड अभी प्रकाशित नहीं है');t2.style.cssText='font-size:13px;opacity:.92;margin-top:3px';tx.appendChild(t2);
+    row.appendChild(cd);row.appendChild(tx);hero.appendChild(row);
+    var go=mk('button','',pub?'👁️ मेरा कार्ड देखें':'🚀 कार्ड प्रकाशित करें');go.type='button';
+    go.style.cssText='width:100%;margin:14px 0 0;background:#ffc21a;color:#5a0509;font-size:19px;font-weight:800;border:0;border-radius:14px;padding:15px 10px;box-shadow:0 4px 0 #c98d00';
+    go.onclick=function(){if(pub)openVw(x.slug,'visiting',x.title);else location.href='/studio/editor/?id='+x.id+'&tab=pub'};hero.appendChild(go);
+    if(pub){var sb2=mk('div','','कार्ड + मिनी वेबसाइट दोनों यहीं खुलेंगे · अंदर स्वाइप करें');sb2.style.cssText='font-size:12px;text-align:center;margin-top:7px;opacity:.9';hero.appendChild(sb2)}
+    var st=mk('div','');st.style.cssText='display:flex;align-items:center;gap:4px;margin-top:12px';
+    [['1','बनाया','✓'],['2','प्रकाशित',pub?'✓':'!'],['3','शेयर','📤']].forEach(function(p,i){
+      if(i)st.appendChild(mk('span','','›')).style.cssText='color:#fff;opacity:.7;font-size:18px';
+      var c=mk('div','');var on=(i===0)||(i===1&&pub)||(i===2&&pub);
+      c.style.cssText='flex:1;text-align:center;border-radius:12px;padding:7px 2px;font-size:12px;font-weight:700;background:'+(on?'#fff':'rgba(255,255,255,.18)')+';color:'+(on?'#7a0a10':'#fff');
+      c.textContent=p[2]+' '+p[1];st.appendChild(c)});
+    hero.appendChild(st);box.appendChild(hero)})();
   var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:10px';
   var e1=mk('a','','✏️ कार्ड एडिट');e1.href='/studio/editor/?id='+x.id;var e2=mk('a','','🌐 वेबसाइट एडिट');e2.href='/studio/editor/?id='+x.id+'&tab=info';
   [e1,e2].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#d4141c;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px';rw.appendChild(a)});box.appendChild(rw);
