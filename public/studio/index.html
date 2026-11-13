@@ -117,6 +117,7 @@ button{min-height:48px;border-radius:12px}
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-enq" hidden></div>
 <div class="card" id="c-my" hidden></div>
+<div class="card" id="c-inv" hidden></div>
 <div class="card" id="c-addr"></div>
 
 <div class="card" id="c-new">
@@ -272,7 +273,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=d.data||[];drawList();loadSubs();myHome();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){var t=document.querySelector('[data-new=visiting]');if(t)t.click()};
+  LIST=d.data||[];drawList();loadSubs();myHome();invHome();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){var t=document.querySelector('[data-new=visiting]');if(t)t.click()};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -444,6 +445,18 @@ function drawIns(box,st,dd){box.textContent='';
 function statRow(title,u){var w=mk('div','');w.style.marginTop='10px';var t=mk('div','k',title);t.style.fontWeight='600';w.appendChild(t);
   var r=mk('div','');r.style.cssText='display:flex;gap:8px;margin-top:4px';var c=u.clicks||{},act=(c.call||0)+(c.whatsapp||0);
   r.appendChild(mtile(u.total||0,'कुल व्यू'));r.appendChild(mtile(u.today||0,'आज'));r.appendChild(mtile(act,'कॉल / WhatsApp'));w.appendChild(r);return w}
+async function invHome(){
+  var box=$('c-inv');if(!box)return;var iv=LIST.filter(function(x){return x.product_type==='invitation'&&x.status==='published'});
+  if(!iv.length){box.hidden=true;return}
+  box.hidden=false;box.textContent='';box.appendChild(mk('b','','💌 मेरे इनविटेशन कार्ड'));
+  for(var i=0;i<iv.length;i++){(function(x){var w=mk('div','');w.style.cssText='margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)';
+    var h=mk('div','',x.title||'इनविटेशन');h.style.fontWeight='700';w.appendChild(h);box.appendChild(w);
+    sb.rpc('studio_my_stats',{p_design:x.id}).then(function(st){var d=(st&&st.data)||{};w.appendChild(statRow('📊 इनसाइट',d.card||{}));
+      var vb=mk('button','alt','📋 View details');vb.type='button';vb.style.cssText='width:100%;margin-top:8px';
+      var det=mk('div','');det.hidden=true;det.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#f7f9ff';var ld=false;
+      vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
+        if(!det.hidden&&!ld){ld=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,{card:d.card,leads:d.leads},dd.data||{})}};
+      w.appendChild(vb);w.appendChild(det)})})(iv[i])}}
 async function myHome(){
   var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
   if(!vis.length){box.hidden=true;return}
@@ -523,7 +536,7 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-addr'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-inv'),'home'],[$('c-addr'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','saved','me'].indexOf(t)<0)t='home';
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
