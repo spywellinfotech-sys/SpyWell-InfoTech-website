@@ -171,6 +171,7 @@
     c = c && typeof c === 'object' ? c : {};
     var out = { fields: {}, events: [], services: [], highlights: [], style: {}, images: {} }, f = c.fields && typeof c.fields === 'object' ? c.fields : {};
     (FIELDS[type] || []).forEach(function (d) { out.fields[d[0]] = txt(f[d[0]], d[3]); });
+    if (type === 'visiting') out.fields.miniweb = txt(f.miniweb, 150);
     if (type === 'invitation' && Array.isArray(c.events)) c.events.slice(0, MAX_EVENTS).forEach(function (e) {
       e = e && typeof e === 'object' ? e : {}; out.events.push({ title: txt(e.title, 60), date: V.date(e.date), time: V.time(e.time), place: txt(e.place, 120) });
     });
@@ -325,7 +326,7 @@
       if (f.name) { x.font = '700 64px ' + FF; x.fillText(String(f.name).slice(0, 40), W / 2, ty); ty += 62; }
       if (f.designation) { x.fillStyle = '#5a6a8c'; x.font = '400 38px ' + FF; x.fillText(String(f.designation).slice(0, 50), W / 2, ty); ty += 30; }
       ty += 40; x.textAlign = 'left'; x.fillStyle = '#14203d';
-      var rows = []; var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website);
+      var rows = []; var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.miniweb) || V.url(f.website);
       if (tel) rows.push(['📞', '+91 ' + tel.slice(0, 5) + ' ' + tel.slice(5)]); if (wa && wa !== tel) rows.push(['💬', 'WhatsApp +91 ' + wa]);
       if (em) rows.push(['✉️', em]); if (web) rows.push(['🌐', String(web).replace(/^https?:\/\//, '').slice(0, 40)]);
       if (f.address) wrapText(x, f.address, 620, '400 36px ' + FF, 3).forEach(function (l, i) { rows.push([i ? '' : '📍', l]); });
@@ -361,12 +362,12 @@
     if (f.name) bd.appendChild(el('div', 'sr-nm', f.name));
     if (f.designation) bd.appendChild(el('div', 'sr-des', f.designation));
     if (f.about) bd.appendChild(el('div', 'sr-msg', f.about));
-    var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), mini = V.url(f.miniweb), act = el('div', 'sr-act');
+    var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), mini = V.url(f.miniweb), act = el('div', 'sr-act'); if (mini) web = '';
     if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
     if (wa) act.appendChild(actA(link('', 'WhatsApp', 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('💬 मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (em) act.appendChild(actA(link('', T('ईमेल'), 'mailto:' + em), 'email'));
-    if (web) act.appendChild(actA(link('', T('वेबसाइट'), web), 'website'));
+    if (mini) act.appendChild(actA(link('', T('🌐 मिनी वेबसाइट'), mini), 'miniweb')); else if (web) act.appendChild(actA(link('', T('वेबसाइट'), web), 'website'));
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('\uD83D\uDCC7 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; act.appendChild(sv0); }
     act.appendChild(saveCardBtn(root, f));
     if (act.children.length) bd.appendChild(act);
