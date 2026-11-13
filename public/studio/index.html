@@ -195,8 +195,12 @@ var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbB
 var $=function(i){return document.getElementById(i)};
 var VIEWS=['load','login','reg','forgot','newpw','dash'];
 function show(v){VIEWS.forEach(function(x){$('v-'+x).hidden=x!==v});$('out').hidden=v!=='dash';var tb=$('tabbar');if(tb)tb.hidden=v!=='dash'}
-window.addEventListener('pageshow',function(){var tb=$('tabbar'),dv=$('v-dash');if(tb&&dv)tb.hidden=dv.hidden});
-setInterval(function(){var tb=$('tabbar'),dv=$('v-dash');if(tb&&dv&&!dv.hidden&&tb.hidden)tb.hidden=false},1000);
+var HEALING=0,HTRY=0;
+function heal(){try{var dv=$('v-dash');if(!dv||dv.hidden)return;var tb=$('tabbar');if(tb&&tb.hidden)tb.hidden=false;
+  if(!document.querySelector('#v-dash .tab-h')&&typeof setTab==='function'){setTab(location.hash.slice(1)||'home',true)}
+  if((!ME||!$('d-name').textContent)&&!HEALING&&HTRY<3&&sb){HEALING=1;HTRY++;sb.auth.getSession().then(function(r){HEALING=0;if(r.data&&r.data.session)dash(r.data.session.user)},function(){HEALING=0})}}catch(e){HEALING=0}}
+window.addEventListener('pageshow',heal);document.addEventListener('visibilitychange',function(){if(!document.hidden)heal()});
+setInterval(heal,1200);
 if(!window.supabase){$('v-load').textContent='लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।';return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
 var HERE=location.origin+'/studio/';
