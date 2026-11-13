@@ -529,7 +529,7 @@ function drawAddr(edit){
     var big=mk('div','','🏠 HOME ADDRESS');big.style.cssText='background:#f59a1a;color:#14203d;font-weight:800;font-size:20px;text-align:center;border-radius:12px;padding:10px;margin-top:12px';box.appendChild(big);
     var ad=mk('div','',[h.addr,h.land?'('+h.land+')':'',[h.city,h.state].filter(Boolean).join(', '),h.pin].filter(Boolean).join(', '));ad.style.cssText='margin-top:10px;font-size:17px';box.appendChild(ad);
     var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:12px';
-    var s1=mk('a','','🖼 कार्ड भेजें');s1.href='/studio/address/?go=share';s1.style.cssText='flex:1.3;text-align:center;background:#12307f;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600';
+    var s1=mk('a','','🖼 कार्ड भेजें');s1.href='/studio/address/?go=share';s1.onclick=function(e){if(!window.ViNative)return;e.preventDefault();var old=document.getElementById('ad-fr');if(old)old.remove();var fr=document.createElement('iframe');fr.id='ad-fr';fr.src='/studio/address/?go=share';fr.style.cssText='position:fixed;left:-9999px;top:0;width:390px;height:700px;border:0';document.body.appendChild(fr);setTimeout(function(){fr.remove()},30000)};s1.style.cssText='flex:1.3;text-align:center;background:#12307f;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600';
     var s2=mk('button','alt','✏️ बदलें');s2.type='button';s2.style.cssText='flex:1;margin:0';s2.onclick=function(){drawAddr(true)};
     rw.appendChild(s1);rw.appendChild(s2);box.appendChild(rw);return}
   var f=mk('div','');f.style.marginTop='10px';
