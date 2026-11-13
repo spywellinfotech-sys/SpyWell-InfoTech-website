@@ -56,7 +56,6 @@ button{min-height:48px;border-radius:12px}
 .qa button i{font-style:normal;font-size:26px}.qa button.pri{background:var(--wine);color:#fff;border-color:var(--wine)}
 .badge{background:var(--wine)}
 
-#v-prof>*:not(#out){display:none!important}
 </style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script>(function(){try{if(!window.Capacitor&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){
   document.addEventListener('DOMContentLoaded',function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#06133f;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
   var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 Vi-card ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#06133f;padding:8px 14px;border-radius:8px;text-decoration:none';
@@ -177,12 +176,12 @@ button{min-height:48px;border-radius:12px}
 <div style="display:flex;gap:8px;margin-top:8px"><button type="button" id="vo-say" style="flex:1">▶ अभी सुनें</button><button type="button" id="vo-stop" style="flex:1">⏹ रोकें</button></div>
 <div class="k" id="vo-msg"></div></div>
 </div>
-<form class="card" id="v-prof" style="background:none;border:0;box-shadow:none;padding:0">
-<b>मेरी प्रोफ़ाइल</b>
-<label>नाम</label><input id="pf-n" maxlength="80" required>
-<label>मोबाइल नंबर</label><input id="pf-m" inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}">
+<form class="card" id="v-prof">
+<b>👤 मेरी प्रोफ़ाइल</b>
+<div class="k" style="margin:4px 0 8px">यहाँ बदलने पर आपका विज़िटिंग कार्ड भी बदल जाएगा, और कार्ड एडिट करने पर यह प्रोफ़ाइल भी।</div>
+<div id="pf-fields"></div>
 <div class="err" id="pf-err"></div><div class="ok" id="pf-ok"></div>
-<button type="submit">सेव करें</button>
+<button type="submit" id="pf-save">सेव करें</button>
 <button type="button" id="out" hidden style="margin-top:14px;width:100%;background:#fff;color:#b3261e;border:1.5px solid #b3261e">🚪 लॉगआउट</button>
 </form>
 </div>
@@ -322,7 +321,7 @@ function pick(type){
     var b=mk('button','mini');b.type='button';var box=mk('div','box'),inn=mk('div','in2');R.render(inn,type,t.config,{},{demo:true});box.appendChild(inn);b.appendChild(box);
     var cap=mk('div','cap',t.name);cap.appendChild(mk('span','',(t.config&&t.config.style)||''));b.appendChild(cap);
     b.onclick=async function(){b.disabled=true;
-      var r=await sb.from('studio_designs').insert({user_id:ME.id,template_id:t.id,product_type:type,title:type==='invitation'?'नया '+R.OCCASIONS[OCCSEL].name+' कार्ड':'नया विज़िटिंग कार्ड',content_json:{}}).select('id').single();
+      var r=await sb.from('studio_designs').insert({user_id:ME.id,template_id:t.id,product_type:type,title:type==='invitation'?'नया '+R.OCCASIONS[OCCSEL].name+' कार्ड':'नया विज़िटिंग कार्ड',content_json:(type==='visiting'&&PFV&&(PFV.name||PFV.mobile))?{fields:PFV}:{}}).select('id').single();
       if(r.error||!r.data){b.disabled=false;$('pk-err').textContent='नया डिज़ाइन नहीं बन पाया। दोबारा कोशिश करें।';return}
       location.href='/studio/editor/?id='+r.data.id};
     g.appendChild(b)});
@@ -476,13 +475,14 @@ async function dash(user){
     await sb.from('studio_profiles').insert({id:user.id,full_name:prof.full_name,phone:prof.phone});
   }
   $('d-name').textContent=prof.full_name||'ग्राहक';
-  $('pf-n').value=prof.full_name||'';$('pf-m').value=prof.phone||'';
+  PFP=prof;
   var a=await sb.rpc('studio_is_admin');
   $('d-admin').hidden=true;
   $('d-list').textContent='लोड हो रहा है…';drawFilters();
   var t=await sb.from('studio_templates').select('id,product_type,name,config,sort').eq('active',true).order('sort',{ascending:true});
   TPL=t.data||[];
   await loadList();
+  pfLoad();
   loadSaved();
 }
 
@@ -508,13 +508,30 @@ $('v-newpw').onsubmit=async function(e){e.preventDefault();$('np-err').textConte
   busy(this,false);
   if(r.error){$('np-err').textContent=msg(r.error);return}
   recovering=false;var s=await sb.auth.getSession();if(s.data.session)dash(s.data.session.user);else show('login')};
+var PFP=null,PFD=null,PFV=null;
+var PF=[['name','नाम','text',60],['business','व्यवसाय / दुकान का नाम','text',80],['designation','पद','text',60],['mobile','मोबाइल नंबर','tel',10],['whatsapp','WhatsApp नंबर','tel',10],['email','ईमेल','email',100],['address','पता','area',200],['city','शहर','text',40],['state','राज्य','text',40],['pin','पिन कोड','tel',6],['website','वेबसाइट','url',150]];
+function pfPrimary(){var vis=LIST.filter(function(x){return x.product_type==='visiting'});return vis.filter(function(v){return v.status==='published'})[0]||vis[0]||null}
+async function pfLoad(){
+  var x=pfPrimary(),f={},cj=null;PFD=null;
+  if(x){var r=await sb.from('studio_designs').select('id,content_json').eq('id',x.id).maybeSingle();if(r.data){cj=r.data.content_json||{};f=cj.fields||{};PFD={id:x.id,cj:cj}}}
+  if(!PFD){var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle();var pd=p.data||{};f=Object.assign({},pd.card_json||{});if(!f.name)f.name=pd.full_name||'';if(!f.mobile)f.mobile=pd.phone||''}
+  PFV=f;var box=$('pf-fields');box.textContent='';
+  PF.forEach(function(d){var l=mk('label','',d[1]);var i=d[2]==='area'?document.createElement('textarea'):document.createElement('input');if(d[2]==='area')i.rows=2;
+    i.id='pf-'+d[0];i.maxLength=d[3];if(d[2]==='tel')i.setAttribute('inputmode','numeric');if(d[2]==='email')i.type='email';if(d[2]==='url')i.setAttribute('inputmode','url');i.value=f[d[0]]||'';box.appendChild(l);box.appendChild(i)});
+  var nm=(f.name||'').trim();if(nm)$('d-name').textContent=nm}
 $('v-prof').onsubmit=async function(e){e.preventDefault();$('pf-err').textContent='';$('pf-ok').textContent='';busy(this,true);
   var u=(await sb.auth.getUser()).data.user;
   if(!u){busy(this,false);show('login');return}
-  var n=$('pf-n').value.trim(),m=$('pf-m').value.trim()||null;
-  var r=await sb.from('studio_profiles').update({full_name:n,phone:m}).eq('id',u.id);
-  busy(this,false);
-  if(r.error)$('pf-err').textContent='सेव नहीं हुआ';else{$('pf-ok').textContent='सेव हो गया';$('d-name').textContent=n}};
+  var f={};PF.forEach(function(d){var v=($('pf-'+d[0])||{value:''}).value.trim();if(d[2]==='tel')v=v.replace(/\D/g,'').replace(/^91(?=\d{10}$)/,'');f[d[0]]=v});
+  var bad=R.invalid('visiting',{fields:f});
+  if(bad.length){busy(this,false);$('pf-err').textContent='ये सही नहीं हैं: '+bad.map(function(k){var q=PF.filter(function(d){return d[0]===k})[0];return q?q[1]:k}).join(', ');return}
+  var r=await sb.from('studio_profiles').update({full_name:f.name||null,phone:f.mobile||null,card_json:f}).eq('id',u.id);
+  if(r.error){busy(this,false);$('pf-err').textContent='सेव नहीं हुआ';return}
+  if(PFD){var cj=PFD.cj||{};cj.fields=Object.assign({},cj.fields||{},f);
+    var r2=await sb.from('studio_designs').update({content_json:cj,title:R.title('visiting',cj)}).eq('id',PFD.id);
+    if(r2.error){busy(this,false);$('pf-err').textContent='प्रोफ़ाइल सेव हुई, पर कार्ड अपडेट नहीं हुआ';return}
+    PFD.cj=cj}
+  PFV=f;busy(this,false);$('pf-ok').textContent=PFD?'सेव हो गया — आपका कार्ड भी अपडेट हो गया':'सेव हो गया';$('d-name').textContent=f.name||'ग्राहक'};
 $('out').onclick=async function(){await sb.auth.signOut()};
 
 sb.auth.onAuthStateChange(function(ev,session){
