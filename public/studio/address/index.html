@@ -28,10 +28,13 @@ button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;backg
 <label>गूगल मैप लोकेशन (खाली छोड़ सकते हैं)</label><input id="a-map" inputmode="url" maxlength="300" placeholder="मैप लिंक या नीचे बटन दबाएँ">
 <button type="button" class="alt" id="a-loc">📍 मेरी अभी की लोकेशन जोड़ें</button>
 <div class="e" id="a-err"></div>
+<button type="button" id="b-store">💾 घर का पता सेव करें</button>
+<div class="ok" id="a-saved"></div>
 </div>
 <div class="card" id="outc" hidden>
 <img id="pv" alt="Address card">
-<button type="button" id="b-share">🖼 कार्ड फ़ोटो शेयर करें</button>
+<button type="button" id="b-save">⬇ फ़ोटो गैलरी में सेव करें</button>
+<button type="button" class="alt" id="b-share">🖼 कार्ड फ़ोटो शेयर करें</button>
 <button type="button" class="wa" id="b-wa">💬 WhatsApp पर पता लिखकर भेजें</button>
 <button type="button" class="alt" id="b-copy">📋 पता कॉपी करें</button>
 <div class="ok" id="a-ok"></div>
@@ -75,7 +78,10 @@ function draw(){
   try{localStorage.setItem('vc_addr',JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
   if(window.__saveHome)window.__saveHome();
   return true}
-function deliver(b,nm){
+function toB64(b,cb){var r=new FileReader();r.onload=function(){cb(String(r.result).split(',')[1])};r.readAsDataURL(b)}
+function nativeDo(b,nm,mode,cb){var N=window.ViNative;if(!N){cb(false);return}
+  toB64(b,function(d){try{var u=N.save(d,nm+'-'+Date.now());if(!u){cb(false);return}if(mode==='share')N.share(u);cb(true,u)}catch(e){cb(false)}})}
+function deliver(b,nm,mode){
   var C=window.Capacitor,P=C&&C.Plugins;
   function overlay(){var u=URL.createObjectURL(b),ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px';
     var im=document.createElement('img');im.src=u;im.style.cssText='max-width:100%;max-height:70vh;border-radius:10px;background:#fff';var t=document.createElement('div');t.style.cssText='color:#fff;text-align:center;font-size:14px';t.textContent='फ़ोटो को दबाकर रखें और "इमेज सेव करें" चुनें।';
@@ -83,7 +89,17 @@ function deliver(b,nm){
   if(P&&P.Filesystem&&P.Share){var rd=new FileReader();rd.onload=function(){P.Filesystem.writeFile({path:nm+'.png',data:String(rd.result).split(',')[1],directory:'CACHE'}).then(function(r){return P.Share.share({title:'Address Card',files:[r.uri]})}).catch(function(e){if(!(e&&/cancel/i.test(String(e.message||e))))overlay()})};rd.readAsDataURL(b);return}
   try{var f=new File([b],nm+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],title:'Address Card'}).catch(function(){});return}}catch(e){}
   overlay()}
-$('b-share').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(b)deliver(b,'address-card-'+(mob()||'vicard'))},'image/png')};
+$('b-store').onclick=function(){var e=$('a-err'),m=$('a-saved');e.textContent='';m.textContent='';
+  if(!val('addr')){e.textContent='पहले घर का पता लिखें';return}
+  if(val('mob')&&mob().length!==10){e.textContent='10 अंक का सही मोबाइल नंबर डालें';return}
+  if(val('pin')&&!/^[0-9]{6}$/.test(val('pin'))){e.textContent='पिन कोड 6 अंकों का होना चाहिए';return}
+  var b=$('b-store');b.disabled=true;b.textContent='सेव हो रहा है…';
+  Promise.resolve(window.__storeNow&&window.__storeNow()).then(function(r){b.disabled=false;b.textContent='💾 घर का पता सेव करें';
+    if(r==='ok')m.textContent='✓ घर का पता सेव हो गया';else if(r==='local')m.textContent='✓ इस फ़ोन में सेव हो गया (लॉगिन करने पर आपके खाते में भी रहेगा)';else e.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।'})};
+$('b-share').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','share',function(ok){if(ok){$('a-ok').textContent='✓ शेयर मेन्यू खुल गया';return}deliver(b,'address-card-'+(mob()||'vicard'))})},'image/png')};
+$('b-save').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','save',function(ok){if(ok){$('a-ok').textContent='✓ फ़ोटो गैलरी में सेव हो गई (Pictures/Vi-card)';return}
+  /* not inside the app: try download, then fallback to long-press overlay */
+  try{var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='address-card.png';document.body.appendChild(a);a.click();a.remove();$('a-ok').textContent='फ़ोटो डाउनलोड हो रही है। न हो तो "शेयर करें" दबाएँ।'}catch(e){deliver(b,'address-card')}})},'image/png')};
 $('b-wa').onclick=function(){if(!draw())return;location.href='https://wa.me/?text='+encodeURIComponent(text())};
 $('b-copy').onclick=function(){if(!draw())return;var t=text(),ok=function(){$('a-ok').textContent='✓ पता कॉपी हो गया'};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){window.prompt('कॉपी करें:',t)});else window.prompt('कॉपी करें:',t)};
@@ -101,6 +117,9 @@ F.forEach(function(k){$('a-'+k).oninput=function(){draw()}});
       /* home address comes from the saved home address only (never the business address) */
       ['addr','land','city','state','pin','map'].forEach(function(k){if(home[k]&&!d[k])d[k]=home[k]});
       if(!d.name)d.name=home.name||pcj.name||pd.full_name||'';if(!d.mob)d.mob=home.mob||pcj.mobile||pd.phone||''}}}catch(e){}
+  window.__storeNow=function(){var h=F.reduce(function(o,k){o[k]=val(k);return o},{});try{localStorage.setItem('vc_addr',JSON.stringify(h))}catch(e){}
+    if(!sb||!u)return Promise.resolve('local');var cj=Object.assign({},pcj,{home:h});pcj=cj;
+    return sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(r){return r&&r.error?'err':'ok'},function(){return 'err'})};
   var tmr=null;window.__saveHome=function(){if(!sb||!u)return;clearTimeout(tmr);tmr=setTimeout(function(){var h=F.reduce(function(o,k){o[k]=val(k);return o},{});var cj=Object.assign({},pcj,{home:h});pcj=cj;try{sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(){})}catch(e){}},1200)};
   F.forEach(function(k){if(d[k])$('a-'+k).value=d[k]});draw()})();
 })();

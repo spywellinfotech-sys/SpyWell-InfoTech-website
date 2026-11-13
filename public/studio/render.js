@@ -277,6 +277,11 @@
     function viaAnchor() {
       try { var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nm + '.png'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); } catch (e) { fallbackOverlay(); }
     }
+    if (window.ViNative) {
+      var rd0 = new FileReader();
+      rd0.onload = function () { try { var u0 = window.ViNative.save(String(rd0.result).split(',')[1], nm + '-' + Date.now()); if (u0) { window.ViNative.share(u0); done(); return; } } catch (e) { } fallbackOverlay(); done(); };
+      rd0.onerror = function () { fallbackOverlay(); done(); }; rd0.readAsDataURL(blob); return;
+    }
     var C = window.Capacitor, P = C && C.Plugins;
     if (P && P.Filesystem && P.Share) {
       var rd = new FileReader();
