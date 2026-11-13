@@ -194,7 +194,9 @@ button{min-height:48px;border-radius:12px}
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 var $=function(i){return document.getElementById(i)};
 var VIEWS=['load','login','reg','forgot','newpw','dash'];
-function show(v){VIEWS.forEach(function(x){$('v-'+x).hidden=x!==v});$('out').hidden=v!=='dash'}
+function show(v){VIEWS.forEach(function(x){$('v-'+x).hidden=x!==v});$('out').hidden=v!=='dash';var tb=$('tabbar');if(tb)tb.hidden=v!=='dash'}
+window.addEventListener('pageshow',function(){var tb=$('tabbar'),dv=$('v-dash');if(tb&&dv)tb.hidden=dv.hidden});
+setInterval(function(){var tb=$('tabbar'),dv=$('v-dash');if(tb&&dv&&!dv.hidden&&tb.hidden)tb.hidden=false},1000);
 if(!window.supabase){$('v-load').textContent='लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।';return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
 var HERE=location.origin+'/studio/';
