@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Address Card | AnantID</title>
+<title>Address Card | DynID</title>
 <link rel="icon" href="/studio/vicard-icon.png">
 <style>
 :root{--wine:#12307f;--org:#f59a1a;--ink:#14203d;--bg:#eef3ff;--line:#d5def5;--mut:#5a6a8c}
@@ -78,7 +78,7 @@ function draw(){
   x.font='400 42px '+FF;var ay=y;addrL.forEach(function(l,i){x.fillText(l,90,y);y+=60});
   var mu=mapUrl();
   if(mu){try{var qc=document.createElement('canvas');window.StudioQR.draw(qc,unescape(encodeURIComponent(mu)),260);x.fillStyle='#fff';x.fillRect(W-340,H-400,260,260);x.drawImage(qc,W-340,H-400,260,260);x.fillStyle='#5a6a8c';x.font='400 28px '+FF;x.textAlign='center';x.fillText('स्कैन करें: लोकेशन',W-210,H-100);x.textAlign='left'}catch(e){}}
-  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('AnantID · Address Card',90,H-60);
+  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('DynID · Address Card',90,H-60);
   try{$('pv').src=cv.toDataURL('image/png')}catch(e){}
   cv.toBlob(function(b){blob=b},'image/png');$('outc').hidden=false;
   try{localStorage.setItem('vc_addr',JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
@@ -103,7 +103,7 @@ $('b-store').onclick=function(){var e=$('a-err'),m=$('a-saved');e.textContent=''
   Promise.resolve(window.__storeNow&&window.__storeNow()).then(function(r){b.disabled=false;b.textContent='💾 घर का पता सेव करें';
     if(r==='ok')m.textContent='✓ घर का पता सेव हो गया';else if(r==='local')m.textContent='✓ इस फ़ोन में सेव हो गया (लॉगिन करने पर आपके खाते में भी रहेगा)';else e.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।'})};
 $('b-share').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','share',function(ok){if(ok){$('a-ok').textContent='✓ शेयर मेन्यू खुल गया';return}deliver(b,'address-card-'+(mob()||'vicard'))})},'image/png')};
-$('b-save').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','save',function(ok){if(ok){$('a-ok').textContent='✓ फ़ोटो गैलरी में सेव हो गई (Pictures/AnantID)';return}
+$('b-save').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','save',function(ok){if(ok){$('a-ok').textContent='✓ फ़ोटो गैलरी में सेव हो गई (Pictures/DynID)';return}
   /* not inside the app: try download, then fallback to long-press overlay */
   try{var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='address-card.png';document.body.appendChild(a);a.click();a.remove();$('a-ok').textContent='फ़ोटो डाउनलोड हो रही है। न हो तो "शेयर करें" दबाएँ।'}catch(e){deliver(b,'address-card')}})},'image/png')};
 $('b-wa').onclick=function(){if(!draw())return;openExt('https://wa.me/?text='+encodeURIComponent(text()))};
