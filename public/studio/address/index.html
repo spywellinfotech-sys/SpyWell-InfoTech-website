@@ -118,7 +118,7 @@ function shr(){var t=encodeURIComponent(text());$('s-wa').href='https://wa.me/?t
 $('s-go').onclick=function(){var n=$('s-num').value.replace(/\D/g,'').slice(-10);if(n.length!==10){$('s-num').style.borderColor='#d33';$('s-num').value='';$('s-num').placeholder='10 अंक का सही नंबर डालें';return}$('s-num').style.borderColor='';openExt('https://wa.me/91'+n+'?text='+encodeURIComponent(text()))};
 ['s-wa','s-tg','s-sms','s-ml'].forEach(function(i){$(i).onclick=function(e){e.preventDefault();openExt(this.href)}});
 var NV=null;try{NV=window.ViNative||(window.parent&&window.parent!==window&&window.parent.ViNative)||null}catch(e){}
-if(NV&&NV.openWa){$('s-wb').hidden=false;$('s-wb').onclick=function(e){e.preventDefault();if(!NV.openWa('',text(),true))NV.shareText(text())}}
+$('s-wa').style.cssText='background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32';if(NV&&NV.openWa){$('s-wb').hidden=false;$('s-wb').style.cssText='background:#075e54;border:1px solid #075e54;color:#fff';$('s-wb').textContent='🛍 WhatsApp Business';$('s-wb').onclick=function(e){e.preventDefault();if(!NV.openWa('',text(),true))NV.shareText(text())}}
 if(NV&&NV.shareText){$('s-more').hidden=false;$('s-more').onclick=function(e){e.preventDefault();NV.shareText(text())}}
 if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 F.forEach(function(k){$('a-'+k).oninput=function(){draw()}});
