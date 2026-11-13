@@ -61,7 +61,7 @@ function gate(msg,href,label){var g=$('gate');g.textContent='';var p=document.cr
     if(!window.supabase){gate('लोड नहीं हो पाया। इंटरनेट जाँचकर दोबारा खोलें।');return}
     var sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});
     var s=await sb.auth.getSession();var u=s.data&&s.data.session&&s.data.session.user;
-    if(!u){gate('कार कॉल QR बनाने के लिए पहले DynID में लॉगिन करें।','/studio/','लॉगिन करें');return}
+    if(!u){gate('कार कॉल QR बनाने के लिए पहले Dyname में लॉगिन करें।','/studio/','लॉगिन करें');return}
     var p=await sb.from('studio_profiles').select('phone,card_json').eq('id',u.id).maybeSingle();var d=p.data||{};
     var ph=String(d.phone||(d.card_json&&d.card_json.mobile)||'').replace(/\D/g,'').slice(-10);
     if(!/^[6-9][0-9]{9}$/.test(ph)){gate('QR बनाने के लिए प्रोफ़ाइल में अपना मोबाइल नंबर भरें। QR उसी नंबर से बनेगा।','/studio/#me','प्रोफ़ाइल में नंबर भरें');return}

@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>कार्ड एडिटर | DynID</title>
+<title>कार्ड एडिटर | Dyname</title>
 <meta name="robots" content="noindex"><link rel="icon" href="/favicon.png">
 <style>
 :root{--wine:#12307f;--ink:#14203d;--bg:#f2f6fd;--line:#d5def2;--mut:#5a6a8c}
@@ -594,12 +594,12 @@ function domainForm(box){box.appendChild(h('b',{text:'🌍 अपना डो�
   box.appendChild(inp);b.style.marginTop='8px';box.appendChild(b);box.appendChild(msg)}
 function dirBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
-  box.appendChild(h('b',{text:'🔍 DynID डायरेक्टरी (Discover)'}));
+  box.appendChild(h('b',{text:'🔍 Dyname डायरेक्टरी (Discover)'}));
   var st=h('div',{class:'k',style:'margin-top:6px',text:'लोड हो रहा है…'}),m=h('div',{class:'k'});box.appendChild(st);
   (async function(){
     var r=await sb.rpc('studio_dir_get',{p_design:D.id});if(r.error||!r.data){st.textContent='अभी उपलब्ध नहीं।';return}
     var pub=r.data.is_public;
-    function draw(){st.textContent=(pub?'🌐 सार्वजनिक: बाकी DynID यूज़र आपका कार्ड "खोजें" में ढूँढ सकते हैं।':'🔒 निजी: आपका कार्ड डायरेक्टरी में नहीं दिखता। सिर्फ़ लिंक वाले ही देख सकते हैं।')+(r.data.verified?' ✅ Verified':'')+(r.data.suspended?' ⛔ एडमिन ने डायरेक्टरी से हटाया है':'')}
+    function draw(){st.textContent=(pub?'🌐 सार्वजनिक: बाकी Dyname यूज़र आपका कार्ड "खोजें" में ढूँढ सकते हैं।':'🔒 निजी: आपका कार्ड डायरेक्टरी में नहीं दिखता। सिर्फ़ लिंक वाले ही देख सकते हैं।')+(r.data.verified?' ✅ Verified':'')+(r.data.suspended?' ⛔ एडमिन ने डायरेक्टरी से हटाया है':'')}
     draw();
     var b=h('button',{class:'btn alt',text:'',onclick:async function(){b.disabled=true;var x=await sb.rpc('studio_dir_set_public',{p_design:D.id,p_public:!pub});b.disabled=false;
       if(x.error||x.data!=='ok'){m.className='e';m.textContent='बदला नहीं जा सका।';return}pub=!pub;m.className='k';m.textContent='सेव हो गया ✓';draw();b.textContent=pub?'डायरेक्टरी से हटाएँ':'डायरेक्टरी में दिखाएँ'}});

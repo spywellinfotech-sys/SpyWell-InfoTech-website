@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DynID</title>
+<title>Dyname</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.png">
 <style>
@@ -58,14 +58,14 @@ button{min-height:48px;border-radius:12px}
 
 </style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script>(function(){try{if(!window.Capacitor&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){
   document.addEventListener('DOMContentLoaded',function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#06133f;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
-  var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 DynID ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#06133f;padding:8px 14px;border-radius:8px;text-decoration:none';
+  var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 Dyname ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#06133f;padding:8px 14px;border-radius:8px;text-decoration:none';
   d.appendChild(document.createTextNode('लॉगिन हो गया।'));d.appendChild(a);document.body.appendChild(d)})}}catch(e){}})();</script>
 </head><body>
-<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:9px;vertical-align:middle;margin-right:9px">DynID<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px">Dynamic ID Card</small></b><button type="button" id="ib" hidden style="position:relative">📥 Inbox<b id="ib-n" hidden style="position:absolute;top:-6px;right:-6px;background:#d93025;color:#fff;border-radius:99px;font-size:11px;padding:0 6px;min-width:18px;line-height:18px;text-align:center"></b></button></div>
+<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:50%;vertical-align:middle;margin-right:9px">Dyname<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px;font-size:10px">Your Identity, Dynamically Connected</small></b><button type="button" id="ib" hidden style="position:relative">📥 Inbox<b id="ib-n" hidden style="position:absolute;top:-6px;right:-6px;background:#d93025;color:#fff;border-radius:99px;font-size:11px;padding:0 6px;min-width:18px;line-height:18px;text-align:center"></b></button></div>
 <div class="wrap">
 
 <div id="v-load" class="k" style="padding:30px;text-align:center">लोड हो रहा है…</div>
-<div class="wrap" style="padding-bottom:0"><a href="/studio/promo/" style="display:block;text-align:center;font-size:14px;color:var(--wine);font-weight:600;text-decoration:none">✨ DynID क्या है? देखें →</a></div>
+<div class="wrap" style="padding-bottom:0"><a href="/studio/promo/" style="display:block;text-align:center;font-size:14px;color:var(--wine);font-weight:600;text-decoration:none">✨ Dyname क्या है? देखें →</a></div>
 
 <form class="card" id="v-login" hidden>
 <h1>लॉगिन</h1>
@@ -137,7 +137,7 @@ button{min-height:48px;border-radius:12px}
 </div>
 <div class="card" id="c-disc">
 <b>🔍 बिज़नेस खोजें (Discover)</b>
-<div class="k">DynID पर सार्वजनिक किए गए बिज़नेस कार्ड, नाम, कंपनी, व्यवसाय या शहर से खोजें।</div>
+<div class="k">Dyname पर सार्वजनिक किए गए बिज़नेस कार्ड, नाम, कंपनी, व्यवसाय या शहर से खोजें।</div>
 <input id="dq" type="search" placeholder="जैसे: CCTV, कोयला, Saharanpur, नाम…" style="margin-top:8px" autocomplete="off">
 <div style="display:flex;gap:8px;margin-top:8px"><select id="dind" style="flex:2"></select><select id="dsort" style="flex:1"><option value="relevance">सबसे सही</option><option value="new">नए पहले</option></select></div>
 <div id="dres" style="margin-top:10px"></div><button type="button" id="dmore" hidden style="margin-top:8px">और दिखाएँ</button>
@@ -170,7 +170,7 @@ button{min-height:48px;border-radius:12px}
 <b>💳 मेरा सब्सक्रिप्शन</b>
 <div id="sub-list" style="margin-top:8px"><div class="k">लोड हो रहा है…</div></div>
 <div class="k" id="sub-cr" hidden style="margin-top:8px"></div>
-<div hidden style="margin-top:12px;border-top:1px dashed var(--line);padding-top:10px"><b>🔊 DynID Voice</b>
+<div hidden style="margin-top:12px;border-top:1px dashed var(--line);padding-top:10px"><b>🔊 Dyname Voice</b>
 <div class="k">प्लान खत्म होने, रिन्यू और AI क्रेडिट की सूचना बोलकर सुनाता है। आवाज़ न चले तो सूचना लिखी हुई दिखती है।</div>
 <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="vo-on" style="width:auto;margin:0"> आवाज़ वाली सूचना चालू</label>
 <div style="display:flex;gap:8px;margin-top:8px"><select id="vo-lang" style="flex:1"><option value="hi">हिंदी</option><option value="en">English</option></select>
