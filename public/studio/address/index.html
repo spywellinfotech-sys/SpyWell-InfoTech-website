@@ -55,7 +55,7 @@ function draw(){
   var FF='"Hind","Noto Sans Devanagari",system-ui,sans-serif',W=1080,x=cv.getContext('2d'),rows=[];
   x.font='400 42px '+FF;
   var addrL=wrap(x,lineAddr(),W-190-(mapUrl()?300:0),'400 42px '+FF,5);
-  var H=Math.max(1000,430+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+170);
+  var H=Math.max(1000,590+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+170);
   cv.width=W;cv.height=H;x.fillStyle='#fff';x.fillRect(0,0,W,H);
   x.fillStyle='#12307f';x.fillRect(0,0,W,250);x.fillStyle='#f59a1a';x.fillRect(0,250,W,10);
   x.fillStyle='#fff';x.textAlign='center';x.textBaseline='alphabetic';x.font='700 38px '+FF;x.fillText('ADDRESS CARD',W/2,95);
@@ -63,6 +63,9 @@ function draw(){
   var y=350;x.textAlign='left';x.fillStyle='#14203d';
   if(val('name')){x.font='700 62px '+FF;x.fillText(val('name').slice(0,40),90,y);y+=90}
   if(mob().length===10){x.font='500 50px '+FF;x.fillStyle='#12307f';x.fillText('📞 +91 '+mob().slice(0,5)+' '+mob().slice(5),90,y);y+=80;x.fillStyle='#14203d'}
+  /* big HOME ADDRESS label */
+  y+=24;var lw=W-180;x.fillStyle='#f59a1a';x.beginPath();if(x.roundRect)x.roundRect(90,y-58,lw,110,26);else x.rect(90,y-58,lw,110);x.fill();
+  x.fillStyle='#14203d';x.textAlign='center';x.font='800 70px '+FF;x.fillText('🏠 HOME ADDRESS',W/2,y+22);x.textAlign='left';y+=130;x.fillStyle='#14203d';
   x.font='400 42px '+FF;var ay=y;addrL.forEach(function(l,i){x.fillText(l,90,y);y+=60});
   var mu=mapUrl();
   if(mu){try{var qc=document.createElement('canvas');window.StudioQR.draw(qc,unescape(encodeURIComponent(mu)),260);x.fillStyle='#fff';x.fillRect(W-340,H-400,260,260);x.drawImage(qc,W-340,H-400,260,260);x.fillStyle='#5a6a8c';x.font='400 28px '+FF;x.textAlign='center';x.fillText('स्कैन करें: लोकेशन',W-210,H-100);x.textAlign='left'}catch(e){}}
