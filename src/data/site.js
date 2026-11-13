@@ -7,8 +7,8 @@ export const SITE = {
   whatsapp: '919837900303', // digits only, used for wa.me links
   whatsappDisplay: '+919837900303',
   location: {
-    en: 'House no-189, Chakrota Road, Gaon Gandevad, Meerpur Gandevar, Jatonwala, Saharanpur, Uttar Pradesh 247121, India',
-    hi: 'मकान नं. 189, चकरौता रोड, गाँव गंडेवड़, मीरपुर गंडेवर, जटोनवाला, सहारनपुर, उत्तर प्रदेश 247121, भारत',
+    en: 'Chakrota Road, Gaon Gandevad, Meerpur Gandevar, Jatonwala, Saharanpur, Uttar Pradesh 247121, India',
+    hi: 'चकरौता रोड, गाँव गंडेवड़, मीरपुर गंडेवर, जटोनवाला, सहारनपुर, उत्तर प्रदेश 247121, भारत',
   },
   mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Chakrota Road, Gandevad, Jatonwala, Saharanpur, Uttar Pradesh 247121'),
   // Set VITE_SITE_URL in .env (or Vercel) once you have a domain.
