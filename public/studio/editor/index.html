@@ -164,8 +164,8 @@ function pInfo(p){
     else inp=h('input',{type:typ==='tel'?'tel':typ==='email'?'email':typ==='url'?'url':typ,maxlength:d[3],inputmode:typ==='tel'?'numeric':null});
     inp.value=C.fields[k]||'';inp.id='f-'+k;
     var er=h('div',{class:'e'});
-    function chk(){var v=inp.value.trim(),ok=!v||!(typ==='tel'||typ==='email'||typ==='url')||R.V[typ](v);inp.className=ok?'':'bad';
-      er.textContent=ok?'':typ==='tel'?'10 अंक का सही मोबाइल नंबर डालें':typ==='email'?'ईमेल सही नहीं है':'लिंक सही नहीं है'}
+    function chk(){var v=inp.value.trim(),isPin=d[0]==='pin',ok=!v||(isPin?/^[0-9]{6}$/.test(v):(!(typ==='tel'||typ==='email'||typ==='url')||R.V[typ](v)));inp.className=ok?'':'bad';
+      er.textContent=ok?'':isPin?'6 अंकों का सही पिन कोड डालें':typ==='tel'?'10 अंक का सही मोबाइल नंबर डालें':typ==='email'?'ईमेल सही नहीं है':'लिंक सही नहीं है'}
     inp.oninput=function(){C.fields[k]=inp.value;chk();changed()};
     p.appendChild(h('label',{text:d[1],for:'f-'+k}));p.appendChild(inp);p.appendChild(er);if(bad.indexOf(k)>=0)chk();
   });
