@@ -27,7 +27,11 @@ async function loadSaved(){try{var u=await sb.auth.getUser();if(!u.data||!u.data
 async function go(more){
   if(!more){OFF=0;$('list').textContent=''}
   var r=await sb.rpc('studio_dir_list',{p_q:$('q').value.trim(),p_ind:$('ind').value,p_city:$('city').value,p_off:OFF,p_lim:LIM});
-  var d=r.data;if(r.error||!d){$('m').textContent='लोड नहीं हुआ।';$('m').hidden=false;return}
+  var d=r.data;
+  if(r.error&&/permission|denied|401|403/i.test(String(r.error.message||r.error.code))){d={error:'login'}}
+  if(d&&d.error==='login'){$('m').hidden=false;$('bar').hidden=true;$('more').hidden=true;$('m').textContent='';var lp=mk('div','','डायरेक्टरी देखने के लिए पहले लॉगिन करें।');lp.style.marginBottom='10px';var lb=mk('a','','🔐 लॉगिन करें');lb.href='/studio/';lb.style.cssText='display:inline-block;background:#2f5bd8;color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:600';$('m').appendChild(lp);$('m').appendChild(lb);return}
+  if(d&&d.error==='rate'){$('m').hidden=false;$('m').textContent='थोड़ी देर बाद दोबारा कोशिश करें।';return}
+  if(r.error||!d){$('m').textContent='लोड नहीं हुआ।';$('m').hidden=false;return}
   if(d.error==='closed'){$('m').hidden=false;$('m').textContent='बिज़नेस डायरेक्टरी जल्द आ रही है।';$('bar').hidden=true;$('more').hidden=true;return}
   $('m').hidden=true;$('bar').hidden=false;TOT=d.total||0;
   if(!more){var cs=$('city'),cur=cs.value;cs.textContent='';var o0=mk('option','','सभी शहर');o0.value='';cs.appendChild(o0);(d.cities||[]).forEach(function(c){var o=mk('option','',c);o.value=c;cs.appendChild(o)});cs.value=cur}
