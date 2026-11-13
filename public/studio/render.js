@@ -188,7 +188,7 @@
   }
   function invalid(type, c) {
     var f = (c && c.fields) || {}, bad = [];
-    (FIELDS[type] || []).forEach(function (d) { var v = String(f[d[0]] || '').trim(); if (!v) return; if ((d[2] === 'tel' || d[2] === 'email' || d[2] === 'url') && !V[d[2]](v)) bad.push(d[0]); });
+    (FIELDS[type] || []).forEach(function (d) { var v = String(f[d[0]] || '').trim(); if (!v) return; if (d[0] === 'pin') { if (!/^[0-9]{6}$/.test(v)) bad.push(d[0]); return; } if ((d[2] === 'tel' || d[2] === 'email' || d[2] === 'url') && !V[d[2]](v)) bad.push(d[0]); });
     return bad;
   }
   function title(type, c) {
