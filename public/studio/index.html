@@ -113,7 +113,7 @@ button{min-height:48px;border-radius:12px}
 <div class="card" id="c-welcome" hidden style="background:linear-gradient(135deg,#06133f,#12307f);color:#fff"><b style="font-size:18px">🎉 स्वागत है! अपना डिजिटल कार्ड बनाइए</b>
 <div style="margin-top:8px;font-size:15px">1️⃣ अपनी जानकारी भरें<br>2️⃣ कार्ड प्रकाशित करें<br>3️⃣ WhatsApp पर शेयर करें और QR बाँटें</div>
 <button type="button" id="wl-go" style="background:#f59a1a;color:#06133f;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
-<div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button><button type="button" data-tab="mine"><i>🎨</i>मेरे कार्ड / वेबसाइट</button></div>
+<div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-my" hidden></div>
 <div class="card" id="c-enq" hidden></div>
@@ -459,9 +459,9 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'mine'],[$('d-act')&&$('d-act').parentNode,'mine'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
-  if(['home','disc','saved','mine','me'].indexOf(t)<0)t='home';
+  if(['home','disc','saved','me'].indexOf(t)<0)t='home';
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
   document.querySelectorAll('#tabbar button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t)});
   try{if(nopush||CURT===null)history.replaceState({tab:t},'','#'+t);else if(CURT!==t)history.pushState({tab:t},'','#'+t)}catch(e){}CURT=t;window.scrollTo(0,0);if(t==='disc')setTimeout(function(){discFill();if(!$('dres').childNodes.length)discGo(false)},30)}
