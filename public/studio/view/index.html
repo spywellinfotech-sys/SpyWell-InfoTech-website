@@ -76,14 +76,10 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     var a=document.createElement('a');a.href=u;a.textContent=lab+'  ↗';a.style.cssText='color:#fff;text-decoration:none;padding:6px 4px;white-space:nowrap';if(isSite||!/^https?:\/\/(www\.)?spywell\.in\//i.test(u))a.target='_blank',a.rel='noopener';
     a.onclick=function(){try{track&&track('website')}catch(e){}};
     var x=document.createElement('button');x.type='button';x.textContent='✕';x.setAttribute('aria-label','बंद करें');x.style.cssText='border:0;background:rgba(255,255,255,.25);color:#fff;width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer';
-    x.onclick=function(){closed=true;p.style.transform='translate(-50%,120px)'};p.appendChild(a);p.appendChild(x);document.body.appendChild(p);
+    x.onclick=function(){closed=true;shown=false;p.style.transform='translate(-50%,120px)'};p.appendChild(a);p.appendChild(x);document.body.appendChild(p);
     function atEnd(){var d=document.documentElement;return window.scrollY+window.innerHeight>=Math.max(d.scrollHeight,document.body.scrollHeight)-10}
-    function show(){if(closed||shown)return;shown=true;p.style.transform='translate(-50%,0)'}
-    var y0=null;window.addEventListener('touchstart',function(e){y0=e.touches[0].clientY},{passive:true});
-    window.addEventListener('touchend',function(e){if(y0==null)return;var dy=e.changedTouches[0].clientY-y0;y0=null;if(dy<-30)setTimeout(function(){if(atEnd())show()},80)},{passive:true});
-    window.addEventListener('wheel',function(e){if(e.deltaY>0&&atEnd())show()},{passive:true});
-    window.addEventListener('keydown',function(e){if((e.key==='ArrowDown'||e.key==='PageDown'||e.key==='End')&&atEnd())show()});
-    window.addEventListener('scroll',function(){if(shown&&!atEnd()&&window.scrollY<10){/* stays */}},{passive:true});
+    function upd(){var on=!closed&&atEnd();if(on===shown)return;shown=on;p.style.transform=on?'translate(-50%,0)':'translate(-50%,120px)'}
+    window.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);window.addEventListener('load',function(){setTimeout(upd,400)});setTimeout(upd,600);setTimeout(upd,1800);
   })()}catch(e){}
   document.title=window.StudioRender.title(t,cj)+' | SpyWell Live Studio';
   try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
