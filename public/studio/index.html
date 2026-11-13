@@ -533,7 +533,6 @@ async function myHome(){
   if(x.status==='published'&&x.slug)sb.rpc('studio_dir_mine',{p_design:x.id}).then(function(r){var m=r&&r.data;if(!m||!m.open)return;
     dw.style.cssText='margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff7f6';
     dw.appendChild(mk('b','','📒 बिज़नेस डायरेक्टरी'));
-    var of=mk('div','','🎁 अभी 20 नवंबर 2026 तक मुफ़्त। उसके बाद लिस्टिंग का शुल्क ₹1800 प्रति वर्ष।');of.style.cssText='margin-top:6px;padding:6px 10px;border-radius:10px;background:#ffe7e8;color:#b8121a;font-weight:700;font-size:13px';dw.appendChild(of);
     var lab=mk('label','');lab.style.cssText='display:flex;gap:8px;align-items:flex-start;margin-top:6px;font-size:14px';var cb=document.createElement('input');cb.type='checkbox';cb.style.cssText='width:auto;margin:3px 0 0;flex:none';cb.checked=!!m.listed;lab.appendChild(cb);lab.appendChild(mk('span','','मैं सहमति देता/देती हूँ कि मेरा नाम, दुकान, शहर, मोबाइल नंबर और कार्ड/मिनी वेबसाइट का लिंक बिज़नेस डायरेक्टरी में लॉगिन किए हुए यूज़र को दिखे और वे इसे सेव कर सकें। मैं इसे कभी भी हटा सकता/सकती हूँ।'));dw.appendChild(lab);
     var ci=document.createElement('input');ci.type='text';ci.maxLength=40;ci.placeholder='आपका शहर / कस्बा';ci.value=m.city||'';ci.style.marginTop='6px';
     if(m.card_city){ci.readOnly=true;ci.style.background='#fff1f0';dw.appendChild(ci);dw.appendChild(mk('div','k','आप सिर्फ़ अपने शहर/कस्बे ('+m.card_city+') की डायरेक्टरी में जुड़ेंगे। शहर बदलना हो तो कार्ड में "शहर" बदलें।'))}
