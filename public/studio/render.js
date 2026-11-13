@@ -142,7 +142,7 @@
     var g = el('div', 'sr-act sr-share');
     function sa(label, href, act) { g.appendChild(actA(link('', label, href), act)); }
     function sb(label, act, fn) { var a = link('', label, '#'); a.onclick = function (ev) { ev.preventDefault(); try { fn(a); } catch (x) { } }; a.setAttribute('role', 'button'); g.appendChild(actA(a, act)); }
-    sa('💬 WhatsApp', 'https://wa.me/?text=' + e(msg), 'share-wa'); g.lastChild.style.cssText = 'background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;';
+    sa('💬 WhatsApp', 'https://wa.me/?text=' + e(msg), 'share-wa'); g.lastChild.style.cssText = 'background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;'; (function (n) { n.style.setProperty('color', '#0b6b32', 'important'); var q = n.querySelectorAll ? n.querySelectorAll('a,span,b') : []; for (var i = 0; i < q.length; i++) q[i].style.setProperty('color', '#0b6b32', 'important'); })(g.lastChild);
     var NV = null; try { NV = window.ViNative || (window.parent && window.parent !== window && window.parent.ViNative) || null; } catch (x) { }
     if (NV && NV.openWa) { sb('🛍 WhatsApp Business', 'share-wab', function () { if (!NV.openWa('', msg, true)) NV.shareText(msg); }); g.lastChild.style.cssText = 'background:#075e54;border:1px solid #075e54;color:#fff;'; }
     if (NV && NV.shareText) sb(T('📤 और विकल्प'), 'share-native', function () { NV.shareText(msg); });
