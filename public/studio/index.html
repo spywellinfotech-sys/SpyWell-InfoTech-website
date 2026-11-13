@@ -496,6 +496,17 @@ async function myHome(){
     var qr=mk('a','','QR');qr.href='/studio/editor/?id='+x.id+'&tab=pub';
     var NVb=window.ViNative;if(NVb&&NVb.openWa){var wb=mk('a','','🛍 WA Business');wb.href='#';wb.onclick=function(ev){ev.preventDefault();var m='मेरा डिजिटल कार्ड: '+u;if(!NVb.openWa('',m,true)&&NVb.shareText)NVb.shareText(m)};[wb].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#075e54;border:1px solid #075e54;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px'})}
     wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';[qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'});r2.appendChild(cp);r2.appendChild(wa);if(wb)r2.appendChild(wb);r2.appendChild(qr);box.appendChild(r2)}
+  var dw=mk('div','');box.appendChild(dw);
+  if(x.status==='published'&&x.slug)sb.rpc('studio_dir_mine',{p_design:x.id}).then(function(r){var m=r&&r.data;if(!m||!m.open)return;
+    dw.style.cssText='margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#f7f9ff';
+    dw.appendChild(mk('b','','📒 बिज़नेस डायरेक्टरी'));
+    var lab=mk('label','');lab.style.cssText='display:flex;gap:8px;align-items:flex-start;margin-top:6px;font-size:14px';var cb=document.createElement('input');cb.type='checkbox';cb.style.cssText='width:auto;margin:3px 0 0;flex:none';cb.checked=!!m.listed;lab.appendChild(cb);lab.appendChild(mk('span','','मैं सहमति देता/देती हूँ कि मेरा विज़िटिंग कार्ड और मिनी वेबसाइट बिज़नेस डायरेक्टरी में दिखे।'));dw.appendChild(lab);
+    var ci=document.createElement('input');ci.type='text';ci.maxLength=40;ci.placeholder='शहर / कस्बा (डायरेक्टरी में दिखेगा)';ci.value=m.city||'';ci.style.marginTop='6px';dw.appendChild(ci);
+    var info=mk('div','k',m.listed&&m.paid_until?'वैधता: '+new Date(m.paid_until).toLocaleDateString('hi-IN'):(m.listed?'वैधता: तय नहीं':''));info.style.marginTop='4px';dw.appendChild(info);
+    var sv=mk('button','alt','सेव करें');sv.type='button';sv.style.cssText='width:100%;margin-top:6px';var ms=mk('div','k','');dw.appendChild(sv);dw.appendChild(ms);
+    sv.onclick=async function(){sv.disabled=true;var q=await sb.rpc('studio_dir_set',{p_design:x.id,p_listed:cb.checked,p_city:ci.value.trim()});sv.disabled=false;var d=q&&q.data;
+      ms.textContent=d&&d.ok?(cb.checked?'✓ डायरेक्टरी में लिस्ट हो गया':'✓ डायरेक्टरी से हटा दिया'):(d&&d.error==='closed'?'डायरेक्टरी अभी चालू नहीं है।':'सेव नहीं हुआ, दोबारा कोशिश करें।')};
+    var ld=mk('a','','📒 डायरेक्टरी देखें →');ld.href='/studio/directory/';ld.style.cssText='display:block;margin-top:8px;color:#12307f;font-weight:600;font-size:14px';dw.appendChild(ld)});
   var sw=mk('div','');box.appendChild(sw);
   var st=await sb.rpc('studio_my_stats',{p_design:x.id});sw.textContent='';
   if(!st.error&&st.data){sw.appendChild(statRow('📇 कार्ड की इनसाइट',st.data.card||{}));
