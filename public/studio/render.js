@@ -125,8 +125,14 @@
   var PETALS = ['none', '❀', '❦', '✦', '❤', '★'], LAYOUTS = ['frame', 'double', 'arch', 'plain', 'band', 'wave', 'side', 'diag', 'ring', 'dots', 'ribbon', 'card'],
     ORNAMENTS = ['', 'none', '❖', '❁', '❋', '✦', '❀', '❦', 'ॐ', '❤'];
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function canonUrl() {
+    try { var q = new URLSearchParams(location.search), t = q.get('t'), sl = q.get('s'), m = { v: 'v', i: 'inv', w: 'web' };
+      if (/\/studio\/view\/?$/.test(location.pathname) && m[t] && /^[a-zA-Z0-9-]+$/.test(sl || '')) return 'https://spywell.in/' + m[t] + '/' + sl;
+    } catch (e) { }
+    return String(location.href).split('#')[0];
+  }
   function shareBar(f, opts) {
-    var url = (opts && opts.shareUrl) || (opts && opts.demo ? 'https://spywell.in/studio/' : String(location.href).split('#')[0]);
+    var url = (opts && opts.shareUrl) || (opts && opts.demo ? 'https://spywell.in/studio/' : canonUrl());
     var nm = f.business || f.name || '', msg = (nm ? nm + ' - ' : '') + T('डिजिटल कार्ड') + ': ' + url, e = encodeURIComponent;
     var box = el('div', 'sr-sharebox'); box.appendChild(el('div', 'sr-sub', T('शेयर करें')));
     var wr = el('div', 'sr-wanum'), wi = el('input'); wi.type = 'tel'; wi.setAttribute('inputmode', 'numeric'); wi.maxLength = 15; wi.placeholder = T('मोबाइल नंबर (सेव न हो तब भी)');
