@@ -116,7 +116,7 @@ button{min-height:48px;border-radius:12px}
 <div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-my" hidden></div>
-<a class="card" id="c-addr" href="/studio/address/" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><span style="font-size:30px">📍</span><span style="flex:1"><b style="display:block">Address Card</b><span class="k">अपना पता कार्ड की तरह भेजें — सामान मँगवाने के लिए</span></span><span style="font-size:26px;color:#12307f">›</span></a>
+<a class="card" id="c-addr" href="/studio/address/" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><span style="font-size:30px">🏠</span><span style="flex:1"><b style="display:block">Address Card</b><span class="k">अपने घर का पता कार्ड की तरह भेजें — सामान मँगवाने के लिए</span></span><span style="font-size:26px;color:#12307f">›</span></a>
 <div class="card" id="c-enq" hidden></div>
 
 <div class="card" id="c-new">
@@ -532,7 +532,8 @@ $('v-prof').onsubmit=async function(e){e.preventDefault();$('pf-err').textConten
   var f={};PF.forEach(function(d){var v=($('pf-'+d[0])||{value:''}).value.trim();if(d[2]==='tel')v=v.replace(/\D/g,'').replace(/^91(?=\d{10}$)/,'');f[d[0]]=v});
   var bad=R.invalid('visiting',{fields:f});
   if(bad.length){busy(this,false);$('pf-err').textContent='ये सही नहीं हैं: '+bad.map(function(k){var q=PF.filter(function(d){return d[0]===k})[0];return q?q[1]:k}).join(', ');return}
-  var r=await sb.from('studio_profiles').update({full_name:f.name||null,phone:f.mobile||null,card_json:f}).eq('id',u.id);
+  var cur=await sb.from('studio_profiles').select('card_json').eq('id',u.id).maybeSingle();var cjn=Object.assign({},(cur.data&&cur.data.card_json)||{},f);
+  var r=await sb.from('studio_profiles').update({full_name:f.name||null,phone:f.mobile||null,card_json:cjn}).eq('id',u.id);
   if(r.error){busy(this,false);$('pf-err').textContent='सेव नहीं हुआ';return}
   if(PFD){var cj=PFD.cj||{};cj.fields=Object.assign({},cj.fields||{},f);
     var r2=await sb.from('studio_designs').update({content_json:cj,title:R.title('visiting',cj)}).eq('id',PFD.id);
