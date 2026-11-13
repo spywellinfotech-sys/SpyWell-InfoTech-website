@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Address Card | Vi-card</title>
+<link rel="icon" href="/studio/vicard-icon.png">
+<style>
+:root{--wine:#12307f;--org:#f59a1a;--ink:#14203d;--bg:#eef3ff;--line:#d5def5;--mut:#5a6a8c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif;padding-bottom:30px}
+.top{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#06133f,#12307f);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}.top a{color:#fff;font-size:14px;text-decoration:none;border:1px solid rgba(255,255,255,.5);border-radius:10px;padding:6px 12px}
+.wrap{max-width:520px;margin:auto;padding:16px}h1{font-size:21px;color:var(--wine);margin:6px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0}
+label{display:block;font-weight:600;margin:10px 0 4px;font-size:14px}input,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:12px;font:inherit;background:#fff;color:var(--ink)}
+button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;background:var(--wine);color:#fff;font:600 16px inherit;cursor:pointer}button.alt{background:#fff;color:var(--wine);border:1.5px solid var(--wine)}button.wa{background:#1fa855}button:disabled{opacity:.6}
+.k{font-size:13px;color:var(--mut);margin-top:6px}.e{color:#b00020;font-size:14px;margin-top:6px}.ok{color:#0a7a3b;font-size:14px;margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#pv{width:100%;display:block;margin:6px auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+[hidden]{display:none!important}</style>
+<script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script></head><body>
+<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="30" height="30" style="border-radius:8px;vertical-align:middle;margin-right:8px">📍 Address Card</b><a href="/studio/">← होम</a></div>
+<div class="wrap"><h1>अपना पता कार्ड की तरह भेजें</h1>
+<div class="k">कहीं से सामान मँगवाना हो, तो अपना पता विज़िटिंग कार्ड की तरह फ़ोटो में भेजिए। नीचे जानकारी जाँचिए और शेयर दबाइए।</div>
+<div class="card">
+<label>नाम</label><input id="a-name" maxlength="60" placeholder="जिसे सामान पहुँचाना है">
+<label>मोबाइल नंबर</label><input id="a-mob" inputmode="numeric" maxlength="12" placeholder="9876543210">
+<label>पूरा पता</label><textarea id="a-addr" rows="3" maxlength="200" placeholder="मकान / दुकान नंबर, गली, मोहल्ला"></textarea>
+<label>लैंडमार्क (खाली छोड़ सकते हैं)</label><input id="a-land" maxlength="80" placeholder="जैसे: शिव मंदिर के सामने">
+<div class="two"><div><label>शहर</label><input id="a-city" maxlength="40"></div><div><label>राज्य</label><input id="a-state" maxlength="40"></div></div>
+<label>पिन कोड</label><input id="a-pin" inputmode="numeric" maxlength="6" placeholder="247121">
+<label>गूगल मैप लोकेशन (खाली छोड़ सकते हैं)</label><input id="a-map" inputmode="url" maxlength="300" placeholder="मैप लिंक या नीचे बटन दबाएँ">
+<button type="button" class="alt" id="a-loc">📍 मेरी अभी की लोकेशन जोड़ें</button>
+<div class="e" id="a-err"></div>
+</div>
+<div class="card" id="outc" hidden>
+<img id="pv" alt="Address card">
+<button type="button" id="b-share">🖼 कार्ड फ़ोटो शेयर करें</button>
+<button type="button" class="wa" id="b-wa">💬 WhatsApp पर पता लिखकर भेजें</button>
+<button type="button" class="alt" id="b-copy">📋 पता कॉपी करें</button>
+<div class="ok" id="a-ok"></div>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/studio/qr.js"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},F=['name','mob','addr','land','city','state','pin','map'],cv=document.createElement('canvas'),blob=null;
+function val(k){return $('a-'+k).value.trim()}
+function mob(){return val('mob').replace(/\D/g,'').slice(-10)}
+function mapUrl(){var m=val('map');if(!m)return '';if(!/^https?:/i.test(m))m='https://'+m;try{var u=new URL(m);return u.hostname.indexOf('.')>0?u.href:''}catch(e){return ''}}
+function lineAddr(){return [val('addr'),val('land')?'('+val('land')+')':'',[val('city'),val('state')].filter(Boolean).join(', '),val('pin')].filter(Boolean).join(', ')}
+function text(){var t='📍 पता कार्ड\n';if(val('name'))t+='नाम: '+val('name')+'\n';if(mob().length===10)t+='मोबाइल: +91 '+mob()+'\n';t+='पता: '+lineAddr();if(mapUrl())t+='\nलोकेशन: '+mapUrl();return t}
+function wrap(x,t,mx,font,max){x.font=font;var w=String(t).split(/\s+/),L=[],c='';w.forEach(function(q){var tt=c?c+' '+q:q;if(x.measureText(tt).width>mx&&c){L.push(c);c=q}else c=tt});if(c)L.push(c);if(L.length>max){L=L.slice(0,max);L[max-1]=L[max-1].replace(/.{0,2}$/,'…')}return L}
+function draw(){
+  var err=$('a-err');err.textContent='';
+  if(!val('addr')){$('outc').hidden=true;return false}
+  if(val('mob')&&mob().length!==10){err.textContent='10 अंक का सही मोबाइल नंबर डालें';$('outc').hidden=true;return false}
+  if(val('pin')&&!/^[0-9]{6}$/.test(val('pin'))){err.textContent='पिन कोड 6 अंकों का होना चाहिए';$('outc').hidden=true;return false}
+  var FF='"Hind","Noto Sans Devanagari",system-ui,sans-serif',W=1080,x=cv.getContext('2d'),rows=[];
+  x.font='400 42px '+FF;
+  var addrL=wrap(x,lineAddr(),W-190-(mapUrl()?300:0),'400 42px '+FF,5);
+  var H=Math.max(1000,430+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+170);
+  cv.width=W;cv.height=H;x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  x.fillStyle='#12307f';x.fillRect(0,0,W,250);x.fillStyle='#f59a1a';x.fillRect(0,250,W,10);
+  x.fillStyle='#fff';x.textAlign='center';x.textBaseline='alphabetic';x.font='700 38px '+FF;x.fillText('ADDRESS CARD',W/2,95);
+  x.font='700 78px '+FF;x.fillText('📍 मेरा पता',W/2,190);
+  var y=350;x.textAlign='left';x.fillStyle='#14203d';
+  if(val('name')){x.font='700 62px '+FF;x.fillText(val('name').slice(0,40),90,y);y+=90}
+  if(mob().length===10){x.font='500 50px '+FF;x.fillStyle='#12307f';x.fillText('📞 +91 '+mob().slice(0,5)+' '+mob().slice(5),90,y);y+=80;x.fillStyle='#14203d'}
+  x.font='400 42px '+FF;var ay=y;addrL.forEach(function(l,i){x.fillText(l,90,y);y+=60});
+  var mu=mapUrl();
+  if(mu){try{var qc=document.createElement('canvas');window.StudioQR.draw(qc,unescape(encodeURIComponent(mu)),260);x.fillStyle='#fff';x.fillRect(W-340,H-400,260,260);x.drawImage(qc,W-340,H-400,260,260);x.fillStyle='#5a6a8c';x.font='400 28px '+FF;x.textAlign='center';x.fillText('स्कैन करें: लोकेशन',W-210,H-100);x.textAlign='left'}catch(e){}}
+  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('Vi-card · Address Card',90,H-60);
+  try{$('pv').src=cv.toDataURL('image/png')}catch(e){}
+  cv.toBlob(function(b){blob=b},'image/png');$('outc').hidden=false;
+  try{localStorage.setItem('vc_addr',JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
+  return true}
+function deliver(b,nm){
+  var C=window.Capacitor,P=C&&C.Plugins;
+  function overlay(){var u=URL.createObjectURL(b),ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px';
+    var im=document.createElement('img');im.src=u;im.style.cssText='max-width:100%;max-height:70vh;border-radius:10px;background:#fff';var t=document.createElement('div');t.style.cssText='color:#fff;text-align:center;font-size:14px';t.textContent='फ़ोटो को दबाकर रखें और "इमेज सेव करें" चुनें।';
+    var c=document.createElement('button');c.type='button';c.textContent='बंद करें';c.style.cssText='width:auto;padding:10px 22px;margin:0';c.onclick=function(){ov.remove()};ov.appendChild(im);ov.appendChild(t);ov.appendChild(c);document.body.appendChild(ov)}
+  if(P&&P.Filesystem&&P.Share){var rd=new FileReader();rd.onload=function(){P.Filesystem.writeFile({path:nm+'.png',data:String(rd.result).split(',')[1],directory:'CACHE'}).then(function(r){return P.Share.share({title:'Address Card',files:[r.uri]})}).catch(function(e){if(!(e&&/cancel/i.test(String(e.message||e))))overlay()})};rd.readAsDataURL(b);return}
+  try{var f=new File([b],nm+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],title:'Address Card'}).catch(function(){});return}}catch(e){}
+  overlay()}
+$('b-share').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(b)deliver(b,'address-card-'+(mob()||'vicard'))},'image/png')};
+$('b-wa').onclick=function(){if(!draw())return;location.href='https://wa.me/?text='+encodeURIComponent(text())};
+$('b-copy').onclick=function(){if(!draw())return;var t=text(),ok=function(){$('a-ok').textContent='✓ पता कॉपी हो गया'};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){window.prompt('कॉपी करें:',t)});else window.prompt('कॉपी करें:',t)};
+$('a-loc').onclick=function(){var e=$('a-err');e.textContent='';if(!navigator.geolocation){e.textContent='इस फ़ोन में लोकेशन उपलब्ध नहीं है';return}
+  var b=$('a-loc');b.disabled=true;b.textContent='लोकेशन ली जा रही है…';
+  navigator.geolocation.getCurrentPosition(function(p){b.disabled=false;b.textContent='📍 मेरी अभी की लोकेशन जोड़ें';$('a-map').value='https://www.google.com/maps?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);draw()},
+    function(){b.disabled=false;b.textContent='📍 मेरी अभी की लोकेशन जोड़ें';e.textContent='लोकेशन नहीं मिली। फ़ोन की लोकेशन चालू करके दोबारा कोशिश करें।'},{enableHighAccuracy:true,timeout:15000})};
+F.forEach(function(k){$('a-'+k).oninput=function(){draw()}});
+(async function(){
+  var d={};try{d=JSON.parse(localStorage.getItem('vc_addr')||'{}')}catch(e){}
+  try{if(window.supabase){var sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});
+    var s=await sb.auth.getSession(),u=s.data&&s.data.session&&s.data.session.user;
+    if(u){var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',u.id).maybeSingle(),pd=p.data||{},c=pd.card_json||{};
+      var pre={name:c.name||pd.full_name||'',mob:c.mobile||pd.phone||'',addr:c.address||'',city:c.city||'',state:c.state||'',pin:c.pin||''};
+      Object.keys(pre).forEach(function(k){if(!d[k])d[k]=pre[k]})}}}catch(e){}
+  F.forEach(function(k){if(d[k])$('a-'+k).value=d[k]});draw()})();
+})();
+</script></body></html>

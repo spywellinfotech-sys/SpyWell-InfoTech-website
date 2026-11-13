@@ -116,6 +116,7 @@ button{min-height:48px;border-radius:12px}
 <div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-my" hidden></div>
+<a class="card" id="c-addr" href="/studio/address/" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><span style="font-size:30px">📍</span><span style="flex:1"><b style="display:block">Address Card</b><span class="k">अपना पता कार्ड की तरह भेजें — सामान मँगवाने के लिए</span></span><span style="font-size:26px;color:#12307f">›</span></a>
 <div class="card" id="c-enq" hidden></div>
 
 <div class="card" id="c-new">
@@ -459,7 +460,7 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-addr'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','saved','me'].indexOf(t)<0)t='home';
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
