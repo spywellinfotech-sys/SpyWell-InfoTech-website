@@ -116,7 +116,7 @@ button{min-height:48px;border-radius:12px}
 <div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-my" hidden></div>
-<a class="card" id="c-addr" href="/studio/address/" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><span style="font-size:30px">🏠</span><span style="flex:1"><b style="display:block">Address Card</b><span class="k">अपने घर का पता कार्ड की तरह भेजें — सामान मँगवाने के लिए</span></span><span style="font-size:26px;color:#12307f">›</span></a>
+<div class="card" id="c-addr"></div>
 <div class="card" id="c-enq" hidden></div>
 
 <div class="card" id="c-new">
@@ -489,7 +489,7 @@ async function dash(user){
   var t=await sb.from('studio_templates').select('id,product_type,name,config,sort').eq('active',true).order('sort',{ascending:true});
   TPL=t.data||[];
   await loadList();
-  pfLoad();
+  pfLoad();addrTile();
   loadSaved();
 }
 
@@ -515,6 +515,40 @@ $('v-newpw').onsubmit=async function(e){e.preventDefault();$('np-err').textConte
   busy(this,false);
   if(r.error){$('np-err').textContent=msg(r.error);return}
   recovering=false;var s=await sb.auth.getSession();if(s.data.session)dash(s.data.session.user);else show('login')};
+var ADH=null;
+async function addrTile(){
+  var box=$('c-addr');if(!box)return;
+  var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};ADH={cj:cj,name:cj.name||pd.full_name||'',mob:cj.mobile||pd.phone||''};
+  drawAddr(false)}
+function drawAddr(edit){
+  var box=$('c-addr'),h=(ADH.cj&&ADH.cj.home)||{};box.textContent='';
+  var top=mk('div','');top.style.cssText='display:flex;align-items:center;gap:10px';top.appendChild(mk('span','','🏠')).style.fontSize='30px';
+  var tt=mk('div','');tt.appendChild(mk('b','','Address Card'));tt.firstChild.style.display='block';tt.appendChild(mk('span','k','घर का पता — सामान मँगवाने के लिए कार्ड की तरह भेजें'));top.appendChild(tt);box.appendChild(top);
+  if(h.addr&&!edit){
+    var big=mk('div','','🏠 HOME ADDRESS');big.style.cssText='background:#f59a1a;color:#14203d;font-weight:800;font-size:20px;text-align:center;border-radius:12px;padding:10px;margin-top:12px';box.appendChild(big);
+    var ad=mk('div','',[h.addr,h.land?'('+h.land+')':'',[h.city,h.state].filter(Boolean).join(', '),h.pin].filter(Boolean).join(', '));ad.style.cssText='margin-top:10px;font-size:17px';box.appendChild(ad);
+    var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:12px';
+    var s1=mk('a','','🖼 कार्ड भेजें');s1.href='/studio/address/';s1.style.cssText='flex:1.3;text-align:center;background:#12307f;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600';
+    var s2=mk('button','alt','✏️ बदलें');s2.type='button';s2.style.cssText='flex:1;margin:0';s2.onclick=function(){drawAddr(true)};
+    rw.appendChild(s1);rw.appendChild(s2);box.appendChild(rw);return}
+  var f=mk('div','');f.style.marginTop='10px';
+  function fld(lbl,id,ph,area,mx,val){f.appendChild(mk('label','',lbl));var i=document.createElement(area?'textarea':'input');if(area)i.rows=2;i.id=id;i.placeholder=ph||'';i.maxLength=mx;i.value=val||'';f.appendChild(i);return i}
+  fld('घर का पूरा पता','ad-a','मकान नंबर, गली, मोहल्ला, गाँव / कॉलोनी',true,200,h.addr);
+  fld('लैंडमार्क (खाली छोड़ सकते हैं)','ad-l','जैसे: शिव मंदिर के सामने',false,80,h.land);
+  fld('शहर','ad-c','',false,40,h.city);fld('राज्य','ad-s','',false,40,h.state);
+  var pn=fld('पिन कोड','ad-p','247121',false,6,h.pin);pn.setAttribute('inputmode','numeric');
+  var er=mk('div','err');f.appendChild(er);
+  var sv=mk('button','','💾 घर का पता सेव करें');sv.type='button';
+  sv.onclick=async function(){er.textContent='';var a=$('ad-a').value.trim(),pin=$('ad-p').value.trim();
+    if(!a){er.textContent='घर का पता लिखें';return}if(pin&&!/^[0-9]{6}$/.test(pin)){er.textContent='पिन कोड 6 अंकों का होना चाहिए';return}
+    sv.disabled=true;var home={name:h.name||ADH.name,mob:h.mob||ADH.mob,addr:a,land:$('ad-l').value.trim(),city:$('ad-c').value.trim(),state:$('ad-s').value.trim(),pin:pin,map:h.map||''};
+    var cur=await sb.from('studio_profiles').select('card_json').eq('id',ME.id).maybeSingle();var cj=Object.assign({},(cur.data&&cur.data.card_json)||{},{home:home});
+    var r=await sb.from('studio_profiles').update({card_json:cj}).eq('id',ME.id);sv.disabled=false;
+    if(r.error){er.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।';return}
+    ADH.cj=cj;try{localStorage.setItem('vc_addr',JSON.stringify(home))}catch(e){}drawAddr(false)};
+  f.appendChild(sv);
+  if(edit){var cn=mk('button','alt','रद्द करें');cn.type='button';cn.onclick=function(){drawAddr(false)};f.appendChild(cn)}
+  box.appendChild(f)}
 var PFP=null,PFD=null,PFV=null;
 var PF=[['name','नाम','text',60],['business','व्यवसाय / दुकान का नाम','text',80],['designation','पद','text',60],['mobile','मोबाइल नंबर','tel',10],['whatsapp','WhatsApp नंबर','tel',10],['email','ईमेल','email',100],['address','पता','area',200],['city','शहर','text',40],['state','राज्य','text',40],['pin','पिन कोड','tel',6],['website','वेबसाइट','url',150]];
 function pfPrimary(){var vis=LIST.filter(function(x){return x.product_type==='visiting'});return vis.filter(function(v){return v.status==='published'})[0]||vis[0]||null}
