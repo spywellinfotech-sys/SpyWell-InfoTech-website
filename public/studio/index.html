@@ -180,9 +180,15 @@ button{min-height:48px;border-radius:12px}
 <form class="card" id="v-prof">
 <b>👤 मेरी प्रोफ़ाइल</b>
 <div class="k" style="margin:4px 0 8px">यहाँ बदलने पर आपका विज़िटिंग कार्ड भी बदल जाएगा, और कार्ड एडिट करने पर यह प्रोफ़ाइल भी।</div>
+<div id="pf-sum" style="margin:6px 0"></div>
+<button type="button" id="pf-open" class="alt" style="width:100%;margin:6px 0 0">✏️ प्रोफ़ाइल एडिट करें</button>
+<div id="pf-edit" hidden>
 <div id="pf-fields"></div>
 <div class="err" id="pf-err"></div><div class="ok" id="pf-ok"></div>
 <button type="submit" id="pf-save">सेव करें</button>
+<button type="button" id="pf-cancel" class="alt" style="width:100%;margin-top:8px">रद्द करें</button>
+</div>
+<div class="ok" id="pf-ok2"></div>
 <button type="button" id="out" hidden style="margin-top:14px;width:100%;background:#fff;color:#b3261e;border:1.5px solid #b3261e">🚪 लॉगआउट</button>
 </form>
 </div>
@@ -575,7 +581,10 @@ async function pfLoad(){
   PFV=f;var box=$('pf-fields');box.textContent='';
   PF.forEach(function(d){var l=mk('label','',d[1]);var i=d[2]==='area'?document.createElement('textarea'):document.createElement('input');if(d[2]==='area')i.rows=2;
     i.id='pf-'+d[0];i.maxLength=d[3];if(d[2]==='tel')i.setAttribute('inputmode','numeric');if(d[2]==='email')i.type='email';if(d[2]==='url')i.setAttribute('inputmode','url');i.value=f[d[0]]||'';box.appendChild(l);box.appendChild(i)});
-  var nm=(f.name||'').trim();if(nm)$('d-name').textContent=nm}
+  var nm=(f.name||'').trim();if(nm)$('d-name').textContent=nm;pfSum()}
+function pfSum(){var f=PFV||{},b=$('pf-sum');b.textContent='';[['👤',f.name],['🏢',f.business],['📞',f.mobile&&'+91 '+f.mobile],['✉️',f.email],['📍',[f.address,f.city].filter(Boolean).join(', ')]].forEach(function(r){if(!r[1])return;var d=mk('div','',r[0]+'  '+r[1]);d.style.cssText='padding:4px 0;border-bottom:1px dashed var(--line)';b.appendChild(d)});if(!b.children.length)b.appendChild(mk('div','k','अभी प्रोफ़ाइल खाली है।'))}
+function pfEdit(on){$('pf-edit').hidden=!on;$('pf-open').hidden=on;$('pf-sum').hidden=on;if(on){$('pf-err').textContent='';$('pf-ok').textContent=''}}
+$('pf-open').onclick=function(){pfEdit(true)};$('pf-cancel').onclick=function(){pfLoad().then(function(){pfEdit(false)})};
 $('v-prof').onsubmit=async function(e){e.preventDefault();$('pf-err').textContent='';$('pf-ok').textContent='';busy(this,true);
   var u=(await sb.auth.getUser()).data.user;
   if(!u){busy(this,false);show('login');return}
@@ -589,7 +598,7 @@ $('v-prof').onsubmit=async function(e){e.preventDefault();$('pf-err').textConten
     var r2=await sb.from('studio_designs').update({content_json:cj,title:R.title('visiting',cj)}).eq('id',PFD.id);
     if(r2.error){busy(this,false);$('pf-err').textContent='प्रोफ़ाइल सेव हुई, पर कार्ड अपडेट नहीं हुआ';return}
     PFD.cj=cj}
-  PFV=f;busy(this,false);$('pf-ok').textContent=PFD?'सेव हो गया — आपका कार्ड भी अपडेट हो गया':'सेव हो गया';$('d-name').textContent=f.name||'ग्राहक'};
+  PFV=f;busy(this,false);$('pf-ok2').textContent=PFD?'✓ सेव हो गया — आपका कार्ड भी अपडेट हो गया':'✓ सेव हो गया';$('d-name').textContent=f.name||'ग्राहक';pfSum();pfEdit(false)};
 $('out').onclick=async function(){await sb.auth.signOut()};
 
 sb.auth.onAuthStateChange(function(ev,session){
