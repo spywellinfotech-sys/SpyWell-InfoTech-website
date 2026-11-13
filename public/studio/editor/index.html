@@ -478,8 +478,8 @@ function slugify(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-'
 
 function newKey(){var a='abcdefghijklmnopqrstuvwxyz0123456789',k='';for(var i=0;i<12;i++)k+=a[Math.floor(Math.random()*a.length)];return k}
 function pExtra(p){
-  var gcb=h('input',{type:'checkbox'});gcb.checked=D.product_type==='visiting'?C.style.gate!==false:C.style.gate===true;gcb.style.cssText='width:auto;margin-right:8px';
-  gcb.onchange=function(){if(D.product_type==='visiting')C.style.gate=!!gcb.checked;else{if(gcb.checked)C.style.gate=true;else delete C.style.gate}changed()};
+  var gcb=h('input',{type:'checkbox'});gcb.checked=C.style.gate===true;gcb.style.cssText='width:auto;margin-right:8px';
+  gcb.onchange=function(){if(gcb.checked)C.style.gate=true;else delete C.style.gate;changed()};
   p.appendChild(h('div',{class:'item'},[h('label',{style:'display:flex;align-items:center'},[gcb,h('b',{text:'🔒 देखने से पहले नाम और मोबाइल माँगें'})]),h('div',{class:'k',text:'चालू करने पर कार्ड खोलने वाले को पहले अपना नाम और मोबाइल नंबर देना होगा। यह सूची "इनसाइट" टैब वाले लिंक में PIN डालकर दिखेगी। पहले से भेजे लिंक भी इसी नियम से चलेंगे।'})]));
   if(D.product_type==='visiting'){
     var on=C.style.site===true;
