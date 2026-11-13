@@ -281,7 +281,7 @@ var SUBI={},PLN2={card:'विज़िटिंग कार्ड',site:'म�
 async function loadSubs(){
   var ids=LIST.filter(function(x){return x.product_type==='visiting'}).map(function(x){return x.id});
   await Promise.all(ids.map(async function(id){try{var r=await sb.rpc('studio_sub_info',{p_id:id});if(!r.error&&r.data)SUBI[id]=r.data}catch(e){}}));
-  drawList();subDraw()}
+  drawList();subDraw();loadEnq()}
 function subLine(x){var i=SUBI[x.id];if(!i||!i.enabled&&!i.plan)return null;
   var pu=i.paid_until?new Date(i.paid_until):null,life=pu&&pu.getFullYear()>=2099,
   dt=life?'लाइफटाइम':(pu?pu.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'');
@@ -450,10 +450,13 @@ async function myHome(){
   var st=await sb.rpc('studio_my_stats',{p_design:x.id});sw.textContent='';
   if(!st.error&&st.data){sw.appendChild(statRow('📇 कार्ड की इनसाइट',st.data.card||{}));
     var pl=SUBI[x.id]&&SUBI[x.id].plan;if(st.data.site&&((st.data.site.total||0)>0||pl==='site'||pl==='domain'))sw.appendChild(statRow('🌐 वेबसाइट की इनसाइट',st.data.site))}
-  var vb=mk('button','alt','📋 View details');vb.type='button';vb.style.cssText='width:100%;margin-top:10px';vb.onclick=openInbox;sw.appendChild(vb);
+  var vb=mk('button','alt','📋 View details');vb.type='button';vb.id='vb-det';vb.hidden=!hasSite();vb.style.cssText='width:100%;margin-top:10px';vb.onclick=openInbox;sw.appendChild(vb);
   loadEnq()}
 var ENQ={rows:[],un:0};
+function hasSite(){return LIST.some(function(x){var i=SUBI[x.id];return x.product_type==='visiting'&&i&&(i.plan==='site'||i.plan==='domain')})}
 async function loadEnq(){
+  var vbb=$('vb-det');if(vbb)vbb.hidden=!hasSite();
+  if(!hasSite()){$('c-enq').hidden=true;var i0=$('ib');if(i0)i0.hidden=true;var t0=$('tb-h');if(t0)t0.hidden=true;return}
   var r=await sb.rpc('studio_my_enquiries',{p_limit:50}),box=$('c-enq'),tb=$('tb-h');
   if(r.error||!r.data){box.hidden=true;return}var rows=r.data.rows||[],un=r.data.unread||0;ENQ={rows:rows,un:un};
   if(tb){tb.textContent=un>99?'99+':un;tb.hidden=!un}
