@@ -478,7 +478,7 @@ async function dash(user){
   $('d-name').textContent=prof.full_name||'ग्राहक';
   $('pf-n').value=prof.full_name||'';$('pf-m').value=prof.phone||'';
   var a=await sb.rpc('studio_is_admin');
-  $('d-admin').hidden=a.data!==true;
+  $('d-admin').hidden=true;
   $('d-list').textContent='लोड हो रहा है…';drawFilters();
   var t=await sb.from('studio_templates').select('id,product_type,name,config,sort').eq('active',true).order('sort',{ascending:true});
   TPL=t.data||[];
