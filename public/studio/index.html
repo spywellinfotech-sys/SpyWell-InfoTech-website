@@ -440,10 +440,10 @@ async function myHome(){
     var wa=mk('a','','WhatsApp');wa.href='https://wa.me/?text='+encodeURIComponent('मेरा डिजिटल कार्ड: '+u);wa.target='_blank';wa.rel='noopener';
     var qr=mk('a','','QR');qr.href='/studio/editor/?id='+x.id+'&tab=pub';
     [wa,qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'});r2.appendChild(cp);r2.appendChild(wa);r2.appendChild(qr);box.appendChild(r2)}
-  var st=await sb.rpc('studio_my_stats',{p_design:x.id});
-  if(!st.error&&st.data){box.appendChild(statRow('📇 कार्ड की इनसाइट',st.data.card||{}));
-    var pl=SUBI[x.id]&&SUBI[x.id].plan;if(st.data.site&&((st.data.site.total||0)>0||pl==='site'||pl==='domain'))box.appendChild(statRow('🌐 वेबसाइट की इनसाइट',st.data.site));
-    var il=mk('a','','📊 पूरी इनसाइट देखें');il.href='/studio/editor/?id='+x.id+'&tab=ins';il.style.cssText='display:block;margin-top:10px;color:var(--wine);font-weight:600;text-decoration:none';box.appendChild(il)}
+  var sw=mk('div','');box.appendChild(sw);
+  var st=await sb.rpc('studio_my_stats',{p_design:x.id});sw.textContent='';
+  if(!st.error&&st.data){sw.appendChild(statRow('📇 कार्ड की इनसाइट',st.data.card||{}));
+    var pl=SUBI[x.id]&&SUBI[x.id].plan;if(st.data.site&&((st.data.site.total||0)>0||pl==='site'||pl==='domain'))sw.appendChild(statRow('🌐 वेबसाइट की इनसाइट',st.data.site))}
   loadEnq()}
 async function loadEnq(){
   var r=await sb.rpc('studio_my_enquiries',{p_limit:50}),box=$('c-enq'),tb=$('tb-h');
