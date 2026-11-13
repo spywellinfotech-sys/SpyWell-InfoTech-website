@@ -187,6 +187,8 @@ button{min-height:48px;border-radius:12px}
 <div id="pf-sum" style="margin:6px 0"></div>
 <button type="button" id="pf-open" class="alt" style="width:100%;margin:6px 0 0">✏️ प्रोफ़ाइल एडिट करें</button>
 <div id="pf-edit" hidden>
+<button type="button" id="pf-scan" style="width:100%;margin:0 0 4px;background:#d4141c;color:#fff;border:0">📷 अपने कार्ड से भरें (मुफ़्त)</button><input id="pf-scanf" type="file" accept="image/*" hidden>
+<div class="k" id="pf-scanm" style="margin-bottom:8px">अपने छपे विज़िटिंग कार्ड की फ़ोटो लें, जानकारी अपने-आप भर जाएगी। फिर जाँचकर सेव करें।</div>
 <div id="pf-fields"></div>
 <div class="err" id="pf-err"></div><div class="ok" id="pf-ok"></div>
 <button type="submit" id="pf-save">सेव करें</button>
@@ -712,6 +714,16 @@ async function pfLoad(){
   var nm=(f.name||'').trim();if(nm)$('d-name').textContent=nm;pfSum()}
 function pfSum(){var f=PFV||{},b=$('pf-sum');b.textContent='';[['👤',f.name],['🏢',f.business],['📞',f.mobile&&'+91 '+f.mobile],['✉️',f.email],['📍',[f.address,f.city].filter(Boolean).join(', ')]].forEach(function(r){if(!r[1])return;var d=mk('div','',r[0]+'  '+r[1]);d.style.cssText='padding:4px 0;border-bottom:1px dashed var(--line)';b.appendChild(d)});if(!b.children.length)b.appendChild(mk('div','k','अभी प्रोफ़ाइल खाली है।'))}
 function pfEdit(on){$('pf-edit').hidden=!on;$('pf-open').hidden=on;$('pf-sum').hidden=on;if(on){$('pf-err').textContent='';$('pf-ok').textContent=''}}
+$('pf-scan').onclick=function(){$('pf-scanf').value='';$('pf-scanf').click()};
+$('pf-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;var msg=$('pf-scanm'),bt=$('pf-scan');msg.style.color='';msg.textContent='कार्ड पढ़ा जा रहा है… 10-20 सेकंड';bt.disabled=true;
+  try{var b64=await scanShrink(f);var ss=await sb.auth.getSession();if(!ss.data.session)throw new Error('unauthorized');
+    var r=await fetch(B+'/functions/v1/dyna-scan',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+ss.data.session.access_token},body:JSON.stringify({files:[{media_type:'image/jpeg',data:b64}]})});
+    var j=await r.json().catch(function(){return{}});if(!r.ok)throw new Error(j.code||'ai_error');
+    var m={name:j.name,business:j.business,designation:j.designation,mobile:j.mobile,whatsapp:j.mobile,email:j.email,address:j.address,website:j.website},n=0;
+    Object.keys(m).forEach(function(k){var e=$('pf-'+k);if(e&&m[k]){e.value=String(m[k]).slice(0,e.maxLength>0?e.maxLength:200);e.style.background='#fff4c2';n++}});
+    msg.style.color=n?'':'#b00020';msg.textContent=n?'✓ पढ़ लिया। पीले खाने ध्यान से जाँचें और ठीक करें, फिर नीचे "सेव करें" दबाएँ।':'कार्ड साफ़ नहीं पढ़ा गया। रोशनी में सीधी फ़ोटो लें, या खुद भरें।'
+  }catch(e){msg.style.color='#b00020';var c=e.message;msg.textContent=c==='limit'?'आज की स्कैन सीमा पूरी हो गई। कल फिर कोशिश करें।':c==='unauthorized'?'दोबारा लॉगिन करें।':c==='ai_off'?'AI अभी बंद है। थोड़ी देर बाद कोशिश करें।':'अभी पढ़ नहीं पाए। फ़ोटो साफ़ लेकर दोबारा कोशिश करें, या खुद भरें।'}
+  bt.disabled=false};
 $('pf-open').onclick=function(){pfEdit(true)};$('pf-cancel').onclick=function(){pfLoad().then(function(){pfEdit(false)})};
 $('v-prof').onsubmit=async function(e){e.preventDefault();$('pf-err').textContent='';$('pf-ok').textContent='';busy(this,true);
   var u=(await sb.auth.getUser()).data.user;
