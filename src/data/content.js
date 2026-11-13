@@ -236,6 +236,21 @@ export const portfolio = [
     link: '',
   },
   {
+    id: 'live-studio',
+    icon: 'Gem',
+    status: 'verified',
+    image: '',
+    category: { en: 'Live Cards and Mini Websites', hi: 'लाइव कार्ड और मिनी वेबसाइट' },
+    title: { en: 'SpyWell Live Studio', hi: 'स्पायवेल लाइव स्टूडियो' },
+    description: {
+      en: 'Make animated live invitation cards for every function, and live visiting cards and mini websites. Share one link on WhatsApp, with one-tap call, location, QR, save contact and view insights. AI can read your old card and fill it in.',
+      hi: 'हर फ़ंक्शन के एनिमेटेड लाइव निमंत्रण कार्ड, और लाइव विज़िटिंग कार्ड व मिनी वेबसाइट बनाएँ। एक लिंक WhatsApp पर भेजें, एक टैप में कॉल, लोकेशन, QR, कॉन्टैक्ट सेव और व्यू इनसाइट के साथ। AI आपका पुराना कार्ड पढ़कर भर देता है।',
+    },
+    version: 'Web app and Android app',
+    download: '',
+    link: '/studio/',
+  },
+  {
     id: 'cctv-promate',
     icon: 'ShieldCheck',
     status: 'verified',
