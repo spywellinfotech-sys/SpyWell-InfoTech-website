@@ -275,7 +275,7 @@ var SUBI={},PLN2={card:'विज़िटिंग कार्ड',site:'म�
 async function loadSubs(){
   var ids=LIST.filter(function(x){return x.product_type==='visiting'}).map(function(x){return x.id});
   await Promise.all(ids.map(async function(id){try{var r=await sb.rpc('studio_sub_info',{p_id:id});if(!r.error&&r.data)SUBI[id]=r.data}catch(e){}}));
-  drawList()}
+  drawList();subDraw()}
 function subLine(x){var i=SUBI[x.id];if(!i||!i.enabled&&!i.plan)return null;
   var pu=i.paid_until?new Date(i.paid_until):null,life=pu&&pu.getFullYear()>=2099,
   dt=life?'लाइफटाइम':(pu?pu.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'');
