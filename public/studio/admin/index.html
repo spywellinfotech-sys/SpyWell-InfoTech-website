@@ -39,6 +39,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
   var mq=h('div');app.appendChild(mq);manPanel(mq);
   var py=h('div');app.appendChild(py);subPanel(py);
+  var dp=h('div');app.appendChild(dp);dirPanel(dp);
   var cf=h('div');app.appendChild(cf);cfgPanel(cf);
   var dm=h('div');app.appendChild(dm);domPanel(dm);
   var ip=h('div');app.appendChild(ip);indPanel(ip);
@@ -96,6 +97,28 @@ async function subPanel(box){
   c.appendChild(tb);c.appendChild(m);
   c.appendChild(h('div',{class:'k',text:'ध्यान: असली भुगतान तभी चलेगा जब Razorpay की चाबियाँ लगी हों।'}));
   box.appendChild(c)}
+async function dirPanel(box){
+  var r=await sb.from('studio_settings').select('k,v').in('k',['directory_public','dir_price_inr','dir_free_until']);box.textContent='';if(r.error)return;
+  var S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});var open=S.directory_public==='1';
+  var c=h('div',{class:'card'});c.appendChild(h('b',{text:'📒 बिज़नेस डायरेक्टरी'}));
+  c.appendChild(h('div',{style:'margin-top:6px;font-weight:700;color:'+(open?'#0a7a2f':'#8b1a2b'),text:open?'✅ डायरेक्टरी सबके लिए खुली है':'⛔ डायरेक्टरी बंद है (सिर्फ़ admin)'}));
+  c.appendChild(h('label',{text:'लिस्टिंग शुल्क ₹ / साल',style:'display:block;margin-top:8px;font-weight:600'}));
+  var pr=h('input',{type:'number',value:S.dir_price_inr||''});c.appendChild(pr);
+  c.appendChild(h('label',{text:'इस तारीख़ तक लिस्टिंग मुफ़्त (खाली = कोई मुफ़्त अवधि नहीं)',style:'display:block;margin-top:8px;font-weight:600'}));
+  var fu=h('input',{type:'date',value:S.dir_free_until?String(S.dir_free_until).slice(0,10):''});c.appendChild(fu);
+  c.appendChild(h('div',{class:'k',text:'मुफ़्त तारीख़ सिर्फ़ नई लिस्टिंग पर लगती है। जो लिस्टिंग पहले से बनी है, उसकी वैधता हर कार्ड के नीचे admin से बदलें। शुल्क यूज़र को नहीं दिखता।'}));
+  var m=h('div',{class:'k'});
+  c.appendChild(h('button',{class:'btn',style:'margin-top:10px',text:'सेव करें',onclick:async function(){
+    var v=parseInt(pr.value);if(!(v>=0&&v<=1000000)){m.className='e';m.textContent='शुल्क 0 या उससे बड़ी संख्या भरें।';return}
+    var fv=fu.value?new Date(fu.value+'T23:59:00+05:30').toISOString():'';
+    var e1=await sb.from('studio_settings').update({v:String(v)}).eq('k','dir_price_inr');
+    var e2=await sb.from('studio_settings').update({v:fv}).eq('k','dir_free_until');
+    if(e1.error||e2.error){m.className='e';m.textContent='सेव नहीं हुआ।';return}
+    m.className='k';m.textContent='सेव हो गया।'}}));
+  var tb=h('button',{class:'btn '+(open?'danger':'alt'),style:'margin-top:10px',text:open?'डायरेक्टरी बंद करें':'डायरेक्टरी सबके लिए खोलें'});
+  tb.onclick=async function(){if(!tb.dataset.a){tb.dataset.a='1';tb.textContent='पक्का? '+(open?'यूज़र को डायरेक्टरी दिखनी बंद हो जाएगी':'सब यूज़र को डायरेक्टरी दिखने लगेगी');return}
+    tb.disabled=true;var e=await sb.from('studio_settings').update({v:open?'0':'1'}).eq('k','directory_public');if(e.error){m.className='e';m.textContent='बदला नहीं जा सका।';tb.disabled=false;return}dirPanel(box)};
+  c.appendChild(tb);c.appendChild(m);box.appendChild(c)}
 async function cfgPanel(box){
   var r=await sb.from('studio_settings').select('k,v').in('k',['ai_model','ai_daily_limit','ai_max_pages','ai_max_file_mb','domain_price_inr']);box.textContent='';if(r.error)return;
   var S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});
