@@ -100,9 +100,9 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
   else timer=setTimeout(save,1500)}
 
 /* ---------- panels ---------- */
-var TABS=[['info','1 · जानकारी'],['list',''],['photo','फ़ोटो'],['design','रंग-रूप'],['tpl','टेम्पलेट'],['ai','🤖 AI से भरें'],['pub','🚀 प्रकाशित करें'],['ins','📊 इनसाइट']];
+var TABS=[['info','1 · जानकारी'],['list',''],['photo','फ़ोटो'],['design','रंग-रूप'],['tpl','टेम्पलेट'],['pub','🚀 प्रकाशित करें'],['ins','📊 इनसाइट']];
 var HINT={info:['अपनी जानकारी भरें','नाम, मोबाइल नंबर और व्यवसाय लिखें। बाकी खाने बाद में भी भर सकते हैं। ऊपर कार्ड का नमूना साथ-साथ बदलता दिखेगा।'],list:['सेवाएँ / कार्यक्रम जोड़ें','जो सेवाएँ देते हैं वे जोड़ें। नहीं हैं तो सीधे "अगला" दबाएँ।'],photo:['फ़ोटो और लोगो','अपनी फ़ोटो और लोगो लगाएँ। यह ज़रूरी नहीं है।'],design:['रंग और अक्षर','पसंद का रंग चुनें।'],tpl:['टेम्पलेट बदलें','कार्ड का दूसरा डिज़ाइन चुनना हो तो यहाँ से चुनें।'],ai:['AI की मदद लें','AI आपके व्यवसाय के बारे में लिखकर दे सकता है।'],pub:['प्रकाशित करें और शेयर करें','कार्ड लाइव करें, लिंक और QR पाएँ, WhatsApp पर भेजें।'],ins:['इनसाइट','कितने लोगों ने कार्ड देखा।']};
-var ORDER=['info','list','photo','design','tpl','ai','pub'];
+var ORDER=['info','list','photo','design','tpl','pub'];
 function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;
@@ -760,7 +760,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   try{var ir=await sb.from('studio_industries').select('id,name_en,name_hi,sort').order('sort',{ascending:true});IND=ir.data||[]}catch(x){}
   var restored=false;
   try{var b=JSON.parse(localStorage.getItem(LS)||'null');if(b&&b.at>new Date(D.updated_at).getTime()){C=shape(b.c);if(b.t)D.template_id=b.t;restored=true}}catch(e){}
-  if(R.isEmpty(D.product_type,C)&&!restored)tab='ai';
+  if(R.isEmpty(D.product_type,C)&&!restored)tab='info';
   $('main').hidden=false;tabs();panel();draw();pushHist();
   sb.rpc('studio_insights_setup',{p_design:D.id}).then(function(r){if(r.error||!r.data)return;INS={id:D.id,key:r.data.key};if(r.data.pin){try{localStorage.setItem(pinKey(),r.data.pin)}catch(x){}state('📊 इनसाइट लिंक और PIN तैयार हैं। "📊 इनसाइट" टैब से कॉपी करें।')}},function(){});
   if(restored){dirty=true;state('पिछली बार के बिना सेव बदलाव वापस लाए गए हैं, सेव हो रहे हैं…');timer=setTimeout(save,800)}

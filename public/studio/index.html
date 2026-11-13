@@ -269,7 +269,7 @@ var SUBI={},PLN2={card:'विज़िटिंग कार्ड',site:'म�
 async function loadSubs(){
   var ids=LIST.filter(function(x){return x.product_type==='visiting'}).map(function(x){return x.id});
   await Promise.all(ids.map(async function(id){try{var r=await sb.rpc('studio_sub_info',{p_id:id});if(!r.error&&r.data)SUBI[id]=r.data}catch(e){}}));
-  drawList();subCredits()}
+  drawList()}
 function subLine(x){var i=SUBI[x.id];if(!i||!i.enabled&&!i.plan)return null;
   var pu=i.paid_until?new Date(i.paid_until):null,life=pu&&pu.getFullYear()>=2099,
   dt=life?'लाइफटाइम':(pu?pu.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'');
@@ -365,7 +365,6 @@ function subEvents(){var ev=[];
     if(i.state==='expired'||(i.state==='unpaid'))ev.push({k:'exp_'+x.id,hi:t+' का '+nm+' प्लान समाप्त हो गया है। कृपया रिन्यू करें।',en:'The '+nm+' plan for '+t+' has expired. Please renew.',bad:1});
     else if(i.state==='grace')ev.push({k:'gr_'+x.id,hi:t+' का '+nm+' प्लान ग्रेस पीरियड में है। जल्दी रिन्यू करें, वरना लिंक बंद हो जाएगा।',en:'The '+nm+' plan for '+t+' is in its grace period. Renew soon or the link will stop working.',bad:1});
     else if(days<=7&&days>=0)ev.push({k:'soon_'+x.id,hi:t+' का '+nm+' प्लान '+dFmt(i.paid_until)+' को समाप्त होगा।',en:'The '+nm+' plan for '+t+' will expire on '+dFmt(i.paid_until)+'.'})});
-  if(CRB!=null&&CRB<=20)ev.push({k:'cr_'+CRB,hi:'आपके AI क्रेडिट में '+CRB+' क्रेडिट शेष हैं।',en:'You have '+CRB+' AI credits remaining.'});
   return ev}
 function subDraw(){var L=$('sub-list');if(!L)return;L.textContent='';
   var vis=LIST.filter(function(x){return x.product_type==='visiting'});
@@ -390,7 +389,7 @@ function noteDraw(){var n0=$('c-note');n0.hidden=true;n0.textContent='';return;v
     if(fresh.length&&!window.__voPend){window.__voPend=1;var go=function(){document.removeEventListener('pointerdown',go);
       if(voSpeak(fresh.map(function(e){return e[VO.lang]}).join(' '))){fresh.forEach(function(e){seen[e.k]=today});try{localStorage.setItem('vc_voice_seen',JSON.stringify(seen))}catch(e){}}};
       document.addEventListener('pointerdown',go)}}}
-async function subCredits(){try{var c=await sb.from('studio_ai_credits').select('balance').eq('user_id',ME.id).maybeSingle();CRB=c.data?c.data.balance:0}catch(e){}subDraw()}
+async function subCredits(){return;try{var c=await sb.from('studio_ai_credits').select('balance').eq('user_id',ME.id).maybeSingle();CRB=c.data?c.data.balance:0}catch(e){}subDraw()}
 $('vo-on').checked=VO.on;$('vo-lang').value=VO.lang;$('vo-rate').value=String(VO.rate);
 $('vo-on').onchange=function(){VO.on=this.checked;voSave();if(VO.on&&!window.speechSynthesis)$('vo-msg').textContent='इस फ़ोन में आवाज़ उपलब्ध नहीं, सूचना लिखी हुई दिखेगी।'};
 $('vo-lang').onchange=function(){VO.lang=this.value;voSave();noteDraw()};$('vo-rate').onchange=function(){VO.rate=+this.value;voSave()};
