@@ -15,9 +15,10 @@ button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;backg
 [hidden]{display:none!important}</style><script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script></head><body>
 <div class="top"><b><img src="/logo.png" alt="SpyWell" width="30" height="30" style="background:#fff;border-radius:50%;padding:2px;vertical-align:middle;margin-right:8px">🚗 कार कॉल QR</b><a href="/studio/">← Studio</a></div>
 <div class="wrap"><h1>गाड़ी पर लगाने वाला कॉल QR</h1>
-<div class="k">इसे स्कैन करने पर "कॉल करें" का बड़ा बटन खुलता है। बिल्कुल मुफ़्त, कोई लॉगिन नहीं चाहिए। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।</div>
-<div class="card">
-<label>मोबाइल नंबर (10 अंक)</label><input id="m" type="tel" inputmode="numeric" maxlength="15" placeholder="9876543210">
+<div class="k">इसे स्कैन करने पर "कॉल करें" का बड़ा बटन खुलता है। बिल्कुल मुफ़्त। QR आपके प्रोफ़ाइल वाले मोबाइल नंबर से ही बनता है। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।</div>
+<div class="card" id="gate" hidden></div>
+<div class="card" id="main" hidden>
+<div id="who" class="k" style="margin:4px 0 6px;font-weight:600"></div><input id="m" type="hidden">
 <label>स्टिकर पर लिखा वाक्य</label><input id="t" type="text" maxlength="40" value="गाड़ी हटवाने के लिए कॉल करें">
 <label>आपका नाम (खाली छोड़ सकते हैं)</label><input id="n" type="text" maxlength="30">
 <label>गाड़ी नंबर (खाली छोड़ सकते हैं)</label><input id="v" type="text" maxlength="14" placeholder="UP11 AB 1234">
@@ -27,11 +28,12 @@ button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;backg
 <button type="button" id="dl">⬇️ QR स्टिकर डाउनलोड करें</button>
 <div class="k">डाउनलोड न हो तो ऊपर की तस्वीर को देर तक दबाकर सेव करें, फिर प्रिंट करवाइए।</div>
 </div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/studio/qr.js"></script>
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)},sc=document.createElement('canvas');
-var q=new URLSearchParams(location.search);try{if(q.get('m'))$('m').value=String(q.get('m')).replace(/\D/g,'').slice(-10);if(q.get('n'))$('n').value=String(q.get('n')).slice(0,30)}catch(e){}
+var q=new URLSearchParams(location.search);
 function pageUrl(cm){var u='https://spywell.in/studio/call/?m='+cm,nn=$('n').value.trim().slice(0,30),vv=$('v').value.trim().toUpperCase().slice(0,14);if(nn)u+='&n='+encodeURIComponent(nn);if(vv)u+='&v='+encodeURIComponent(vv);return u}
 function num(){return $('m').value.replace(/\D/g,'').slice(-10)}
 function qr(text,px){var c=document.createElement('canvas');try{window.StudioQR.draw(c,text,px)}catch(e){}return c}
@@ -52,6 +54,20 @@ function draw(){var cm=num();$('err').textContent='';
 ['m','t','n','v'].forEach(function(i){$(i).oninput=draw});$('w').onchange=draw;
 $('dl').onclick=function(){var cm=num();if(cm.length!==10){$('err').textContent='पहले 10 अंक का मोबाइल नंबर डालें';return}draw();
   sc.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='car-call-qr-'+cm+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)},'image/png')};
-draw();
+function gate(msg,href,label){var g=$('gate');g.textContent='';var p=document.createElement('div');p.className='k';p.style.cssText='font-size:15px;margin-bottom:12px';p.textContent=msg;g.appendChild(p);
+  if(href){var a=document.createElement('a');a.href=href;a.textContent=label;a.style.cssText='display:block;text-align:center;background:#12307f;color:#fff;border-radius:12px;padding:13px;text-decoration:none;font-weight:600';g.appendChild(a)}g.hidden=false;$('main').hidden=true}
+(async function(){
+  try{
+    if(!window.supabase){gate('लोड नहीं हो पाया। इंटरनेट जाँचकर दोबारा खोलें।');return}
+    var sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});
+    var s=await sb.auth.getSession();var u=s.data&&s.data.session&&s.data.session.user;
+    if(!u){gate('कार कॉल QR बनाने के लिए पहले Vi-card में लॉगिन करें।','/studio/','लॉगिन करें');return}
+    var p=await sb.from('studio_profiles').select('phone,card_json').eq('id',u.id).maybeSingle();var d=p.data||{};
+    var ph=String(d.phone||(d.card_json&&d.card_json.mobile)||'').replace(/\D/g,'').slice(-10);
+    if(!/^[6-9][0-9]{9}$/.test(ph)){gate('QR बनाने के लिए प्रोफ़ाइल में अपना मोबाइल नंबर भरें। QR उसी नंबर से बनेगा।','/studio/#me','प्रोफ़ाइल में नंबर भरें');return}
+    $('m').value=ph;$('who').textContent='📞 आपका नंबर (प्रोफ़ाइल से): +91 '+ph.slice(0,5)+' '+ph.slice(5);
+    $('main').hidden=false;draw();
+  }catch(e){gate('अभी लोड नहीं हो सका। दोबारा कोशिश करें।')}
+})();
 })();
 </script></body></html>

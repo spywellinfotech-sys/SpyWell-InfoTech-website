@@ -333,7 +333,7 @@ function pick(type){
     g.appendChild(b)});
   $('c-pick').scrollIntoView({block:'start'});
 }
-$('t-car').onclick=function(){var ph=(ME&&ME.user_metadata&&ME.user_metadata.phone)||'';location.href='/studio/carqr/'+(ph?'?m='+encodeURIComponent(ph):'')};
+$('t-car').onclick=function(){var ph=(ME&&ME.user_metadata&&ME.user_metadata.phone)||'';location.href='/studio/carqr/'};
 document.querySelectorAll('[data-new]').forEach(function(b){b.onclick=function(){pick(b.getAttribute('data-new'))}});
 $('pk-back').onclick=function(){if(OCCSEL){OCCSEL='';pickOcc();return}$('c-pick').hidden=true;$('c-new').hidden=false};
 $('q').oninput=drawList;
