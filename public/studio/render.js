@@ -361,7 +361,7 @@
     if (f.name) bd.appendChild(el('div', 'sr-nm', f.name));
     if (f.designation) bd.appendChild(el('div', 'sr-des', f.designation));
     if (f.about) bd.appendChild(el('div', 'sr-msg', f.about));
-    var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), act = el('div', 'sr-act');
+    var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), mini = V.url(f.miniweb), act = el('div', 'sr-act');
     if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
     if (wa) act.appendChild(actA(link('', 'WhatsApp', 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('💬 मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
@@ -371,8 +371,8 @@
     act.appendChild(saveCardBtn(root, f));
     if (act.children.length) bd.appendChild(act);
     if (d.services.length) { var sv = el('div', 'sr-svs'); sv.appendChild(el('div', 'sr-sub', T('सेवाएँ'))); d.services.forEach(function (s) { sv.appendChild(el('span', 'sr-chip', svName(s))); }); bd.appendChild(sv); }
-    [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
-      if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', T(r[0]))); if (r[0] === 'मोबाइल') row.appendChild(actA(link('', r[1], 'tel:+91' + tel), 'call')); else row.appendChild(el('div', '', r[1])); bd.appendChild(row);
+    [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')], ['मिनी वेबसाइट', mini && mini.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
+      if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', T(r[0]))); if (r[0] === 'मोबाइल') row.appendChild(actA(link('', r[1], 'tel:+91' + tel), 'call')); else if (r[0] === 'मिनी वेबसाइट') row.appendChild(actA(link('', r[1], mini), 'miniweb')); else row.appendChild(el('div', '', r[1])); bd.appendChild(row);
     });
     var soc = el('div', 'sr-soc');
     [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (s) { var u = V.url(s[1]); if (u) soc.appendChild(link('', s[0], u)); });
