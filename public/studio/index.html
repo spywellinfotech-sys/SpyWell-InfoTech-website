@@ -61,7 +61,7 @@ button{min-height:48px;border-radius:12px}
   var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 Vi-card ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#06133f;padding:8px 14px;border-radius:8px;text-decoration:none';
   d.appendChild(document.createTextNode('लॉगिन हो गया।'));d.appendChild(a);document.body.appendChild(d)})}}catch(e){}})();</script>
 </head><body>
-<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:9px;vertical-align:middle;margin-right:9px">Vi-card<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px">Your Business. Your Digital Identity.</small></b><button id="out" hidden>लॉगआउट</button></div>
+<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:9px;vertical-align:middle;margin-right:9px">Vi-card<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px">Your Business. Your Digital Identity.</small></b></div>
 <div class="wrap">
 
 <div id="v-load" class="k" style="padding:30px;text-align:center">लोड हो रहा है…</div>
@@ -113,7 +113,7 @@ button{min-height:48px;border-radius:12px}
 <div class="card" id="c-welcome" hidden style="background:linear-gradient(135deg,#06133f,#12307f);color:#fff"><b style="font-size:18px">🎉 स्वागत है! अपना डिजिटल कार्ड बनाइए</b>
 <div style="margin-top:8px;font-size:15px">1️⃣ अपनी जानकारी भरें<br>2️⃣ कार्ड प्रकाशित करें<br>3️⃣ WhatsApp पर शेयर करें और QR बाँटें</div>
 <button type="button" id="wl-go" style="background:#f59a1a;color:#06133f;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
-<div class="qa" id="c-qa"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button><button type="button" data-tab="mine"><i>🎨</i>मेरे कार्ड / वेबसाइट</button></div>
+<div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button><button type="button" data-tab="mine"><i>🎨</i>मेरे कार्ड / वेबसाइट</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-my" hidden></div>
 <div class="card" id="c-enq" hidden></div>
@@ -182,6 +182,7 @@ button{min-height:48px;border-radius:12px}
 <label>मोबाइल नंबर</label><input id="pf-m" inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}">
 <div class="err" id="pf-err"></div><div class="ok" id="pf-ok"></div>
 <button type="submit">सेव करें</button>
+<button type="button" id="out" hidden style="margin-top:14px;width:100%;background:#fff;color:#b3261e;border:1.5px solid #b3261e">🚪 लॉगआउट</button>
 </form>
 </div>
 
@@ -455,14 +456,14 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-enq'),'home'],[$('c-note'),'home'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list').parentNode,'mine'],[$('d-act').parentNode,'mine'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-enq'),'home'],[$('c-note'),'home'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'mine'],[$('d-act')&&$('d-act').parentNode,'mine'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','saved','mine','me'].indexOf(t)<0)t='home';if(t==='disc'){discFill();if(!$('dres').childNodes.length)discGo(false)}
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
   document.querySelectorAll('#tabbar button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t)});
   try{if(nopush||CURT===null)history.replaceState({tab:t},'','#'+t);else if(CURT!==t)history.pushState({tab:t},'','#'+t)}catch(e){}CURT=t;window.scrollTo(0,0)}
 window.addEventListener('popstate',function(){if(document.getElementById('vw'))return;var h=(location.hash||'#home').slice(1);if(TABMAP)setTab(h,true)});
-document.querySelectorAll('#tabbar button').forEach(function(b){b.onclick=function(){setTab(b.getAttribute('data-tab'))}});
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tabbar button');if(b)setTab(b.getAttribute('data-tab'))});
 document.querySelectorAll('#c-qa button').forEach(function(b){b.onclick=function(){var t=b.getAttribute('data-tab');if(t==='new'){var e=$('c-new');e.scrollIntoView({behavior:'smooth'});return}setTab(t)}});
 async function dash(user){
   ME=user;show('dash');OCCSEL='';$('c-pick').hidden=true;$('c-new').hidden=false;
