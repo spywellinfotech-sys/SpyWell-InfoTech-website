@@ -522,7 +522,7 @@ $('out').onclick=async function(){await sb.auth.signOut()};
 sb.auth.onAuthStateChange(function(ev,session){
   if(ev==='PASSWORD_RECOVERY'){recovering=true;show('newpw');return}
   if(recovering)return;
-  if(session)setTimeout(function(){dash(session.user)},0);else show('login');
+  if(session){if(ME&&ME.id===session.user.id&&!document.getElementById('v-dash').hidden){ME=session.user;return}setTimeout(function(){dash(session.user)},0)}else{ME=null;show('login')}
 });
 })();
 </script>
