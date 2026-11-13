@@ -121,6 +121,7 @@ F.forEach(function(k){$('a-'+k).oninput=function(){draw()}});
     if(!sb||!u)return Promise.resolve('local');var cj=Object.assign({},pcj,{home:h});pcj=cj;
     return sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(r){return r&&r.error?'err':'ok'},function(){return 'err'})};
   var tmr=null;window.__saveHome=function(){if(!sb||!u)return;clearTimeout(tmr);tmr=setTimeout(function(){var h=F.reduce(function(o,k){o[k]=val(k);return o},{});var cj=Object.assign({},pcj,{home:h});pcj=cj;try{sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(){})}catch(e){}},1200)};
-  F.forEach(function(k){if(d[k])$('a-'+k).value=d[k]});draw()})();
+  F.forEach(function(k){if(d[k])$('a-'+k).value=d[k]});draw();
+  if(/[?&]go=share/.test(location.search)){try{history.replaceState(null,'','/studio/address/')}catch(e){}if(val('addr'))setTimeout(function(){$('b-share').click()},300)}})();
 })();
 </script></body></html>
