@@ -46,6 +46,7 @@ function draw(){var cm=num();$('err').textContent='';
     x.fillStyle='#2b1a14';x.font='bold 36px sans-serif';x.fillText('📞 CALL',205,590);x.fillText('💬 WHATSAPP',595,590)}
   else x.drawImage(qr($('w').value==='p'?pageUrl(cm):'tel:+91'+cm,500),150,190,500,500);
   x.fillStyle='#2b1a14';x.font='bold 46px sans-serif';x.fillText(($('t').value||'').trim().slice(0,40),W/2,two?680:740,W-80);
+  x.font='bold 34px sans-serif';x.fillStyle='#8b1a2b';x.fillText('Contact Car Owner',W/2,two?716:786,W-80);x.fillStyle='#2b1a14';
   var nm=$('n').value.trim(),vn=$('v').value.trim().toUpperCase();
   x.font='38px sans-serif';if(nm)x.fillText(nm,W/2,two?750:820,W-80);
   x.font='bold 70px sans-serif';if(vn)x.fillText(vn,W/2,two?860:920,W-80);
