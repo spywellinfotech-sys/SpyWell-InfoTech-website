@@ -335,7 +335,7 @@
       if (f.address) wrapText(x, f.address, 620, '400 36px ' + FF, 3).forEach(function (l, i) { rows.push([i ? '' : '📍', l]); });
       rows.forEach(function (rw) { if (ty > H - 120) return; x.font = '400 40px ' + FF; x.fillText(rw[0], 90, ty); x.font = '400 40px ' + FF; x.fillText(rw[1], 160, ty); ty += 62; });
       try { var qc = document.createElement('canvas'); window.StudioQR.draw(qc, unescape(encodeURIComponent(url)), 360); x.fillStyle = '#fff'; x.fillRect(W - 290, H - 290, 230, 230); x.drawImage(qc, W - 285, H - 285, 220, 220); } catch (e) { }
-      x.fillStyle = '#5a6a8c'; x.font = '400 30px ' + FF; x.textAlign = 'left'; x.fillText('Vi-card', 90, H - 70);
+      x.fillStyle = '#5a6a8c'; x.font = '400 30px ' + FF; x.textAlign = 'left'; x.fillText('AnantID', 90, H - 70);
       return new Promise(function (ok) { cv.toBlob(function (b) { ok(b); }, 'image/png'); });
     });
   }
