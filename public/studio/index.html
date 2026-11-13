@@ -516,6 +516,7 @@ $('v-newpw').onsubmit=async function(e){e.preventDefault();$('np-err').textConte
   busy(this,false);
   if(r.error){$('np-err').textContent=msg(r.error);return}
   recovering=false;var s=await sb.auth.getSession();if(s.data.session)dash(s.data.session.user);else show('login')};
+window.addEventListener('message',function(e){var d=e.data;if(e.origin!==location.origin||!d||typeof d.vcOpen!=='string')return;var u=d.vcOpen;if(/^(https:\/\/(wa\.me|t\.me)\/|sms:|mailto:)/.test(u))location.href=u});
 var ADH=null;
 function openAd(){closeVw(true);var o=document.createElement('div');o.id='vw';o.style.cssText='position:fixed;inset:0;z-index:200;background:#fff;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden';
   var hd=document.createElement('div');hd.style.cssText='background:#06133f;color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px';

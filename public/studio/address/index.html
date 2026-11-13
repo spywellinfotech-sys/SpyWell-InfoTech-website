@@ -106,15 +106,17 @@ $('b-share').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)re
 $('b-save').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','save',function(ok){if(ok){$('a-ok').textContent='✓ फ़ोटो गैलरी में सेव हो गई (Pictures/Vi-card)';return}
   /* not inside the app: try download, then fallback to long-press overlay */
   try{var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='address-card.png';document.body.appendChild(a);a.click();a.remove();$('a-ok').textContent='फ़ोटो डाउनलोड हो रही है। न हो तो "शेयर करें" दबाएँ।'}catch(e){deliver(b,'address-card')}})},'image/png')};
-$('b-wa').onclick=function(){if(!draw())return;var a=document.createElement('a');a.href='https://wa.me/?text='+encodeURIComponent(text());a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()};
+$('b-wa').onclick=function(){if(!draw())return;openExt('https://wa.me/?text='+encodeURIComponent(text()))};
 $('b-copy').onclick=function(){if(!draw())return;var t=text(),ok=function(){$('a-ok').textContent='✓ पता कॉपी हो गया'};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){window.prompt('कॉपी करें:',t)});else window.prompt('कॉपी करें:',t)};
 $('a-loc').onclick=function(){var e=$('a-err');e.textContent='';if(!navigator.geolocation){e.textContent='इस फ़ोन में लोकेशन उपलब्ध नहीं है';return}
   var b=$('a-loc');b.disabled=true;b.textContent='लोकेशन ली जा रही है…';
   navigator.geolocation.getCurrentPosition(function(p){b.disabled=false;b.textContent='📍 मेरी अभी की लोकेशन जोड़ें';$('a-map').value='https://www.google.com/maps?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);draw()},
     function(){b.disabled=false;b.textContent='📍 मेरी अभी की लोकेशन जोड़ें';e.textContent='लोकेशन नहीं मिली। फ़ोन की लोकेशन चालू करके दोबारा कोशिश करें।'},{enableHighAccuracy:true,timeout:15000})};
+function openExt(u){if(window.parent&&window.parent!==window){window.parent.postMessage({vcOpen:u},location.origin)}else{location.href=u}}
 function shr(){var t=encodeURIComponent(text());$('s-wa').href='https://wa.me/?text='+t;$('s-tg').href='https://t.me/share/url?url='+encodeURIComponent('https://spywell.in/studio/')+'&text='+t;$('s-sms').href='sms:?&body='+t;$('s-ml').href='mailto:?subject='+encodeURIComponent('मेरे घर का पता')+'&body='+t}
-$('s-go').onclick=function(){var n=$('s-num').value.replace(/\D/g,'').slice(-10);if(n.length!==10){$('s-num').style.borderColor='#d33';$('s-num').value='';$('s-num').placeholder='10 अंक का सही नंबर डालें';return}$('s-num').style.borderColor='';var a=document.createElement('a');a.href='https://wa.me/91'+n+'?text='+encodeURIComponent(text());a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()};
+$('s-go').onclick=function(){var n=$('s-num').value.replace(/\D/g,'').slice(-10);if(n.length!==10){$('s-num').style.borderColor='#d33';$('s-num').value='';$('s-num').placeholder='10 अंक का सही नंबर डालें';return}$('s-num').style.borderColor='';openExt('https://wa.me/91'+n+'?text='+encodeURIComponent(text()))};
+['s-wa','s-tg','s-sms','s-ml'].forEach(function(i){$(i).onclick=function(e){e.preventDefault();openExt(this.href)}});
 if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 F.forEach(function(k){$('a-'+k).oninput=function(){draw()}});
 (async function(){
