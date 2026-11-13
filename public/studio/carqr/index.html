@@ -19,7 +19,7 @@ button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;backg
 <div class="card" id="gate" hidden></div>
 <div class="card" id="main" hidden>
 <div id="who" class="k" style="margin:4px 0 6px;font-weight:600"></div><input id="m" type="hidden">
-<label>स्टिकर पर लिखा वाक्य</label><input id="t" type="text" maxlength="40" value="गाड़ी हटवाने के लिए कॉल करें">
+<label>स्टिकर पर लिखा वाक्य</label><input id="t" type="text" maxlength="40" value="Contact Car Owner">
 <label>आपका नाम (खाली छोड़ सकते हैं)</label><input id="n" type="text" maxlength="30">
 <label>गाड़ी नंबर (खाली छोड़ सकते हैं)</label><input id="v" type="text" maxlength="14" placeholder="UP11 AB 1234">
 <label>QR का प्रकार</label><select id="w"><option value="p">कॉल पेज QR (कॉल बटन + मुफ़्त QR बनाने का लिंक)</option><option value="c">सीधा कॉल QR (बिना इंटरनेट भी चले)</option><option value="cw">सीधा कॉल QR + WhatsApp QR (दो QR)</option></select>
@@ -46,7 +46,6 @@ function draw(){var cm=num();$('err').textContent='';
     x.fillStyle='#2b1a14';x.font='bold 36px sans-serif';x.fillText('📞 CALL',205,590);x.fillText('💬 WHATSAPP',595,590)}
   else x.drawImage(qr($('w').value==='p'?pageUrl(cm):'tel:+91'+cm,500),150,190,500,500);
   x.fillStyle='#2b1a14';x.font='bold 46px sans-serif';x.fillText(($('t').value||'').trim().slice(0,40),W/2,two?680:740,W-80);
-  x.font='bold 34px sans-serif';x.fillStyle='#8b1a2b';x.fillText('Contact Car Owner',W/2,two?716:786,W-80);x.fillStyle='#2b1a14';
   var nm=$('n').value.trim(),vn=$('v').value.trim().toUpperCase();
   x.font='38px sans-serif';if(nm)x.fillText(nm,W/2,two?750:820,W-80);
   x.font='bold 70px sans-serif';if(vn)x.fillText(vn,W/2,two?860:920,W-80);
