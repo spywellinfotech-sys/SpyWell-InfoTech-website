@@ -115,9 +115,9 @@ button{min-height:48px;border-radius:12px}
 <button type="button" id="wl-go" style="background:#f59a1a;color:#06133f;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
 <div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button></div>
 <div class="card" id="c-note" hidden></div>
+<div class="card" id="c-enq" hidden></div>
 <div class="card" id="c-my" hidden></div>
 <div class="card" id="c-addr"></div>
-<div class="card" id="c-enq" hidden></div>
 
 <div class="card" id="c-new">
 <b>नया बनाएँ</b>
@@ -456,6 +456,7 @@ async function loadEnq(){
     var ac=mk('div','acts'),c=mk('a','','📞 कॉल');c.href='tel:+91'+q.mobile;var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+q.mobile;w.target='_blank';w.rel='noopener';ac.appendChild(c);ac.appendChild(w);
     if(!q.read){var m=mk('button','','✓ देख लिया');m.type='button';m.onclick=async function(){m.disabled=true;await sb.rpc('studio_enquiry_mark',{p_id:q.id,p_read:true});loadEnq()};ac.appendChild(m)}
     d.appendChild(ac);box.appendChild(d)})}
+setInterval(function(){if(!document.hidden&&ME&&$('c-enq'))loadEnq()},60000);document.addEventListener('visibilitychange',function(){if(!document.hidden&&ME&&$('c-enq'))loadEnq()});
 var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
