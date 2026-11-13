@@ -473,10 +473,10 @@ async function myHome(){
   [e1,e2].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#12307f;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px';rw.appendChild(a)});box.appendChild(rw);
   if(x.status==='published'&&x.slug){var r2=mk('div','');r2.style.cssText='display:flex;gap:8px;margin-top:8px';var u=location.origin+'/v/'+x.slug;
     var cp=mk('button','alt','🔗 लिंक');cp.type='button';cp.style.cssText='margin:0;flex:1';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक'},2000)};
-    var wa=mk('a','','WhatsApp');wa.href='https://wa.me/?text='+encodeURIComponent('मेरा डिजिटल कार्ड: '+u);wa.target='_blank';wa.rel='noopener';
+    var wa=mk('a','','💬 WhatsApp');wa.href='https://wa.me/?text='+encodeURIComponent('मेरा डिजिटल कार्ड: '+u);wa.target='_blank';wa.rel='noopener';
     var qr=mk('a','','QR');qr.href='/studio/editor/?id='+x.id+'&tab=pub';
-    var NVb=window.ViNative;if(NVb&&NVb.openWa){var wb=mk('a','','💼 Business');wb.href='#';wb.onclick=function(ev){ev.preventDefault();var m='मेरा डिजिटल कार्ड: '+u;if(!NVb.openWa('',m,true)&&NVb.shareText)NVb.shareText(m)};[wb].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'})}
-    [wa,qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'});r2.appendChild(cp);r2.appendChild(wa);if(wb)r2.appendChild(wb);r2.appendChild(qr);box.appendChild(r2)}
+    var NVb=window.ViNative;if(NVb&&NVb.openWa){var wb=mk('a','','💼 WA Business');wb.href='#';wb.onclick=function(ev){ev.preventDefault();var m='मेरा डिजिटल कार्ड: '+u;if(!NVb.openWa('',m,true)&&NVb.shareText)NVb.shareText(m)};[wb].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px'})}
+    wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';[qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'});r2.appendChild(cp);r2.appendChild(wa);if(wb)r2.appendChild(wb);r2.appendChild(qr);box.appendChild(r2)}
   var sw=mk('div','');box.appendChild(sw);
   var st=await sb.rpc('studio_my_stats',{p_design:x.id});sw.textContent='';
   if(!st.error&&st.data){sw.appendChild(statRow('📇 कार्ड की इनसाइट',st.data.card||{}));
@@ -501,7 +501,7 @@ function drawEnq(box,rows,un,lim){
   box.hidden=false;var h=mk('b','','📩 पूछताछ'+(un?' · '+un+' नई':''));box.appendChild(h);
   rows.slice(0,lim).forEach(function(q){var d=mk('div','des');d.style.opacity=q.read?'.6':'1';
     d.appendChild(mk('b','',(q.read?'':'🔵 ')+q.name+' · '+q.mobile));d.appendChild(mk('div','',q.message));d.appendChild(mk('div','k',(q.title||'')+' · '+when(q.at)));
-    var ac=mk('div','acts'),c=mk('a','','📞 कॉल');c.href='tel:+91'+q.mobile;var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+q.mobile;w.target='_blank';w.rel='noopener';ac.appendChild(c);ac.appendChild(w);
+    var ac=mk('div','acts'),c=mk('a','','📞 कॉल');c.href='tel:+91'+q.mobile;var w=mk('a','','💬 WhatsApp');w.href='https://wa.me/91'+q.mobile;w.target='_blank';w.rel='noopener';ac.appendChild(c);ac.appendChild(w);
     if(!q.read){var m=mk('button','','✓ देख लिया');m.type='button';m.onclick=async function(){m.disabled=true;await sb.rpc('studio_enquiry_mark',{p_id:q.id,p_read:true});loadEnq()};ac.appendChild(m)}
     var vd=mk('button','alt','👁 View details');vd.type='button';ac.appendChild(vd);
     var dt=mk('div','');dt.hidden=true;dt.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#f7f9ff';
