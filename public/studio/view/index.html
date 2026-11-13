@@ -70,6 +70,21 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   if(typeof sty.set==='string'&&/^[a-z0-9]{8,32}$/.test(sty.set)){
     var sr=await sb.from('studio_designs').select('slug,title,lbl:content_json->style->>setLabel,ord:created_at').eq('status','published').eq('product_type',t).eq('user_id',r.data.user_id).eq('content_json->style->>set',sty.set).order('created_at').limit(12);
     if(!sr.error&&sr.data&&sr.data.length>1){tabs.style.display='flex';sr.data.forEach(function(x,i){var a=document.createElement('a');a.textContent=String(x.lbl||x.title||('कार्ड '+(i+1))).slice(0,24);var cur=x.slug===s;a.href=cur?'#':'/'+(t==='invitation'?'inv':'v')+'/'+x.slug;a.style.cssText='flex:none;padding:7px 14px;border-radius:20px;text-decoration:none;font-size:14px;font-weight:600;border:1px solid #8b1a2b;'+(cur?'background:#8b1a2b;color:#fff':'color:#8b1a2b;background:#fff');tabs.appendChild(a)})}}
+  try{(function(){var fl=(cj&&cj.fields)||{},u=isSite?fl.website:fl.miniweb;u=String(u||'').trim();if(!u)return;if(!/^https?:\/\//i.test(u))u='https://'+u;if(!/^https?:\/\/[^\s]+\.[^\s]+/i.test(u))return;
+    var lab=isSite?'🌍 पूरी वेबसाइट देखें':'🌐 मिनी वेबसाइट देखें',p=document.createElement('div'),shown=false,closed=false;
+    p.style.cssText='position:fixed;left:50%;bottom:18px;transform:translate(-50%,120px);transition:transform .35s;z-index:50;display:flex;align-items:center;gap:6px;background:#d4141c;color:#fff;border-radius:30px;padding:6px 8px 6px 18px;box-shadow:0 8px 22px rgba(0,0,0,.28);font:700 15px system-ui,sans-serif;max-width:92vw';
+    var a=document.createElement('a');a.href=u;a.textContent=lab+'  ↗';a.style.cssText='color:#fff;text-decoration:none;padding:6px 4px;white-space:nowrap';if(isSite||!/^https?:\/\/(www\.)?spywell\.in\//i.test(u))a.target='_blank',a.rel='noopener';
+    a.onclick=function(){try{track&&track('website')}catch(e){}};
+    var x=document.createElement('button');x.type='button';x.textContent='✕';x.setAttribute('aria-label','बंद करें');x.style.cssText='border:0;background:rgba(255,255,255,.25);color:#fff;width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer';
+    x.onclick=function(){closed=true;p.style.transform='translate(-50%,120px)'};p.appendChild(a);p.appendChild(x);document.body.appendChild(p);
+    function atEnd(){var d=document.documentElement;return window.scrollY+window.innerHeight>=Math.max(d.scrollHeight,document.body.scrollHeight)-10}
+    function show(){if(closed||shown)return;shown=true;p.style.transform='translate(-50%,0)'}
+    var y0=null;window.addEventListener('touchstart',function(e){y0=e.touches[0].clientY},{passive:true});
+    window.addEventListener('touchend',function(e){if(y0==null)return;var dy=e.changedTouches[0].clientY-y0;y0=null;if(dy<-30)setTimeout(function(){if(atEnd())show()},80)},{passive:true});
+    window.addEventListener('wheel',function(e){if(e.deltaY>0&&atEnd())show()},{passive:true});
+    window.addEventListener('keydown',function(e){if((e.key==='ArrowDown'||e.key==='PageDown'||e.key==='End')&&atEnd())show()});
+    window.addEventListener('scroll',function(){if(shown&&!atEnd()&&window.scrollY<10){/* stays */}},{passive:true});
+  })()}catch(e){}
   document.title=window.StudioRender.title(t,cj)+' | SpyWell Live Studio';
   try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
   document.getElementById('foot').hidden=false;
