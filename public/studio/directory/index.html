@@ -11,7 +11,7 @@
 .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;background:#eef3ff;color:#2f5bd8;margin-left:6px}.tag.v{background:#e7f8ee;color:#0b6b32}.tag.f{background:#fff4c2;color:#7a5b00}
 .adm{background:#fff8e1;border:1px solid #f0d98a;border-radius:14px;padding:12px;margin-top:10px}.adm button{width:auto;padding:6px 10px;font-size:13px;margin:4px 4px 0 0}
 </style></head><body>
-<div class="top"><img src="/studio/vicard-icon.png" alt=""><b>बिज़नेस डायरेक्टरी</b><a href="/studio/">← ऐप</a></div>
+<div class="top" id="tp"><img src="/studio/vicard-icon.png" alt=""><b>बिज़नेस डायरेक्टरी</b><a href="/studio/">← ऐप</a></div>
 <div class="w"><div id="m" class="k" style="padding:30px 0;text-align:center">लोड हो रहा है…</div><div id="adm"></div><div id="bar" hidden>
 <input id="q" type="search" placeholder="🔍 नाम, दुकान, व्यवसाय या शहर से खोजें"><div class="row"><select id="ind"></select><select id="city"><option value="">सभी शहर</option></select></div></div>
 <div id="list"></div><button id="more" hidden style="margin-top:12px">और दिखाएँ</button></div>
@@ -20,8 +20,10 @@
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
+if(/[?&]embed=1/.test(location.search)){document.getElementById('tp').style.display='none'}
 function $(i){return document.getElementById(i)}function mk(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-var OFF=0,LIM=20,TOT=0,TM=null,ISADM=false,CITIES=[];
+var OFF=0,LIM=20,TOT=0,TM=null,ISADM=false,CITIES=[],SAVED={};
+async function loadSaved(){try{var u=await sb.auth.getUser();if(!u.data||!u.data.user)return;var r=await sb.from('studio_saved_cards').select('slug').eq('product_type','visiting');SAVED={};(r.data||[]).forEach(function(x){SAVED[x.slug]=1})}catch(e){}}
 async function go(more){
   if(!more){OFF=0;$('list').textContent=''}
   var r=await sb.rpc('studio_dir_list',{p_q:$('q').value.trim(),p_ind:$('ind').value,p_city:$('city').value,p_off:OFF,p_lim:LIM});
@@ -34,7 +36,14 @@ async function go(more){
     var meta=[x.name&&x.business?x.name:'',x.designation,x.industry_name,x.city].filter(Boolean).join(' · ');if(meta)c.appendChild(mk('div','k',meta));if(x.about)c.appendChild(mk('div','',x.about)).style.cssText='font-size:14px;margin-top:4px';
     var a=mk('div','acts'),v=mk('a','p','📇 कार्ड देखें');v.href='/v/'+encodeURIComponent(x.slug);a.appendChild(v);
     if(x.site){var w=mk('a','','🌐 वेबसाइट');w.href='/web/'+encodeURIComponent(x.slug);a.appendChild(w)}
-    c.appendChild(a);$('list').appendChild(c)});
+    var sv=mk('button','',SAVED[x.slug]?'✓ सेव है':'💾 सेव करें');sv.type='button';if(SAVED[x.slug]){sv.disabled=true;sv.style.opacity='.7'}
+    sv.onclick=async function(){sv.disabled=true;sv.textContent='सेव हो रहा है…';var q=await sb.rpc('studio_save_card',{p_type:'visiting',p_slug:x.slug});var m=q&&q.data;
+      if(m==='ok'){SAVED[x.slug]=1;sv.textContent='✓ सेव है';sv.style.opacity='.7'}
+      else if(m==='own'){sv.textContent='यह आपका अपना कार्ड है'}
+      else if(m==='login'){sv.disabled=false;sv.textContent='पहले लॉगिन करें'}
+      else if(m==='limit'){sv.textContent='सेव की सीमा पूरी'}
+      else{sv.disabled=false;sv.textContent='💾 सेव करें (दोबारा)'}};
+    a.appendChild(sv);c.appendChild(a);$('list').appendChild(c)});
   OFF+=(d.rows||[]).length;$('more').hidden=OFF>=TOT}
 async function admin(){
   var a=await sb.rpc('studio_is_admin');if(a.data!==true)return;ISADM=true;
@@ -54,7 +63,7 @@ async function admin(){
 async function init(){
   var si=await sb.from('studio_industries').select('id,name_hi,sort').order('sort',{ascending:true}),s=$('ind'),o0=mk('option','','सभी व्यवसाय');o0.value='';s.appendChild(o0);(si.data||[]).forEach(function(o){var op=mk('option','',o.name_hi);op.value=o.id;s.appendChild(op)});
   $('q').oninput=function(){clearTimeout(TM);TM=setTimeout(function(){go(false)},350)};$('ind').onchange=$('city').onchange=function(){go(false)};$('more').onclick=function(){go(true)};
-  await go(false);admin()}
+  await loadSaved();await go(false);admin()}
 init();
 })();
 </script></body></html>
