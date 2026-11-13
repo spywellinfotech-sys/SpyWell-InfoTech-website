@@ -7,7 +7,7 @@
 :root{--wine:#12307f;--ink:#14203d;--bg:#f2f6fd;--line:#d5def2;--mut:#5a6a8c;--org:#f59a1a}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%;overscroll-behavior:none}body{padding-bottom:84px;overscroll-behavior:none;margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
 .top{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#2f5bd8,#5b8cf5);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
-.top b{font-size:17px}.top button{width:auto;margin:0;padding:6px 12px;background:#fff;color:#2f5bd8;font-size:14px}
+body:not([data-tab=me]) #sp-lang{display:none!important}.top b{font-size:17px}.top button{width:auto;margin:0;min-height:36px;padding:4px 12px;background:#fff;color:#2f5bd8;font-size:14px}
 .wrap{max-width:560px;margin:auto;padding:16px}h1{font-size:22px;color:var(--wine);margin:6px 0 2px}
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
 label{display:block;font-size:13px;color:var(--mut);margin-top:12px}
@@ -540,6 +540,7 @@ function setTab(t,nopush){
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','saved','me'].indexOf(t)<0)t='home';
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
+  document.body.setAttribute('data-tab',t);
   document.querySelectorAll('#tabbar button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t)});
   try{if(nopush||CURT===null)history.replaceState({tab:t},'','#'+t);else if(CURT!==t)history.pushState({tab:t},'','#'+t)}catch(e){}CURT=t;window.scrollTo(0,0);if(t==='disc')setTimeout(function(){discFill();if(!$('dres').childNodes.length)discGo(false)},30)}
 window.addEventListener('popstate',function(){if(document.getElementById('vw'))return;var h=(location.hash||'#home').slice(1);if(TABMAP)setTab(h,true)});
