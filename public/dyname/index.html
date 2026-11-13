@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DynaMe: Your Identity, Dynamically Connected | Digital Visiting Card &amp; Mini Website</title>
+<meta name="description" content="DynaMe by SpyWell InfoTech: create a digital visiting card, mini website, invitation cards, home address card and car call QR. Share by link or QR, scan and save business cards.">
+<link rel="canonical" href="https://spywell.in/dyname/">
+<meta property="og:type" content="website"><meta property="og:title" content="DynaMe: Your Identity, Dynamically Connected"><meta property="og:description" content="One digital identity for your business, profile, invitations and more. Create, share and stay connected.">
+<meta property="og:image" content="https://spywell.in/dyname/og.jpg"><meta property="og:url" content="https://spywell.in/dyname/">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="DynaMe: Your Identity, Dynamically Connected"><meta name="twitter:image" content="https://spywell.in/dyname/og.jpg">
+<meta name="theme-color" content="#ED1C24">
+<link rel="icon" href="/dyname/logo.png">
+<style>
+:root{--r:#ED1C24;--rd:#b8121a;--k:#111;--g:#F5F6F8;--m:#737373;--l:#e6e8ec}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:16px/1.6 Poppins,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--k);background:#fff;-webkit-text-size-adjust:100%}
+a{color:inherit}img{max-width:100%;height:auto}
+.w{max-width:1040px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--l)}
+header .w{display:flex;align-items:center;justify-content:space-between;height:56px}
+.lg{display:flex;align-items:center;gap:8px;font-weight:800;font-size:18px;text-decoration:none}.lg img{width:34px;height:34px;border-radius:50%}.lg b{color:var(--r)}
+nav{display:flex;gap:18px;align-items:center}nav a{text-decoration:none;font-size:14px;font-weight:600;color:#333}nav a:hover{color:var(--r)}
+.hb{display:none;background:none;border:0;font-size:26px;cursor:pointer;color:var(--k)}
+@media(max-width:760px){.hb{display:block}nav{display:none;position:absolute;top:56px;left:0;right:0;background:#fff;flex-direction:column;align-items:stretch;gap:0;border-bottom:1px solid var(--l)}nav.on{display:flex}nav a{padding:13px 20px;border-top:1px solid var(--g)}}
+.btn{display:inline-block;background:var(--r);color:#fff;text-decoration:none;font-weight:700;padding:13px 26px;border-radius:30px;font-size:15px;border:2px solid var(--r);cursor:pointer;transition:.15s}
+.btn:hover{background:var(--rd);border-color:var(--rd)}.btn.o{background:#fff;color:var(--r)}.btn.o:hover{background:#fff4f4}
+.hero{padding:40px 0 30px;background:radial-gradient(circle at 85% 10%,#ffe9ea,transparent 45%),#fff}
+.hero .w{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+.hero h1{font-size:40px;line-height:1.15;margin:0 0 14px;letter-spacing:-.5px}.hero h1 em{font-style:normal;color:var(--r)}
+.hero p{color:var(--m);font-size:17px;margin:0 0 22px}.cta{display:flex;flex-wrap:wrap;gap:10px}
+.tr{font-size:13px;color:var(--m);margin-top:16px}
+@media(max-width:820px){.hero .w{grid-template-columns:1fr}.hero h1{font-size:31px}}
+.stage{position:relative;height:420px;max-width:380px;margin:0 auto;width:100%}
+.ph{position:absolute;left:50%;top:0;transform:translateX(-50%);width:210px;height:410px;border:7px solid #151515;border-radius:30px;background:#fff;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+.ph .hd{background:linear-gradient(135deg,var(--r),var(--rd));height:84px}
+.av{width:62px;height:62px;border-radius:50%;background:#fff;border:3px solid #fff;margin:-32px auto 0;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 2px 8px rgba(0,0,0,.2);position:relative}
+.ph .nm{text-align:center;font-weight:800;font-size:15px;margin-top:6px}.ph .sb{text-align:center;color:var(--m);font-size:11px}
+.ph .bt{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 12px 0}
+.ph .bt i{font-style:normal;text-align:center;font-size:11px;font-weight:700;padding:7px 0;border-radius:10px;background:var(--r);color:#fff}.ph .bt i.w2{background:#1f9d55}.ph .bt i.n{background:var(--g);color:var(--k)}
+.ph .qr{width:70px;height:70px;margin:10px auto 0;background:conic-gradient(var(--k) 25%,#fff 0 50%,var(--k) 0 75%,#fff 0) 0 0/14px 14px;border:4px solid #fff;outline:1px solid var(--l)}
+.ph .ln{height:7px;border-radius:4px;background:var(--g);margin:6px 18px}
+.fl{position:absolute;background:#fff;border:1px solid var(--l);border-radius:14px;padding:8px 12px;font-size:12px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.1);animation:fy 5s ease-in-out infinite}
+.fl small{display:block;color:var(--m);font-weight:500}.f1{left:-4px;top:14px}.f2{right:-4px;top:262px;animation-delay:1.2s}.f3{left:-4px;top:345px;animation-delay:2.4s}
+@keyframes fy{50%{transform:translateY(-8px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+section{padding:52px 0}section.alt{background:var(--g)}
+h2{font-size:29px;line-height:1.25;text-align:center;margin:0 0 8px;letter-spacing:-.3px}h2 em{font-style:normal;color:var(--r)}
+.sub{text-align:center;color:var(--m);max-width:600px;margin:0 auto 28px}
+.ctr{text-align:center;margin-top:26px}
+.hub{max-width:760px;margin:0 auto}.hub svg{width:100%;height:auto;display:block}
+.hub text{font-family:inherit}.hg{display:none;grid-template-columns:1fr 1fr;gap:10px}.hg div{background:#fff;border:1px solid var(--l);border-radius:14px;padding:12px;font-weight:700;font-size:14px}.hg div:nth-child(2){}@media(max-width:600px){.hub svg{display:none}.hg{display:grid}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center}@media(max-width:760px){.two{grid-template-columns:1fr}}
+.chk{list-style:none;padding:0;margin:0 0 18px}.chk li{padding:5px 0 5px 28px;position:relative;font-size:15px}.chk li::before{content:"";position:absolute;left:0;top:11px;width:16px;height:16px;border-radius:50%;background:var(--r) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' stroke='%23fff' stroke-width='2' fill='none'/%3E%3C/svg%3E")}
+.card{background:#fff;border:1px solid var(--l);border-radius:20px;padding:20px;box-shadow:0 10px 28px rgba(0,0,0,.07)}
+.dc{max-width:330px;margin:0 auto;padding:0;overflow:hidden}.dc .hd{background:linear-gradient(135deg,var(--r),var(--rd));color:#fff;padding:18px;display:flex;gap:12px;align-items:center}
+.dc .hd .av{margin:0;width:54px;height:54px;font-size:22px;color:var(--k)}.dc .hd b{font-size:16px}.dc .hd small{display:block;opacity:.9}
+.dc .bd{padding:14px 18px}.dc .row{display:flex;gap:8px;margin-bottom:10px}.dc .row i{flex:1;text-align:center;font-style:normal;font-weight:700;font-size:13px;padding:9px 0;border-radius:12px;background:var(--r);color:#fff}.dc .row i.w2{background:#1f9d55}
+.tg{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tg span{background:var(--g);border-radius:14px;padding:3px 11px;font-size:12px;font-weight:600}
+.dc .ft{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--l);padding:12px 18px;font-size:13px;color:var(--m)}
+.mq{width:46px;height:46px;background:conic-gradient(var(--k) 25%,#fff 0 50%,var(--k) 0 75%,#fff 0) 0 0/12px 12px;border:3px solid #fff;outline:1px solid var(--l)}
+.flow{display:flex;align-items:stretch;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.fs{flex:1;min-width:190px;max-width:260px;background:#fff;border:1px solid var(--l);border-radius:18px;padding:16px;text-align:center}.fs .ic{font-size:30px}.fs b{display:block}.fs small{color:var(--m)}
+.ar{align-self:center;color:var(--r);font-size:26px;font-weight:800;animation:pu 2.4s ease-in-out infinite}@keyframes pu{50%{transform:translateX(5px)}}
+@media(max-width:700px){.ar{transform:rotate(90deg);width:100%;text-align:center}@keyframes pu{50%{opacity:.4}}}
+.car{position:relative}.trk{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 14px;scrollbar-width:thin}
+.iv{flex:0 0 200px;height:290px;border-radius:18px;scroll-snap-align:center;color:#fff;padding:18px 14px;display:flex;flex-direction:column;justify-content:space-between;text-align:center;box-shadow:0 10px 24px rgba(0,0,0,.12);position:relative;overflow:hidden}
+.iv .e{font-size:40px}.iv b{font-size:19px;line-height:1.2}.iv small{opacity:.92;font-size:12px}.iv .dt{border:1px solid rgba(255,255,255,.6);border-radius:12px;padding:6px;font-size:12px}
+.cb{display:flex;justify-content:center;gap:10px;margin-top:4px}.cb button{width:42px;height:42px;border-radius:50%;border:1px solid var(--l);background:#fff;font-size:18px;cursor:pointer;color:var(--r);font-weight:800}.cb button:hover{background:#fff4f4}
+.hm{background:#fff;border:2px solid var(--k);border-radius:16px;padding:16px;font-size:13px;position:relative}.hm .t{background:var(--k);color:#fff;border-radius:8px;display:inline-block;padding:2px 10px;font-weight:800;letter-spacing:1px;font-size:12px}
+.hm .qr2{position:absolute;right:14px;bottom:14px;width:54px;height:54px;background:conic-gradient(var(--k) 25%,#fff 0 50%,var(--k) 0 75%,#fff 0) 0 0/13px 13px}
+.sk{background:#fff;border:3px solid var(--r);border-radius:16px;padding:16px;text-align:center}.sk .mq{width:82px;height:82px;margin:8px auto;background-size:20px 20px}.sk b{color:var(--r)}
+.sw{display:grid;grid-template-columns:1fr 54px 1fr;align-items:center;gap:6px;max-width:640px;margin:0 auto 22px}
+.pc{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px;font-size:12px;transform:rotate(-3deg);box-shadow:0 6px 16px rgba(0,0,0,.08)}.pc b{display:block;font-size:14px}
+.sc{height:3px;background:linear-gradient(90deg,transparent,var(--r),transparent);animation:sc 2.2s ease-in-out infinite}@keyframes sc{50%{transform:translateY(30px)}}
+.bg{display:inline-block;font-size:11px;font-weight:700;border-radius:10px;padding:2px 9px;margin:2px 3px 0 0}.b1{background:var(--r);color:#fff}.b2{background:#fff0f0;color:var(--rd);border:1px solid var(--r)}.b3{background:var(--g);color:#444;border:1px solid #ccc}
+.dir{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}.dir .card{padding:12px;border-radius:14px;box-shadow:none;font-size:13px}.dir b{display:block}
+.note{background:#fff8e6;border:1px solid #ffd978;border-radius:12px;padding:10px 14px;font-size:14px;margin:14px auto 0;max-width:640px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;position:relative}
+.sp{background:#fff;border:1px solid var(--l);border-radius:18px;padding:18px;text-align:center}.sp i{display:flex;width:44px;height:44px;border-radius:50%;background:var(--r);color:#fff;font-style:normal;font-weight:800;align-items:center;justify-content:center;margin:0 auto 8px;font-size:18px}.sp b{display:block}.sp small{color:var(--m)}
+.tc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.tc div{background:#fff;border:1px solid var(--l);border-radius:16px;padding:18px}.tc i{font-style:normal;font-size:26px}.tc b{display:block;margin:4px 0}.tc p{margin:0;color:var(--m);font-size:14px}
+details{background:#fff;border:1px solid var(--l);border-radius:14px;margin:0 auto 10px;max-width:760px}summary{cursor:pointer;padding:14px 18px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px}summary::-webkit-details-marker{display:none}summary::after{content:"+";color:var(--r);font-size:22px;line-height:1}details[open] summary::after{content:"–"}details p{margin:0;padding:0 18px 16px;color:#444;font-size:15px}
+.fin{background:linear-gradient(135deg,var(--r),var(--rd));color:#fff;text-align:center;padding:54px 18px}.fin h2{color:#fff}.fin .sub{color:#ffe3e4}.fin .btn{background:#fff;color:var(--r);border-color:#fff}.fin .btn.o{background:transparent;color:#fff}
+footer{background:var(--k);color:#bbb;text-align:center;padding:26px 18px;font-size:14px}footer a{color:#fff}footer img{width:46px;height:46px;border-radius:50%;background:#fff}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #111;outline-offset:2px}
+</style></head><body>
+<header><div class="w"><a class="lg" href="#top"><img src="/dyname/logo.png" width="34" height="34" alt="DynaMe logo"><span>Dyna<b>Me</b></span></a>
+<button class="hb" id="hb" aria-label="Menu" aria-expanded="false">☰</button>
+<nav id="nv"><a href="#what">Features</a><a href="#card">Digital card</a><a href="#scan">Scan</a><a href="#faq">FAQ</a><a class="btn" style="padding:8px 18px;color:#fff" href="/studio/" data-t="nav_cta">Open app</a></nav></div></header>
+
+<main id="top">
+<div class="hero"><div class="w"><div>
+<h1>Your Identity, <em>Dynamically Connected.</em></h1>
+<p>One digital identity for your business, personal profile, invitations and more. Create, share and stay connected, all from one app.</p>
+<div class="cta"><a class="btn" href="/studio/" data-t="hero_create">Create Your Free Digital Card</a><a class="btn o" href="#what" data-t="hero_explore">Explore Features</a></div>
+<div class="tr">Designed for professionals, businesses and everyday users.</div></div>
+<div class="stage" aria-label="Illustration of a DynaMe digital card on a phone">
+<div class="ph"><div class="hd"></div><div class="av">👤</div><div class="nm">Your Name</div><div class="sb">Your business · Your city</div>
+<div class="bt"><i>📞 Call</i><i class="w2">WhatsApp</i><i class="n">✉ Email</i><i class="n">📍 Map</i></div><div class="qr" role="img" aria-label="QR code"></div><div class="ln"></div><div class="ln" style="margin-right:60px"></div></div>
+<div class="fl f1">📲 Share by link<small>spywell.in/v/your-number</small></div>
+<div class="fl f2">🌐 Mini website<small>from your card</small></div>
+<div class="fl f3">⬇ Save contact<small>.vcf</small></div></div>
+</div></div>
+
+<section id="what"><div class="w"><h2>Everything About You. <em>One Digital Identity.</em></h2><p class="sub">Six tools, one app, all connected to your profile.</p>
+<div class="hub"><div class="hg"><div>🪪 Digital Visiting Card</div><div>🌐 Mini Website</div><div>💌 Invitation Cards</div><div>🏠 Home Address Card</div><div>🚗 Car Call QR</div><div>📇 Saved Business Cards</div></div><svg viewBox="0 0 700 440" role="img" aria-label="DynaMe at the centre connected to six modules">
+<g stroke="#ED1C24" stroke-width="2" stroke-dasharray="5 5" opacity=".55" fill="none"><path d="M350 220 L130 70"/><path d="M350 220 L350 52"/><path d="M350 220 L570 70"/><path d="M350 220 L130 370"/><path d="M350 220 L350 388"/><path d="M350 220 L570 370"/></g>
+<circle cx="350" cy="220" r="62" fill="#fff" stroke="#ED1C24" stroke-width="4"/><image href="/dyname/logo.png" x="298" y="168" width="104" height="104"/>
+<g font-size="14" font-weight="700" text-anchor="middle" fill="#111">
+<g><rect x="50" y="40" width="160" height="62" rx="16" fill="#fff" stroke="#e6e8ec"/><text x="130" y="66" font-size="20">🪪</text><text x="130" y="90">Digital Visiting Card</text></g>
+<g><rect x="270" y="22" width="160" height="62" rx="16" fill="#fff" stroke="#e6e8ec"/><text x="350" y="48" font-size="20">🌐</text><text x="350" y="72">Mini Website</text></g>
+<g><rect x="490" y="40" width="160" height="62" rx="16" fill="#fff" stroke="#e6e8ec"/><text x="570" y="66" font-size="20">💌</text><text x="570" y="90">Invitation Cards</text></g>
+<g><rect x="50" y="340" width="160" height="62" rx="16" fill="#fff" stroke="#e6e8ec"/><text x="130" y="366" font-size="20">🏠</text><text x="130" y="390">Home Address Card</text></g>
+<g><rect x="270" y="358" width="160" height="62" rx="16" fill="#fff" stroke="#e6e8ec"/><text x="350" y="384" font-size="20">🚗</text><text x="350" y="408">Car Call QR</text></g>
+<g><rect x="490" y="340" width="160" height="62" rx="16" fill="#fff" stroke="#e6e8ec"/><text x="570" y="366" font-size="20">📇</text><text x="570" y="390">Saved Business Cards</text></g></g></svg></div></div></section>
+
+<section class="alt" id="card"><div class="w"><div class="two"><div>
+<h2 style="text-align:left">Your Business Card. <em>Reinvented.</em></h2>
+<ul class="chk"><li>Name and business details</li><li>Phone and WhatsApp buttons</li><li>Email and address</li><li>Social media links</li><li>Services and business information</li><li>QR code</li><li>Save Contact (.vcf)</li><li>Share through WhatsApp and other apps</li></ul>
+<a class="btn" href="/studio/" data-t="card_cta">Create My Digital Card</a></div>
+<div class="card dc" aria-label="Sample digital card illustration"><div class="hd"><div class="av">👤</div><div><b>Sample Name</b><small>Your business · Your city</small></div></div>
+<div class="bd"><div class="row"><i>📞 Call</i><i class="w2">WhatsApp</i></div><div class="tg"><span>Service one</span><span>Service two</span><span>Service three</span></div><div class="tg"><span>📧 Email</span><span>📍 Location</span><span>🔗 Social</span></div></div>
+<div class="ft"><span>⬇ Save contact · 📤 Share</span><span class="mq" role="img" aria-label="QR code"></span></div></div></div></div></section>
+
+<section id="web"><div class="w"><h2>A Website That Starts With <em>Your Digital Card.</em></h2><p class="sub">Your card details become a clean webpage you can share anywhere.</p>
+<div class="flow"><div class="fs"><div class="ic">🪪</div><b>Digital Card</b><small>Your details, one tap</small></div><div class="ar">➜</div><div class="fs"><div class="ic">🌐</div><b>Mini Website</b><small>spywell.in/web/your-number</small></div><div class="ar">➜</div><div class="fs"><div class="ic">📥</div><b>Customer Enquiry</b><small>lands in your app inbox</small></div></div>
+<div class="two"><ul class="chk"><li>Professional personal or business webpage</li><li>Services and contact information</li><li>Website link you can share</li><li>Enquiry form for users on an eligible Mini Website plan</li><li>Enquiry Inbox inside the app</li></ul>
+<div class="note" style="margin:0">A custom domain is a separate plan and is not included in every plan.</div></div>
+<div class="ctr"><a class="btn o" href="/studio/sample/" data-t="web_cta">Explore Mini Website</a></div></div></section>
+
+<section class="alt" id="inv"><div class="w"><h2>Every Celebration Deserves <em>a Beautiful Invitation.</em></h2><p class="sub">Create and share digital invitation cards with one link. Illustrative designs.</p>
+<div class="car"><div class="trk" id="trk" tabindex="0" aria-label="Invitation card examples">
+<div class="iv" style="background:linear-gradient(160deg,#8b1a2b,#c9a227)"><div class="e">💍</div><div><b>Wedding</b><br><small>Rituals, date, venue and map</small></div><div class="dt">Save the date</div></div>
+<div class="iv" style="background:linear-gradient(160deg,#ED1C24,#ff7a59)"><div class="e">💑</div><div><b>Engagement</b><br><small>Share the happy news</small></div><div class="dt">You're invited</div></div>
+<div class="iv" style="background:linear-gradient(160deg,#7c3aed,#ec4899)"><div class="e">🎂</div><div><b>Birthday</b><br><small>Party details in one link</small></div><div class="dt">Let's celebrate</div></div>
+<div class="iv" style="background:linear-gradient(160deg,#0f766e,#14b8a6)"><div class="e">🥂</div><div><b>Anniversary</b><br><small>Celebrate together</small></div><div class="dt">Join us</div></div>
+<div class="iv" style="background:linear-gradient(160deg,#b45309,#f59e0b)"><div class="e">🏠</div><div><b>Family functions</b><br><small>Pooja, housewarming, more</small></div><div class="dt">Be our guest</div></div>
+<div class="iv" style="background:linear-gradient(160deg,#1d4ed8,#38bdf8)"><div class="e">🎉</div><div><b>Other celebrations</b><br><small>Any occasion</small></div><div class="dt">Celebrate with us</div></div></div>
+<div class="cb"><button id="pv" aria-label="Previous">‹</button><button id="nx" aria-label="Next">›</button></div></div></div></section>
+
+<section id="more"><div class="w"><h2>Address Card &amp; <em>Car Call QR</em></h2><p class="sub">Two small tools that solve everyday problems.</p>
+<div class="two"><div><h3 style="margin:0 0 10px">🏠 Home Address Card</h3><div class="hm"><span class="t">HOME ADDRESS</span><div style="margin:8px 0;font-weight:700">Name · Mobile number</div><div style="color:var(--m)">Landmark<br>PIN code</div><div class="qr2" role="img" aria-label="Maps QR"></div><div style="height:28px"></div></div>
+<ul class="chk" style="margin-top:12px"><li>Share your home address as a beautiful card</li><li>Name and mobile number</li><li>Landmark and PIN code</li><li>Google Maps QR code</li></ul></div>
+<div><h3 style="margin:0 0 10px">🚗 Car Call QR</h3><div class="sk"><b>Contact Car Owner</b><div class="mq" role="img" aria-label="QR sticker"></div><small>Scan to call the owner</small></div>
+<ul class="chk" style="margin-top:12px"><li>QR sticker for vehicles</li><li>Scan to contact the vehicle owner</li><li>Uses the mobile number on your profile</li><li>Downloadable sticker</li></ul></div></div>
+<div class="ctr"><a class="btn o" href="/studio/" data-t="more_cta">Discover More Features</a></div></div></section>
+
+<section class="alt" id="scan"><div class="w"><h2>Never Lose an Important <em>Business Contact Again.</em></h2><p class="sub">Turn a physical visiting card into a saved digital contact.</p>
+<div class="sw"><div class="pc"><b>Sample Traders</b>Owner Name<br>98xxxxxx00<br>Your City</div><div style="text-align:center"><div class="sc"></div><div style="font-size:12px;font-weight:700;color:var(--r)">AI scan</div></div><div class="card" style="padding:14px;font-size:13px"><b>Owner Name</b><br>Sample Traders<br>98xxxxxx00<div><span class="bg b2">Scanned</span></div></div></div>
+<div class="steps"><div class="sp"><i>1</i><b>Scan</b><small>Photograph a physical card</small></div><div class="sp"><i>2</i><b>AI extracts</b><small>Available details are filled in</small></div><div class="sp"><i>3</i><b>Review &amp; save</b><small>Check, correct and save</small></div><div class="sp"><i>4</i><b>Search &amp; organize</b><small>By name, number or business</small></div></div>
+<div class="ctr" style="margin-top:20px"><span class="bg b1">DynaMe</span><span class="bg b2">Scanned</span><span class="bg b3">Manually Added</span></div>
+<div class="note" style="text-align:center">Currently up to 30 scans per day.</div></div></section>
+
+<section id="dir"><div class="w"><h2>Discover Businesses <em>Around You.</em></h2><p class="sub">A city-based business directory, coming step by step.</p>
+<div class="dir"><div class="card"><b>🔎 Search</b>By name, business or category</div><div class="card"><b>📇 Explore</b>Cards and mini websites</div><div class="card"><b>🏙 Your city</b>Businesses near you</div><div class="card"><b>💾 Save</b>Useful business contacts</div></div>
+<div class="note" style="text-align:center"><b>Businesses appear in the directory only after giving consent.</b><br>The Business Directory is being rolled out gradually and is not yet open to everyone.</div></div></section>
+
+<section class="alt"><div class="w"><h2>Simple to Use. <em>Easy to Share.</em></h2><p class="sub">From sign-up to sharing in a few minutes.</p>
+<div class="steps"><div class="sp"><i>1</i><b>Create your profile</b><small>Add your basic details</small></div><div class="sp"><i>2</i><b>Build your digital card</b><small>Services, links, photo</small></div><div class="sp"><i>3</i><b>Share your link or QR</b><small>WhatsApp, SMS and more</small></div><div class="sp"><i>4</i><b>Stay connected</b><small>Insights and enquiries</small></div></div></div></section>
+
+<section id="trust"><div class="w"><h2>Your Identity. <em>Your Control.</em></h2><p class="sub">What protects your information today.</p>
+<div class="tc"><div><i>🛡</i><b>Row Level Security</b><p>Access to user data is controlled with Supabase Row Level Security.</p></div><div><i>👤</i><b>Your own data</b><p>You manage your own profile and cards.</p></div><div><i>✅</i><b>Directory by consent</b><p>Public directory listing requires your consent.</p></div><div><i>📞</i><b>Contact permissions</b><p>Contact visibility follows the permissions you configure.</p></div></div></div></section>
+
+<section class="alt" id="faq"><div class="w"><h2>Frequently Asked <em>Questions</em></h2><p class="sub">Quick answers.</p>
+<details><summary>What is DynaMe?</summary><p>DynaMe is an app by SpyWell InfoTech to create and share a digital visiting card, mini website, invitation cards, home address card and car call QR, and to save other people's business cards.</p></details>
+<details><summary>Is DynaMe free to use?</summary><p>You can open the app and start with a digital card at spywell.in/studio. Some features, such as the Mini Website enquiry inbox or your own domain, depend on the plan. Plan details are shown inside the app.</p></details>
+<details><summary>How can I create a digital visiting card?</summary><p>Open the app, create your profile, fill in your details and publish. Your card gets a shareable link and QR code.</p></details>
+<details><summary>Can I create my own mini website?</summary><p>Yes. Your card details are turned into a mini website with its own link. The enquiry form is available on eligible Mini Website plans.</p></details>
+<details><summary>Can I share my card on WhatsApp?</summary><p>Yes. Share through WhatsApp, WhatsApp Business, Telegram, SMS, email and other apps, or copy the link.</p></details>
+<details><summary>Can I create wedding invitation cards?</summary><p>Yes. You can create digital invitation cards for weddings, engagements, birthdays, anniversaries, family functions and other celebrations.</p></details>
+<details><summary>Can I save someone else's business card?</summary><p>Yes. Open a DynaMe card and tap Save, add a contact by hand, or scan a physical card.</p></details>
+<details><summary>What is the AI Card Scanner?</summary><p>You photograph a physical visiting card and AI fills in the details it can read. You review and save. Currently up to 30 scans per day.</p></details>
+<details><summary>Is my card automatically visible in the Business Directory?</summary><p>No. A card is listed only after you give consent. The directory is being rolled out gradually and is not yet open to everyone.</p></details>
+<details><summary>Does DynaMe support Android?</summary><p>Yes, DynaMe has an Android app (package com.spywell.vicard). The web version also works in your browser at spywell.in/studio.</p></details></div></section>
+
+<div class="fin"><div class="w"><h2>Make Your Identity More Than Just a Card.</h2><p class="sub">Create your digital identity and connect with people in a smarter way.</p>
+<div class="cta" style="justify-content:center"><a class="btn" href="/studio/" data-t="final_start">Get Started with DynaMe</a><a class="btn o" href="/studio/" data-t="final_app">Explore the App</a></div></div></div>
+</main>
+<footer><img src="/dyname/logo.png" width="46" height="46" loading="lazy" alt="DynaMe"><p style="margin:8px 0"><b style="color:#fff">DynaMe</b> | Your Identity, Dynamically Connected<br>A product by SpyWell InfoTech</p>
+<p style="margin:0">Website: <a href="https://spywell.in">spywell.in</a> · App: <a href="https://spywell.in/studio/">spywell.in/studio</a></p></footer>
+<script>
+(function(){var hb=document.getElementById('hb'),nv=document.getElementById('nv');
+hb.onclick=function(){var o=nv.classList.toggle('on');hb.setAttribute('aria-expanded',o)};
+nv.addEventListener('click',function(e){if(e.target.tagName=='A')nv.classList.remove('on')});
+var t=document.getElementById('trk');function mv(d){t.scrollBy({left:d*216,behavior:'smooth'})}
+document.getElementById('pv').onclick=function(){mv(-1)};document.getElementById('nx').onclick=function(){mv(1)};
+document.addEventListener('click',function(e){var a=e.target.closest('[data-t]');if(a&&window.gtag)try{gtag('event',a.getAttribute('data-t'))}catch(_){}});
+})();
+</script></body></html>
