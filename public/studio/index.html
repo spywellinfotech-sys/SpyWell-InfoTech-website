@@ -657,7 +657,7 @@ async function loadEnq(){
   var r=await sb.rpc('studio_my_enquiries',{p_limit:50}),box=$('c-enq'),tb=$('tb-h');
   if(r.error||!r.data){box.hidden=true;return}var rows=r.data.rows||[],un=r.data.unread||0;ENQ={rows:rows,un:un};
   if(tb){tb.textContent=un>99?'99+':un;tb.hidden=!un}
-  var ib=$('ib'),ibn=$('ib-n');if(ib){ib.hidden=false;ibn.textContent=un>99?'99+':un;ibn.hidden=!un}
+  var ib=$('ib'),ibn=$('ib-n');if(ib){ib.hidden=true;ibn.textContent=un>99?'99+':un;ibn.hidden=!un}
   drawEnq(box,rows,un,1);var ob=$('ibx-b');if(ob)drawEnq(ob,rows,un,200);enqNew(rows)}
 function drawEnq(box,rows,un,lim){
   box.textContent='';if(!rows.length){box.hidden=false;box.appendChild(mk('b','','📩 पूछताछ'));box.appendChild(mk('div','k','वेबसाइट के फ़ॉर्म से आई पूछताछ यहाँ दिखेगी।'));return}
