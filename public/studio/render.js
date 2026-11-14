@@ -142,7 +142,6 @@
     var g = el('div', 'sr-act sr-share');
     function sa(label, href, act) { g.appendChild(actA(link('', label, href), act)); }
     function sb(label, act, fn) { var a = link('', label, '#'); a.onclick = function (ev) { ev.preventDefault(); try { fn(a); } catch (x) { } }; a.setAttribute('role', 'button'); g.appendChild(actA(a, act)); }
-    if (root) { sb(T('🖼 फ़ोटो + लिंक भेजें'), 'share-img', function (a) { saveCardImage(root, f, a); }); g.lastChild.style.cssText = 'background:#1ea952;border:1px solid #1ea952;color:#fff;'; }
     sa('💬 WhatsApp', 'https://wa.me/?text=' + e(msg), 'share-wa'); g.lastChild.style.cssText = 'background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;'; (function (n) { n.style.setProperty('color', '#0b6b32', 'important'); var q = n.querySelectorAll ? n.querySelectorAll('a,span,b') : []; for (var i = 0; i < q.length; i++) q[i].style.setProperty('color', '#0b6b32', 'important'); })(g.lastChild);
     var NV = null; try { NV = window.ViNative || (window.parent && window.parent !== window && window.parent.ViNative) || null; } catch (x) { }
     if (NV && NV.openWa) { sb('🛍 WhatsApp Business', 'share-wab', function () { if (!NV.openWa('', msg, true)) NV.shareText(msg); }); g.lastChild.style.cssText = 'background:#075e54;border:1px solid #075e54;color:#fff;'; }
@@ -363,7 +362,7 @@
     if (window.html2canvas) { go(); return; }
     var sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'; sc.onload = go; sc.onerror = done; document.head.appendChild(sc);
   }
-  function saveCardBtn(root, f) { var b = el('button', 'sr-save sr-savecard', T('\uD83D\uDDBC कार्ड फ़ोटो + लिंक भेजें')); b.type = 'button'; b.setAttribute('data-act', 'savecard'); b.onclick = function () { saveCardImage(root, f, b); }; return b; }
+  function saveCardBtn(root, f) { var b = el('button', 'sr-save sr-savecard', T('\uD83D\uDDBC कार्ड फ़ोटो सेव करें')); b.type = 'button'; b.setAttribute('data-act', 'savecard'); b.onclick = function () { saveCardImage(root, f, b); }; return b; }
   function motifStrip(m) { var d = el('div', 'sr-mt'); for (var n = 0; n < 7; n++) { var sp = el('span', '', m); sp.style.setProperty('--n', n); d.appendChild(sp); } return d; }
   function buildVisiting(root, d, opts) {
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd');
