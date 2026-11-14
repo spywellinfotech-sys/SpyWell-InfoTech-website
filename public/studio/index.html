@@ -680,6 +680,17 @@ async function dash(user){
   PFP=prof;
   var a=await sb.rpc('studio_is_admin');
   $('d-admin').hidden=true;
+  try{var _ps=$('v-prof');var _ob=document.getElementById('adm-sw');if(_ob)_ob.remove();
+    if(a&&a.data===true&&_ps){var sw=document.createElement('div');sw.id='adm-sw';sw.style.cssText='margin:0 0 12px;padding:10px;border-radius:14px;background:#fff1f0;border:1px solid #f0b4b0';
+      var tt=document.createElement('b');tt.textContent='🛡️ मोड बदलें';tt.style.display='block';sw.appendChild(tt);
+      var rw=document.createElement('div');rw.style.cssText='display:flex;gap:6px;margin-top:8px;background:#fff;border-radius:12px;padding:4px;border:1px solid #f0b4b0';
+      var bu=document.createElement('button');bu.type='button';bu.textContent='👤 User';bu.style.cssText='flex:1;margin:0;border:0;border-radius:9px;background:#d4141c;color:#fff;font-weight:700;padding:11px 4px';
+      var ba=document.createElement('button');ba.type='button';ba.textContent='🛡️ Admin';ba.style.cssText='flex:1;margin:0;border:0;border-radius:9px;background:transparent;color:#7a0a10;font-weight:700;padding:11px 4px';
+      ba.onclick=function(){try{localStorage.setItem('st_mode','admin')}catch(e){}location.href='/studio/admin/'};
+      bu.onclick=function(){try{localStorage.setItem('st_mode','user')}catch(e){}};
+      rw.appendChild(bu);rw.appendChild(ba);sw.appendChild(rw);
+      var nt=document.createElement('div');nt.className='k';nt.style.marginTop='6px';nt.textContent='अभी आप User मोड में हैं। Admin दबाने पर सुपर एडमिन पैनल खुलेगा।';sw.appendChild(nt);
+      _ps.insertBefore(sw,_ps.firstChild)}}catch(e){}
   $('d-list').textContent='लोड हो रहा है…';drawFilters();
   var t=await sb.from('studio_templates').select('id,product_type,name,config,sort').eq('active',true).order('sort',{ascending:true});
   TPL=t.data||[];
