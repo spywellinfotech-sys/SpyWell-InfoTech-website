@@ -661,7 +661,7 @@ function drawEnq(box,rows,un,lim){
     function row(l,v,href){var r=mk('div','');r.style.cssText='display:flex;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line)';var a=mk('b','k',l);a.style.cssText='min-width:92px;flex:none';r.appendChild(a);var b=href?mk('a','',v):mk('span','',v);if(href){b.href=href;if(/^https?:/.test(href)){b.target='_blank';b.rel='noopener'}}b.style.cssText='flex:1;word-break:break-word';r.appendChild(b);dt.appendChild(r)}
     row('👤 नाम',q.name);row('📞 मोबाइल','+91 '+q.mobile,'tel:+91'+q.mobile);
     row('📍 शहर / गाँव',q.city||'दिया नहीं गया');
-    row('🗺 लोकेशन',q.loc?'मैप में देखें':'जोड़ी नहीं गई',q.loc||'');
+    row('📍 लोकेशन',q.loc?'मैप में देखें':'जोड़ी नहीं गई',q.loc||'');
     row('💬 संदेश',q.message);row('🪪 कार्ड',q.title||'—');row('🕒 समय',when(q.at));
     vd.onclick=function(){dt.hidden=!dt.hidden;vd.textContent=dt.hidden?'👁 View details':'🙈 Hide details'};
     d.appendChild(ac);d.appendChild(dt);box.appendChild(d)});
@@ -789,7 +789,7 @@ function locTile(){
     if(p.addr){var ad=mk('span','k',p.addr);ad.style.cssText='display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin:0';n.appendChild(ad)}r.appendChild(n);
     var w=mk('a','','💬 भेजें');w.href='#';w.style.cssText='flex:none;background:#1ea952;color:#fff;border-radius:10px;padding:8px 12px;text-decoration:none;font-weight:700;font-size:14px';
     w.onclick=function(ev){ev.preventDefault();window.open('https://wa.me/?text='+encodeURIComponent(txt(p,PROMO)),'_blank','noopener')};r.appendChild(w);
-    if(p.map){var mp=mk('a','','🗺');mp.href=p.map;mp.target='_blank';mp.rel='noopener';mp.style.cssText='flex:none;border:1px solid var(--line);border-radius:10px;padding:7px 10px;text-decoration:none;font-size:15px';r.appendChild(mp)}
+    if(p.map){var mp=mk('a','','📍');mp.href=p.map;mp.target='_blank';mp.rel='noopener';mp.style.cssText='flex:none;border:1px solid var(--line);border-radius:10px;padding:7px 10px;text-decoration:none;font-size:15px';r.appendChild(mp)}
     box.appendChild(r)});
   var ad2=mk('a','','➕ नई जगह जोड़ें / बदलें');ad2.href='/studio/places/';ad2.style.cssText='display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:600;font-size:14px';box.appendChild(ad2);
   foldBox(box,'📍 मेरी लोकेशन',P.length?P.length+' जगह':'जोड़ें');box.firstChild.style.marginTop='0';box.firstChild.style.border='0';box.firstChild.style.background='transparent';box.firstChild.style.padding='2px 0'}

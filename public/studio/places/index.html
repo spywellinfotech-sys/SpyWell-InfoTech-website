@@ -72,7 +72,7 @@ function draw(){var L=$('list');L.textContent='';
     var sh=mk('button','g','📤 शेयर');sh.type='button';sh.onclick=function(){var t=text(p);if(NV&&NV.shareText){NV.shareText(t);return}if(navigator.share){navigator.share({text:t}).catch(function(){});return}cp.click()};ac.appendChild(sh);
     var cp=mk('button','g','📋 कॉपी');cp.type='button';cp.onclick=function(){var t=text(p);function ok(){cp.textContent='कॉपी हुआ ✓';setTimeout(function(){cp.textContent='📋 कॉपी'},2000)}
       if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){});};ac.appendChild(cp);
-    if(p.map){var m=mk('a','g','🗺 मैप');m.href=p.map;m.target='_blank';m.rel='noopener';ac.appendChild(m)}
+    if(p.map){var m=mk('a','g','📍 मैप');m.href=p.map;m.target='_blank';m.rel='noopener';ac.appendChild(m)}
     var ed=mk('button','g','✏️ बदलें');ed.type='button';ed.onclick=function(){EDIT=p.id;LAB=p.label;$('f-label').value=LABS.slice(0,-1).some(function(l){return l[1]===p.label})?'':p.label;$('f-name').value=p.name||'';$('f-addr').value=p.addr||'';$('f-mob').value=p.mob||'';$('f-map').value=p.map||'';$('f-title').textContent='✏️ जगह बदलें';$('form').hidden=false;$('f-open').hidden=true;chips();$('form').scrollIntoView({behavior:'smooth'})};ac.appendChild(ed);
     var dl=mk('button','d','🗑 हटाएँ');dl.type='button';var arm=false;dl.onclick=function(){if(!arm){arm=true;dl.textContent='पक्का हटाएँ?';setTimeout(function(){arm=false;dl.textContent='🗑 हटाएँ'},3000);return}P=P.filter(function(q){return q.id!==p.id});store();if(EDIT===p.id)reset();draw()};ac.appendChild(dl);
     d.appendChild(ac);L.appendChild(d)})}
