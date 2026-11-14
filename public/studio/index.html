@@ -140,6 +140,7 @@ button{min-height:48px;border-radius:12px}
 <div class="minis" id="pk-grid"></div>
 <button type="button" class="alt" id="pk-back">वापस</button>
 </div>
+<div class="card" id="c-ins" hidden style="padding:10px 14px"></div>
 <div class="card" id="c-disc">
 <b>🔍 बिज़नेस खोजें (Discover)</b>
 <div class="k">DynaMe पर सार्वजनिक किए गए बिज़नेस कार्ड, नाम, कंपनी, व्यवसाय या शहर से खोजें।</div>
@@ -628,8 +629,8 @@ async function myHome(){
     sv.onclick=async function(){sv.disabled=true;var q=await sb.rpc('studio_dir_set',{p_design:x.id,p_listed:cb.checked,p_city:ci.value.trim()});sv.disabled=false;var d=q&&q.data;
       ms.textContent=d&&d.ok?(cb.checked?'✓ डायरेक्टरी में लिस्ट हो गया':'✓ डायरेक्टरी से हटा दिया'):(d&&d.error==='closed'?'डायरेक्टरी अभी चालू नहीं है।':d&&d.error==='city'?'पहले अपना शहर/कस्बा लिखें।':'सेव नहीं हुआ, दोबारा कोशिश करें।')};
     var ld=mk('a','','📒 डायरेक्टरी देखें →');ld.href='/studio/directory/';ld.style.cssText='display:block;margin-top:8px;color:#d4141c;font-weight:600;font-size:14px';dw.appendChild(ld);dw.removeChild(dw.firstChild);dw.style.cssText='';foldBox(dw,'📒 बिज़नेस डायरेक्टरी',m.listed?'✓ लिस्टेड':'लिस्ट नहीं')});
-  var sw=mk('div','');box.appendChild(sw);
-  var st=await sb.rpc('studio_my_stats',{p_design:x.id});sw.textContent='';
+  var sw=$('c-ins')||box.appendChild(mk('div',''));sw.textContent='';
+  var st=await sb.rpc('studio_my_stats',{p_design:x.id});sw.textContent='';sw.hidden=!!st.error||!st.data;
   if(!st.error&&st.data){sw.appendChild(statRow('📇 कार्ड की इनसाइट',st.data.card||{}));
     var pl=SUBI[x.id]&&SUBI[x.id].plan;if(st.data.site&&((st.data.site.total||0)>0||pl==='site'||pl==='domain'))sw.appendChild(statRow('🌐 वेबसाइट की इनसाइट',st.data.site))}
   var vb=mk('button','alt','📋 View details');vb.type='button';vb.style.cssText='width:100%;margin-top:10px';
@@ -637,7 +638,7 @@ async function myHome(){
   vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
     if(!det.hidden&&!loaded){loaded=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,st.data||{},dd.data||{})}};
   sw.appendChild(vb);sw.appendChild(det);
-  if(!st.error&&st.data){var cc=st.data.card||{};foldBox(sw,'📊 इनसाइट','👁 '+(cc.total||0)+' · आज '+(cc.today||0))}
+  if(!st.error&&st.data){var cc=st.data.card||{};foldBox(sw,'📊 इनसाइट','👁 '+(cc.total||0)+' · आज '+(cc.today||0));sw.firstChild.style.cssText+=';margin-top:0;border:0;background:transparent;padding:2px 0'}
   loadEnq()}
 var ENQ={rows:[],un:0};
 function hasSite(){return LIST.some(function(x){var i=SUBI[x.id];return x.product_type==='visiting'&&i&&(i.plan==='site'||i.plan==='domain')})}
@@ -690,7 +691,7 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-addr'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-ins'),'home'],[$('c-addr'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','dir','saved','me'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden))t='home';
   if(t==='dir'){var cd=$('c-dir');if(!cd.firstChild){var fr=document.createElement('iframe');fr.src='/studio/directory/?embed=1';fr.style.cssText='width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);border:0;display:block';cd.appendChild(fr)}}
