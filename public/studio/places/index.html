@@ -24,7 +24,7 @@ details>summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;di
 <div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="30" height="30" style="border-radius:8px;vertical-align:middle;margin-right:8px">📍 मेरी लोकेशन</b><a href="/studio/">← होम</a></div>
 <div class="wrap"><h1>अपनी हर जगह की लोकेशन सेव रखें</h1>
 <div class="k">दुकान, ऑफ़िस, फ़ैक्टरी, साइट, घर: एक बार सेव करें, फिर कहीं से भी एक टैप में WhatsApp पर भेजें। जितनी चाहें उतनी जगह जोड़ें।</div>
-<details class="card" id="sv" open><summary id="sv-t">📂 Saved Locations</summary><div id="list"></div></details>
+<div id="list"></div>
 <button type="button" id="f-open">➕ नई जगह जोड़ें</button>
 <div class="card" id="form" hidden>
 <b id="f-title">➕ नई जगह जोड़ें</b>
@@ -61,7 +61,7 @@ function store(){try{localStorage.setItem('vc_places',JSON.stringify(P))}catch(e
   return sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(r){return r&&r.error?'err':'ok'},function(){return 'err'})}
 function reset(){EDIT=null;LAB='दुकान';['label','name','addr','mob','map'].forEach(function(k){$('f-'+k).value=''});$('f-title').textContent='➕ नई जगह जोड़ें';$('f-err').textContent='';chips();$('form').hidden=true;$('f-open').hidden=false}
 $('f-open').onclick=function(){$('form').hidden=false;$('f-open').hidden=true;$('form').scrollIntoView({behavior:'smooth'})};
-function draw(){var L=$('list');L.textContent='';$('sv-t').textContent='📂 Saved Locations ('+P.length+')';
+function draw(){var L=$('list');L.textContent='';
   if(!P.length){L.appendChild(mk('div','k','अभी कोई जगह सेव नहीं है। नीचे से पहली जगह जोड़ें।')).style.marginTop='12px';return}
   P.forEach(function(p){var d=mk('details','pl');d.appendChild(mk('summary','',ic(p.label)+' '+p.label+(p.name?' · '+p.name:'')));
     if(p.addr)d.appendChild(mk('div','k',p.addr));if(p.mob)d.appendChild(mk('div','k','📞 +91 '+p.mob));
