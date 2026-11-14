@@ -663,7 +663,9 @@ function drawEnq(box,rows,un,lim){
   box.textContent='';if(!rows.length){box.hidden=false;box.appendChild(mk('b','','📩 पूछताछ'));box.appendChild(mk('div','k','वेबसाइट के फ़ॉर्म से आई पूछताछ यहाँ दिखेगी।'));return}
   box.hidden=false;var h=mk('b','','📩 पूछताछ'+(un?' · '+un+' नई':''));box.appendChild(h);
   rows.slice(0,lim).forEach(function(q){var d=mk('div','des');d.style.opacity=q.read?'.6':'1';
-    d.appendChild(mk('b','',(q.read?'':'🔵 ')+q.name+' · '+q.mobile));d.appendChild(mk('div','',q.message));d.appendChild(mk('div','k',(q.title||'')+' · '+when(q.at)));
+    var mg=mk('b','',(q.read?'':'🔵 ')+q.message);mg.style.cssText='display:block;font-size:17px;line-height:1.4;color:#1a1a1a;word-break:break-word';d.appendChild(mg);
+    var sn=mk('div','','👤 '+q.name+' · '+q.mobile);sn.style.cssText='font-size:14px;font-weight:600;color:#555;margin-top:4px';d.appendChild(sn);
+    var ot=mk('div','k',(q.title||'')+' · '+when(q.at));ot.style.cssText='font-size:12px;margin-top:2px';d.appendChild(ot);
     var ac=mk('div','acts'),c=mk('a','','📞 कॉल');c.href='tel:+91'+q.mobile;var w=mk('a','','💬 WhatsApp');w.href='https://wa.me/91'+q.mobile;w.target='_blank';w.rel='noopener';ac.appendChild(c);ac.appendChild(w);
     if(!q.read){var m=mk('button','','✓ देख लिया');m.type='button';m.onclick=async function(){m.disabled=true;await sb.rpc('studio_enquiry_mark',{p_id:q.id,p_read:true});loadEnq()};ac.appendChild(m)}
     var vd=mk('button','alt','👁 View details');vd.type='button';ac.appendChild(vd);
