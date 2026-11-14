@@ -1,0 +1,2 @@
+-- Admin user tools: extra info, block/unblock, wallet adjust, delete Studio data (applied via MCP as studio_admin_user_tools).
+-- See functions: studio_admin_users_extra, studio_admin_user_block, studio_admin_wallet_adjust, studio_admin_delete_user.

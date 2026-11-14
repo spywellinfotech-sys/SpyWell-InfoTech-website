@@ -231,11 +231,35 @@ function custView(){
     var r=await sb.rpc('studio_admin_customers',{p_search:q.value.trim()});var cr=await sb.rpc('studio_admin_credits');var CRM={};(cr.data||[]).forEach(function(x){CRM[x.user_id]=x.balance});list.textContent='';
     if(r.error){list.appendChild(h('div',{class:'msg bad',text:'सूची नहीं आई'}));return}
     if(!r.data.length)list.appendChild(h('div',{class:'msg',text:'कोई ग्राहक नहीं मिला'}));
-    r.data.forEach(function(c){list.appendChild(h('div',{class:'card'},[h('b',{text:c.full_name||'(नाम नहीं)'}),h('div',{class:'k',text:[c.phone,c.email].filter(Boolean).join(' · ')}),
+    var EX={};try{var ex=await sb.rpc('studio_admin_users_extra');EX=ex.data||{}}catch(e){}
+    r.data.forEach(function(c){var x=EX[c.id]||{};var ph=String(c.phone||'').replace(/\D/g,'').slice(-10);var msg=h('div',{class:'k',style:'margin-top:6px'});
+      function act(label,cls,fn){return h('button',{class:'btn '+(cls||''),text:label,onclick:fn})}
+      var bl=act(x.blocked?'✅ अनब्लॉक करें':'🚫 ब्लॉक करें',x.blocked?'':'',async function(){
+        if(!bl.dataset.a){bl.dataset.a='1';bl.textContent='पक्का? '+(x.blocked?'लॉगिन फिर चालू होगा':'यह यूज़र लॉगिन नहीं कर पाएगा');return}
+        bl.disabled=true;var e=await sb.rpc('studio_admin_user_block',{p_user:c.id,p_block:!x.blocked});
+        if(e.error||!e.data||!e.data.ok){msg.textContent=e.data&&e.data.error==='admin'?'Admin खाते पर यह नहीं हो सकता।':'नहीं हुआ';bl.disabled=false;return}load()});
+      var wl=act('💰 वॉलेट ± ₹','',async function(){
+        if(!wl.dataset.o){wl.dataset.o='1';var ip=h('input',{type:'number',placeholder:'+50 जोड़ने के लिए, -50 घटाने के लिए',style:'margin-top:6px'});msg.textContent='';msg.appendChild(ip);
+          var ok=act('सेव','',async function(){var v=parseInt(ip.value);if(!v){return}var e=await sb.rpc('studio_admin_wallet_adjust',{p_user:c.id,p_amt:v,p_note:''});
+            if(e.error||!e.data||!e.data.ok){msg.textContent=e.data&&e.data.error==='low_balance'?'वॉलेट में इतने पैसे नहीं।':'नहीं हुआ';return}load()});msg.appendChild(ok);ip.focus()}});
+      var del=act('🗑️ यूज़र हटाएँ','d',async function(){
+        if(!del.dataset.a){del.dataset.a='1';del.textContent='पक्का? इसके सारे कार्ड/वॉलेट मिट जाएँगे';return}
+        if(del.dataset.a==='1'){del.dataset.a='2';del.textContent='आख़िरी बार: हाँ, हमेशा के लिए हटाएँ';return}
+        del.disabled=true;var e=await sb.rpc('studio_admin_delete_user',{p_user:c.id});
+        if(e.error||!e.data||!e.data.ok){msg.textContent=e.data&&e.data.error==='admin'?'Admin खाते को हटा नहीं सकते।':'नहीं हटा';del.disabled=false;return}load()});
+      var card=h('div',{class:'card',style:x.blocked?'border:2px solid #b00020':''},[h('b',{text:(x.blocked?'🚫 ':'')+(c.full_name||'(नाम नहीं)')}),h('div',{class:'k',text:[c.phone,c.email].filter(Boolean).join(' · ')}),
       h('div',{class:'k',text:'कार्ड: '+c.designs+' · प्रकाशित: '+c.published+' · जुड़े: '+dt(c.created_at)}),
+      h('div',{class:'k',text:'लॉगिन: '+(x.prov||'—').replace('google','Google').replace('email','ईमेल')+' · आख़िरी बार: '+(x.last?dt(x.last):'—')+(x.blocked?' · ब्लॉक है':'')}),
+      h('div',{class:'k',text:'वॉलेट: ₹'+(x.wallet||0)}),
       h('div',{class:'k',id:'cr-'+c.id,text:'AI क्रेडिट: '+(CRM[c.id]||0)}),
+      h('div',{},[
+        ph.length===10?h('a',{class:'btn',text:'📞 कॉल',href:'tel:+91'+ph}):null,
+        ph.length===10?h('a',{class:'btn',text:'💬 WhatsApp',href:'https://wa.me/91'+ph,target:'_blank',rel:'noopener'}):null,
+        c.email?h('a',{class:'btn',text:'✉️ ईमेल',href:'mailto:'+c.email}):null]),
       h('button',{class:'btn',text:'कार्ड देखें',onclick:function(){sel=c;window.__draw()}}),
-      h('button',{class:'btn',text:'+3 क्रेडिट दें',onclick:async function(){var x=await sb.rpc('studio_admin_grant',{p_user:c.id,p_n:3});var e=document.getElementById('cr-'+c.id);if(x.error){e.textContent='क्रेडिट नहीं जुड़ा';return}e.textContent='AI क्रेडिट: '+x.data}})]))})}
+      h('button',{class:'btn',text:'+3 क्रेडिट दें',onclick:async function(){var y=await sb.rpc('studio_admin_grant',{p_user:c.id,p_n:3});var e=document.getElementById('cr-'+c.id);if(y.error){e.textContent='क्रेडिट नहीं जुड़ा';return}e.textContent='AI क्रेडिट: '+y.data}}),
+      wl,bl,x.admin?h('div',{class:'k',text:'🛡️ यह Admin खाता है, हटाया/ब्लॉक नहीं हो सकता।'}):del,msg]);
+      list.appendChild(card)})}
   q.oninput=function(){clearTimeout(tm);tm=setTimeout(load,350)};load()}
 async function cardsView(){
   var c=sel;body.appendChild(h('button',{class:'btn',text:'← वापस',onclick:function(){sel=null;window.__draw()}}));
