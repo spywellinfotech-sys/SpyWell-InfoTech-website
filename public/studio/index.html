@@ -123,6 +123,7 @@ button{min-height:48px;border-radius:12px}
 <div class="card" id="c-ref" hidden></div>
 <div class="card" id="c-inv" hidden></div>
 <div class="card" id="c-addr"></div>
+<a class="card" id="c-loc" href="/studio/places/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit"><span style="font-size:30px">📍</span><span style="flex:1"><b style="display:block">मेरी लोकेशन</b><span class="k">दुकान, ऑफ़िस, फ़ैक्टरी, साइट: सेव करें और कहीं से भी भेजें</span></span><b style="color:#d4141c;font-size:20px">›</b></a>
 
 <div class="card" id="c-new">
 <b>नया बनाएँ</b>
@@ -679,7 +680,7 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-addr'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-addr'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','dir','saved','me'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden))t='home';
   if(t==='dir'){var cd=$('c-dir');if(!cd.firstChild){var fr=document.createElement('iframe');fr.src='/studio/directory/?embed=1';fr.style.cssText='width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);border:0;display:block';cd.appendChild(fr)}}
