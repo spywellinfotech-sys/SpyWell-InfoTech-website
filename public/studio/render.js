@@ -319,7 +319,7 @@
     var hdEl = root.querySelector('.hd'), cs = hdEl ? getComputedStyle(hdEl) : null, ac = (cs && cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)') ? cs.backgroundColor : '#12307f', fg = (cs && cs.color) || '#ffffff';
     var lgEl = root.querySelector('img.sr-lg'), phEl = root.querySelector('.ph img, img.ph');
     var slug = ''; try { slug = new URLSearchParams(location.search).get('s') || ''; } catch (e) { }
-    var url = slug ? location.origin + '/v/' + slug : location.href.split('#')[0];
+    var url = canonUrl();
     return Promise.all([loadImg(phEl && phEl.src), loadImg(lgEl && lgEl.src)]).then(function (im) {
       var W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d');
       var FF = '"Hind","Noto Sans Devanagari",system-ui,sans-serif';
