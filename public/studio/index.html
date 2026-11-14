@@ -443,7 +443,7 @@ $('vo-say').onclick=function(){var ev=subEvents();voSpeak(ev.length?ev.map(funct
 $('vo-stop').onclick=function(){try{speechSynthesis.cancel()}catch(e){}};
 
 var VWO=null;
-function openVw(slug,pt,title){
+function openVw(slug,pt,title,tab){
   closeVw(true);var o=document.createElement('div');o.id='vw';o.style.cssText='position:fixed;inset:0;z-index:200;background:#fff;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden';
   var hd=document.createElement('div');hd.style.cssText='background:#7a0a10;color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px';
   var bk=mk('button','','⬅ वापस');bk.type='button';bk.style.cssText='width:auto;margin:0;min-height:40px;padding:6px 12px;background:#fff;color:#d4141c';bk.onclick=function(){history.back()};hd.appendChild(bk);
@@ -453,7 +453,7 @@ function openVw(slug,pt,title){
   if(pt!=='invitation'){var sg=document.createElement('div');sg.style.cssText='display:flex;gap:6px;padding:6px 10px;background:#fff1f0';
     [['c','📇 कार्ड','/v/'],['w','🌐 मिनी वेबसाइट','/web/']].forEach(function(z,i){var b=mk('button','',z[1]);b.type='button';b.style.cssText='margin:0;min-height:38px;padding:6px;font-size:14px;flex:1;'+(i?'background:#fff;color:#d4141c;border:1px solid #d4141c':'');b.dataset.k=z[0];
       b.onclick=function(){fr.src=z[2]+encodeURIComponent(slug);sg.querySelectorAll('button').forEach(function(q){var on=q===b;q.style.background=on?'#d4141c':'#fff';q.style.color=on?'#fff':'#d4141c'})};sg.appendChild(b)});o.appendChild(sg)}
-  o.appendChild(fr);document.body.appendChild(o);VWO=o;try{history.pushState({vw:1},'')}catch(e){}}
+  o.appendChild(fr);document.body.appendChild(o);VWO=o;if(tab==='w'&&pt!=='invitation'){try{var sgb=o.querySelectorAll('button');sgb[sgb.length-1].click()}catch(e){}}try{history.pushState({vw:1},'')}catch(e){}}
 function closeVw(silent){var o=document.getElementById('vw');if(o)o.remove();VWO=null}
 window.addEventListener('popstate',function(){if(document.getElementById('vw'))closeVw(true)});
 
@@ -583,6 +583,28 @@ async function myHome(){
     var qr=mk('a','','QR');qr.href='/studio/editor/?id='+x.id+'&tab=pub';
     var NVb=window.ViNative;if(NVb&&NVb.openWa){var wb=mk('a','','🛍 WA Business');wb.href='#';wb.onclick=function(ev){ev.preventDefault();var m='मेरा डिजिटल कार्ड: '+u;if(!NVb.openWa('',m,true)&&NVb.shareText)NVb.shareText(m)};[wb].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#075e54;border:1px solid #075e54;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px'})}
     wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';[qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'});r2.appendChild(cp);r2.appendChild(wa);if(wb)r2.appendChild(wb);r2.appendChild(qr);box.appendChild(r2)}
+  (function(){var pub=x.status==='published'&&!!x.slug,nm=(x.title||'मेरी वेबसाइट');
+    var hero=mk('div','');hero.style.cssText='margin-top:14px;background:linear-gradient(135deg,#0b3d5c,#1a8fd1);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(26,143,209,.3)';
+    hero.appendChild(mk('b','','🌐 मेरी मिनी वेबसाइट')).style.cssText='display:block;font-size:17px';
+    var row=mk('div','');row.style.cssText='display:flex;gap:12px;align-items:center;margin-top:10px';
+    var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';
+    var t1=mk('b','',nm);t1.style.cssText='display:block;font-size:17px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';tx.appendChild(t1);
+    var t2=mk('div','',pub?'आपकी वेबसाइट लाइव है ✅':'कार्ड प्रकाशित होते ही वेबसाइट अपने-आप बन जाएगी');t2.style.cssText='font-size:13px;opacity:.92;margin-top:3px';tx.appendChild(t2);
+    if(pub){var u2=mk('div','','spywell.in/web/'+x.slug);u2.style.cssText='font-size:12px;opacity:.9;margin-top:6px;word-break:break-all';tx.appendChild(u2);var t3=mk('div','','👆 वेबसाइट दबाकर बड़ा देखें');t3.style.cssText='font-size:12px;margin-top:6px;background:rgba(255,255,255,.18);border-radius:8px;padding:4px 8px;display:inline-block';tx.appendChild(t3)}
+    var pv=mk('div','');pv.style.cssText='flex:none;width:150px;height:240px;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.35);position:relative;border:2px solid #fff';
+    if(pub){var pf=document.createElement('iframe');pf.src='/web/'+encodeURIComponent(x.slug);pf.loading='lazy';pf.tabIndex=-1;pf.setAttribute('aria-hidden','true');pf.style.cssText='border:0;width:390px;height:624px;transform:scale(.385);transform-origin:0 0;pointer-events:none;background:#fff';pv.appendChild(pf);
+      var ov=mk('div','');ov.style.cssText='position:absolute;inset:0;cursor:pointer';ov.onclick=function(){openVw(x.slug,'visiting',x.title,'w')};pv.appendChild(ov)}
+    else{pv.style.cssText+=';display:flex;align-items:center;justify-content:center;font-size:44px;background:rgba(255,255,255,.15)';pv.textContent='🌐'}
+    row.appendChild(pv);row.appendChild(tx);hero.appendChild(row);
+    var go=mk('button','',pub?'🌐 मेरी वेबसाइट देखें':'🚀 पहले कार्ड प्रकाशित करें');go.type='button';
+    go.style.cssText='width:100%;margin:14px 0 0;background:#ffc21a;color:#0b3d5c;font-size:18px;font-weight:800;border:0;border-radius:14px;padding:14px 10px;box-shadow:0 4px 0 #c98d00';
+    go.onclick=function(){if(pub)openVw(x.slug,'visiting',x.title,'w');else location.href='/studio/editor/?id='+x.id+'&tab=pub'};hero.appendChild(go);
+    var r3=mk('div','');r3.style.cssText='display:flex;gap:8px;margin-top:10px';
+    var ed=mk('a','','✏️ वेबसाइट एडिट');ed.href='/studio/editor/?id='+x.id+'&tab=info';
+    ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d5c;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(ed);
+    if(pub){var wl=location.origin+'/web/'+x.slug;var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent((x.title||'मेरी')+' की मिनी वेबसाइट: '+wl);wa.target='_blank';wa.rel='noopener';
+      wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(wa)}
+    hero.appendChild(r3);box.appendChild(hero)})();
   var dw=mk('div','');box.appendChild(dw);
   if(x.status==='published'&&x.slug)sb.rpc('studio_dir_mine',{p_design:x.id}).then(function(r){var m=r&&r.data;if(!m||!m.open)return;
     dw.style.cssText='margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff7f6';
