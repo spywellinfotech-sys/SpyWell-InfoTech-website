@@ -31,8 +31,8 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chips button{width:auto;margin:0;padding:5px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:14px;font-weight:400}
 .chips button.on{background:var(--wine);color:#fff;border-color:var(--wine)}
-.des{border-top:1px solid var(--line);padding:10px 0}.des b{display:block}.des .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.des .acts button,.des .acts a{width:auto;margin:0;padding:6px 12px;font-size:14px;border-radius:8px;text-decoration:none;display:inline-block;font-weight:600}
+.des{border-top:1px solid var(--line);padding:10px 0}.des b{display:block}.des .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.des .acts button,.des .acts a{width:auto;margin:0;padding:6px 12px;font-size:14px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:36px;line-height:1.2;box-sizing:border-box;font-weight:600}
 .des .acts a{background:var(--wine);color:#fff}.des .acts button{background:#fff;color:var(--wine);border:1px solid var(--wine)}.des .acts button.danger{background:#b00020;color:#fff;border-color:#b00020}
 .st{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;margin-left:6px;background:#eee;color:#444}.st.published{background:#1b6e3c;color:#fff}.st.unpublished{background:#7a6248;color:#fff}
 .minis{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
@@ -66,8 +66,6 @@ button{min-height:48px;border-radius:12px}
 <div class="wrap">
 
 <div id="v-load" class="k" style="padding:30px;text-align:center">लोड हो रहा है…</div>
-<div class="wrap" style="padding-bottom:0"><a href="/dyname/" style="display:block;text-align:center;font-size:14px;color:var(--wine);font-weight:600;text-decoration:none">✨ DynaMe क्या है? देखें →</a></div>
-<div class="k" style="text-align:center;margin:14px 0 4px;font-size:12px"><a href="/dyname/privacy/">Privacy Policy</a> · <a href="/dyname/terms/">Terms</a> · <a href="/dyname/disclaimer/">Disclaimer</a> · <a href="/dyname/refund/">Refund</a></div>
 
 <form class="card" id="v-login" hidden>
 <h1>लॉगिन</h1>
@@ -118,7 +116,7 @@ button{min-height:48px;border-radius:12px}
 <button type="button" id="wl-go" style="background:#f59a1a;color:#7a0a10;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
 <div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button></div>
 <div class="card" id="c-note" hidden></div>
-<div class="card" id="c-enq" hidden></div>
+<div class="card" id="c-enq" hidden style="padding:10px 14px"></div>
 <div class="card" id="c-my" hidden></div>
 <div class="card" id="c-addr"></div>
 <div class="card" id="c-loc" style="padding:10px 14px"></div>
@@ -205,6 +203,8 @@ button{min-height:48px;border-radius:12px}
 </form>
 </div>
 
+<div class="wrap" style="padding-bottom:0"><a href="/dyname/" style="display:block;text-align:center;font-size:14px;color:var(--wine);font-weight:600;text-decoration:none">✨ DynaMe क्या है? देखें →</a></div>
+<div class="k" style="text-align:center;margin:14px 0 4px;font-size:12px"><a href="/dyname/privacy/">Privacy Policy</a> · <a href="/dyname/terms/">Terms</a> · <a href="/dyname/disclaimer/">Disclaimer</a> · <a href="/dyname/refund/">Refund</a></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/studio/render.js"></script>
@@ -665,7 +665,8 @@ function drawEnq(box,rows,un,lim){
     row('💬 संदेश',q.message);row('🪪 कार्ड',q.title||'—');row('🕒 समय',when(q.at));
     vd.onclick=function(){dt.hidden=!dt.hidden;vd.textContent=dt.hidden?'👁 View details':'🙈 Hide details'};
     d.appendChild(ac);d.appendChild(dt);box.appendChild(d)});
-  if(rows.length>lim){var ma=mk('button','alt','📥 सभी '+rows.length+' पूछताछ Inbox में देखें');ma.type='button';ma.style.cssText='width:100%;margin-top:10px';ma.onclick=function(){openInbox()};box.appendChild(ma)}}
+  if(rows.length>lim){var ma=mk('button','alt','📥 सभी '+rows.length+' पूछताछ Inbox में देखें');ma.type='button';ma.style.cssText='width:100%;margin-top:10px';ma.onclick=function(){openInbox()};box.appendChild(ma)}
+  if(lim===1){var wasOpen=box._open;h.remove();foldBox(box,'📩 पूछताछ',un?('🔵 '+un+' नई'):(rows.length+' कुल'));var hd=box.firstChild,bd=box.lastChild;hd.style.marginTop='0';if(wasOpen){bd.hidden=false;hd.lastChild.textContent='▲'}hd.addEventListener('click',function(){box._open=!bd.hidden})}}
 function enqNew(rows){var seen='';try{seen=localStorage.getItem('vc_enq_seen')||''}catch(e){}
   var nw=rows.filter(function(q){return !q.read&&(!seen||q.at>seen)});if(!nw.length)return;
   var mx=rows.reduce(function(m,q){return q.at>m?q.at:m},'');try{localStorage.setItem('vc_enq_seen',mx)}catch(e){}
