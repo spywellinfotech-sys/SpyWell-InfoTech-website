@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '*/20 * * * *'
 
 permissions:
   contents: read
@@ -27,6 +29,9 @@ jobs:
         env:
           VITE_SITE_URL: https://spywell.in
         run: npm run build -- --base=/ && node scripts/make404.cjs
+      - name: Per-card link previews (Studio)
+        continue-on-error: true
+        run: node scripts/make-og-pages.cjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

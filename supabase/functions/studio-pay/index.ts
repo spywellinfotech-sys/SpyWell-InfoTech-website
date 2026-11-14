@@ -37,7 +37,7 @@ const RANK: Record<string, number> = { card: 1, site: 2, domain: 3 };
 async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> {
   const claim = await sb.from("studio_pub_orders")
     .update({ status: "paid", rzp_payment_id: paymentId, paid_at: new Date().toISOString() })
-    .eq("rzp_order_id", orderId).eq("status", "created").select("design_id,plan,new_until,user_id,amount_paise,wallet_used");
+    .eq("rzp_order_id", orderId).eq("status", "created").select("design_id,plan,new_until,user_id,amount_paise,wallet_used,template_id");
   if (claim.error) return false;
   if (!claim.data || claim.data.length === 0) {
     const { data: o } = await sb.from("studio_pub_orders").select("status").eq("rzp_order_id", orderId).maybeSingle();
@@ -45,7 +45,9 @@ async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> 
   }
   const o = claim.data[0] as any;
   let err: unknown = null;
-  if (o.plan) {
+  if (o.plan === "premium") {
+    err = (await sb.from("studio_prem_paid").upsert({ design_id: o.design_id, template_id: o.template_id || "", amount: Math.round((o.amount_paise || 0) / 100) + (o.wallet_used || 0), source: "paid" }, { onConflict: "design_id,template_id", ignoreDuplicates: true })).error;
+  } else if (o.plan) {
     const { data: cur } = await sb.from("studio_subs").select("plan,paid_until").eq("design_id", o.design_id).maybeSingle();
     const plan = cur && (RANK[cur.plan] || 0) > (RANK[o.plan] || 0) ? cur.plan : o.plan;
     const until = cur && new Date(cur.paid_until) > new Date(o.new_until) ? cur.paid_until : o.new_until;
@@ -118,11 +120,16 @@ Deno.serve(async (req) => {
   if (b.action === "pub_create" || b.action === "pub_verify") {
     if (b.action === "pub_create") {
       const did = clip(b.design_id, 60);
-      const { data: d } = await sb.from("studio_designs").select("user_id,product_type").eq("id", did).maybeSingle();
+      const { data: d } = await sb.from("studio_designs").select("user_id,product_type,template_id").eq("id", did).maybeSingle();
       if (!d || d.user_id !== user.id) return json({ code: "design_not_found" }, 404);
       let price = st.pub[d.product_type] || 0, plan: string | null = null, newUntil: string | null = null;
       if (st.bypass) return json({ code: "free" }, 400);
-      if (d.product_type === "visiting") {
+      let tplId: string | null = null;
+      if (clip(b.plan, 10) === "premium") {
+        const due = ((await sb.rpc("studio_prem_due", { p_design: did, p_tpl: d.template_id })).data as number) || 0;
+        if (due < 1) return json({ code: "free" }, 400);
+        price = due; plan = "premium"; tplId = d.template_id;
+      } else if (d.product_type === "visiting") {
         const req = (await sb.rpc("studio_sub_required", { p_id: did })).data as string | null;
         const target = RANK[clip(b.plan, 10)] ? clip(b.plan, 10) : req;
         if (!req || !target || RANK[target] < RANK[req]) return json({ code: "bad_plan" }, 400);
@@ -144,7 +151,7 @@ Deno.serve(async (req) => {
       });
       const ro = await r.json();
       if (!r.ok || !ro.id) return json({ code: "order_failed" }, 502);
-      const ins = await sb.from("studio_pub_orders").insert({ rzp_order_id: ro.id, user_id: user.id, design_id: did, amount_paise: amount, plan, new_until: newUntil, wallet_used: wu });
+      const ins = await sb.from("studio_pub_orders").insert({ rzp_order_id: ro.id, user_id: user.id, design_id: did, amount_paise: amount, plan, new_until: newUntil, wallet_used: wu, template_id: tplId });
       if (ins.error) return json({ code: "db" }, 500);
       return json({ order_id: ro.id, key_id: keyId, amount, wallet_used: wu });
     }

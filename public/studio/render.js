@@ -131,7 +131,7 @@
     } catch (e) { }
     return String(location.href).split('#')[0];
   }
-  function shareBar(f, opts) {
+  function shareBar(f, opts, root) {
     var url = (opts && opts.shareUrl) || (opts && opts.demo ? 'https://spywell.in/studio/' : canonUrl());
     var nm = f.business || f.name || '', msg = (nm ? nm + ' - ' : '') + T('डिजिटल कार्ड') + ': ' + url, e = encodeURIComponent;
     var box = el('div', 'sr-sharebox'); box.appendChild(el('div', 'sr-sub', T('शेयर करें')));
@@ -142,6 +142,7 @@
     var g = el('div', 'sr-act sr-share');
     function sa(label, href, act) { g.appendChild(actA(link('', label, href), act)); }
     function sb(label, act, fn) { var a = link('', label, '#'); a.onclick = function (ev) { ev.preventDefault(); try { fn(a); } catch (x) { } }; a.setAttribute('role', 'button'); g.appendChild(actA(a, act)); }
+    if (root) { sb(T('🖼 फ़ोटो + लिंक भेजें'), 'share-img', function (a) { saveCardImage(root, f, a); }); g.lastChild.style.cssText = 'background:#1ea952;border:1px solid #1ea952;color:#fff;'; }
     sa('💬 WhatsApp', 'https://wa.me/?text=' + e(msg), 'share-wa'); g.lastChild.style.cssText = 'background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;'; (function (n) { n.style.setProperty('color', '#0b6b32', 'important'); var q = n.querySelectorAll ? n.querySelectorAll('a,span,b') : []; for (var i = 0; i < q.length; i++) q[i].style.setProperty('color', '#0b6b32', 'important'); })(g.lastChild);
     var NV = null; try { NV = window.ViNative || (window.parent && window.parent !== window && window.parent.ViNative) || null; } catch (x) { }
     if (NV && NV.openWa) { sb('🛍 WhatsApp Business', 'share-wab', function () { if (!NV.openWa('', msg, true)) NV.shareText(msg); }); g.lastChild.style.cssText = 'background:#075e54;border:1px solid #075e54;color:#fff;'; }
@@ -276,7 +277,8 @@
     try { var cv = document.createElement('canvas'); window.StudioQR.draw(cv, unescape(encodeURIComponent(t)), 320);
       var im = el('img', 'sr-qrimg'); im.src = cv.toDataURL('image/png'); im.alt = 'कॉन्टैक्ट QR कोड'; im.width = 160; im.height = 160; return im; } catch (e) { return null; }
   }
-  function deliverImage(blob, nm, done) {
+  function deliverImage(blob, nm, done, caption) {
+    caption = caption || '';
     function fallbackOverlay() {
       var u = URL.createObjectURL(blob), ov = el('div', ''); ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px';
       var im = document.createElement('img'); im.src = u; im.style.cssText = 'max-width:100%;max-height:70vh;border-radius:10px;background:#fff';
@@ -289,7 +291,7 @@
     }
     if (window.ViNative) {
       var rd0 = new FileReader();
-      rd0.onload = function () { try { var u0 = window.ViNative.save(String(rd0.result).split(',')[1], nm + '-' + Date.now()); if (u0) { window.ViNative.share(u0); done(); return; } } catch (e) { } fallbackOverlay(); done(); };
+      rd0.onload = function () { try { var u0 = window.ViNative.save(String(rd0.result).split(',')[1], nm + '-' + Date.now()); if (u0) { if (caption && window.ViNative.shareImgText) window.ViNative.shareImgText(u0, caption); else { if (caption) { try { navigator.clipboard.writeText(caption); var tt = el('div', '', T('लिंक कॉपी हो गया है। WhatsApp में फ़ोटो के नीचे पेस्ट कर दें।')); tt.style.cssText = 'position:fixed;left:12px;right:12px;bottom:90px;z-index:99999;background:#1b1b1b;color:#fff;padding:12px;border-radius:10px;text-align:center;font-size:14px'; document.body.appendChild(tt); setTimeout(function () { tt.remove(); }, 4500); } catch (e2) { } } window.ViNative.share(u0); } done(); return; } } catch (e) { } fallbackOverlay(); done(); };
       rd0.onerror = function () { fallbackOverlay(); done(); }; rd0.readAsDataURL(blob); return;
     }
     var C = window.Capacitor, P = C && C.Plugins;
@@ -297,13 +299,13 @@
       var rd = new FileReader();
       rd.onload = function () {
         var b64 = String(rd.result).split(',')[1];
-        P.Filesystem.writeFile({ path: nm + '.png', data: b64, directory: 'CACHE' }).then(function (r) { return P.Share.share({ title: nm, files: [r.uri], dialogTitle: T('कार्ड फ़ोटो सेव / शेयर करें') }); }).then(done, function () { fallbackOverlay(); done(); });
+        P.Filesystem.writeFile({ path: nm + '.png', data: b64, directory: 'CACHE' }).then(function (r) { return P.Share.share({ title: nm, text: caption || undefined, files: [r.uri], dialogTitle: T('कार्ड फ़ोटो सेव / शेयर करें') }); }).then(done, function () { fallbackOverlay(); done(); });
       };
       rd.onerror = function () { fallbackOverlay(); done(); }; rd.readAsDataURL(blob); return;
     }
     try {
       var file = new File([blob], nm + '.png', { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) { navigator.share({ files: [file], title: nm }).then(done, function () { viaAnchor(); done(); }); return; }
+      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) { navigator.share({ files: [file], title: nm, text: caption || undefined }).then(done, function () { viaAnchor(); done(); }); return; }
     } catch (e) { }
     viaAnchor(); done();
   }
@@ -346,21 +348,22 @@
     });
   }
   function saveCardImage(root, f, btn) {
+    var cap = ((f.business || f.name || '') ? (f.business || f.name) + ' - ' : '') + T('डिजिटल कार्ड') + ': ' + canonUrl();
     var old = btn.textContent; btn.textContent = T('तैयार हो रहा है…'); btn.disabled = true;
     function done() { btn.textContent = old; btn.disabled = false; }
     var nm = (f.name || f.business || f.bride || 'card').replace(/[^\wऀ-ॿ ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'card';
-    if (!(f.bride || f.groom)) { drawVisitingImage(root, f).then(function (b) { if (!b) { done(); return; } deliverImage(b, nm, done); }, done); return; }
+    if (!(f.bride || f.groom)) { drawVisitingImage(root, f).then(function (b) { if (!b) { done(); return; } deliverImage(b, nm, done, cap); }, done); return; }
     function go() {
       try {
         window.html2canvas(root, { useCORS: true, scale: 2, backgroundColor: null, ignoreElements: function (n) { return n.classList && (n.classList.contains('sr-pw') || n.classList.contains('sr-save')); } }).then(function (cv) {
-          cv.toBlob(function (b) { if (!b) { done(); return; } deliverImage(b, nm, done); }, 'image/png');
+          cv.toBlob(function (b) { if (!b) { done(); return; } deliverImage(b, nm, done, cap); }, 'image/png');
         }, done);
       } catch (e) { done(); }
     }
     if (window.html2canvas) { go(); return; }
     var sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'; sc.onload = go; sc.onerror = done; document.head.appendChild(sc);
   }
-  function saveCardBtn(root, f) { var b = el('button', 'sr-save sr-savecard', T('\uD83D\uDDBC कार्ड फ़ोटो सेव करें')); b.type = 'button'; b.setAttribute('data-act', 'savecard'); b.onclick = function () { saveCardImage(root, f, b); }; return b; }
+  function saveCardBtn(root, f) { var b = el('button', 'sr-save sr-savecard', T('\uD83D\uDDBC कार्ड फ़ोटो + लिंक भेजें')); b.type = 'button'; b.setAttribute('data-act', 'savecard'); b.onclick = function () { saveCardImage(root, f, b); }; return b; }
   function motifStrip(m) { var d = el('div', 'sr-mt'); for (var n = 0; n < 7; n++) { var sp = el('span', '', m); sp.style.setProperty('--n', n); d.appendChild(sp); } return d; }
   function buildVisiting(root, d, opts) {
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd');
@@ -387,10 +390,25 @@
     var soc = el('div', 'sr-soc');
     [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (s) { var u = V.url(s[1]); if (u) soc.appendChild(link('', s[0], u)); });
     if (soc.children.length) bd.appendChild(soc);
-    bd.appendChild(shareBar(f, opts));
+    bd.appendChild(shareBar(f, opts, root));
     root.appendChild(bd);
   }
 
+
+  /* Premium animated effects. Particle effects get a light overlay of CSS-animated spans (no JS loop, GPU only). */
+  var FXLIST = ['curtain', 'aurora', 'neon', 'flip', 'sparkle', 'hearts', 'bokeh', 'fireworks', 'grid', 'shimmer', 'lotus', 'gold'];
+  var FXGLYPH = { sparkle: '✦', hearts: '❤', lotus: '❀', gold: '✶' };
+  function fxOverlay(root, fx) {
+    var cnt = { sparkle: 16, hearts: 12, bokeh: 9, fireworks: 5, lotus: 12, gold: 18 }[fx]; if (!cnt) return;
+    var o = el('div', 'sr-fxo sr-fxo-' + fx);
+    for (var n = 0; n < cnt; n++) {
+      var q = el('span', '', FXGLYPH[fx] || ''); q.style.left = (4 + (n * 37) % 90) + '%'; q.style.top = (6 + (n * 53) % 84) + '%';
+      q.style.animationDelay = (-(n * 1.3) % 9) + 's'; q.style.animationDuration = (fx === 'fireworks' ? 3.2 + (n % 3) * .6 : 5 + (n * 7) % 6) + 's';
+      var z = fx === 'bokeh' ? 34 + (n * 17) % 60 : 10 + (n * 5) % 14; q.style.setProperty('--z', z + 'px'); q.style.setProperty('--dx', (((n % 2) ? 1 : -1) * (12 + (n * 9) % 36)) + 'px');
+      o.appendChild(q);
+    }
+    root.appendChild(o);
+  }
   function render(mount, type, tplConfig, content, opts) {
     ensureAssets();
     opts = opts || {}; var t = tplConfig && typeof tplConfig === 'object' ? tplConfig : {}; var pal = t.palette || {};
@@ -407,7 +425,7 @@
     st.setProperty('--soft', rgba(fg, 0.14)); st.fontSize = (16 * s.size) + 'px'; if (s.weight) st.fontWeight = s.weight;
     var align = s.align || (layout === 'side' || (type === 'invitation' && layout === 'plain' && t.align === 'left') ? 'left' : 'center');
     root.className += ' a-' + align;
-    var fx = ['curtain', 'aurora', 'neon', 'flip'].indexOf(s.fx || t.fx) >= 0 ? (s.fx || t.fx) : ''; if (fx && !(opts.demo && !opts.play)) root.className += ' fx-' + fx;
+    var fx = FXLIST.indexOf(s.fx || t.fx) >= 0 ? (s.fx || t.fx) : ''; if (fx && !(opts.demo && !opts.play)) { root.className += ' fx-' + fx; fxOverlay(root, fx); }
     if (type === 'invitation' && d.images.bg) { st.backgroundImage = 'url("' + d.images.bg.url + '")'; st.backgroundPosition = '50% ' + d.images.bg.pos + '%'; st.setProperty('--pane', rgba(bg, 0.88)); } else st.setProperty('--pane', 'transparent');
     var mo = type === 'visiting' && t.motif ? txt(t.motif, 8) : '';
     if (type === 'visiting') buildVisiting(root, d, opts); else buildInvitation(root, d, { ornament: s.ornament === 'none' ? '' : (s.ornament || (t.ornament === 'none' ? '' : txt(t.ornament, 4))) });
@@ -499,7 +517,18 @@
     '.fx-neon::after,.fx-flip::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.22) 50%,transparent 60%) -150% 0/250% 100% no-repeat;animation:srsw 4.5s ease-in-out 1s infinite}@keyframes srsw{0%{background-position:-150% 0}60%,100%{background-position:150% 0}}' +
     '.fx-flip{animation:srfl 1.3s cubic-bezier(.2,.8,.2,1) both;transform-origin:50% 0}@keyframes srfl{from{opacity:0;transform:perspective(700px) rotateX(-70deg)}to{opacity:1;transform:perspective(700px) rotateX(0)}}' +
     '.fx-flip .hd{animation:sraur 10s ease-in-out infinite;background-image:linear-gradient(120deg,var(--ac),color-mix(in srgb,var(--ac) 55%,#fff),var(--ac));background-size:300% 100%}' +
-    '@media (prefers-reduced-motion:reduce){.sr-an *,.sr-pw{animation:none!important;opacity:1!important;transform:none!important}.sr-pw{display:none}.fx-curtain::before,.fx-curtain::after{display:none}}';
+    '.sr-fxo{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}.sr-fxo span{position:absolute;color:var(--ac);font-size:var(--z,14px);opacity:0}' +
+    '.sr-fxo-sparkle span,.sr-fxo-gold span{animation:srtw ease-in-out infinite}@keyframes srtw{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:.95;transform:scale(1.15) rotate(90deg)}}' +
+    '.sr-fxo-gold span{color:#f5d36b;text-shadow:0 0 8px #f5d36b}' +
+    '.sr-fxo-hearts span,.sr-fxo-lotus span{top:auto!important;bottom:-8%;animation:srrs linear infinite}@keyframes srrs{0%{opacity:0;transform:translate3d(0,0,0) scale(.7)}15%{opacity:.8}100%{opacity:0;transform:translate3d(var(--dx),-115vh,0) scale(1.1) rotate(25deg)}}' +
+    '.sr-fxo-hearts span{color:#ff4d79}' +
+    '.sr-fxo-bokeh span{width:var(--z);height:var(--z);border-radius:50%;background:radial-gradient(circle,var(--ac),transparent 70%);animation:srbk ease-in-out infinite}@keyframes srbk{0%,100%{opacity:0;transform:translate3d(0,0,0) scale(.8)}50%{opacity:.45;transform:translate3d(var(--dx),-30px,0) scale(1.2)}}' +
+    '.sr-fxo-fireworks span{width:4px;height:4px;border-radius:50%;background:var(--ac);animation:srfw ease-out infinite;box-shadow:0 -34px var(--ac),24px -24px var(--ac),34px 0 var(--ac),24px 24px var(--ac),0 34px var(--ac),-24px 24px var(--ac),-34px 0 var(--ac),-24px -24px var(--ac),0 -18px #fff,13px -13px #fff,18px 0 #fff,13px 13px #fff,0 18px #fff,-13px 13px #fff,-18px 0 #fff,-13px -13px #fff}@keyframes srfw{0%{opacity:0;transform:scale(0)}12%{opacity:1}70%{opacity:.9;transform:scale(1.15)}100%{opacity:0;transform:scale(1.35)}}' +
+    '.fx-grid{background-image:linear-gradient(var(--soft) 1px,transparent 1px),linear-gradient(90deg,var(--soft) 1px,transparent 1px)!important;background-size:26px 26px!important;animation:srgd 5s linear infinite}@keyframes srgd{to{background-position:0 26px}}.fx-grid .sr-nm{text-shadow:0 0 12px var(--ac)}' +
+    '.fx-shimmer .sr-nm{background:linear-gradient(100deg,var(--fg) 30%,var(--ac) 48%,#fff 52%,var(--ac) 56%,var(--fg) 70%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:srsh 3.4s ease-in-out infinite}@keyframes srsh{0%{background-position:140% 0}70%,100%{background-position:-60% 0}}' +
+    '.fx-shimmer::after,.fx-gold::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.2) 50%,transparent 58%) -150% 0/250% 100% no-repeat;animation:srsw 5s ease-in-out 1s infinite}' +
+    '.fx-gold{box-shadow:inset 0 0 0 2px #d4af37,inset 0 0 22px rgba(212,175,55,.45)}' +
+    '@media (prefers-reduced-motion:reduce){.sr-fxo{display:none}.fx-grid,.fx-shimmer .sr-nm{animation:none!important}.sr-an *,.sr-pw{animation:none!important;opacity:1!important;transform:none!important}.sr-pw{display:none}.fx-curtain::before,.fx-curtain::after{display:none}}';
   var assetsDone = false;
 
   /* Mini website: full-page layout built from a visiting card's data. */
@@ -589,7 +618,7 @@
         root.appendChild(fab); root.appendChild(sh);
       }
     }
-    var shs = el('div', 'ws-sec'), shi = el('div', 'ws-in'); shi.appendChild(shareBar(f, opts)); shs.appendChild(shi); root.appendChild(shs);
+    var shs = el('div', 'ws-sec'), shi = el('div', 'ws-in'); shi.appendChild(shareBar(f, opts, root)); shs.appendChild(shi); root.appendChild(shs);
     root.appendChild(el('div', 'ws-foot', '© ' + new Date().getFullYear() + ' ' + (f.business || f.name || '')));
     if (typeof opts.onAct === 'function') root.addEventListener('click', function (ev) { var x = ev.target.closest ? ev.target.closest('[data-act]') : null; if (x) { try { opts.onAct(x.getAttribute('data-act')); } catch (e) { } } });
     var wan = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich');
@@ -600,6 +629,7 @@
       Array.prototype.forEach.call(root.querySelectorAll('.ws-card,.sr-chip,.sr-qr'), function (x, i) { x.style.setProperty('--k', i % 6); });
       if (wan === 'rich') { var bl = el('div', 'ws-bl'); for (var n = 0; n < 6; n++) { var b = el('i', '', smo); b.style.cssText = 'left:' + (8 + n * 16) + '%;width:' + (30 + (n * 17) % 40) + 'px;height:' + (30 + (n * 17) % 40) + 'px;animation-delay:' + (-n * 1.6) + 's;animation-duration:' + (9 + n * 2) + 's'; bl.appendChild(b); } root.querySelector('.ws-hero').appendChild(bl); }
     }
+    var sfx = FXLIST.indexOf(s.fx || t.fx) >= 0 ? (s.fx || t.fx) : ''; if (sfx && !(opts.demo && !opts.play)) { root.className += ' fx-' + sfx; fxOverlay(root, sfx); }
     mount.textContent = ''; mount.appendChild(root); return root;
   }
   CSS += '.sr[dir=rtl] .sr-row{text-align:right}.sr[dir=rtl] .sr-save,.sr[dir=rtl] .sr-act a{direction:rtl}' +
