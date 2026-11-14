@@ -8,7 +8,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,s
 .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}.stat b{display:block;font-size:22px;color:var(--wine)}.stat span{font-size:12px;color:var(--mut)}
 .tabs{display:flex;gap:6px;margin:12px 0}.tabs button{flex:1;padding:9px;border-radius:20px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;cursor:pointer}.tabs button.on{background:var(--wine);color:#fff}
 input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);font:inherit;margin-bottom:8px}
-.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}.card .k{font-size:13px;color:var(--mut);word-break:break-all}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:6px}.stat b{font-size:19px!important}.card .k{font-size:13px;color:var(--mut);word-break:break-all}
 .btn{padding:7px 12px;border-radius:8px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;font-size:14px;margin:6px 6px 0 0;cursor:pointer;text-decoration:none;display:inline-block}.btn.d{background:#b00020;color:#fff;border-color:#b00020}
 .st{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;background:#eee}.st.published{background:#1b6e3c;color:#fff}[hidden]{display:none!important}</style><script src="/studio/appback.js"></script></head><body>
 <div class="top"><b><img src="/logo.png" alt="SpyWell" width="30" height="30" style="background:#fff;border-radius:50%;padding:2px;vertical-align:middle;margin-right:8px">SpyWell Studio · एडमिन</b><a href="/studio/#me">👤 User मोड</a></div>
@@ -44,10 +44,24 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   var dm=h('div');app.appendChild(dm);domPanel(dm);
   var ip=h('div');app.appendChild(ip);indPanel(ip);
   var au=h('div');app.appendChild(au);auditPanel(au);
+  Array.prototype.forEach.call(app.children,function(el){if(el.tagName==='DIV'&&!el.className)compact(el)});
   var tabs=h('div',{class:'tabs'});app.appendChild(tabs);body=h('div');app.appendChild(body);
   function draw(){tabs.textContent='';[['cust','ग्राहक'],['tpl','टेम्पलेट']].forEach(function(t){tabs.appendChild(h('button',{class:tab===t[0]?'on':'',text:t[1],onclick:function(){tab=t[0];sel=null;draw()}}))});body.textContent='';(tab==='cust'?(sel?cardsView:custView):tplView)()}
   window.__draw=draw;draw();
 })();
+var OPENP={};
+function compact(box){
+  function fold(c){
+    if(c.dataset.cp)return;var t=c.firstElementChild;if(!t||t.tagName!=='B')return;
+    c.dataset.cp='1';var key=t.textContent;var rest=[];while(t.nextSibling){rest.push(t.nextSibling);c.removeChild(t.nextSibling)}
+    var body=document.createElement('div');rest.forEach(function(n){body.appendChild(n)});
+    var alert=/b00020/.test(c.getAttribute('style')||'');var open=OPENP[key]===undefined?alert:OPENP[key];
+    var ar=document.createElement('span');ar.style.cssText='float:right;color:#8b1a2b;font-weight:700';
+    function sync(){body.hidden=!open;ar.textContent=open?'▲':'▼'}
+    t.style.cssText='display:block;cursor:pointer;font-size:15px';t.appendChild(ar);c.style.padding='9px 10px';
+    t.onclick=function(){open=!open;OPENP[key]=open;sync()};sync();c.appendChild(body)}
+  function run(){Array.prototype.forEach.call(box.children,function(c){if(c.classList&&c.classList.contains('card'))fold(c)})}
+  run();new MutationObserver(run).observe(box,{childList:true})}
 var VC={};
 
 async function aiPanel(box){
