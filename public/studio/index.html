@@ -121,7 +121,7 @@ button{min-height:48px;border-radius:12px}
 <div class="card" id="c-enq" hidden></div>
 <div class="card" id="c-my" hidden></div>
 <div class="card" id="c-addr"></div>
-<a class="card" id="c-loc" href="/studio/places/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit"><span style="font-size:30px">📍</span><span style="flex:1"><b style="display:block">मेरी लोकेशन</b><span class="k">दुकान, ऑफ़िस, फ़ैक्टरी, साइट: सेव करें और कहीं से भी भेजें</span></span><b style="color:#d4141c;font-size:20px">›</b></a>
+<div class="card" id="c-loc" style="padding:10px 14px"></div>
 <div class="card" id="c-ref" hidden></div>
 <div class="card" id="c-inv" hidden></div>
 
@@ -775,7 +775,23 @@ function openAd(){closeVw(true);var o=document.createElement('div');o.id='vw';o.
 async function addrTile(){
   var box=$('c-addr');if(!box)return;
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};ADH={cj:cj,name:cj.name||pd.full_name||'',mob:cj.mobile||pd.phone||''};
-  drawAddr(false)}
+  drawAddr(false);locTile()}
+function locTile(){
+  var box=$('c-loc');if(!box)return;box.textContent='';
+  var P=(ADH&&ADH.cj&&Array.isArray(ADH.cj.places))?ADH.cj.places:[];
+  var IC={'घर':'🏠','दुकान':'🏪','ऑफ़िस':'🏢','फ़ैक्टरी':'🏭','साइट':'🚧','गोदाम':'📦'};
+  function txt(p,promo){var t=(IC[p.label]||'📍')+' '+p.label+(p.name?' · '+p.name:'')+'\n';if(p.addr)t+='पता: '+p.addr+'\n';if(p.mob)t+='मोबाइल: +91 '+p.mob+'\n';if(p.map)t+='📍 लोकेशन (दबाते ही रास्ता खुलेगा): '+p.map+'\n';return t+'\n📲 अपना डिजिटल कार्ड और लोकेशन कार्ड मुफ़्त बनाएँ: '+promo}
+  var PROMO='https://spywell.in/studio/';sb.rpc('studio_ref_me').then(function(r){if(r&&r.data&&r.data.enabled&&r.data.code)PROMO='https://spywell.in/studio/?ref='+r.data.code},function(){});
+  if(!P.length){var e=mk('div','k','अभी कोई जगह सेव नहीं है। दुकान, ऑफ़िस, फ़ैक्टरी, साइट की लोकेशन सेव करें और कहीं से भी भेजें।');box.appendChild(e)}
+  P.forEach(function(p){var r=mk('div','');r.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line)';
+    var n=mk('div','');n.style.cssText='flex:1;min-width:0';var b=mk('b','',(IC[p.label]||'📍')+' '+p.label+(p.name?' · '+p.name:''));b.style.cssText='display:block;font-size:15px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';n.appendChild(b);
+    if(p.addr){var ad=mk('span','k',p.addr);ad.style.cssText='display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin:0';n.appendChild(ad)}r.appendChild(n);
+    var w=mk('a','','💬 भेजें');w.href='#';w.style.cssText='flex:none;background:#1ea952;color:#fff;border-radius:10px;padding:8px 12px;text-decoration:none;font-weight:700;font-size:14px';
+    w.onclick=function(ev){ev.preventDefault();window.open('https://wa.me/?text='+encodeURIComponent(txt(p,PROMO)),'_blank','noopener')};r.appendChild(w);
+    if(p.map){var mp=mk('a','','🗺');mp.href=p.map;mp.target='_blank';mp.rel='noopener';mp.style.cssText='flex:none;border:1px solid var(--line);border-radius:10px;padding:7px 10px;text-decoration:none;font-size:15px';r.appendChild(mp)}
+    box.appendChild(r)});
+  var ad2=mk('a','','➕ नई जगह जोड़ें / बदलें');ad2.href='/studio/places/';ad2.style.cssText='display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:600;font-size:14px';box.appendChild(ad2);
+  foldBox(box,'📍 मेरी लोकेशन',P.length?P.length+' जगह':'जोड़ें');box.firstChild.style.marginTop='0';box.firstChild.style.border='0';box.firstChild.style.background='transparent';box.firstChild.style.padding='2px 0'}
 function drawAddr(edit){
   var box=$('c-addr'),h=(ADH.cj&&ADH.cj.home)||{};box.textContent='';
   var top=mk('div','');top.style.cssText='display:flex;align-items:center;gap:10px';top.appendChild(mk('span','','🏠')).style.fontSize='30px';
