@@ -675,8 +675,8 @@ function drawEnq(box,rows,un,lim){
     row('💬 संदेश',q.message);row('🪪 कार्ड',q.title||'—');row('🕒 समय',when(q.at));
     vd.onclick=function(){dt.hidden=!dt.hidden;vd.textContent=dt.hidden?'👁 View details':'🙈 Hide details'};
     d.appendChild(ac);d.appendChild(dt);box.appendChild(d)});
-  if(rows.length>lim){var ma=mk('button','alt','📥 सभी '+rows.length+' पूछताछ Inbox में देखें');ma.type='button';ma.style.cssText='width:100%;margin-top:10px';ma.onclick=function(){openInbox()};box.appendChild(ma)}
-  if(lim===1){var wasOpen=box._open;h.remove();foldBox(box,'📩 पूछताछ',un?('🔵 '+un+' नई'):(rows.length+' कुल'));var hd=box.firstChild,bd=box.lastChild;hd.style.marginTop='0';if(wasOpen){bd.hidden=false;hd.lastChild.textContent='▲'}hd.addEventListener('click',function(){box._open=!bd.hidden})}}
+  if(rows.length>lim){var ma=mk('button','alt','📥 Inbox में सभी देखें ('+rows.length+')');ma.type='button';ma.style.cssText='width:100%;margin-top:10px';ma.onclick=function(){openInbox()};box.appendChild(ma)}
+  if(lim===1){var wasOpen=box._open;h.remove();foldBox(box,'📩 पूछताछ',un?('🔵 '+un+' नई'):(rows.length+' कुल'));var hd=box.firstChild,bd=box.lastChild;hd.style.marginTop='0';var sm=hd.children[1];sm.textContent=un?'🔵 '+un+' ':rows.length+' ';sm.appendChild(mk('span','',un?'नई':'कुल'));if(wasOpen){bd.hidden=false;hd.lastChild.textContent='▲'}hd.addEventListener('click',function(){box._open=!bd.hidden})}}
 function enqNew(rows){var seen='';try{seen=localStorage.getItem('vc_enq_seen')||''}catch(e){}
   var nw=rows.filter(function(q){return !q.read&&(!seen||q.at>seen)});if(!nw.length)return;
   var mx=rows.reduce(function(m,q){return q.at>m?q.at:m},'');try{localStorage.setItem('vc_enq_seen',mx)}catch(e){}
