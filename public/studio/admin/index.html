@@ -36,6 +36,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   if(!vc.error){var g2=h('div',{class:'stats'});[[tv,'कुल कार्ड व्यू'],[tc,'कुल बटन क्लिक']].forEach(function(x){g2.appendChild(h('div',{class:'stat'},[h('b',{text:String(x[0])}),h('span',{text:x[1]})]))});app.appendChild(g2)}
   var bp=h('div');app.appendChild(bp);balPanel(bp);
   var pp=h('div');app.appendChild(pp);payPanel(pp);
+  var ch=h('div');app.appendChild(ch);chatPanel(ch);
   var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
   var mq=h('div');app.appendChild(mq);manPanel(mq);
   var py=h('div');app.appendChild(py);subPanel(py);
@@ -67,6 +68,37 @@ function compact(box,keep){
   function run(){Array.prototype.forEach.call(box.children,function(c){if(c.classList&&c.classList.contains('card'))fold(c)})}
   run();new MutationObserver(run).observe(box,{childList:true})}
 var VC={};
+
+function chatPanel(box){
+  var c=h('div',{class:'card'});c.appendChild(h('b',{text:'💬 AI से चैट (एडमिन सहायक)'}));
+  var log=h('div',{style:'max-height:300px;overflow:auto;margin-top:8px;display:flex;flex-direction:column;gap:6px'});
+  var hist=[],busy=false;
+  var inp=h('input',{type:'text',placeholder:'जैसे: आज कितने नए कार्ड बने? / रेफ़रल 15% कर दो',style:'flex:1;min-width:0;padding:9px;border:1px solid #d9c293;border-radius:8px;font-size:14px'});
+  var go=h('button',{text:'भेजें',style:'padding:9px 14px'});
+  function bub(t,me){var d=h('div',{style:'padding:7px 10px;border-radius:10px;font-size:14px;white-space:pre-wrap;word-break:break-word;max-width:92%;'+(me?'align-self:flex-end;background:#8b1a2b;color:#fff':'align-self:flex-start;background:#f6ead0')});d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+  var ERR={ai_key:'AI की (API key) सही नहीं है।',ai_credit:'AI क्रेडिट खत्म है।',ai_busy:'AI व्यस्त है, थोड़ी देर बाद कोशिश करें।',ai_timeout:'समय खत्म हो गया, फिर कोशिश करें।',not_configured:'AI अभी सेट नहीं है (ANTHROPIC_API_KEY)।',forbidden:'सिर्फ़ एडमिन के लिए।'};
+  async function call(payload){var ss=await sb.auth.getSession();var r=await fetch(B+'/functions/v1/studio-admin-ai',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+(ss.data.session&&ss.data.session.access_token)},body:JSON.stringify(payload)});var j={};try{j=await r.json()}catch(e){}return j}
+  async function send(){
+    var t=inp.value.trim();if(!t||busy)return;busy=true;go.disabled=true;inp.value='';bub(t,true);hist.push({role:'user',content:t});
+    var w=bub('सोच रहा हूँ…',false);
+    try{var j=await call({messages:hist});w.remove();
+      if(j.code){bub(ERR[j.code]||'कुछ गड़बड़ हुई, फिर कोशिश करें।',false);hist.pop()}
+      else{if(j.text){bub(j.text,false);hist.push({role:'assistant',content:j.text})}
+        else if(!(j.pending||[]).length){bub('(कोई जवाब नहीं)',false);hist.pop()}
+        (j.pending||[]).forEach(function(p){var d=h('div',{style:'align-self:flex-start;border:2px solid #8b1a2b;border-radius:10px;padding:8px 10px;background:#fff;max-width:92%'});
+          d.appendChild(h('div',{text:'⚠️ '+p.summary,style:'font-weight:700;font-size:14px;word-break:break-word'}));
+          var row=h('div',{style:'display:flex;gap:8px;margin-top:8px'});
+          var ok=h('button',{text:'✅ हाँ, करो'}),no=h('button',{text:'रद्द'});
+          ok.onclick=async function(){ok.disabled=no.disabled=true;var x=await call({confirm:{name:p.name,input:p.input}});var res=x.result,fail=x.code||!res||res.error;
+            d.textContent='';d.appendChild(h('div',{text:(fail?'❌ नहीं हुआ'+(res&&res.error?': '+res.error:''):'✅ हो गया')+' — '+p.summary,style:'font-size:14px;word-break:break-word'}));
+            hist.push({role:'assistant',content:(fail?'बदलाव नहीं हो पाया: ':'बदलाव हो गया: ')+p.summary});if(!fail&&window.__draw)setTimeout(function(){if(/set_template|block|wallet/.test(p.name))window.__draw()},300)};
+          no.onclick=function(){d.textContent='रद्द किया — '+p.summary;hist.push({role:'assistant',content:'एडमिन ने रद्द किया: '+p.summary})};
+          row.appendChild(ok);row.appendChild(no);d.appendChild(row);log.appendChild(d);log.scrollTop=log.scrollHeight})}
+    }catch(e){w.remove();bub('नेटवर्क में दिक्कत, फिर कोशिश करें।',false);hist.pop()}
+    busy=false;go.disabled=false}
+  go.onclick=send;inp.onkeydown=function(e){if(e.key==='Enter')send()};
+  var hint=h('div',{class:'k',style:'margin-top:6px',text:'पूछें: आँकड़े, ग्राहक खोजना, रेट/रेफ़रल बदलना, टेम्पलेट चालू/बंद, ब्लॉक, वॉलेट। हर बदलाव से पहले आपसे "हाँ" पूछा जाएगा। कोड/डिज़ाइन एडिट यहाँ नहीं होता।'});
+  c.appendChild(log);c.appendChild(h('div',{style:'display:flex;gap:6px;margin-top:8px'},[inp,go]));c.appendChild(hint);box.appendChild(c)}
 
 async function aiPanel(box){
   var r=await sb.rpc('studio_ai_flag');box.textContent='';if(r.error)return;var on=r.data===true,c=h('div',{class:'card',style:on?'':'border:2px solid #b00020'});
