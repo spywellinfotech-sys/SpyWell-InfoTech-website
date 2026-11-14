@@ -251,6 +251,21 @@ export const portfolio = [
     link: '/studio/',
   },
   {
+    id: 'news-host',
+    icon: 'Newspaper',
+    status: 'verified',
+    image: '',
+    category: { en: 'District News Portal (Demo)', hi: 'जिला न्यूज़ पोर्टल (डेमो)' },
+    title: { en: 'NEWS HOST', hi: 'न्यूज़ होस्ट' },
+    description: {
+      en: 'A Hindi district news portal with breaking news, a quick short-news scroll, video, and an admin panel where reporters write and the editor approves before news goes live. Demo version, starting with Saharanpur.',
+      hi: 'हिंदी जिला न्यूज़ पोर्टल: ब्रेकिंग न्यूज़, तेज़ स्क्रॉल वाली शॉर्ट न्यूज़, वीडियो और एडमिन पैनल, जहाँ रिपोर्टर खबर लिखता है और एडिटर की मंज़ूरी के बाद ही खबर लाइव होती है। डेमो वर्ज़न, शुरुआत सहारनपुर से।',
+    },
+    version: 'Web portal (demo)',
+    download: '',
+    link: '/Newshost/',
+  },
+  {
     id: 'cctv-promate',
     icon: 'ShieldCheck',
     status: 'verified',
