@@ -62,7 +62,7 @@ button{min-height:48px;border-radius:12px}
   var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 DynaMe ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#7a0a10;padding:8px 14px;border-radius:8px;text-decoration:none';
   d.appendChild(document.createTextNode('लॉगिन हो गया।'));d.appendChild(a);document.body.appendChild(d)})}}catch(e){}})();</script>
 </head><body>
-<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:50%;vertical-align:middle;margin-right:9px">DynaMe<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px;font-size:10px">Your Identity, Dynamically Connected</small></b><button type="button" id="ib" hidden style="position:relative">📥 Inbox<b id="ib-n" hidden style="position:absolute;top:-6px;right:-6px;background:#d93025;color:#fff;border-radius:99px;font-size:11px;padding:0 6px;min-width:18px;line-height:18px;text-align:center"></b></button></div>
+<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:50%;vertical-align:middle;margin-right:9px">DynaMe<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px;font-size:10px">Your Identity, Dynamically Connected</small></b><span style="display:flex;gap:8px;align-items:center"><button type="button" id="rf" aria-label="रिफ़्रेश" title="रिफ़्रेश" style="margin:0;width:auto;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:99px;padding:6px 12px;font-size:16px;line-height:1">🔄</button><button type="button" id="ib" hidden style="position:relative">📥 Inbox<b id="ib-n" hidden style="position:absolute;top:-6px;right:-6px;background:#d93025;color:#fff;border-radius:99px;font-size:11px;padding:0 6px;min-width:18px;line-height:18px;text-align:center"></b></button></span></div>
 <div class="wrap">
 
 <div id="v-load" class="k" style="padding:30px;text-align:center">लोड हो रहा है…</div>
@@ -706,6 +706,7 @@ async function dash(user){
 }
 
 try{if(/[?&]email=1/.test(location.search)){$('li-em').hidden=false;$('li-e').required=true;$('li-p').required=true}}catch(e){}
+$('rf').onclick=function(){var b=this;b.style.transition='transform .6s';b.style.transform='rotate(360deg)';setTimeout(function(){location.reload()},250)};
 $('g-btn').onclick=async function(){$('li-err').textContent='';
   var r=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:HERE}});
   if(r.error)$('li-err').textContent='Google लॉगिन अभी चालू नहीं है। ईमेल और पासवर्ड से लॉगिन करें।'};
