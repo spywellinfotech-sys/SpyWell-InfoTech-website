@@ -516,11 +516,14 @@ var MANERR={bad_utr:'UTR/ट्रांज़ैक्शन नंबर स�
 async function manualPay(plan,amount){
   var r=await sb.from('studio_settings').select('k,v').in('k',['manual_pay','upi_id','upi_name']),S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});
   if(S.manual_pay!=='1'||!S.upi_id)return null;
+  var wuse=0;try{var wq=await sb.rpc('studio_wallet_quote',{p_amount:amount});wuse=(wq&&wq.data&&wq.data.use)||0}catch(e){}
+  var fullAmt=amount;if(wuse>0)amount=amount-wuse;
   var uri='upi://pay?pa='+encodeURIComponent(S.upi_id)+'&pn='+encodeURIComponent(S.upi_name||'SpyWell InfoTech')+'&am='+amount+'&cu=INR&tn='+encodeURIComponent('SpyWell Studio '+(PLN[plan]||'कार्ड'));
   return new Promise(function(res){
     var ov=h('div',{style:'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:flex-end;justify-content:center'});
     var bx=h('div',{style:'background:#fff;width:100%;max-width:460px;border-radius:16px 16px 0 0;padding:16px;max-height:92vh;overflow:auto'});ov.appendChild(bx);
     bx.appendChild(h('b',{text:'💳 UPI से भुगतान · ₹'+amount,style:'font-size:18px'}));
+    if(wuse>0)bx.appendChild(h('div',{class:'k',style:'color:#0a7a2f;font-weight:700',text:'🎁 वॉलेट से ₹'+wuse+' घटे (₹'+fullAmt+' में से)'}));
     bx.appendChild(h('div',{class:'k',text:(PLN[plan]||'कार्ड प्रकाशन')+(plan?' (1 साल)':'')+'। नीचे के बटन से UPI ऐप खोलें या QR स्कैन करें, भुगतान के बाद UTR/ट्रांज़ैक्शन नंबर यहाँ डालें। हमारी टीम जाँचकर प्लान चालू कर देगी।',style:'margin-top:6px'}));
     var cv=h('canvas');cv.style.cssText='width:190px;height:190px;display:block;margin:10px auto;border:1px solid #e8d5ad';bx.appendChild(cv);try{window.StudioQR.draw(cv,uri,500)}catch(e){}
     bx.appendChild(h('div',{style:'text-align:center;font-weight:700;word-break:break-all',text:S.upi_id}));

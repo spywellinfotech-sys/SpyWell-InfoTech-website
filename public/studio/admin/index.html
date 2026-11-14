@@ -39,7 +39,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
   var mq=h('div');app.appendChild(mq);manPanel(mq);
   var py=h('div');app.appendChild(py);subPanel(py);
-  var dp=h('div');app.appendChild(dp);dirPanel(dp);
+  var dp=h('div');app.appendChild(dp);dirPanel(dp);var rp=h('div');app.appendChild(rp);refPanel(rp);
   var cf=h('div');app.appendChild(cf);cfgPanel(cf);
   var dm=h('div');app.appendChild(dm);domPanel(dm);
   var ip=h('div');app.appendChild(ip);indPanel(ip);
@@ -97,6 +97,24 @@ async function subPanel(box){
   c.appendChild(tb);c.appendChild(m);
   c.appendChild(h('div',{class:'k',text:'ध्यान: असली भुगतान तभी चलेगा जब Razorpay की चाबियाँ लगी हों।'}));
   box.appendChild(c)}
+async function refPanel(box){
+  var r=await sb.from('studio_settings').select('k,v').in('k',['ref_enabled','ref_pct']);box.textContent='';if(r.error)return;
+  var S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});var on=S.ref_enabled!=='0';
+  var st=await sb.rpc('studio_admin_ref_stats');var d=st.data||{};
+  var c=h('div',{class:'card'});c.appendChild(h('b',{text:'🎁 Refer & Earn'}));
+  c.appendChild(h('div',{style:'margin-top:6px;font-weight:700;color:'+(on?'#0a7a2f':'#8b1a2b'),text:on?'✅ चालू है':'⛔ बंद है'}));
+  c.appendChild(h('div',{class:'k',style:'margin-top:6px',text:'जुड़े: '+(d.joined||0)+' · भुगतान किया: '+(d.paid||0)+' · कुल इनाम: ₹'+(d.rewards||0)+' · वॉलेट में बाकी: ₹'+(d.wallet_open||0)}));
+  c.appendChild(h('label',{text:'इनाम % (दोस्त के पहले भुगतान का)',style:'display:block;margin-top:8px;font-weight:600'}));
+  var pc=h('input',{type:'number',min:0,max:100,value:S.ref_pct||'20'});c.appendChild(pc);
+  c.appendChild(h('div',{class:'k',text:'इनाम तभी मिलता है जब दोस्त पहली बार असली पेमेंट करे। इनाम रेफ़र करने वाले के वॉलेट में जाता है और अगले प्लान के भुगतान में घटता है।'}));
+  var m=h('div',{class:'k'});
+  c.appendChild(h('button',{class:'btn',style:'margin-top:10px',text:'% सेव करें',onclick:async function(){
+    var v=parseInt(pc.value);if(!(v>=0&&v<=100)){m.className='e';m.textContent='0 से 100 के बीच भरें।';return}
+    var e=await sb.from('studio_settings').update({v:String(v)}).eq('k','ref_pct');
+    if(e.error){m.className='e';m.textContent='सेव नहीं हुआ।';return}m.className='k';m.textContent='सेव हो गया।'}}));
+  var tb=h('button',{class:'btn '+(on?'danger':'alt'),style:'margin-top:10px',text:on?'Refer & Earn बंद करें':'Refer & Earn चालू करें'});
+  tb.onclick=async function(){tb.disabled=true;var e=await sb.from('studio_settings').update({v:on?'0':'1'}).eq('k','ref_enabled');if(e.error){m.className='e';m.textContent='बदला नहीं जा सका।';tb.disabled=false;return}refPanel(box)};
+  c.appendChild(tb);c.appendChild(m);box.appendChild(c)}
 async function dirPanel(box){
   var r=await sb.from('studio_settings').select('k,v').in('k',['directory_public','dir_price_inr','dir_free_until']);box.textContent='';if(r.error)return;
   var S={};(r.data||[]).forEach(function(x){S[x.k]=x.v});var open=S.directory_public==='1';

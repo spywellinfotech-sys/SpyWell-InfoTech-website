@@ -117,6 +117,7 @@ button{min-height:48px;border-radius:12px}
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-enq" hidden></div>
 <div class="card" id="c-my" hidden></div>
+<div class="card" id="c-ref" hidden></div>
 <div class="card" id="c-inv" hidden></div>
 <div class="card" id="c-addr"></div>
 
@@ -302,7 +303,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=d.data||[];drawList();loadSubs();myHome();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){var t=document.querySelector('[data-new=visiting]');if(t)t.click()};
+  LIST=d.data||[];drawList();loadSubs();myHome();refHome();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){var t=document.querySelector('[data-new=visiting]');if(t)t.click()};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -509,6 +510,34 @@ async function invHome(){
       vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
         if(!det.hidden&&!ld){ld=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,{card:d.card,leads:d.leads},dd.data||{})}};
       w.appendChild(vb);w.appendChild(det)})})(iv[i])}}
+
+/* ---- Refer & Earn ---- */
+try{var _rq=new URLSearchParams(location.search).get('ref');if(_rq&&/^[A-Za-z0-9]{4,10}$/.test(_rq))localStorage.setItem('st_ref',_rq.toUpperCase())}catch(e){}
+async function refHome(){
+  var box=$('c-ref');if(!box)return;
+  var r=await sb.rpc('studio_ref_me');var m=r&&r.data;
+  if(!m||!m.enabled){box.hidden=true;return}
+  try{var pc=localStorage.getItem('st_ref');if(pc&&!m.referred_by){var ap=await sb.rpc('studio_ref_apply',{p_code:pc});if(ap&&ap.data&&(ap.data.ok||ap.data.error!=='login')){localStorage.removeItem('st_ref');if(ap.data.ok)m.referred_by=true}}}catch(e){}
+  box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#fff4d6,#ffe1a8);border:1px solid #f0c56a';
+  box.appendChild(mk('b','','🎁 Refer & Earn · दोस्त को बुलाओ, कमाओ'));
+  var u=location.origin+'/studio/?ref='+m.code;
+  var tx=mk('div','k','दोस्त पहली बार पेमेंट करे तो उसके भुगतान का '+m.pct+'% आपके वॉलेट में। वॉलेट से अगला प्लान सस्ता।');tx.style.margin='6px 0 8px';box.appendChild(tx);
+  var st=mk('div','');st.style.cssText='display:flex;gap:6px;margin-bottom:8px';
+  [['👥','जुड़े',m.joined],['✅','पेमेंट किया',m.paid],['💰','वॉलेट','₹'+m.balance]].forEach(function(p){var c=mk('div','');c.style.cssText='flex:1;background:#fff;border-radius:12px;padding:8px 4px;text-align:center';var n=mk('b','',String(p[2]));n.style.cssText='display:block;font-size:18px;color:#b3141c';c.appendChild(n);c.appendChild(mk('span','k',p[0]+' '+p[1]));st.appendChild(c)});box.appendChild(st);
+  var cd=mk('div','','आपका कोड: '+m.code);cd.style.cssText='text-align:center;font-weight:800;font-size:20px;letter-spacing:2px;background:#fff;border:2px dashed #d4141c;border-radius:12px;padding:10px;color:#7a0a10';box.appendChild(cd);
+  var row=mk('div','');row.style.cssText='display:flex;gap:8px;margin-top:8px';
+  var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent('मैं SpyWell DynaMe पर अपना डिजिटल विज़िटिंग कार्ड बनाता हूँ। आप भी बनाइए: '+u+'  (कोड: '+m.code+')');wa.target='_blank';wa.rel='noopener';
+  wa.style.cssText='flex:1;text-align:center;background:#1ea952;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700';
+  var cp=mk('button','alt','🔗 लिंक कॉपी');cp.type='button';cp.style.cssText='margin:0;flex:1';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2000)};
+  row.appendChild(wa);row.appendChild(cp);box.appendChild(row);
+  if(!m.referred_by&&!m.paid&&!m.joined){var q=mk('div','k','किसी दोस्त ने कोड दिया है?');q.style.marginTop='10px';box.appendChild(q);
+    var rw=mk('div','');rw.style.cssText='display:flex;gap:6px;margin-top:4px';var inp=document.createElement('input');inp.placeholder='रेफ़रल कोड';inp.maxLength=10;inp.style.cssText='flex:1;margin:0;text-transform:uppercase';
+    var go=mk('button','','लगाएँ');go.type='button';go.style.cssText='margin:0;width:auto;padding:0 16px';var er=mk('div','e');
+    go.onclick=async function(){er.textContent='';var a=await sb.rpc('studio_ref_apply',{p_code:inp.value});var d=a&&a.data||{};if(d.ok){refHome();return}
+      er.textContent={bad_code:'कोड सही नहीं है।',already:'कोड पहले से लगा है।',too_late:'यह कोड सिर्फ़ पेमेंट से पहले लगता है।',self:'अपना कोड नहीं लगा सकते।',off:'अभी रेफ़रल बंद है।'}[d.error]||'लग नहीं पाया।'};
+    rw.appendChild(inp);rw.appendChild(go);box.appendChild(rw);box.appendChild(er)}
+  else if(m.referred_by){var rb=mk('div','k','✓ आप किसी के रेफ़रल से जुड़े हैं');rb.style.marginTop='8px';box.appendChild(rb)}
+}
 async function myHome(){
   var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
   if(!vis.length){box.hidden=true;return}
@@ -622,7 +651,7 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-inv'),'home'],[$('c-addr'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'me'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-addr'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(['home','disc','dir','saved','me'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden))t='home';
   if(t==='dir'){var cd=$('c-dir');if(!cd.firstChild){var fr=document.createElement('iframe');fr.src='/studio/directory/?embed=1';fr.style.cssText='width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);border:0;display:block';cd.appendChild(fr)}}

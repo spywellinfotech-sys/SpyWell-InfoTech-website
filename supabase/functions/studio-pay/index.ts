@@ -37,7 +37,7 @@ const RANK: Record<string, number> = { card: 1, site: 2, domain: 3 };
 async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> {
   const claim = await sb.from("studio_pub_orders")
     .update({ status: "paid", rzp_payment_id: paymentId, paid_at: new Date().toISOString() })
-    .eq("rzp_order_id", orderId).eq("status", "created").select("design_id,plan,new_until");
+    .eq("rzp_order_id", orderId).eq("status", "created").select("design_id,plan,new_until,user_id,amount_paise,wallet_used");
   if (claim.error) return false;
   if (!claim.data || claim.data.length === 0) {
     const { data: o } = await sb.from("studio_pub_orders").select("status").eq("rzp_order_id", orderId).maybeSingle();
@@ -54,6 +54,10 @@ async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> 
     err = (await sb.from("studio_pub_paid").upsert({ design_id: o.design_id, source: "paid" }, { onConflict: "design_id", ignoreDuplicates: true })).error;
   }
   if (err) { await sb.from("studio_pub_orders").update({ status: "created", paid_at: null }).eq("rzp_order_id", orderId); return false; }
+  try {
+    if (o.wallet_used > 0) await sb.rpc("studio_wallet_spend", { p_user: o.user_id, p_amt: o.wallet_used, p_note: "प्लान भुगतान में उपयोग" });
+    await sb.rpc("studio_ref_reward", { p_user: o.user_id, p_paid: Math.round((o.amount_paise || 0) / 100) });
+  } catch { /* wallet/referral must never break a paid order */ }
   return true;
 }
 
@@ -131,7 +135,8 @@ Deno.serve(async (req) => {
         if (paid) return json({ code: "already_paid" }, 400);
       }
       if (!keyId || !keySecret) return json({ code: "not_configured" }, 503);
-      const amount = price * 100;
+      const wu = ((await sb.rpc("studio_wallet_use", { p_user: user.id, p_amount: price })).data as number) || 0;
+      const amount = (price - wu) * 100;
       const r = await fetch("https://api.razorpay.com/v1/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: "Basic " + btoa(`${keyId}:${keySecret}`) },
@@ -139,9 +144,9 @@ Deno.serve(async (req) => {
       });
       const ro = await r.json();
       if (!r.ok || !ro.id) return json({ code: "order_failed" }, 502);
-      const ins = await sb.from("studio_pub_orders").insert({ rzp_order_id: ro.id, user_id: user.id, design_id: did, amount_paise: amount, plan, new_until: newUntil });
+      const ins = await sb.from("studio_pub_orders").insert({ rzp_order_id: ro.id, user_id: user.id, design_id: did, amount_paise: amount, plan, new_until: newUntil, wallet_used: wu });
       if (ins.error) return json({ code: "db" }, 500);
-      return json({ order_id: ro.id, key_id: keyId, amount });
+      return json({ order_id: ro.id, key_id: keyId, amount, wallet_used: wu });
     }
     const oid = clip(b.order_id, 60), pid = clip(b.payment_id, 60), sig = clip(b.signature, 100);
     if (!oid || !pid || !sig || !keySecret) return json({ code: "bad_request" }, 400);
