@@ -496,6 +496,9 @@ function drawIns(box,st,dd){box.textContent='';
   var rc=dd.recent||[];if(rc.length){sec('🕒 ताज़ा गतिविधि');var tl=mk('div','');tl.style.cssText='border-left:2px solid #f0d6d4;margin-left:6px;padding-left:12px';
     rc.forEach(function(q){var l=q.kind==='click'?('👆 क्लिक: '+(CLK[q.what]||q.what)):(q.what==='site'?'🌐 मिनी वेबसाइट खुली':'📇 कार्ड खुला');var r=mk('div','');r.style.cssText='position:relative;display:flex;justify-content:space-between;gap:8px;padding:4px 0;font-size:13px';var dot=mk('span','');dot.style.cssText='position:absolute;left:-18px;top:11px;width:10px;height:10px;border-radius:50%;background:'+(q.kind==='click'?'#d4141c':'#f0a6a3');r.appendChild(dot);r.appendChild(mk('span','',l));r.appendChild(mk('span','k',new Date(q.t).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))).style.fontSize='11px';tl.appendChild(r)});box.appendChild(tl)}
   if(st.enq||st.leads){sec('📩 संपर्क');grid([[st.enq||0,'पूछताछ','📩'],[st.leads||0,'कार्ड लेने वाले','🤝']])}}
+function foldBox(w,title,sum){var bd=mk('div','');while(w.firstChild)bd.appendChild(w.firstChild);bd.hidden=true;var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:10px;padding:9px 12px;border:1px solid #f0d6d4;border-radius:12px;background:#fff7f6;font-weight:700;color:#9d0b12;font-size:15px';
+  var a=mk('span','',title);a.style.flex='1';var b=mk('span','',sum);b.style.cssText='font-size:13px;font-weight:600;color:#5a1a1a';var c=mk('span','','▼');c.style.fontSize='13px';hd.appendChild(a);hd.appendChild(b);hd.appendChild(c);
+  hd.onclick=function(){bd.hidden=!bd.hidden;c.textContent=bd.hidden?'▼':'▲'};w.appendChild(hd);w.appendChild(bd)}
 function statRow(title,u){var w=mk('div','');w.style.marginTop='12px';var t=mk('div','',title);t.style.cssText='font-weight:700;color:#9d0b12;margin-bottom:6px';w.appendChild(t);
   var r=mk('div','');r.style.cssText='display:flex;gap:8px';var c=u.clicks||{},act=(c.call||0)+(c.whatsapp||0);
   r.appendChild(mtile(u.total||0,'कुल व्यू','👁'));r.appendChild(mtile(u.today||0,'आज','📅'));r.appendChild(mtile(act,'कॉल / WhatsApp','📞'));w.appendChild(r);
@@ -513,7 +516,7 @@ async function invHome(){
       var det=mk('div','');det.hidden=true;det.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff7f6';var ld=false;
       vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
         if(!det.hidden&&!ld){ld=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,{card:d.card,leads:d.leads},dd.data||{})}};
-      w.appendChild(vb);w.appendChild(det)})})(iv[i])}}
+      w.appendChild(vb);w.appendChild(det);var c2=d.card||{};w.removeChild(h);foldBox(w,'💌 '+(x.title||'इनविटेशन'),'👁 '+(c2.total||0)+' · आज '+(c2.today||0));w.style.cssText='margin-top:0'})})(iv[i])}}
 
 /* ---- Refer & Earn ---- */
 try{var _rq=new URLSearchParams(location.search).get('ref');if(_rq&&/^[A-Za-z0-9]{4,10}$/.test(_rq))localStorage.setItem('st_ref',_rq.toUpperCase())}catch(e){}
@@ -634,6 +637,7 @@ async function myHome(){
   vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
     if(!det.hidden&&!loaded){loaded=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,st.data||{},dd.data||{})}};
   sw.appendChild(vb);sw.appendChild(det);
+  if(!st.error&&st.data){var cc=st.data.card||{};foldBox(sw,'📊 इनसाइट','👁 '+(cc.total||0)+' · आज '+(cc.today||0))}
   loadEnq()}
 var ENQ={rows:[],un:0};
 function hasSite(){return LIST.some(function(x){var i=SUBI[x.id];return x.product_type==='visiting'&&i&&(i.plan==='site'||i.plan==='domain')})}
