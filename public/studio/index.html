@@ -26,7 +26,11 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 .ig-art svg{height:100%;max-width:100%}.ig-inv{background:linear-gradient(160deg,#fff3f5,#fffaf0)}.ig-inv .ig-art{background:#fdeaee}
 .ig-vis{background:linear-gradient(160deg,#f3f0ff,#fffaf0)}.ig-vis .ig-art{background:#ece8fb}
 .ig-car{grid-column:1/-1;background:linear-gradient(160deg,#eaf7ee,#fffaf0)}.ig-car .ig-art{background:#dcf1e2;height:84px}
-.grid.ig{grid-template-columns:1fr;gap:6px}.ig-t{display:grid!important;grid-template-columns:70px 1fr;column-gap:12px;align-items:center;text-align:left;padding:7px 10px!important}.ig-t .ig-art{grid-row:1/3;height:50px!important;margin:0!important}.ig-t b{font-size:15px;line-height:1.25}.ig-t span{font-size:12px}.ig-chips{display:none!important}.ig-car{grid-column:auto}
+.grid.ig{grid-template-columns:1fr 1fr;gap:10px}.ig-t{display:flex!important;flex-direction:column;align-items:center;text-align:center;padding:10px 10px 12px!important;border-radius:16px!important;border-width:1.5px!important}
+.ig-t .ig-art{width:100%;height:96px!important;margin:0 0 8px!important;border-radius:12px}.ig-t b{font-size:17px;line-height:1.25}.ig-t span{font-size:12.5px;line-height:1.35;margin-top:2px}.ig-chips{display:none!important}
+.ig-t:after{content:'➕ बनाएँ';margin-top:auto;display:inline-block;background:var(--wine);color:#fff;font-weight:700;font-size:14px;border-radius:99px;padding:7px 18px}.ig-t span{margin-bottom:9px}
+.ig-car{grid-column:1/-1;display:grid!important;grid-template-columns:96px 1fr auto;column-gap:12px;text-align:left;align-items:center}.ig-car .ig-art{grid-row:1/3;height:64px!important;margin:0!important}.ig-car b,.ig-car span{grid-column:2}.ig-car span{margin-bottom:0}.ig-car:after{grid-column:3;grid-row:1/3;margin:0;background:#1ea952}
+#c-new>b{font-size:18px}
 .ig-chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:8px}.ig-chips i{font-style:normal;font-size:11px;background:#fff;border:1px solid #e8d5ad;border-radius:99px;padding:2px 7px;color:#6b4a2b}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chips button{width:auto;margin:0;padding:5px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:14px;font-weight:400}
