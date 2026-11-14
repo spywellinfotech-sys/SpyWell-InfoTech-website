@@ -559,6 +559,9 @@ async function myHome(){
     var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';
     var t1=mk('b','',nm);t1.style.cssText='display:block;font-size:18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';tx.appendChild(t1);
     var t2=mk('div','',pub?'आपका कार्ड लाइव है ✅':'कार्ड अभी प्रकाशित नहीं है');t2.style.cssText='font-size:13px;opacity:.92;margin-top:3px';tx.appendChild(t2);
+    if(pub&&x.product_type!=='invitation'){var pv=mk('div','');pv.style.cssText='flex:none;width:104px;height:148px;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.35);position:relative;border:2px solid #fff';
+      var pf=document.createElement('iframe');pf.src='/v/'+encodeURIComponent(x.slug);pf.loading='lazy';pf.tabIndex=-1;pf.setAttribute('aria-hidden','true');pf.style.cssText='border:0;width:360px;height:512px;transform:scale(.285);transform-origin:0 0;pointer-events:none;background:#fff';
+      var ov=mk('div','');ov.style.cssText='position:absolute;inset:0;cursor:pointer';ov.onclick=function(){openVw(x.slug,'visiting',x.title)};pv.appendChild(pf);pv.appendChild(ov);cd=pv}
     row.appendChild(cd);row.appendChild(tx);hero.appendChild(row);
     var go=mk('button','',pub?'👁️ मेरा कार्ड देखें':'🚀 कार्ड प्रकाशित करें');go.type='button';
     go.style.cssText='width:100%;margin:14px 0 0;background:#ffc21a;color:#5a0509;font-size:19px;font-weight:800;border:0;border-radius:14px;padding:15px 10px;box-shadow:0 4px 0 #c98d00';
