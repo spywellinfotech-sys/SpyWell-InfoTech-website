@@ -541,6 +541,12 @@ async function refHome(){
       er.textContent={bad_code:'कोड सही नहीं है।',already:'कोड पहले से लगा है।',too_late:'यह कोड सिर्फ़ पेमेंट से पहले लगता है।',self:'अपना कोड नहीं लगा सकते।',off:'अभी रेफ़रल बंद है।'}[d.error]||'लग नहीं पाया।'};
     rw.appendChild(inp);rw.appendChild(go);box.appendChild(rw);box.appendChild(er)}
   else if(m.referred_by){var rb=mk('div','k','✓ आप किसी के रेफ़रल से जुड़े हैं');rb.style.marginTop='8px';box.appendChild(rb)}
+  var hd=box.firstChild,bd=mk('div','');while(hd.nextSibling)bd.appendChild(hd.nextSibling);
+  hd.textContent='';hd.style.cssText='display:flex;align-items:center;gap:8px;cursor:pointer;font-size:15px';
+  var h1=mk('span','','🎁 Refer & Earn');h1.style.flex='1';var h2=mk('span','','👥 '+m.joined+' · 💰 ₹'+m.balance);h2.style.cssText='font-size:13px;font-weight:600;color:#7a0a10;background:#fff;border-radius:99px;padding:2px 9px';var h3=mk('span','','▼');h3.style.cssText='color:#b3141c;font-size:13px';
+  hd.appendChild(h1);hd.appendChild(h2);hd.appendChild(h3);
+  bd.hidden=!window.__refOpen;h3.textContent=bd.hidden?'▼':'▲';box.style.padding='10px 14px';
+  hd.onclick=function(){bd.hidden=!bd.hidden;window.__refOpen=!bd.hidden;h3.textContent=bd.hidden?'▼':'▲'};box.appendChild(bd);
 }
 async function myHome(){
   var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
