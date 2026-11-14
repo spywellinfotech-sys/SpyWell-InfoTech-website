@@ -18,14 +18,15 @@ body.vw .top,body.vw h1,body.vw .wrap>.k,body.vw .wrap>.card:not(#outc){display:
 .shr{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.shr button,.shr a{margin:0;background:#0b0b0b;color:#fff;border-radius:12px;padding:13px 6px;text-align:center;text-decoration:none;font:600 15px inherit;border:0}
 .wn{display:flex;gap:8px;margin-top:10px}.wn input{flex:1}.wn button{width:auto;margin:0;background:#1fa855;padding:0 14px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{width:auto;margin:0;padding:8px 12px;font-size:14px;background:#fff;color:var(--wine);border:1.5px solid var(--line);border-radius:20px}.chips button.on{background:var(--wine);color:#fff;border-color:var(--wine)}
 details>summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;align-items:center}details>summary::-webkit-details-marker{display:none}details>summary::after{content:'▼';color:var(--wine);font-size:13px}details[open]>summary::after{content:'▲'}
-.pl{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;background:#fff}.pl b{font-size:17px}.pl .ac{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.pl .ac button,.pl .ac a{margin:0;padding:10px 4px;font:600 14px inherit;border-radius:10px;text-align:center;text-decoration:none}
-.pl .ac .w{background:#1fa855;color:#fff;grid-column:1/3;font-size:16px;padding:12px}.pl .ac .g{background:#fff;color:var(--wine);border:1.5px solid var(--wine)}.pl .ac .d{background:#fff;color:#b00020;border:1.5px solid #e6b3bb}</style>
+.pl{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;background:#fff}.pl b{font-size:17px}.pl .ac{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:8px}.pl .ac button,.pl .ac a{margin:0;padding:7px 2px;font:600 12.5px inherit;border-radius:10px;text-align:center;text-decoration:none}
+.pl .ac .w{background:#1fa855;color:#fff;grid-column:1/4;font-size:15px;padding:10px}.pl{padding:9px 11px!important;margin-top:7px!important}.pl .k{margin-top:2px}#sv{padding:12px;margin:10px 0}.pl .ac .g{background:#fff;color:var(--wine);border:1.5px solid var(--wine)}.pl .ac .d{background:#fff;color:#b00020;border:1.5px solid #e6b3bb}</style>
 <script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script></head><body>
 <div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="30" height="30" style="border-radius:8px;vertical-align:middle;margin-right:8px">📍 मेरी लोकेशन</b><a href="/studio/">← होम</a></div>
 <div class="wrap"><h1>अपनी हर जगह की लोकेशन सेव रखें</h1>
 <div class="k">दुकान, ऑफ़िस, फ़ैक्टरी, साइट, घर: एक बार सेव करें, फिर कहीं से भी एक टैप में WhatsApp पर भेजें। जितनी चाहें उतनी जगह जोड़ें।</div>
 <details class="card" id="sv" open><summary id="sv-t">📂 Saved Locations</summary><div id="list"></div></details>
-<div class="card" id="form">
+<button type="button" id="f-open">➕ नई जगह जोड़ें</button>
+<div class="card" id="form" hidden>
 <b id="f-title">➕ नई जगह जोड़ें</b>
 <label>यह कौन-सी जगह है?</label><div class="chips" id="f-chips"></div>
 <input id="f-label" maxlength="40" placeholder="अपना नाम लिखें, जैसे: नई साइट, गोदाम 2" style="margin-top:8px" hidden>
@@ -37,7 +38,7 @@ details>summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;di
 <div class="k">घर बैठे जोड़ना हो तो Google Maps में जगह खोलें → Share → लिंक कॉपी करें और ऊपर चिपका दें।</div>
 <div class="e" id="f-err"></div>
 <button type="button" id="f-save">💾 जगह सेव करें</button>
-<button type="button" class="alt" id="f-cancel" hidden>रद्द करें</button>
+<button type="button" class="alt" id="f-cancel">रद्द करें</button>
 <div class="ok" id="f-ok"></div>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -58,20 +59,21 @@ $('f-label').oninput=function(){LAB=this.value.trim()};
 function store(){try{localStorage.setItem('vc_places',JSON.stringify(P))}catch(e){}
   if(!sb||!u)return Promise.resolve('local');var cj=Object.assign({},pcj,{places:P});pcj=cj;
   return sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(r){return r&&r.error?'err':'ok'},function(){return 'err'})}
-function reset(){EDIT=null;LAB='दुकान';['label','name','addr','mob','map'].forEach(function(k){$('f-'+k).value=''});$('f-title').textContent='➕ नई जगह जोड़ें';$('f-cancel').hidden=true;$('f-err').textContent='';chips()}
+function reset(){EDIT=null;LAB='दुकान';['label','name','addr','mob','map'].forEach(function(k){$('f-'+k).value=''});$('f-title').textContent='➕ नई जगह जोड़ें';$('f-err').textContent='';chips();$('form').hidden=true;$('f-open').hidden=false}
+$('f-open').onclick=function(){$('form').hidden=false;$('f-open').hidden=true;$('form').scrollIntoView({behavior:'smooth'})};
 function draw(){var L=$('list');L.textContent='';$('sv-t').textContent='📂 Saved Locations ('+P.length+')';
   if(!P.length){L.appendChild(mk('div','k','अभी कोई जगह सेव नहीं है। नीचे से पहली जगह जोड़ें।')).style.marginTop='12px';return}
-  P.forEach(function(p){var d=mk('details','pl');d.appendChild(mk('summary','',ic(p.label)+' '+p.label+(p.name?' · '+p.name:'')));if(P.length===1)d.open=true;
+  P.forEach(function(p){var d=mk('details','pl');d.appendChild(mk('summary','',ic(p.label)+' '+p.label+(p.name?' · '+p.name:'')));
     if(p.addr)d.appendChild(mk('div','k',p.addr));if(p.mob)d.appendChild(mk('div','k','📞 +91 '+p.mob));
     if(!p.map)d.appendChild(mk('div','e','मैप लोकेशन नहीं जुड़ी है, "बदलें" दबाकर जोड़ें।'));
     var ac=mk('div','ac');
     var w=mk('button','w','💬 WhatsApp पर लोकेशन भेजें');w.type='button';w.onclick=function(){go('https://wa.me/?text='+encodeURIComponent(text(p)))};ac.appendChild(w);
     var NV=window.ViNative;
-    var sh=mk('button','g','📤 और जगह भेजें');sh.type='button';sh.onclick=function(){var t=text(p);if(NV&&NV.shareText){NV.shareText(t);return}if(navigator.share){navigator.share({text:t}).catch(function(){});return}cp.click()};ac.appendChild(sh);
+    var sh=mk('button','g','📤 शेयर');sh.type='button';sh.onclick=function(){var t=text(p);if(NV&&NV.shareText){NV.shareText(t);return}if(navigator.share){navigator.share({text:t}).catch(function(){});return}cp.click()};ac.appendChild(sh);
     var cp=mk('button','g','📋 कॉपी');cp.type='button';cp.onclick=function(){var t=text(p);function ok(){cp.textContent='कॉपी हुआ ✓';setTimeout(function(){cp.textContent='📋 कॉपी'},2000)}
       if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){});};ac.appendChild(cp);
-    if(p.map){var m=mk('a','g','🗺 मैप में देखें');m.href=p.map;m.target='_blank';m.rel='noopener';ac.appendChild(m)}
-    var ed=mk('button','g','✏️ बदलें');ed.type='button';ed.onclick=function(){EDIT=p.id;LAB=p.label;$('f-label').value=LABS.slice(0,-1).some(function(l){return l[1]===p.label})?'':p.label;$('f-name').value=p.name||'';$('f-addr').value=p.addr||'';$('f-mob').value=p.mob||'';$('f-map').value=p.map||'';$('f-title').textContent='✏️ जगह बदलें';$('f-cancel').hidden=false;chips();$('form').scrollIntoView({behavior:'smooth'})};ac.appendChild(ed);
+    if(p.map){var m=mk('a','g','🗺 मैप');m.href=p.map;m.target='_blank';m.rel='noopener';ac.appendChild(m)}
+    var ed=mk('button','g','✏️ बदलें');ed.type='button';ed.onclick=function(){EDIT=p.id;LAB=p.label;$('f-label').value=LABS.slice(0,-1).some(function(l){return l[1]===p.label})?'':p.label;$('f-name').value=p.name||'';$('f-addr').value=p.addr||'';$('f-mob').value=p.mob||'';$('f-map').value=p.map||'';$('f-title').textContent='✏️ जगह बदलें';$('form').hidden=false;$('f-open').hidden=true;chips();$('form').scrollIntoView({behavior:'smooth'})};ac.appendChild(ed);
     var dl=mk('button','d','🗑 हटाएँ');dl.type='button';var arm=false;dl.onclick=function(){if(!arm){arm=true;dl.textContent='पक्का हटाएँ?';setTimeout(function(){arm=false;dl.textContent='🗑 हटाएँ'},3000);return}P=P.filter(function(q){return q.id!==p.id});store();if(EDIT===p.id)reset();draw()};ac.appendChild(dl);
     d.appendChild(ac);L.appendChild(d)})}
 $('f-cancel').onclick=reset;
