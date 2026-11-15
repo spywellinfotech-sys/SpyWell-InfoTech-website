@@ -89,7 +89,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     var ERR={limit:'आज की अनुवाद सीमा पूरी हो गई। कल फिर कोशिश करें।',not_found:'कार्ड नहीं मिला।'};
     async function apply(code,btn){
       if(!code){cur='';paint(cj);pn.hidden=true;tb.textContent=LBL;return}
-      var old=btn.textContent;btn.textContent='…';st.textContent='अनुवाद हो रहा है… 10-20 सेकंड';st.style.color='#6b5b3b';
+      var old=btn.textContent;pn.hidden=true;tb.textContent='⏳ …';tb.disabled=true;st.textContent='अपनी भाषा चुनें · Choose your language';st.style.color='#6b5b3b';
       try{
         var data=CACHE[code],keys=window.StudioRender.uiKeys();
         if(!data){var r=await fetch(B+'/functions/v1/studio-translate',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+K},body:JSON.stringify({slug:s,type:t,lang:code,ui:keys})});
@@ -103,8 +103,8 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
           else if(p[0]==='u'){var D=window.I18N_DATA=window.I18N_DATA||{},lab=keys[+p[1]];if(lab){D[lab]=D[lab]||{};if(!D[lab][code])D[lab][code]=data[k]}}});
         c2.style.lang=code;paint(c2);cur=code;pn.hidden=true;st.textContent='अपनी भाषा चुनें · Choose your language';
         var nm=LG.filter(function(x){return x[0]===code})[0];tb.textContent=LBL;window.scrollTo(0,0);
-      }catch(e){st.textContent=ERR[e.message]||'अनुवाद अभी नहीं हो पाया। थोड़ी देर बाद कोशिश करें।';st.style.color='#b00020'}
-      btn.textContent=old}
+      }catch(e){st.textContent=ERR[e.message]||'अनुवाद अभी नहीं हो पाया। थोड़ी देर बाद कोशिश करें।';st.style.color='#b00020';pn.hidden=false}
+      tb.disabled=false;tb.textContent=LBL;btn.textContent=old}
   })()}catch(e){}
   if(typeof sty.set==='string'&&/^[a-z0-9]{8,32}$/.test(sty.set)){
     var sr=await sb.from('studio_designs').select('slug,title,lbl:content_json->style->>setLabel,ord:created_at').eq('status','published').eq('product_type',t).eq('user_id',r.data.user_id).eq('content_json->style->>set',sty.set).order('created_at').limit(12);
