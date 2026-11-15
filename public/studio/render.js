@@ -263,13 +263,13 @@
       var sg = el('div', 'sr-cs sr-sg'); sg.appendChild(el('div', 'sr-sub', '\uD83C\uDF81 ' + T('शगुन')));
       sg.appendChild(el('div', 'sr-msg', T('आशीर्वाद के साथ शगुन भेजना चाहें तो UPI से भेज सकते हैं।')));
       var upl = 'upi://pay?pa=' + encodeURIComponent(up) + (f.upi_name ? '&pn=' + encodeURIComponent(f.upi_name) : '') + '&cu=INR&tn=' + encodeURIComponent('Shagun');
-      var pl = act(link('sr-call', '\uD83C\uDF81 ' + T('UPI से शगुन भेजें') + (f.upi_name ? ' · ' + f.upi_name : ''), upl), 'shagun'); pl.addEventListener('click', function () { if (!(opts && opts.demo)) shagunWatch(f); }); sg.appendChild(pl);
+      var pl = act(link('sr-call', '\uD83C\uDF81 ' + T('UPI से शगुन भेजें') + (f.upi_name ? ' · ' + f.upi_name : ''), upl), 'shagun'); pl.addEventListener('click', function () { if (!(opts && opts.demo)) shagunWatch(f, opts); }); sg.appendChild(pl);
       var qd = el('div', ''); qd.style.cssText = 'text-align:center;margin:10px 0 2px';
       try { if (window.StudioQR) { var qc = document.createElement('canvas'); window.StudioQR.draw(qc, unescape(encodeURIComponent(upl)), 300); qc.style.cssText = 'width:170px;height:170px;background:#fff;padding:8px;border-radius:12px'; qd.appendChild(qc); qd.appendChild(el('div', 'sr-sub', T('किसी भी UPI ऐप से स्कैन करें'))); } } catch (e) { }
       sg.appendChild(qd);
       var cp = el('button', 'sr-save', T('UPI ID कॉपी करें') + ': ' + up); cp.type = 'button'; cp.onclick = function () { try { navigator.clipboard.writeText(up); cp.textContent = T('✓ कॉपी हो गया'); } catch (e) { window.prompt(up, up); } };
       sg.appendChild(cp);
-      var dn = el('button', 'sr-save', '\u2705 ' + T('मैंने शगुन भेज दिया')); dn.type = 'button'; dn.onclick = function () { shagunOverlay('video', f); }; sg.appendChild(dn); box.appendChild(sg);
+      var dn = el('button', 'sr-save', '\u2705 ' + T('मैंने शगुन भेज दिया')); dn.type = 'button'; dn.onclick = function () { shagunOverlay('form', f, opts); }; sg.appendChild(dn); box.appendChild(sg);
     }
     var sw = el('div', 'sr-cs'); sw.appendChild(saveCardBtn(root, f)); box.appendChild(sw);
     root.appendChild(box);
@@ -382,9 +382,30 @@
       var h = el('div', '', '\uD83C\uDF81 ' + T('क्या आपने शगुन भेज दिया?')); h.style.cssText = 'font:700 19px system-ui,sans-serif;color:#7a0a10;margin-bottom:6px';
       var m = el('div', '', T('अपने UPI ऐप में भुगतान पूरा होने के बाद "हाँ" दबाएँ।')); m.style.cssText = 'font-size:14px;color:#555;margin-bottom:14px';
       var row = el('div', ''); row.style.cssText = 'display:flex;gap:10px;justify-content:center';
-      row.appendChild(btn(T('✅ हाँ, भेज दिया'), '#1ea952', '#fff', function () { close(); shagunOverlay('video', f, opts); }));
+      row.appendChild(btn(T('✅ हाँ, भेज दिया'), '#1ea952', '#fff', function () { close(); shagunOverlay('form', f, opts); }));
       row.appendChild(btn(T('अभी नहीं'), '#eee', '#333', close));
       cd.appendChild(h); cd.appendChild(m); cd.appendChild(row); ov.appendChild(cd); document.body.appendChild(ov); return;
+    }
+    if (kind === 'form' && opts && opts.onShagun && !opts.demo) {
+      var fc = el('div', ''); fc.style.cssText = 'background:#fff;border-radius:18px;padding:20px;max-width:340px;width:100%;text-align:left';
+      var fh = el('div', '', '🎁 ' + T('शगुन की जानकारी')); fh.style.cssText = 'font:700 19px system-ui,sans-serif;color:#7a0a10;margin-bottom:4px';
+      var fs = el('div', '', T('ताकि परिवार जान सके कि शगुन किसने भेजा।')); fs.style.cssText = 'font-size:13px;color:#666;margin-bottom:10px';
+      fc.appendChild(fh); fc.appendChild(fs);
+      function inp(ph, type, mode) { var i = document.createElement('input'); i.placeholder = ph; i.type = type || 'text'; if (mode) i.setAttribute('inputmode', mode); i.style.cssText = 'width:100%;box-sizing:border-box;margin:5px 0;padding:11px;border:1px solid #d9c3a0;border-radius:10px;font:16px system-ui,sans-serif'; fc.appendChild(i); return i; }
+      var ni = inp(T('आपका नाम *')), ai = inp(T('भेजी गई रकम (₹)'), 'tel', 'numeric'), mi = inp(T('आपका मोबाइल (वैकल्पिक)'), 'tel', 'numeric'), gi = inp(T('शुभकामना संदेश (वैकल्पिक)'));
+      ni.maxLength = 60; ai.maxLength = 7; mi.maxLength = 10; gi.maxLength = 200;
+      var er = el('div', ''); er.style.cssText = 'color:#b00020;font-size:13px;min-height:16px'; fc.appendChild(er);
+      var fr = el('div', ''); fr.style.cssText = 'display:flex;gap:10px;margin-top:6px';
+      var sb2 = btn(T('✅ भेजें'), '#1ea952', '#fff', async function () {
+        var nm = ni.value.trim(); if (!nm) { er.textContent = T('अपना नाम लिखें'); return; }
+        var am = parseInt(ai.value.replace(/\D/g, '')); var mb = mi.value.replace(/\D/g, ''); if (mb && !/^[6-9][0-9]{9}$/.test(mb)) { er.textContent = T('सही 10 अंक का मोबाइल नंबर डालें'); return; }
+        sb2.disabled = true; er.textContent = '';
+        var r = 'err'; try { r = await opts.onShagun({ name: nm, amount: am > 0 ? am : null, message: gi.value.trim(), mobile: mb }); } catch (e) { }
+        if (r !== 'ok') { sb2.disabled = false; er.textContent = T('अभी सेव नहीं हो पाया। दोबारा कोशिश करें।'); return; }
+        close(); shagunOverlay('video', f, opts);
+      });
+      var sk = btn(T('छोड़ें'), '#eee', '#333', function () { close(); shagunOverlay('video', f, opts); });
+      fr.appendChild(sb2); fr.appendChild(sk); fc.appendChild(fr); ov.appendChild(fc); document.body.appendChild(ov); return;
     }
     var who = (f.bride && f.groom) ? f.bride + ' & ' + f.groom : (f.bride || f.groom || '');
     var v = document.createElement('video'); v.src = '/studio/media/shagun-thanks.mp4'; v.poster = '/studio/media/shagun-thanks.jpg'; v.autoplay = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.controls = true;
@@ -394,13 +415,13 @@
     ov.appendChild(btn(T('बंद करें'), '#fff', '#333', close)); document.body.appendChild(ov);
     try { var pr = v.play(); if (pr && pr.catch) pr.catch(function () { }); } catch (e) { }
   }
-  var SG_WAIT = 0, SG_F = null, SG_BOUND = false;
-  function shagunWatch(f) {
-    SG_WAIT = Date.now(); SG_F = f;
+  var SG_WAIT = 0, SG_F = null, SG_O = null, SG_BOUND = false;
+  function shagunWatch(f, o) {
+    SG_WAIT = Date.now(); SG_F = f; SG_O = o;
     if (SG_BOUND) return; SG_BOUND = true;
     document.addEventListener('visibilitychange', function () {
       if (document.hidden || !SG_WAIT) return; var dt = Date.now() - SG_WAIT; SG_WAIT = 0;
-      if (dt > 2500 && dt < 20 * 60 * 1000) shagunOverlay('ask', SG_F);
+      if (dt > 2500 && dt < 20 * 60 * 1000) shagunOverlay('ask', SG_F, SG_O);
     });
   }
   function drawInviteImage(root, f, photoUrl) {

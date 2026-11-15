@@ -552,6 +552,18 @@ async function invHome(){
     ar.appendChild(ed);ar.appendChild(dl2);hero.appendChild(ar);
     var ins=mk('div','');ins.style.cssText='margin-top:12px;background:#fff;color:#222;border-radius:14px;padding:10px';hero.appendChild(ins);
     box.appendChild(hero);
+    (async function(){var sg=await sb.from('studio_shagun').select('name,amount,message,mobile,created_at').eq('design_id',x.id).order('created_at',{ascending:false}).limit(200);
+      if(sg.error)return;var rows=sg.data||[],tot=0;rows.forEach(function(r){tot+=Number(r.amount)||0});
+      var sw=mk('div','');sw.style.cssText='margin-top:12px;background:#fff;color:#222;border-radius:14px;padding:10px';
+      var hd=mk('div','','🎁 शगुन · '+rows.length+(tot?' · ₹'+tot:'')+'  ▼');hd.style.cssText='font-weight:800;color:#0b3d2e;cursor:pointer';sw.appendChild(hd);
+      var bd=mk('div','');bd.hidden=true;sw.appendChild(bd);
+      if(!rows.length)bd.appendChild(mk('div','k','अभी किसी ने जानकारी नहीं भरी। शगुन सीधे आपकी UPI ID पर आता है; यहाँ सिर्फ़ वही दिखता है जो मेहमान "मैंने शगुन भेज दिया" दबाकर भरते हैं।'));
+      rows.forEach(function(r){var d=mk('div','');d.style.cssText='padding:8px 0;border-top:1px dashed #eadfc9';
+        var t=mk('b','',r.name+(r.amount?' · ₹'+r.amount:''));d.appendChild(t);
+        var sub=[r.mobile?'📞 '+r.mobile:'',new Date(r.created_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})].filter(Boolean).join(' · ');d.appendChild(mk('div','k',sub));
+        if(r.message)d.appendChild(mk('div','','💬 '+r.message));bd.appendChild(d)});
+      hd.onclick=function(){bd.hidden=!bd.hidden;hd.textContent=hd.textContent.replace(/[▼▲]$/,bd.hidden?'▼':'▲')};
+      hero.appendChild(sw)})();
     sb.rpc('studio_my_stats',{p_design:x.id}).then(function(st){var d=(st&&st.data)||{},c2=d.card||{};cv.textContent='👁 '+(c2.total||0)+' · आज '+(c2.today||0);
       ins.appendChild(statRow('📊 इनसाइट',c2));
       var vb=mk('button','alt','📋 View details');vb.type='button';vb.style.cssText='width:100%;margin-top:8px';
