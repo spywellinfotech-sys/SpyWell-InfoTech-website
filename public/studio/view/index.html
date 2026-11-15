@@ -75,6 +75,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     var bb=document.createElement('a');bb.href='/studio/';bb.setAttribute('data-wizard','');bb.textContent='✨ अपना कार्ड बनाएँ  →';bb.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:80;width:calc(100% - 28px);max-width:400px;box-sizing:border-box;text-align:center;padding:15px 18px;border-radius:99px;background:linear-gradient(120deg,#f59a1a,#d4141c);color:#fff;font:800 18px system-ui,sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(212,20,28,.45)';var pv=false;try{pv=!!(window.frameElement&&window.frameElement.getAttribute('aria-hidden')==='true')}catch(e){}if(!pv)document.body.appendChild(bb);if(!pv)document.body.style.paddingBottom='84px';var fm=document.getElementById('mkb');if(fm)fm.style.display='none'}catch(e){}}
   /* ---- translate the whole card into the viewer's language ---- */
   try{(function(){
+    var TR_ON=false; /* AI translate button off: set true to bring it back */ if(!TR_ON)return;
     try{if(window.frameElement&&window.frameElement.getAttribute('aria-hidden')==='true')return}catch(e){}
     var LG=[['en','English'],['hi','हिन्दी'],['bn','বাংলা'],['ta','தமிழ்'],['te','తెలుగు'],['kn','ಕನ್ನಡ'],['ml','മലയാളം'],['mr','मराठी'],['gu','ગુજરાતી'],['pa','ਪੰਜਾਬੀ'],['or','ଓଡ଼ିଆ'],['ur','اردو']],CACHE={},cur='';
     var LB={en:'Language',hi:'भाषा',bn:'ভাষা',ta:'மொழி',te:'భాష',kn:'ಭಾಷೆ',ml:'ഭാഷ',mr:'भाषा',gu:'ભાષા',pa:'ਭਾਸ਼ਾ',or:'ଭାଷା',ur:'زبان'},LBL='🌐 '+(LB[(cj&&cj.style&&cj.style.lang)||'hi']||'भाषा');
