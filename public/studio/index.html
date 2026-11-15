@@ -802,6 +802,7 @@ function drawEnq(box,rows,un,lim){
   rows.slice(0,lim).forEach(function(q){var d=mk('div','des');d.style.opacity=q.read?'.6':'1';
     var mg=mk('b','',(q.read?'':'🔵 ')+q.message);mg.style.cssText='display:block;font-size:17px;line-height:1.4;color:#1a1a1a;word-break:break-word';d.appendChild(mg);
     var sn=mk('div','','👤 '+q.name+' · '+q.mobile);sn.style.cssText='font-size:14px;font-weight:600;color:#555;margin-top:4px';d.appendChild(sn);
+    if(q.last){var ls=mk('div','',(q.last_owner?'↩ आपका जवाब: ':'💬 उनका जवाब: ')+q.last);ls.style.cssText='font-size:13px;margin-top:4px;color:'+(q.last_owner?'#555':'#d4141c')+';font-weight:600;word-break:break-word';d.appendChild(ls)}
     var ot=mk('div','k',(q.title||'')+' · '+when(q.at));ot.style.cssText='font-size:12px;margin-top:2px';d.appendChild(ot);
     var ac=mk('div','acts'),c=mk('a','','📞 कॉल');c.href='tel:+91'+q.mobile;var w=mk('a','','💬 WhatsApp');w.href='https://wa.me/91'+q.mobile;w.target='_blank';w.rel='noopener';ac.appendChild(c);ac.appendChild(w);
     if(!q.read){var m=mk('button','','✓ देख लिया');m.type='button';m.onclick=async function(){m.disabled=true;await sb.rpc('studio_enquiry_mark',{p_id:q.id,p_read:true});loadEnq()};ac.appendChild(m)}
