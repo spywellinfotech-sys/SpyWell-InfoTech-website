@@ -42,9 +42,9 @@ function page(kind, slug, d) {
   return '<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<title>' + esc(title) + '</title><meta name="description" content="' + esc(desc) + '"><link rel="canonical" href="' + esc(url) + '">' +
     '<meta property="og:type" content="website"><meta property="og:site_name" content="' + esc(BRAND) + '"><meta property="og:url" content="' + esc(url) + '">' +
-    '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(desc) + '"><meta property="og:image" content="' + esc(img) + '">' +
+    (THUMB[slug] && img === THUMB[slug] ? '<meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="200"><meta property="og:image:height" content="200">' : '') + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(desc) + '"><meta property="og:image" content="' + esc(img) + '">' +
     '<meta name="twitter:card" content="' + (big ? 'summary_large_image' : 'summary') + '"><meta name="twitter:title" content="' + esc(title) + '"><meta name="twitter:image" content="' + esc(img) + '">' +
-    '<meta name="robots" content="noindex"><script>location.replace(' + JSON.stringify(to) + ')</script></head>' +
+    '<meta name="robots" content="noindex"><script>setTimeout(function(){location.replace(' + JSON.stringify(to) + ')},900)</script></head>' +
     '<body style="font-family:sans-serif;text-align:center;padding:40px"><p>' + esc(title) + '</p><p><a href="' + esc(to) + '">खोलें</a></p></body></html>';
 }
 
