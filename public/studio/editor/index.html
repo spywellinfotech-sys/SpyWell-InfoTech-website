@@ -19,6 +19,8 @@ input,textarea,select{min-height:46px}
 .cols{display:block}
 #pvbox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:46vh}
 .pvbar{display:flex;justify-content:flex-end;margin:6px 0}
+.aib{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:8px 0 2px;padding:13px 14px;border:0;border-radius:14px;background:linear-gradient(120deg,#7a0a10,#d4141c,#f59a1a);background-size:200% 100%;color:#fff;font:inherit;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(122,10,16,.25);animation:aibg 6s ease-in-out infinite}.aib.on{outline:3px solid #f59a1a}.aib small{font-weight:500;font-size:12px;opacity:.9}
+@keyframes aibg{0%,100%{background-position:0 0}50%{background-position:100% 0}}@media (prefers-reduced-motion:reduce){.aib{animation:none}}
 .tabs{display:flex;gap:6px;overflow-x:auto;margin:6px 0 10px;padding-bottom:2px}
 .tabs button{flex:none;width:auto;margin:0;padding:8px 14px;border-radius:20px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;font-size:14px;cursor:pointer}
 .tabs button.on{background:var(--wine);color:#fff}
@@ -56,7 +58,7 @@ button:active{transform:scale(.96);filter:brightness(.9)}button{-webkit-tap-high
 <div class="state" id="state">लोड हो रहा है…</div>
 <div class="cols" id="main" hidden>
 <div class="left"><div id="pvbox"><div id="pv"></div></div><div class="pvbar"><button class="btn alt sm" id="fullbtn">पूरा प्रीव्यू देखें</button></div></div>
-<div><div class="tabs" id="tabs"></div><div class="panel" id="panel"></div></div>
+<div><button type="button" id="aibtn" hidden></button><div class="tabs" id="tabs"></div><div class="panel" id="panel"></div></div>
 </div></div>
 <div id="toast" hidden></div>
 <div id="pubbar" hidden><div class="pbrow"><button type="button" id="pubbtn">🚀 प्रकाशित करें</button><button type="button" id="pinbtn" hidden>🔑 PIN</button></div></div>
@@ -108,7 +110,7 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
 var TABS=[['info','1 · जानकारी'],['list',''],['photo','फ़ोटो'],['design','रंग-रूप'],['tpl','टेम्पलेट'],['ai','🤖 AI से भरें'],['pub','🚀 प्रकाशित करें'],['ins','📊 इनसाइट']];
 var HINT={info:['अपनी जानकारी भरें','नाम, मोबाइल नंबर और व्यवसाय लिखें। बाकी खाने बाद में भी भर सकते हैं। ऊपर कार्ड का नमूना साथ-साथ बदलता दिखेगा।'],list:['सेवाएँ / कार्यक्रम जोड़ें','जो सेवाएँ देते हैं वे जोड़ें। नहीं हैं तो सीधे "अगला" दबाएँ।'],photo:['फ़ोटो और लोगो','अपनी फ़ोटो और लोगो लगाएँ। यह ज़रूरी नहीं है।'],design:['रंग और अक्षर','पसंद का रंग चुनें।'],tpl:['टेम्पलेट बदलें','कार्ड का दूसरा डिज़ाइन चुनना हो तो यहाँ से चुनें।'],ai:['AI की मदद लें','AI आपके व्यवसाय के बारे में लिखकर दे सकता है।'],pub:['प्रकाशित करें और शेयर करें','कार्ड लाइव करें, लिंक और QR पाएँ, WhatsApp पर भेजें।'],ins:['इनसाइट','कितने लोगों ने कार्ड देखा।']};
 var ORDER=['info','list','photo','design','tpl','pub'];
-function tabs(){var w=$('tabs');w.textContent='';TABS.forEach(function(t){var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
+function tabs(){var w=$('tabs');w.textContent='';var ab=$('aibtn');ab.hidden=false;ab.className='aib'+(tab==='ai'?' on':'');ab.textContent='';ab.appendChild(document.createTextNode(D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से AI भरें':'🤖 AI से भरें'));ab.onclick=function(){tab='ai';tabs();panel()};TABS.forEach(function(t){if(t[0]==='ai')return;var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;
   var hn=HINT[tab];if(hn)p.appendChild(h('div',{class:'step'},[h('b',{text:hn[0]}),document.createTextNode(hn[1])]));
