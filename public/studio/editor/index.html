@@ -478,6 +478,8 @@ async function pIns(p){
 var SLUG=/^[a-z0-9]+(-[a-z0-9]+)*$/;
 function pubUrl(slug){return location.origin+'/'+(D.product_type==='invitation'?'inv':'v')+'/'+slug}
 function shareText(){return D.product_type==='invitation'?'आप सादर आमंत्रित हैं: ':'हमारा ऑनलाइन विज़िटिंग कार्ड: '}
+function shareMsg(url){var m=shareText()+url;if(D.product_type==='invitation'){var ml=R.V&&R.V.url?R.V.url((C.fields&&C.fields.maplink)||''):'';if(ml)m+='\n\n📍 लोकेशन: '+ml}return m}
+function shareInv(btn,url){var f=C.fields||{},ph=(C.images&&C.images.couple&&C.images.couple.url)||'',old=btn.textContent;btn.textContent='तैयार हो रहा है…';btn.disabled=true;R.shareInvite($('pv'),f,shareMsg(url),ph,function(){btn.textContent=old;btn.disabled=false})}
 function webUrl(slug){return location.origin+'/web/'+slug}
 var PHONE='';
 function invSlug(){var m=mobSlug()||PHONE;if(!m)return slugify(R.title(D.product_type,C));var t=slugify(R.title(D.product_type,C)).replace(/^\d{10}-?/,'');return (m+(t?'-'+t:'')).slice(0,60).replace(/-+$/,'')}
@@ -686,10 +688,10 @@ function pPub(p){
         h('div',{class:'k',text:'1) विज़िटिंग कार्ड ✅ 2) मिनी वेबसाइट '+(C.style.site===true?'✅':'(ऊपर स्विच से चालू करें)')+' 3) अपना डोमेन (जैसे www.aapkanaam.com) 4) पूरी वेबसाइट'}),
         h('button',{class:'btn alt',text:'🌍 अपना डोमेन लगवाएँ',onclick:function(){upq('अपने मिनी वेबसाइट पर अपना कस्टम डोमेन')}}),
         h('button',{class:'btn alt',text:'🏢 पूरी वेबसाइट बनवाएँ',onclick:function(){upq('अपने बिज़नेस की पूरी वेबसाइट')}})]))}
-    p.appendChild(h('button',{class:'btn',text:'WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent(shareText()+url),'_blank','noopener')}}));
+    p.appendChild(h('button',{class:'btn',text:D.product_type==='invitation'?'💬 WhatsApp पर भेजें (नाम वाला preview + लिंक)':'WhatsApp पर भेजें',onclick:function(){if(D.product_type==='invitation')shareInv(this,url);else window.open('https://wa.me/?text='+encodeURIComponent(shareMsg(url)),'_blank','noopener')}}));
     var wn=h('input',{type:'tel',placeholder:'मोबाइल नंबर (10 अंक)',maxlength:15,inputmode:'numeric'});wn.style.marginTop='10px';
     p.appendChild(wn);
-    p.appendChild(h('button',{class:'btn',text:'📲 इस नंबर पर WhatsApp भेजें',onclick:function(){var n=wn.value.replace(/\D/g,'').slice(-10);if(n.length!==10){info.className='e';info.textContent='10 अंक का सही मोबाइल नंबर डालें';return}info.textContent='';window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(shareText()+url),'_blank','noopener')}}));
+    p.appendChild(h('button',{class:'btn',text:'📲 इस नंबर पर WhatsApp भेजें',onclick:function(){var n=wn.value.replace(/\D/g,'').slice(-10);if(n.length!==10){info.className='e';info.textContent='10 अंक का सही मोबाइल नंबर डालें';return}info.textContent='';window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(shareMsg(url)),'_blank','noopener')}}));
     p.appendChild(h('button',{class:'btn alt',text:'लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(url);info.className='k';info.textContent='लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें और कॉपी करें।'}}}));
     p.appendChild(h('button',{class:'btn alt',text:'कार्ड खोलकर देखें',onclick:function(){window.open(url,'_blank','noopener')}}));
     p.appendChild(h('button',{class:'btn alt',text:'QR कोड डाउनलोड करें',onclick:function(){var a=h('a',{href:cv.toDataURL('image/png'),download:'qr-'+D.slug+'.png'});document.body.appendChild(a);a.click();a.remove()}}));

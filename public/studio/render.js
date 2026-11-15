@@ -346,6 +346,43 @@
       return new Promise(function (ok) { cv.toBlob(function (b) { ok(b); }, 'image/png'); });
     });
   }
+  function drawInviteImage(root, f, photoUrl) {
+    var inv = root.querySelector('.sr-inv') || root, cs = getComputedStyle(inv), bg = cs.backgroundColor, n = inv;
+    while ((!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') && n.parentElement) { n = n.parentElement; bg = getComputedStyle(n).backgroundColor; }
+    if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') bg = '#5a0f1a';
+    var nmEl = inv.querySelector('.sr-nm'), ac = nmEl ? getComputedStyle(nmEl).color : '#e0b94a', fg = cs.color || '#ffffff', nf = nmEl ? getComputedStyle(nmEl).fontFamily : 'serif';
+    var FF = '"Hind","Noto Sans Devanagari",system-ui,sans-serif';
+    return loadImg(photoUrl).then(function (ph) {
+      var W = 1080, P = 70, mx = W - 2 * P, cv = document.createElement('canvas'), x = cv.getContext('2d'), items = [], y = 60;
+      cv.width = W; cv.height = 2400;
+      function txt(t, font, color, gap, maxL, lh) { var ls = wrapText(x, t, mx, font, maxL || 4); items.push({ ls: ls, font: font, color: color, gap: gap, lh: lh }); }
+      function nameFit(t) { var px = 104; x.font = '400 ' + px + 'px ' + nf; while (px > 48 && x.measureText(t).width > mx) { px -= 4; x.font = '400 ' + px + 'px ' + nf; } return px; }
+      if (f.heading) txt(f.heading, '400 40px ' + FF, ac, 40, 2, 52);
+      if (ph) items.push({ ph: true });
+      if (f.bride) { var pb = nameFit(f.bride); items.push({ ls: [f.bride], font: '400 ' + pb + 'px ' + nf, color: ac, gap: 14, lh: pb * 1.25 }); }
+      if (f.bride_parents) txt(f.bride_parents, '400 38px ' + FF, fg, 30, 3, 50);
+      if (f.bride && f.groom) items.push({ ls: ['&'], font: '400 70px ' + nf, color: fg, gap: 20, lh: 80 });
+      if (f.groom) { var pg = nameFit(f.groom); items.push({ ls: [f.groom], font: '400 ' + pg + 'px ' + nf, color: ac, gap: 14, lh: pg * 1.25 }); }
+      if (f.groom_parents) txt(f.groom_parents, '400 38px ' + FF, fg, 30, 3, 50);
+      if (f.message) txt(f.message, '400 42px ' + FF, fg, 10, 4, 58);
+      var H = 60 + 14, i, it;
+      items.forEach(function (o) { H += o.ph ? 300 : o.ls.length * o.lh + o.gap; });
+      H += 70; cv.height = Math.max(H, 700); x = cv.getContext('2d');
+      x.fillStyle = bg; x.fillRect(0, 0, W, cv.height); x.fillStyle = ac; x.fillRect(P, 60, mx, 10); x.fillRect(P, cv.height - 70, mx, 6);
+      x.textAlign = 'center'; x.textBaseline = 'alphabetic'; y = 60 + 10 + 70;
+      items.forEach(function (o) {
+        if (o.ph) { var r = 120, cx = W / 2, cy = y + r; x.save(); x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.clip(); var sc = Math.max(2 * r / ph.width, 2 * r / ph.height); x.drawImage(ph, cx - ph.width * sc / 2, cy - ph.height * sc / 2, ph.width * sc, ph.height * sc); x.restore(); x.strokeStyle = ac; x.lineWidth = 6; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.stroke(); y += 300; return; }
+        x.font = o.font; x.fillStyle = o.color; o.ls.forEach(function (l) { y += o.lh; x.fillText(l, W / 2, y - o.lh * 0.25); }); y += o.gap;
+      });
+      return new Promise(function (ok) { cv.toBlob(function (b) { ok(b); }, 'image/png'); });
+    });
+  }
+  function shareInvite(root, f, caption, photoUrl, done) {
+    var nm = String(f.bride || f.groom || 'invitation').replace(/[^\wऀ-ॿ ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'invitation';
+    var canImg = !!(window.ViNative || (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Share) || (navigator.canShare && navigator.share));
+    if (!canImg) { window.open('https://wa.me/?text=' + encodeURIComponent(caption), '_blank', 'noopener'); done && done(); return; }
+    drawInviteImage(root, f, photoUrl).then(function (b) { if (!b) { window.open('https://wa.me/?text=' + encodeURIComponent(caption), '_blank', 'noopener'); done && done(); return; } deliverImage(b, nm, function () { done && done(); }, caption); }, function () { done && done(); });
+  }
   function saveCardImage(root, f, btn) {
     var cap = ((f.business || f.name || '') ? (f.business || f.name) + ' - ' : '') + T('डिजिटल कार्ड') + ': ' + canonUrl();
     var old = btn.textContent; btn.textContent = T('तैयार हो रहा है…'); btn.disabled = true;
@@ -683,6 +720,6 @@
     document.head.appendChild(l);
   }
 
-  window.StudioRender = { fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
+  window.StudioRender = { shareInvite: shareInvite, fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
     FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, MAX_HIGH: MAX_HIGH, svParts: svParts, BUCKET: BUCKET };
 })();
