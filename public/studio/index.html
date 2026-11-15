@@ -666,6 +666,33 @@ async function refHome(){
   bd.hidden=!window.__refOpen;h3.textContent=bd.hidden?'▼':'▲';box.style.padding='10px 14px';
   hd.onclick=function(){bd.hidden=!bd.hidden;window.__refOpen=!bd.hidden;h3.textContent=bd.hidden?'▼':'▲'};box.appendChild(bd);
 }
+function shareTools(x,url,shTx){
+  var shr=mk('div','');shr.style.cssText='display:flex;gap:8px;margin-top:10px';
+  var sh1=mk('button','','📤 शेयर करें');sh1.type='button';sh1.style.cssText='margin:0;flex:2;padding:12px 6px;border:0;border-radius:12px;background:#25d366;color:#fff;font-weight:800;font-size:15px';
+  sh1.onclick=async function(){try{if(navigator.share){await navigator.share({title:x.title||'',text:shTx});return}}catch(e){if(e&&e.name==='AbortError')return}window.open('https://wa.me/?text='+encodeURIComponent(shTx),'_blank','noopener')};
+  var sh2=mk('button','','🔗 लिंक');sh2.type='button';sh2.style.cssText='margin:0;flex:1;padding:12px 6px;border:1px solid rgba(255,255,255,.7);border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:15px';
+  sh2.onclick=async function(){try{await navigator.clipboard.writeText(url);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('लिंक',url)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
+  shr.appendChild(sh1);shr.appendChild(sh2);
+  var more=mk('div','');more.hidden=true;var mh=mk('div','','⚙️ और विकल्प (नंबर पर भेजें, नाम-मोबाइल)  ▼');mh.style.cssText='margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.16);font-weight:800;cursor:pointer;font-size:14px';
+  mh.onclick=function(){more.hidden=!more.hidden;mh.textContent=mh.textContent.replace(/[▼▲]$/,more.hidden?'▼':'▲')};
+  var nr=mk('div','');nr.style.cssText='margin-top:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
+  nr.appendChild(mk('b','','📞 नंबर डालकर सीधे भेजें'));var nh=mk('div','','जिनका नंबर WhatsApp में सेव नहीं है, उन्हें भी भेज सकते हैं');nh.style.cssText='font-size:12px;opacity:.9;margin:2px 0 6px';nr.appendChild(nh);
+  var nrow=mk('div','');nrow.style.cssText='display:flex;flex-direction:column;gap:8px';var ni=document.createElement('input');ni.type='tel';ni.setAttribute('inputmode','numeric');ni.maxLength=10;ni.placeholder='मोबाइल नंबर';
+  ni.style.cssText='display:block!important;width:100%!important;box-sizing:border-box!important;height:54px!important;margin:0!important;padding:0 14px!important;border:0!important;border-radius:12px!important;font:700 20px system-ui,sans-serif!important;letter-spacing:1px;color:#222!important;background:#fff!important';
+  var nb=mk('button','','💬 भेजें');nb.type='button';nb.style.cssText='margin:0!important;width:100%!important;height:46px!important;min-height:0!important;padding:0 16px!important;border:0!important;border-radius:12px!important;background:#25d366!important;color:#fff!important;font-weight:800;font-size:16px';
+  var nm2=mk('div','');nm2.style.cssText='font-size:12px;margin-top:2px';
+  nb.onclick=function(){var n=ni.value.replace(/\D/g,'');if(n.length>10&&/^91/.test(n))n=n.slice(2);if(!/^[6-9][0-9]{9}$/.test(n)){nm2.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}nm2.textContent='';window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(shTx),'_blank','noopener');ni.value=''};
+  ni.onkeydown=function(e){if(e.key==='Enter')nb.click()};nrow.appendChild(ni);nrow.appendChild(nb);nr.appendChild(nrow);nr.appendChild(nm2);more.appendChild(nr);
+  (async function(){var g=await sb.from('studio_designs').select('gt:content_json->style->>gate').eq('id',x.id).maybeSingle();if(g.error)return;var on=g.data&&g.data.gt==='true';
+    var gr=mk('div','');gr.style.cssText='margin-top:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
+    var gl=mk('div','');gl.appendChild(mk('b','','📱 देखने से पहले नाम और मोबाइल पूछें'));var gs=mk('div','');gs.style.cssText='font-size:12px;opacity:.9;margin-top:2px';gl.appendChild(gs);gl.style.flex='1';
+    var sw=mk('button','isw');sw.type='button';sw.setAttribute('aria-label','नाम-मोबाइल पूछना');sw.appendChild(document.createElement('i'));var lb2=mk('span','swl2','');
+    var paint=function(){sw.className='isw'+(on?' on':'');lb2.textContent=on?'चालू':'बंद';gs.textContent=on?'चालू: कार्ड देखने वाले को पहले नाम और नंबर देना होगा':'बंद: कार्ड सीधे खुलेगा'};paint();
+    sw.onclick=async function(){sw.disabled=true;var r=await sb.from('studio_designs').select('content_json').eq('id',x.id).maybeSingle();if(r.error||!r.data){sw.disabled=false;gs.textContent='बदला नहीं जा सका';return}
+      var cj=r.data.content_json||{};cj.style=(cj.style&&typeof cj.style==='object')?cj.style:{};if(!on)cj.style.gate=true;else delete cj.style.gate;
+      var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(u.error||!u.data||!u.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;paint()};
+    var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:10px;width:100%';hd.appendChild(gl);hd.appendChild(lb2);hd.appendChild(sw);gr.appendChild(hd);more.appendChild(gr)})();
+  return {shr:shr,mh:mh,more:more}}
 async function myHome(){
   var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
   if(!vis.length){box.hidden=true;return}
@@ -698,8 +725,7 @@ async function myHome(){
       var c=mk('div','');var on=(i===0)||(i===1&&pub)||(i===2&&pub);
       c.style.cssText='flex:1;text-align:center;border-radius:12px;padding:7px 2px;font-size:12px;font-weight:700;background:'+(on?'#fff':'rgba(255,255,255,.18)')+';color:'+(on?'#7a0a10':'#fff');
       c.textContent=p[2]+' '+p[1];st.appendChild(c)});
-    hero.appendChild(st);
-    var ec=mk('a','','✏️ एडिट करें');ec.href='/studio/editor/?id='+x.id;ec.style.cssText='display:block;text-align:center;margin-top:10px;background:#fff;color:#7a0a10;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';hero.appendChild(ec);
+    var ec=mk('a','','✏️ एडिट करें');ec.href='/studio/editor/?id='+x.id;ec.style.cssText='display:block;text-align:center;margin-top:10px;background:#fff;color:#7a0a10;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';if(pub){var stl=shareTools(x,location.origin+'/v/'+x.slug,'मेरा डिजिटल कार्ड:\n'+location.origin+'/v/'+x.slug);hero.appendChild(stl.shr)}hero.appendChild(ec);if(pub){hero.appendChild(stl.mh);hero.appendChild(stl.more)}
     box.appendChild(hero)})();
 
   if(x.status==='published'&&x.slug){var r2=mk('div','');r2.style.cssText='display:flex;gap:8px;margin-top:8px';var u=location.origin+'/v/'+x.slug;
@@ -707,7 +733,7 @@ async function myHome(){
     var wa=mk('a','','💬 WhatsApp');wa.href='https://wa.me/?text='+encodeURIComponent('मेरा डिजिटल कार्ड: '+u);wa.target='_blank';wa.rel='noopener';
     var qr=mk('a','','QR');qr.href='/studio/editor/?id='+x.id+'&tab=pub';
     var NVb=window.ViNative;if(NVb&&NVb.openWa){var wb=mk('a','','🛍 WA Business');wb.href='#';wb.onclick=function(ev){ev.preventDefault();var m='मेरा डिजिटल कार्ड: '+u;if(!NVb.openWa('',m,true)&&NVb.shareText)NVb.shareText(m)};[wb].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#075e54;border:1px solid #075e54;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px'})}
-    wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';[qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'});r2.appendChild(cp);r2.appendChild(wa);if(wb)r2.appendChild(wb);r2.appendChild(qr);box.appendChild(r2)}
+    wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';[qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600;font-size:14px'});if(wb)r2.appendChild(wb);r2.appendChild(qr);box.appendChild(r2)}
   (function(){var pub=x.status==='published'&&!!x.slug,nm=(x.title||'मेरी वेबसाइट');
     var hero=mk('div','');hero.style.cssText='margin-top:14px;background:linear-gradient(135deg,#0b3d5c,#1a8fd1);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(26,143,209,.3)';
     hero.appendChild(mk('b','','🌐 मेरी मिनी वेबसाइट')).style.cssText='display:block;font-size:17px';
@@ -727,9 +753,9 @@ async function myHome(){
     var r3=mk('div','');r3.style.cssText='display:flex;gap:8px;margin-top:10px';
     var ed=mk('a','','✏️ एडिट करें');ed.href='/studio/editor/?id='+x.id+'&tab=info';
     ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d5c;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(ed);
-    if(pub){var wl=location.origin+'/web/'+x.slug;var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent((x.title||'मेरी')+' की मिनी वेबसाइट: '+wl);wa.target='_blank';wa.rel='noopener';
+    if(false){var wl=location.origin+'/web/'+x.slug;var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent((x.title||'मेरी')+' की मिनी वेबसाइट: '+wl);wa.target='_blank';wa.rel='noopener';
       wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(wa)}
-    hero.appendChild(r3);box.appendChild(hero)})();
+    if(pub){var wl2=location.origin+'/web/'+x.slug,stw=shareTools(x,wl2,(x.title||'मेरी')+' की मिनी वेबसाइट:\n'+wl2);hero.appendChild(stw.shr);hero.appendChild(r3);hero.appendChild(stw.mh);hero.appendChild(stw.more)}else hero.appendChild(r3);box.appendChild(hero)})();
   var dw=mk('div','');box.appendChild(dw);
   if(x.status==='published'&&x.slug)sb.rpc('studio_dir_mine',{p_design:x.id}).then(function(r){var m=r&&r.data;if(!m||!m.open)return;
     dw.style.cssText='margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff7f6';
