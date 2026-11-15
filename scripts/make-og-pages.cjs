@@ -17,9 +17,14 @@ function page(kind, slug, d) {
     desc = clip(f.message || 'आप सपरिवार सादर आमंत्रित हैं।', 160);
     img = okImg(im.bg && im.bg.url) || okImg(im.photo && im.photo.url) || okImg(im.cover && im.cover.url);
   } else {
-    const nm = f.name || f.business || d.title || 'डिजिटल कार्ड';
-    title = clip(nm + (f.business && f.name ? ' | ' + f.business : ''), 90);
-    desc = clip([f.designation, f.business && !f.name ? '' : '', 'डिजिटल कार्ड: कॉल, WhatsApp, लोकेशन एक टैप में'].filter(Boolean).join(' · '), 160);
+    const isWeb = kind === 'web', nm = f.name || f.business || d.title || 'डिजिटल कार्ड';
+    if (isWeb) { // mini website: the shop / business name leads
+      title = clip(f.business || nm, 90);
+      desc = clip([f.business && f.name ? f.name : '', f.designation, 'कॉल, WhatsApp, लोकेशन और सब जानकारी एक जगह'].filter(Boolean).join(' · '), 160);
+    } else { // visiting card: the person's name leads
+      title = clip(nm, 90);
+      desc = clip([f.designation, f.business && f.name ? f.business : '', 'डिजिटल विज़िटिंग कार्ड'].filter(Boolean).join(' · '), 160);
+    }
     img = okImg(im.photo && im.photo.url) || okImg(im.logo && im.logo.url);
   }
   img = img || FALLBACK;
