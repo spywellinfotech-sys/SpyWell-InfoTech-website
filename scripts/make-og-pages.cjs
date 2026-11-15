@@ -9,6 +9,8 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&':
 const clip = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
 const okImg = (u) => typeof u === 'string' && u.indexOf(B + '/storage/v1/object/public/') === 0 && u.indexOf('..') < 0 ? u : '';
 
+let sharp = null; try { sharp = require('sharp'); } catch (e) { console.warn('sharp missing: small thumbnails skipped'); }
+const THUMB = {}; // slug -> small square preview url (WhatsApp shows a small side thumbnail for small images)
 function page(kind, slug, d) {
   const f = (d.content_json && d.content_json.fields) || {}, im = (d.content_json && d.content_json.images) || {};
   const inv = d.product_type === 'invitation';
@@ -32,6 +34,7 @@ function page(kind, slug, d) {
     img = okImg(im.photo && im.photo.url) || okImg(im.logo && im.logo.url);
   }
   img = img || FALLBACK;
+  if (!inv && THUMB[slug]) img = THUMB[slug];
   const t = kind === 'inv' || kind === 'i' ? 'i' : kind === 'web' ? 'w' : 'v';
   const url = ORIGIN + '/' + (kind === 'i' ? 'inv' : kind) + '/' + slug;
   const to = '/studio/view/?t=' + t + '&s=' + slug;
@@ -56,6 +59,21 @@ function page(kind, slug, d) {
     const br = await fetch(B + '/rest/v1/rpc/studio_brand', { method: 'POST', headers: { apikey: K, Authorization: 'Bearer ' + K, 'Content-Type': 'application/json' }, body: '{}' });
     if (br.ok) { const j = await br.json(); if (j && j.name) BRAND = String(j.name).slice(0, 60); if (j && /^https:\/\//.test(j.icon || '')) FALLBACK = j.icon; }
   } catch (e) { console.warn('brand default used:', e.message); }
+  if (sharp) {
+    fs.mkdirSync(path.join('dist', 'og'), { recursive: true });
+    for (const d of rows) {
+      const slug = String(d.slug || '').toLowerCase();
+      if (d.product_type === 'invitation' || !/^[a-z0-9-]{1,60}$/.test(slug)) continue;
+      const im = (d.content_json && d.content_json.images) || {}, src = okImg(im.photo && im.photo.url) || okImg(im.logo && im.logo.url);
+      if (!src) continue;
+      try {
+        const r = await fetch(src); if (!r.ok) continue;
+        const buf = Buffer.from(await r.arrayBuffer());
+        await sharp(buf).rotate().resize(200, 200, { fit: 'cover', position: 'attention' }).jpeg({ quality: 80 }).toFile(path.join('dist', 'og', slug + '.jpg'));
+        THUMB[slug] = ORIGIN + '/og/' + slug + '.jpg';
+      } catch (e) { console.warn('thumb skipped', slug, e.message); }
+    }
+  }
   let n = 0;
   for (const d of rows) {
     const slug = String(d.slug || '').toLowerCase();
