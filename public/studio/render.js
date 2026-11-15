@@ -732,7 +732,7 @@
         eb.disabled = true; er.textContent = T('भेजा जा रहा है…');
         Promise.resolve(opts.onEnquiry(nm, mb, ms, ec.value.trim(), locUrl)).then(function (r) {
           eb.disabled = false;
-          if (r === 'ok') { er.textContent = T('✓ आपकी पूछताछ भेज दी गई। जल्द जवाब मिलेगा।'); en.value = em.value = ex.value = ec.value = ''; locUrl = ''; lb.textContent = T('📍 मेरी लोकेशन जोड़ें'); }
+          if (r === 'ok') { er.textContent = T('✓ आपकी पूछताछ भेज दी गई। जवाब आने पर यहीं दिखेगा।'); en.value = em.value = ex.value = ec.value = ''; locUrl = ''; lb.textContent = T('📍 मेरी लोकेशन जोड़ें'); }
           else if (r === 'limit') er.textContent = T('बहुत ज़्यादा संदेश भेजे गए, थोड़ी देर बाद कोशिश करें।');
           else er.textContent = T('अभी नहीं भेजा जा सका। दोबारा कोशिश करें।');
         }, function () { eb.disabled = false; er.textContent = T('अभी नहीं भेजा जा सका। दोबारा कोशिश करें।'); });
@@ -751,7 +751,30 @@
         var h2 = ei.querySelector('h2'), bar = ei.querySelector('.ws-bar'); if (h2) h2.remove(); if (bar) bar.remove();
         eb.style.cssText = 'display:block;width:100%;margin-top:10px;border:0;border-radius:12px;padding:14px;font:600 16px/1 system-ui,sans-serif;color:#fff;background:' + (ac2.trim() || '#12307f') + ';cursor:pointer';
         sh.appendChild(ei);
-        function openSh() { sh.style.display = 'block'; fab.style.display = 'none'; }
+        var thw = null, drawTh = function () { };
+        if (typeof opts.onThread === 'function') {
+          thw = el('div', ''); thw.style.cssText = 'margin:0 0 12px'; sh.insertBefore(thw, ei);
+          var acc = (ac2.trim() || '#12307f');
+          drawTh = function (list) {
+            thw.textContent = ''; var any = false;
+            (list || []).forEach(function (en) {
+              if (!en.msgs || !en.msgs.length) return;
+              if (!any) { var h0 = el('b', '', T('💬 आपकी बातचीत')); h0.style.cssText = 'display:block;font-size:16px;margin-bottom:8px'; thw.appendChild(h0); }
+              any = true;
+              var bx = el('div', ''); bx.style.cssText = 'border:1px solid #dfe5f2;border-radius:12px;padding:10px;margin-bottom:10px;background:#f6f8fd';
+              var q0 = el('div', '', T('आपका संदेश') + ': ' + en.message); q0.style.cssText = 'font-size:13px;opacity:.75;margin-bottom:6px'; bx.appendChild(q0);
+              en.msgs.forEach(function (m) { var b = el('div', '', m.body); b.style.cssText = 'max-width:88%;width:fit-content;padding:7px 10px;border-radius:12px;margin:4px 0;font-size:14px;word-break:break-word;' + (m.owner ? 'background:#fff;border:1px solid #dfe5f2;margin-right:auto' : 'background:' + acc + ';color:#fff;margin-left:auto'); bx.appendChild(b); });
+              var rr = el('div', ''); rr.style.cssText = 'display:flex;gap:6px;margin-top:6px';
+              var ri = el('input', ''); ri.type = 'text'; ri.maxLength = 500; ri.placeholder = T('जवाब लिखें…'); ri.style.cssText = 'flex:1;min-width:0;padding:9px;border:1px solid #cfd6e6;border-radius:10px;font:inherit';
+              var rbn = el('button', '', T('भेजें')); rbn.type = 'button'; rbn.style.cssText = 'flex:none;border:0;border-radius:10px;padding:9px 14px;font:600 14px system-ui,sans-serif;color:#fff;background:' + acc + ';cursor:pointer';
+              rbn.onclick = function () { var v = ri.value.trim(); if (!v || typeof opts.onThreadReply !== 'function') return; rbn.disabled = true; Promise.resolve(opts.onThreadReply(en.id, v)).then(function () { rbn.disabled = false; ri.value = ''; return opts.onThread(); }).then(drawTh, function () { rbn.disabled = false; }); };
+              rr.appendChild(ri); rr.appendChild(rbn); bx.appendChild(rr); thw.appendChild(bx);
+            });
+            if (any && !(fab.textContent || '').match(/💬/)) fab.textContent = T('📩 पूछताछ') + ' · 💬';
+          };
+          try { Promise.resolve(opts.onThread()).then(drawTh, function () { }); } catch (e) { }
+        }
+        function openSh() { sh.style.display = 'block'; fab.style.display = 'none'; if (thw) { try { Promise.resolve(opts.onThread()).then(drawTh, function () { }); } catch (e) { } } }
         function closeSh() { sh.style.display = 'none'; fab.style.display = ''; }
         fab.onclick = openSh; cx.onclick = closeSh;
         root.appendChild(fab); root.appendChild(sh);

@@ -813,7 +813,17 @@ function drawEnq(box,rows,un,lim){
     row('📍 लोकेशन',q.loc?'मैप में देखें':'जोड़ी नहीं गई',q.loc||'');
     row('🪪 कार्ड',q.title||'—');row('🕒 समय',when(q.at));
     vd.onclick=function(){dt.hidden=!dt.hidden;vd.textContent=dt.hidden?'👁 View details':'🙈 Hide details'};
-    d.appendChild(ac);d.appendChild(dt);box.appendChild(d)});
+    var rb=mk('button','','💬 जवाब / बातचीत');rb.type='button';ac.appendChild(rb);
+    var cv=mk('div','');cv.hidden=true;cv.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#f4f8ff';
+    var tl=mk('div','');tl.style.cssText='display:flex;flex-direction:column;gap:6px;margin-bottom:8px';cv.appendChild(tl);
+    var ti=document.createElement('textarea');ti.rows=2;ti.maxLength=500;ti.placeholder='अपना जवाब लिखें…';ti.style.cssText='width:100%;box-sizing:border-box;margin:0';cv.appendChild(ti);
+    var ts=mk('button','','📨 जवाब भेजें');ts.type='button';ts.style.cssText='width:100%;margin-top:6px';cv.appendChild(ts);var tm=mk('div','k','');tm.style.marginTop='4px';cv.appendChild(tm);
+    function bub(m,mine){var b=mk('div','');b.style.cssText='max-width:85%;padding:7px 10px;border-radius:12px;font-size:14px;word-break:break-word;'+(mine?'align-self:flex-end;background:#d4141c;color:#fff':'align-self:flex-start;background:#fff;border:1px solid var(--line)');b.appendChild(document.createTextNode(m));return b}
+    async function loadTh(){tl.textContent='';tl.appendChild(bub(q.message,false));var r=await sb.rpc('studio_enquiry_msgs_owner',{p_enquiry:q.id});((r&&r.data)||[]).forEach(function(m){tl.appendChild(bub(m.body,!!m.mine))})}
+    rb.onclick=function(){cv.hidden=!cv.hidden;if(!cv.hidden)loadTh()};
+    ts.onclick=async function(){var v=ti.value.trim();if(!v)return;ts.disabled=true;tm.textContent='';var r=await sb.rpc('studio_enquiry_reply',{p_enquiry:q.id,p_body:v});ts.disabled=false;
+      if(r.data==='ok'){ti.value='';tm.textContent='✓ जवाब भेज दिया गया। पूछने वाले को कार्ड पेज पर दिखेगा; चाहें तो ऊपर के बटन से WhatsApp पर भी भेजें।';loadTh()}else tm.textContent=r.data==='limit'?'आज के लिए सीमा पूरी हो गई':'भेजा नहीं जा सका'};
+    d.appendChild(ac);d.appendChild(dt);d.appendChild(cv);box.appendChild(d)});
   if(rows.length>lim){var ma=mk('button','alt','📥 Inbox में सभी देखें ('+rows.length+')');ma.type='button';ma.style.cssText='width:100%;margin-top:10px';ma.onclick=function(){openInbox()};box.appendChild(ma)}
   if(lim===1){var wasOpen=box._open;h.remove();foldBox(box,'📩 पूछताछ',un?('🔵 '+un+' नई'):(rows.length+' कुल'));var hd=box.firstChild,bd=box.lastChild;hd.style.marginTop='0';var sm=hd.children[1];sm.textContent=un?'🔵 '+un+' ':rows.length+' ';sm.appendChild(mk('span','',un?'नई':'कुल'));if(wasOpen){bd.hidden=false;hd.lastChild.textContent='▲'}hd.addEventListener('click',function(){box._open=!bd.hidden})}}
 function enqNew(rows){var seen='';try{seen=localStorage.getItem('vc_enq_seen')||''}catch(e){}
