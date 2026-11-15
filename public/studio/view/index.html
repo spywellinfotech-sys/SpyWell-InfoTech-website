@@ -72,7 +72,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   if(cj.demo===true){try{var db=document.createElement('div');db.setAttribute('aria-label','Demo');db.style.cssText='position:fixed;top:0;left:0;z-index:70;width:120px;height:120px;overflow:hidden;pointer-events:none';
     var dr=document.createElement('div');dr.textContent='DEMO';dr.style.cssText='position:absolute;top:24px;left:-34px;width:150px;text-align:center;transform:rotate(-45deg);background:linear-gradient(90deg,#f59a1a,#d4141c);color:#fff;font:800 15px/28px system-ui,sans-serif;letter-spacing:2px;box-shadow:0 3px 8px rgba(0,0,0,.35)';db.appendChild(dr);document.body.appendChild(db);
     var dn=document.createElement('div');dn.textContent='यह सिर्फ़ डेमो कार्ड है। अपना कार्ड 2 मिनट में बनाइए।';dn.style.cssText='max-width:440px;margin:0 auto;text-align:center;background:#fff4e0;color:#7a0a10;font:700 13px/1.4 system-ui,sans-serif;padding:8px 12px;border-bottom:1px solid #f0c98a';box.parentNode.insertBefore(dn,box);
-    var bb=document.createElement('a');bb.href='/studio/';bb.setAttribute('data-wizard','');bb.textContent='✨ अपना कार्ड बनाएँ  →';bb.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:80;width:calc(100% - 28px);max-width:400px;box-sizing:border-box;text-align:center;padding:15px 18px;border-radius:99px;background:linear-gradient(120deg,#f59a1a,#d4141c);color:#fff;font:800 18px system-ui,sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(212,20,28,.45)';document.body.appendChild(bb);document.body.style.paddingBottom='84px'}catch(e){}}
+    var bb=document.createElement('a');bb.href='/studio/';bb.setAttribute('data-wizard','');bb.textContent='✨ अपना कार्ड बनाएँ  →';bb.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:80;width:calc(100% - 28px);max-width:400px;box-sizing:border-box;text-align:center;padding:15px 18px;border-radius:99px;background:linear-gradient(120deg,#f59a1a,#d4141c);color:#fff;font:800 18px system-ui,sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(212,20,28,.45)';document.body.appendChild(bb);document.body.style.paddingBottom='84px';var fm=document.getElementById('mkb');if(fm)fm.style.display='none'}catch(e){}}
   /* ---- translate the whole card into the viewer's language ---- */
   try{(function(){
     try{if(window.frameElement&&window.frameElement.getAttribute('aria-hidden')==='true')return}catch(e){}
@@ -100,7 +100,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
           else if(p[0]==='s'&&c2.services&&c2.services[+p[1]]!=null)c2.services[+p[1]]=data[k];
           else if(p[0]==='h'&&c2.highlights&&c2.highlights[+p[1]]!=null)c2.highlights[+p[1]]=data[k];
           else if(p[0]==='u'){var D=window.I18N_DATA=window.I18N_DATA||{},lab=keys[+p[1]];if(lab){D[lab]=D[lab]||{};if(!D[lab][code])D[lab][code]=data[k]}}});
-        c2.style.lang=code;paint(c2);cur=code;pn.hidden=true;
+        c2.style.lang=code;paint(c2);cur=code;pn.hidden=true;st.textContent='अपनी भाषा चुनें · Choose your language';
         var nm=LG.filter(function(x){return x[0]===code})[0];tb.textContent='🌐 '+(nm?nm[1]:code)+' ✓';window.scrollTo(0,0);
       }catch(e){st.textContent=ERR[e.message]||'अनुवाद अभी नहीं हो पाया। थोड़ी देर बाद कोशिश करें।';st.style.color='#b00020'}
       btn.textContent=old}
