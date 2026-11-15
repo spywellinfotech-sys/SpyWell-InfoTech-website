@@ -3,7 +3,8 @@
 // People are sent on to the real viewer by a script; link-preview bots read only the meta tags.
 const fs = require('fs'), path = require('path');
 const B = 'https://rxhanrtoaplwphmwpgqg.supabase.co', K = 'sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
-const ORIGIN = 'https://spywell.in', FALLBACK = ORIGIN + '/studio/vicard-icon.png';
+const ORIGIN = 'https://spywell.in';
+let FALLBACK = ORIGIN + '/studio/vicard-icon.png', BRAND = 'DynaMe'; // both can be changed from studio_settings (brand_name, brand_icon)
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const clip = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
 const okImg = (u) => typeof u === 'string' && u.indexOf(B + '/storage/v1/object/public/') === 0 && u.indexOf('..') < 0 ? u : '';
@@ -37,7 +38,7 @@ function page(kind, slug, d) {
   const big = inv && img !== FALLBACK;
   return '<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<title>' + esc(title) + '</title><meta name="description" content="' + esc(desc) + '"><link rel="canonical" href="' + esc(url) + '">' +
-    '<meta property="og:type" content="website"><meta property="og:site_name" content="DynaMe · SpyWell"><meta property="og:url" content="' + esc(url) + '">' +
+    '<meta property="og:type" content="website"><meta property="og:site_name" content="' + esc(BRAND) + '"><meta property="og:url" content="' + esc(url) + '">' +
     '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(desc) + '"><meta property="og:image" content="' + esc(img) + '">' +
     '<meta name="twitter:card" content="' + (big ? 'summary_large_image' : 'summary') + '"><meta name="twitter:title" content="' + esc(title) + '"><meta name="twitter:image" content="' + esc(img) + '">' +
     '<meta name="robots" content="noindex"><script>location.replace(' + JSON.stringify(to) + ')</script></head>' +
@@ -51,6 +52,10 @@ function page(kind, slug, d) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     rows = await r.json();
   } catch (e) { console.warn('og pages skipped:', e.message); return; }
+  try {
+    const br = await fetch(B + '/rest/v1/rpc/studio_brand', { method: 'POST', headers: { apikey: K, Authorization: 'Bearer ' + K, 'Content-Type': 'application/json' }, body: '{}' });
+    if (br.ok) { const j = await br.json(); if (j && j.name) BRAND = String(j.name).slice(0, 60); if (j && /^https:\/\//.test(j.icon || '')) FALLBACK = j.icon; }
+  } catch (e) { console.warn('brand default used:', e.message); }
   let n = 0;
   for (const d of rows) {
     const slug = String(d.slug || '').toLowerCase();
