@@ -6,15 +6,15 @@
   var css = '.wz{position:fixed;inset:0;background:rgba(20,8,8,.6);z-index:2147483000;display:flex;align-items:flex-end;justify-content:center;font-family:inherit}' +
     '.wz>div{background:#fff;width:100%;max-width:460px;border-radius:22px 22px 0 0;padding:18px 18px 22px;box-shadow:0 -8px 30px rgba(0,0,0,.3);max-height:92vh;overflow:auto;box-sizing:border-box}' +
     '@media(min-width:520px){.wz{align-items:center}.wz>div{border-radius:22px}}' +
-    '.wz .bar{height:6px;border-radius:9px;background:#f3e3cc;overflow:hidden;margin-bottom:12px}.wz .bar i{display:block;height:100%;background:linear-gradient(90deg,#f59a1a,#d4141c);transition:width .25s}' +
-    '.wz .st{font-size:12px;color:#7a6248;display:flex;justify-content:space-between;margin-bottom:6px}.wz .x{background:none;border:0;font-size:20px;color:#7a6248;cursor:pointer;padding:0 4px}' +
-    '.wz h3{margin:4px 0 4px;font-size:20px;color:#7a0a10;line-height:1.3}.wz .hn{font-size:13px;color:#7a6248;margin:0 0 12px;line-height:1.5}' +
+    '.wz .wz-bar{height:6px;border-radius:9px;background:#f3e3cc;overflow:hidden;margin-bottom:12px}.wz .wz-bar i{display:block;height:100%;background:linear-gradient(90deg,#f59a1a,#d4141c);transition:width .25s}' +
+    '.wz .wz-st{font-size:12px;color:#7a6248;display:flex;justify-content:space-between;margin-bottom:6px}.wz .wz-x{background:none;border:0;font-size:20px;color:#7a6248;cursor:pointer;padding:0 4px}' +
+    '.wz h3{margin:4px 0 4px;font-size:20px;color:#7a0a10;line-height:1.3}.wz .wz-hn{font-size:13px;color:#7a6248;margin:0 0 12px;line-height:1.5}' +
     '.wz input,.wz textarea{width:100%;box-sizing:border-box;font-size:17px;padding:13px;border:1.5px solid #e5cfa8;border-radius:12px;outline:0;background:#fffdf8}.wz input:focus,.wz textarea:focus{border-color:#d4141c}' +
-    '.wz .ch{display:block;width:100%;text-align:left;margin:8px 0 0;padding:14px;border:1.5px solid #f0c98a;border-radius:14px;background:#fff8ec;font-size:16px;font-weight:700;color:#7a0a10;cursor:pointer}' +
-    '.wz .ch small{display:block;font-weight:400;color:#7a6248;font-size:12px;margin-top:2px}' +
-    '.wz .er{color:#c0182a;font-size:13px;min-height:16px;margin-top:6px}' +
-    '.wz .nv{display:flex;gap:8px;margin-top:12px}.wz .nv button{flex:1;padding:14px;border-radius:99px;border:0;font-size:16px;font-weight:800;cursor:pointer}' +
-    '.wz .nx{background:linear-gradient(120deg,#f59a1a,#d4141c);color:#fff}.wz .bk{background:#fff4e0;color:#7a0a10;flex:.6!important}.wz .sk{background:none;color:#7a6248;font-weight:500!important;flex:.7!important}';
+    '.wz .wz-ch{display:block;width:100%;text-align:left;margin:8px 0 0;padding:14px;border:1.5px solid #f0c98a;border-radius:14px;background:#fff8ec;font-size:16px;font-weight:700;color:#7a0a10;cursor:pointer}' +
+    '.wz .wz-ch small{display:block;font-weight:400;color:#7a6248;font-size:12px;margin-top:2px}' +
+    '.wz .wz-er{color:#c0182a;font-size:13px;min-height:16px;margin-top:6px}' +
+    '.wz .wz-nv{display:flex;gap:8px;margin-top:12px}.wz .wz-nv button{flex:1;padding:14px;border-radius:99px;border:0;font-size:16px;font-weight:800;cursor:pointer}' +
+    '.wz .wz-nx{background:linear-gradient(120deg,#f59a1a,#d4141c);color:#fff}.wz .wz-bk{background:#fff4e0;color:#7a0a10;flex:.6!important}.wz .wz-sk{background:none;color:#7a6248;font-weight:500!important;flex:.7!important}';
 
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function digits(s) { return String(s || '').replace(/\D/g, ''); }
@@ -59,12 +59,12 @@
     function close() { ov.remove(); }
     function shell(title, hint, idx, total) {
       box.textContent = '';
-      var top = el('div', 'st'); top.appendChild(el('span', '', total ? 'सवाल ' + (idx + 1) + ' / ' + total : '🚀 Get Started'));
-      var x = el('button', 'x', '✕'); x.type = 'button'; x.onclick = close; top.appendChild(x); box.appendChild(top);
-      if (total) { var b = el('div', 'bar'), f = el('i'); f.style.width = Math.round((idx + 1) / total * 100) + '%'; b.appendChild(f); box.appendChild(b); }
-      box.appendChild(el('h3', '', title)); if (hint) box.appendChild(el('p', 'hn', hint));
+      var top = el('div', 'wz-st'); top.appendChild(el('span', '', total ? 'सवाल ' + (idx + 1) + ' / ' + total : '🚀 Get Started'));
+      var x = el('button', 'wz-x', '✕'); x.type = 'button'; x.onclick = close; top.appendChild(x); box.appendChild(top);
+      if (total) { var b = el('div', 'wz-bar'), f = el('i'); f.style.width = Math.round((idx + 1) / total * 100) + '%'; b.appendChild(f); box.appendChild(b); }
+      box.appendChild(el('h3', '', title)); if (hint) box.appendChild(el('p', 'wz-hn', hint));
     }
-    function choice(label, sub, fn) { var b = el('button', 'ch', label); b.type = 'button'; if (sub) b.appendChild(el('small', '', sub)); b.onclick = fn; box.appendChild(b); }
+    function choice(label, sub, fn) { var b = el('button', 'wz-ch', label); b.type = 'button'; if (sub) b.appendChild(el('small', '', sub)); b.onclick = fn; box.appendChild(b); }
 
     function pickKind() {
       shell('आप क्या बनाना चाहते हैं?', 'कुछ आसान सवालों में आपका कार्ड तैयार हो जाएगा।');
@@ -76,7 +76,7 @@
       var O = (R && R.OCCASIONS) || { wedding: { name: 'विवाह' } };
       shell('कौन सा कार्यक्रम है?', '');
       Object.keys(O).forEach(function (k) { choice(O[k].name, '', function () { A.occ = k; begin(); }); });
-      var b = el('div', 'nv'), bk = el('button', 'bk', '← पीछे'); bk.type = 'button'; bk.onclick = pickKind; b.appendChild(bk); box.appendChild(b);
+      var b = el('div', 'wz-nv'), bk = el('button', 'wz-bk', '← पीछे'); bk.type = 'button'; bk.onclick = pickKind; b.appendChild(bk); box.appendChild(b);
     }
     function begin() { steps = stepsFor(A.type, A.occ, R); i = 0; started = true; ask(); }
 
@@ -85,10 +85,10 @@
       var inp = s.t === 'area' ? el('textarea') : el('input'); if (s.t !== 'area') inp.type = s.t === 'tel' ? 'tel' : s.t === 'date' ? 'date' : 'text';
       if (s.t === 'tel') { inp.inputMode = 'numeric'; inp.maxLength = 10; }
       inp.placeholder = s.t === 'date' ? '' : (s.h || ''); inp.value = A.fields[s.k] || ''; box.appendChild(inp);
-      var er = el('div', 'er'); box.appendChild(er);
-      var nv = el('div', 'nv');
-      var bk = el('button', 'bk', '← पीछे'); bk.type = 'button'; bk.onclick = function () { if (i === 0) { if (mode === 'new') { A.fields = {}; pickKind(); } else close(); } else { save(); i--; ask(); } }; nv.appendChild(bk);
-      var nx = el('button', 'nx', i === steps.length - 1 ? '✅ तैयार करें' : 'आगे →'); nx.type = 'button';
+      var er = el('div', 'wz-er'); box.appendChild(er);
+      var nv = el('div', 'wz-nv');
+      var bk = el('button', 'wz-bk', '← पीछे'); bk.type = 'button'; bk.onclick = function () { if (i === 0) { if (mode === 'new') { A.fields = {}; pickKind(); } else close(); } else { save(); i--; ask(); } }; nv.appendChild(bk);
+      var nx = el('button', 'wz-nx', i === steps.length - 1 ? '✅ तैयार करें' : 'आगे →'); nx.type = 'button';
       function save() { var v = inp.value.trim(); if (s.t === 'tel') v = digits(v).slice(-10); if (v) A.fields[s.k] = v; else if (!s.skipKeep) delete A.fields[s.k]; return v; }
       nx.onclick = function () {
         var v = save();
@@ -97,7 +97,7 @@
         next();
       };
       nv.appendChild(nx);
-      if (s.skip) { var sk = el('button', 'sk', 'छोड़ें'); sk.type = 'button'; sk.onclick = function () { delete A.fields[s.k]; next(); }; nv.appendChild(sk); }
+      if (s.skip) { var sk = el('button', 'wz-sk', 'छोड़ें'); sk.type = 'button'; sk.onclick = function () { delete A.fields[s.k]; next(); }; nv.appendChild(sk); }
       box.appendChild(nv);
       inp.onkeydown = function (e) { if (e.key === 'Enter' && s.t !== 'area') { e.preventDefault(); nx.click(); } };
       setTimeout(function () { try { inp.focus(); } catch (e) { } }, 60);
