@@ -17,7 +17,7 @@ function page(kind, slug, d) {
     const who = [f.bride, f.groom].filter(Boolean).join(' संग '); // birthday / puja etc. have only one name
     const MON = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
     const dm = /^(\d{4})-(\d{2})-(\d{2})/.exec(f.date || ''), when = dm ? (+dm[3]) + ' ' + MON[+dm[2] - 1] + ' ' + dm[1] : '';
-    title = clip(d.title || (f.heading && who ? f.heading.replace(/\s+/g, ' ').trim() + ' · ' + who : who) || f.heading || 'डिजिटल निमंत्रण', 90);
+    title = clip((d.content_json && d.content_json.demo === true ? 'DEMO · ' : '') + (d.title || (f.heading && who ? f.heading.replace(/\s+/g, ' ').trim() + ' · ' + who : who) || f.heading || 'डिजिटल निमंत्रण'), 90);
     desc = clip([when, f.venue, f.message || 'आप सपरिवार सादर आमंत्रित हैं।'].filter(Boolean).join(' · '), 160);
     img = okImg(im.couple && im.couple.url) || okImg(im.family && im.family.url) || okImg(im.bg && im.bg.url); // the person / couple first, then family, then background
   } else {
