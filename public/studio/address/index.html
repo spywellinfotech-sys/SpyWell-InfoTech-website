@@ -67,15 +67,15 @@ function draw(){
   var FF='"Hind","Noto Sans Devanagari",system-ui,sans-serif',W=1080,x=cv.getContext('2d'),rows=[];
   x.font='400 42px '+FF;
   var addrL=wrap(x,lineAddr(),W-190-(mapUrl()?300:0),'400 42px '+FF,5);
-  var H=Math.max(1000,590+(OF&&val('co')?150:0)+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+170);
+  var H=Math.max(1000,590+(OF&&val('co')?190:0)+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+170);
   cv.width=W;cv.height=H;x.fillStyle='#fff';x.fillRect(0,0,W,H);
   x.fillStyle='#12307f';x.fillRect(0,0,W,250);x.fillStyle='#f59a1a';x.fillRect(0,250,W,10);
   x.fillStyle='#fff';x.textAlign='center';x.textBaseline='alphabetic';x.font='700 38px '+FF;x.fillText('ADDRESS CARD',W/2,95);
   x.font='700 78px '+FF;x.fillText(TIT,W/2,190);
   var y=350;x.textAlign='left';x.fillStyle='#14203d';
-  if(OF&&val('co')){x.font='800 58px '+FF;x.fillStyle='#12307f';wrap(x,val('co'),W-180,'800 58px '+FF,2).forEach(function(l){x.fillText(l,90,y);y+=70});x.fillStyle='#14203d';y+=8}
-  if(val('name')){x.font='700 62px '+FF;x.fillText(val('name').slice(0,40),90,y);y+=90}
-  if(mob().length===10){x.font='500 50px '+FF;x.fillStyle='#12307f';x.fillText('📞 +91 '+mob().slice(0,5)+' '+mob().slice(5),90,y);y+=80;x.fillStyle='#14203d'}
+  if(OF&&val('co')){x.font='800 58px '+FF;x.fillStyle='#12307f';wrap(x,val('co'),W-180,'800 58px '+FF,2).forEach(function(l){x.fillText(l,90,y);y+=76});x.fillStyle='#14203d';y+=26}
+  if(val('name')){x.font='700 62px '+FF;x.fillText(val('name').slice(0,40),90,y);y+=OF&&val('co')?106:90}
+  if(mob().length===10){x.font='500 50px '+FF;x.fillStyle='#12307f';x.fillText('📞 +91 '+mob().slice(0,5)+' '+mob().slice(5),90,y);y+=90;x.fillStyle='#14203d'}
   /* big HOME ADDRESS label */
   y+=24;var lw=W-180;x.fillStyle='#f59a1a';x.beginPath();if(x.roundRect)x.roundRect(90,y-58,lw,110,26);else x.rect(90,y-58,lw,110);x.fill();
   x.fillStyle='#14203d';x.textAlign='center';x.font='800 70px '+FF;x.fillText(IC+' '+BIG,W/2,y+22);x.textAlign='left';y+=130;x.fillStyle='#14203d';
