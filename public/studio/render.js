@@ -244,7 +244,15 @@
       if (ev.children.length > 1) box.appendChild(ev);
     }
     if (d.images.family) box.appendChild(picture('sr-fam', d.images.family, 'wide'));
-    if (f.extra) box.appendChild(el('div', 'sr-msg', f.extra));
+    if (f.extra) {
+      var ex = String(f.extra).split(/\s*\|\s*/).filter(Boolean); // "|" separates paragraphs: e.g. घर की रौनक | विनीत: ... | दर्शनाभिलाषी: ...
+      ex.forEach(function (t, i) {
+        var d = el('div', 'sr-msg'); d.style.margin = (i ? '1.3em' : '1.1em') + ' 0 0';
+        var m = /^([^:：]{2,24})([:：])\s*([\s\S]+)$/.exec(t);
+        if (m) { var lb = el('b', '', m[1] + m[2]); lb.style.cssText = 'display:block;color:var(--ac);margin-bottom:.3em'; d.appendChild(lb); d.appendChild(document.createTextNode(m[3])); } else d.textContent = t;
+        box.appendChild(d);
+      });
+    }
     var cs = [[f.c1_name, V.tel(f.c1_phone)], [f.c2_name, V.tel(f.c2_phone)]].filter(function (x) { return x[1]; });
     if (cs.length) { var cw = el('div', 'sr-cs'); cw.appendChild(el('div', 'sr-sub', T('संपर्क'))); cs.forEach(function (x) { cw.appendChild(act(link('sr-call', '📞 ' + (x[0] ? x[0] + ' : ' : '') + x[1].slice(0, 5) + ' ' + x[1].slice(5), 'tel:+91' + x[1]), 'call')); }); box.appendChild(cw); }
     var mu = V.url(f.maplink) || ((f.venue || f.address) ? maps([f.venue, f.address].filter(Boolean).join(', ')) : '');
