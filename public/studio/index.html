@@ -560,13 +560,24 @@ async function invHome(){
         var cj=r.data.content_json||{};cj.style=(cj.style&&typeof cj.style==='object')?cj.style:{};if(!on)cj.style.gate=true;else delete cj.style.gate;
         var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(u.error||!u.data||!u.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;paint()};
       gr.appendChild(gl);gr.appendChild(sw);hero.insertBefore(gr,ins)})();
-    (async function(){var g=await sb.from('studio_designs').select('so:content_json->style->>shagun_off').eq('id',x.id).maybeSingle();if(g.error)return;var on=!(g.data&&g.data.so==='true');
+    (async function(){var g=await sb.from('studio_designs').select('so:content_json->style->>shagun_off,upi:content_json->fields->>upi,un:content_json->fields->>upi_name').eq('id',x.id).maybeSingle();if(g.error)return;var on=!(g.data&&g.data.so==='true');
       var gr=mk('div','');gr.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
       var gl=mk('div','');gl.appendChild(mk('b','','🎁 ऑनलाइन शगुन (QR और UPI ID)'));var gs=mk('div','');gs.style.cssText='font-size:12px;opacity:.9;margin-top:2px';gl.appendChild(gs);gl.style.flex='1';
       var sw=mk('button','','');sw.type='button';sw.setAttribute('aria-label','ऑनलाइन शगुन');var paint=function(){sw.style.cssText='margin:0;flex:none;width:54px;height:30px;border-radius:99px;border:0;position:relative;padding:0;background:'+(on?'#ffc21a':'rgba(255,255,255,.35)');sw.textContent='';var kn=mk('span','');kn.style.cssText='position:absolute;top:3px;left:'+(on?'27px':'3px')+';width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s';sw.appendChild(kn);gs.textContent=on?'चालू: कार्ड पर शगुन भेजने का हिस्सा दिखता है (UPI ID भरी हो तो)':'बंद: कार्ड पर शगुन का हिस्सा नहीं दिखेगा'};paint();
       sw.onclick=async function(){sw.disabled=true;var r=await sb.from('studio_designs').select('content_json').eq('id',x.id).maybeSingle();if(r.error||!r.data){sw.disabled=false;gs.textContent='बदला नहीं जा सका';return}
         var cj=r.data.content_json||{};cj.style=(cj.style&&typeof cj.style==='object')?cj.style:{};if(on)cj.style.shagun_off=true;else delete cj.style.shagun_off;
         var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(u.error||!u.data||!u.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;paint()};
+      gr.style.flexWrap='wrap';
+      var ed=mk('div','');ed.style.cssText='flex:1 1 100%;margin-top:6px';
+      var ui=document.createElement('input');ui.placeholder='UPI ID (जैसे नाम@ybl)';ui.value=(g.data&&g.data.upi)||'';ui.maxLength=60;ui.setAttribute('autocapitalize','off');
+      var un=document.createElement('input');un.placeholder='UPI पर दिखने वाला नाम (वैकल्पिक)';un.value=(g.data&&g.data.un)||'';un.maxLength=40;
+      [ui,un].forEach(function(i){i.style.cssText='display:block;width:100%;box-sizing:border-box;margin:6px 0 0;padding:10px;border:0;border-radius:10px;font:16px system-ui,sans-serif;color:#222'});
+      var sv=mk('button','','💾 UPI ID सेव करें');sv.type='button';sv.style.cssText='margin:8px 0 0;width:100%;padding:11px;border:0;border-radius:10px;background:#fff;color:#0b3d2e;font-weight:800';var sm=mk('div','');sm.style.cssText='font-size:12px;margin-top:4px;min-height:14px';
+      sv.onclick=async function(){var v=ui.value.trim();if(v&&!/^[a-z0-9._-]{2,50}@[a-z][a-z0-9.-]{1,30}$/i.test(v)){sm.textContent='UPI ID सही नहीं है। ऐसे लिखें: नाम@ybl';return}
+        sv.disabled=true;sm.textContent='सेव हो रहा है…';var r=await sb.from('studio_designs').select('content_json').eq('id',x.id).maybeSingle();if(r.error||!r.data){sv.disabled=false;sm.textContent='सेव नहीं हुआ';return}
+        var cj=r.data.content_json||{};cj.fields=(cj.fields&&typeof cj.fields==='object')?cj.fields:{};if(v)cj.fields.upi=v;else delete cj.fields.upi;var nm=un.value.trim();if(nm)cj.fields.upi_name=nm;else delete cj.fields.upi_name;
+        var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sv.disabled=false;sm.textContent=(u.error||!u.data||!u.data.length)?'सेव नहीं हुआ':'✓ सेव हो गया';};
+      ed.appendChild(ui);ed.appendChild(un);ed.appendChild(sv);ed.appendChild(sm);gr.appendChild(ed);
       gr.appendChild(gl);gr.appendChild(sw);hero.insertBefore(gr,ins)})();
     var ins=mk('div','');ins.style.cssText='margin-top:12px;background:#fff;color:#222;border-radius:14px;padding:10px';hero.appendChild(ins);
     box.appendChild(hero);
