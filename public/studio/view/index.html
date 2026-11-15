@@ -71,6 +71,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   paint(cj);
   /* ---- translate the whole card into the viewer's language ---- */
   try{(function(){
+    try{if(window.frameElement&&window.frameElement.getAttribute('aria-hidden')==='true')return}catch(e){}
     var LG=[['en','English'],['hi','हिन्दी'],['bn','বাংলা'],['ta','தமிழ்'],['te','తెలుగు'],['kn','ಕನ್ನಡ'],['ml','മലയാളം'],['mr','मराठी'],['gu','ગુજરાતી'],['pa','ਪੰਜਾਬੀ'],['or','ଓଡ଼ିଆ'],['ur','اردو']],CACHE={},cur='';
     var tb=document.createElement('button');tb.type='button';tb.setAttribute('aria-label','Translate');tb.textContent='🌐 अनुवाद / Translate';
     tb.style.cssText='position:fixed;top:10px;right:10px;z-index:60;padding:8px 14px;border:0;border-radius:22px;background:#fff;color:#8b1a2b;font:700 13px system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.3);cursor:pointer';
