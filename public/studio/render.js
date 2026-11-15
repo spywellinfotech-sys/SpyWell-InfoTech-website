@@ -229,7 +229,7 @@
     if (dt.length) { var b = el('div', 'sr-dt'); dt.forEach(function (x) { b.appendChild(el('div', '', x)); }); box.appendChild(b); }
     if (f.venue || f.address || V.url(f.maplink)) {
       var v = el('div', 'sr-ven'); if (f.venue) v.appendChild(el('b', '', f.venue)); if (f.address) v.appendChild(el('div', '', f.address));
-      v.appendChild(act(link('sr-btn', T('\uD83D\uDCCD मैप में देखें'), V.url(f.maplink) || maps([f.venue, f.address].filter(Boolean).join(', '))), 'map')); box.appendChild(v);
+      box.appendChild(v);
     }
     if (d.events.length) {
       var ev = el('div', 'sr-evs'); ev.appendChild(el('div', 'sr-sub', T('कार्यक्रम')));
@@ -244,6 +244,8 @@
     if (f.extra) box.appendChild(el('div', 'sr-msg', f.extra));
     var cs = [[f.c1_name, V.tel(f.c1_phone)], [f.c2_name, V.tel(f.c2_phone)]].filter(function (x) { return x[1]; });
     if (cs.length) { var cw = el('div', 'sr-cs'); cw.appendChild(el('div', 'sr-sub', T('संपर्क'))); cs.forEach(function (x) { cw.appendChild(act(link('sr-call', '📞 ' + (x[0] ? x[0] + ' : ' : '') + x[1].slice(0, 5) + ' ' + x[1].slice(5), 'tel:+91' + x[1]), 'call')); }); box.appendChild(cw); }
+    var mu = V.url(f.maplink) || ((f.venue || f.address) ? maps([f.venue, f.address].filter(Boolean).join(', ')) : '');
+    if (mu) { var mw = el('div', 'sr-cs'); mw.appendChild(act(link('sr-call', '\uD83D\uDCCD ' + T('लोकेशन देखें / रास्ता खोलें'), mu), 'map')); box.appendChild(mw); }
     var sw = el('div', 'sr-cs'); sw.appendChild(saveCardBtn(root, f)); box.appendChild(sw);
     root.appendChild(box);
   }
