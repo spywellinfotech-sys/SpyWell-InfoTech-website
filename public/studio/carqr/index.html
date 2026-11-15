@@ -18,7 +18,7 @@ button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;backg
 <div class="k">इसे स्कैन करने पर "कॉल करें" का बड़ा बटन खुलता है। बिल्कुल मुफ़्त। QR आपके प्रोफ़ाइल वाले मोबाइल नंबर से ही बनता है। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।</div>
 <div class="card" id="gate" hidden></div>
 <div class="card" id="main" hidden>
-<div id="who" class="k" style="margin:4px 0 6px;font-weight:600"></div><input id="m" type="hidden">
+<div id="who" class="k" style="margin:4px 0 6px;font-weight:600"></div><label>QR पर कॉल का मोबाइल नंबर (बदल सकते हैं)</label><input id="m" type="tel" inputmode="numeric" maxlength="14" placeholder="10 अंक का नंबर">
 <label>स्टिकर पर लिखा वाक्य</label><input id="t" type="text" maxlength="40" value="Contact Car Owner">
 <label>आपका नाम (खाली छोड़ सकते हैं)</label><input id="n" type="text" maxlength="30">
 <label>गाड़ी नंबर (खाली छोड़ सकते हैं)</label><input id="v" type="text" maxlength="14" placeholder="UP11 AB 1234">
@@ -51,7 +51,7 @@ function draw(){var cm=num();$('err').textContent='';
   x.font='bold 70px sans-serif';if(vn)x.fillText(vn,W/2,two?860:920,W-80);
   x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('SpyWell Live Studio',W/2,962);
   try{$('pv').src=sc.toDataURL('image/png');$('pv').hidden=false}catch(e){$('pv').hidden=true}}
-var svT=null;function save(){clearTimeout(svT);svT=setTimeout(async function(){if(!window._SB||!window._UID)return;try{var cur=await window._SB.from('studio_profiles').select('card_json').eq('id',window._UID).maybeSingle();var cj=Object.assign({},(cur.data&&cur.data.card_json)||{},{carqr:{t:$('t').value.trim().slice(0,40),n:$('n').value.trim().slice(0,30),v:$('v').value.trim().toUpperCase().slice(0,14),w:$('w').value}});var r=await window._SB.from('studio_profiles').update({card_json:cj}).eq('id',window._UID);$('sv').textContent=r.error?'सेव नहीं हो पाया':'✓ प्रोफ़ाइल में सेव हो गया'}catch(e){}},900)}
+var svT=null;function save(){clearTimeout(svT);svT=setTimeout(async function(){if(!window._SB||!window._UID)return;try{var cur=await window._SB.from('studio_profiles').select('card_json').eq('id',window._UID).maybeSingle();var cj=Object.assign({},(cur.data&&cur.data.card_json)||{},{carqr:{m:num(),t:$('t').value.trim().slice(0,40),n:$('n').value.trim().slice(0,30),v:$('v').value.trim().toUpperCase().slice(0,14),w:$('w').value}});var r=await window._SB.from('studio_profiles').update({card_json:cj}).eq('id',window._UID);$('sv').textContent=r.error?'सेव नहीं हो पाया':'✓ प्रोफ़ाइल में सेव हो गया'}catch(e){}},900)}
 ['m','t','n','v'].forEach(function(i){$(i).oninput=function(){draw();save()}});$('w').onchange=function(){draw();save()};
 $('dl').onclick=function(){var cm=num();if(cm.length!==10){$('err').textContent='पहले 10 अंक का मोबाइल नंबर डालें';return}draw();save();
   sc.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='car-call-qr-'+cm+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)},'image/png')};
@@ -66,7 +66,7 @@ function gate(msg,href,label){var g=$('gate');g.textContent='';var p=document.cr
     var p=await sb.from('studio_profiles').select('phone,card_json').eq('id',u.id).maybeSingle();var d=p.data||{};var sq=(d.card_json&&d.card_json.carqr)||null;window._SB=sb;window._UID=u.id;
     var ph=String(d.phone||(d.card_json&&d.card_json.mobile)||'').replace(/\D/g,'').slice(-10);
     if(!/^[6-9][0-9]{9}$/.test(ph)){gate('QR बनाने के लिए प्रोफ़ाइल में अपना मोबाइल नंबर भरें। QR उसी नंबर से बनेगा।','/studio/#me','प्रोफ़ाइल में नंबर भरें');return}
-    $('m').value=ph;$('who').textContent='📞 आपका नंबर (प्रोफ़ाइल से): +91 '+ph.slice(0,5)+' '+ph.slice(5);
+    $('m').value=ph;$('who').textContent='';if(sq&&sq.m&&/^[6-9][0-9]{9}$/.test(String(sq.m)))$('m').value=String(sq.m);
     if(sq){if(sq.t!=null)$('t').value=String(sq.t).slice(0,40);if(sq.n!=null)$('n').value=String(sq.n).slice(0,30);if(sq.v!=null)$('v').value=String(sq.v).slice(0,14);if(sq.w&&/^(p|c|cw)$/.test(sq.w))$('w').value=sq.w;$('sv').textContent='✓ आपका सेव किया हुआ QR प्रोफ़ाइल से खुला'}
     $('main').hidden=false;draw();
   }catch(e){gate('अभी लोड नहीं हो सका। दोबारा कोशिश करें।')}
