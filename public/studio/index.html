@@ -434,7 +434,7 @@ function subEvents(){var ev=[];
     else if(days<=7&&days>=0)ev.push({k:'soon_'+x.id,hi:t+' का '+nm+' प्लान '+dFmt(i.paid_until)+' को समाप्त होगा।',en:'The '+nm+' plan for '+t+' will expire on '+dFmt(i.paid_until)+'.'})});
   return ev}
 function subDraw(){var L=$('sub-list');if(!L)return;L.textContent='';
-  var vis=LIST.filter(function(x){return x.product_type==='visiting'});
+  var vis=LIST.filter(function(x){return x.product_type==='visiting'&&!/^demo/.test(x.slug||'')});
   if(!vis.length)L.appendChild(mk('div','k','अभी कोई विज़िटिंग कार्ड नहीं है।'));
   vis.forEach(function(x){var i=SUBI[x.id],row=mk('div','des');row.appendChild(mk('b','',x.title||'बिना नाम'));
     if(!i||(!i.enabled&&!i.plan)){row.appendChild(mk('div','k','इस कार्ड पर कोई शुल्क लागू नहीं।'))}
