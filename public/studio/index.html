@@ -547,6 +547,13 @@ async function invHome(){
     tx.appendChild(chips);if(pd){var t3=mk('div','','प्रकाशित: '+pd+' · एक बार का शुल्क');t3.style.cssText='font-size:11px;opacity:.85;margin-top:6px';tx.appendChild(t3)}
     row.appendChild(pv);row.appendChild(tx);hero.appendChild(row);
     var vc=mk('a','','👁️ मेरा कार्ड देखें');vc.href='/inv/'+x.slug;vc.target='_blank';vc.rel='noopener';vc.style.cssText='display:block;text-align:center;margin-top:14px;background:#ffc21a;color:#3d2a00;font-size:18px;font-weight:800;border-radius:14px;padding:14px 10px;text-decoration:none;box-shadow:0 4px 0 #c98d00';hero.appendChild(vc);
+    var shUrl=location.origin+'/inv/'+x.slug,shTx=(x.title||'इनविटेशन')+'\nआप सादर आमंत्रित हैं। कार्ड देखें:\n'+shUrl;
+    var shr=mk('div','');shr.style.cssText='display:flex;gap:8px;margin-top:12px';
+    var sh1=mk('button','','📤 शेयर करें');sh1.type='button';sh1.style.cssText='margin:0;flex:2;padding:13px 6px;border:0;border-radius:12px;background:#25d366;color:#fff;font-weight:800;font-size:15px';
+    sh1.onclick=async function(){try{if(navigator.share){await navigator.share({title:x.title||'इनविटेशन',text:shTx});return}}catch(e){if(e&&e.name==='AbortError')return}window.open('https://wa.me/?text='+encodeURIComponent(shTx),'_blank','noopener')};
+    var sh2=mk('button','','🔗 लिंक');sh2.type='button';sh2.style.cssText='margin:0;flex:1;padding:13px 6px;border:1px solid rgba(255,255,255,.7);border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:15px';
+    sh2.onclick=async function(){try{await navigator.clipboard.writeText(shUrl);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('कार्ड का लिंक',shUrl)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
+    shr.appendChild(sh1);shr.appendChild(sh2);hero.appendChild(shr);
     var ar=mk('div','');ar.style.cssText='display:flex;gap:8px;margin-top:12px';
     var ed=mk('a','','✏️ Edit');ed.href='/studio/editor/?id='+x.id;ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d2e;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:800';
     var dl2=mk('button','','🗑 Delete');dl2.type='button';dl2.style.cssText='margin:0;flex:1;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:12px;padding:12px 6px;font-weight:800';
