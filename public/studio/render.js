@@ -398,13 +398,33 @@
       function inp(ph, type, mode) { var i = document.createElement('input'); i.placeholder = ph; i.type = type || 'text'; if (mode) i.setAttribute('inputmode', mode); i.style.cssText = 'width:100%;box-sizing:border-box;margin:5px 0;padding:11px;border:1px solid #d9c3a0;border-radius:10px;font:16px system-ui,sans-serif'; fc.appendChild(i); return i; }
       var ni = inp(T('आपका नाम *')), ai = inp(T('भेजी गई रकम (₹)'), 'tel', 'numeric'), mi = inp(T('आपका मोबाइल (वैकल्पिक)'), 'tel', 'numeric'), gi = inp(T('शुभकामना संदेश (वैकल्पिक)'));
       ni.maxLength = 60; ai.maxLength = 7; mi.maxLength = 10; gi.maxLength = 200;
+      var shotBlob = null;
+      var sl = el('div', '', T('पेमेंट का स्क्रीनशॉट (वैकल्पिक)')); sl.style.cssText = 'font-size:13px;color:#555;margin-top:8px'; fc.appendChild(sl);
+      var sr2 = el('div', ''); sr2.style.cssText = 'display:flex;gap:8px;margin:5px 0'; fc.appendChild(sr2);
+      var sthumb = el('div', ''); sthumb.style.cssText = 'font-size:13px;color:#1b7a3a;min-height:16px'; fc.appendChild(sthumb);
+      function pick(cam) {
+        var fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; if (cam) fi.setAttribute('capture', 'environment'); fi.style.display = 'none';
+        fi.onchange = function () {
+          var fl = fi.files && fi.files[0]; if (!fl) return; sthumb.textContent = T('फ़ोटो तैयार हो रही है…');
+          var im = new Image(), u = URL.createObjectURL(fl);
+          im.onload = function () {
+            var mx = 1000, sc = Math.min(1, mx / Math.max(im.width, im.height)), cv = document.createElement('canvas'); cv.width = Math.round(im.width * sc); cv.height = Math.round(im.height * sc);
+            cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); URL.revokeObjectURL(u);
+            cv.toBlob(function (b) { if (b && b.size < 1400000) { shotBlob = b; sthumb.textContent = '✅ ' + T('स्क्रीनशॉट जुड़ गया'); } else { shotBlob = null; sthumb.textContent = T('फ़ोटो बहुत बड़ी है, दूसरी चुनें'); } }, 'image/jpeg', 0.75);
+          };
+          im.onerror = function () { sthumb.textContent = T('फ़ोटो खुल नहीं पाई'); }; im.src = u;
+        };
+        document.body.appendChild(fi); fi.click(); setTimeout(function () { fi.remove(); }, 60000);
+      }
+      function sbtn(t, cam) { var b = el('button', '', t); b.type = 'button'; b.style.cssText = 'flex:1;padding:10px 6px;border:1px solid #d9c3a0;border-radius:10px;background:#fffaf0;color:#3b2a14;font:600 14px system-ui,sans-serif;cursor:pointer'; b.onclick = function () { pick(cam); }; return b; }
+      sr2.appendChild(sbtn('📷 ' + T('कैमरा'), true)); sr2.appendChild(sbtn('🖼 ' + T('गैलरी'), false));
       var er = el('div', ''); er.style.cssText = 'color:#b00020;font-size:13px;min-height:16px'; fc.appendChild(er);
       var fr = el('div', ''); fr.style.cssText = 'display:flex;gap:10px;margin-top:6px';
       var sb2 = btn(T('✅ भेजें'), '#1ea952', '#fff', async function () {
         var nm = ni.value.trim(); if (!nm) { er.textContent = T('अपना नाम लिखें'); return; }
         var am = parseInt(ai.value.replace(/\D/g, '')); var mb = mi.value.replace(/\D/g, ''); if (mb && !/^[6-9][0-9]{9}$/.test(mb)) { er.textContent = T('सही 10 अंक का मोबाइल नंबर डालें'); return; }
         sb2.disabled = true; er.textContent = '';
-        var r = 'err'; try { r = await opts.onShagun({ name: nm, amount: am > 0 ? am : null, message: gi.value.trim(), mobile: mb }); } catch (e) { }
+        var r = 'err'; try { r = await opts.onShagun({ name: nm, amount: am > 0 ? am : null, message: gi.value.trim(), mobile: mb, shot: shotBlob }); } catch (e) { }
         if (r !== 'ok') { sb2.disabled = false; er.textContent = T('अभी सेव नहीं हो पाया। दोबारा कोशिश करें।'); return; }
         close(); shagunOverlay('video', f, opts);
       });

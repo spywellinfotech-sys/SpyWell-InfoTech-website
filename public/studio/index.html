@@ -554,7 +554,7 @@ async function invHome(){
     ar.appendChild(ed);ar.appendChild(dl2);hero.appendChild(ar);
     var ins=mk('div','');ins.style.cssText='margin-top:12px;background:#fff;color:#222;border-radius:14px;padding:10px';hero.appendChild(ins);
     box.appendChild(hero);
-    (async function(){var sg=await sb.from('studio_shagun').select('name,amount,message,mobile,created_at').eq('design_id',x.id).order('created_at',{ascending:false}).limit(200);
+    (async function(){var sg=await sb.from('studio_shagun').select('name,amount,message,mobile,created_at,shot').eq('design_id',x.id).order('created_at',{ascending:false}).limit(200);
       if(sg.error)return;var rows=sg.data||[],tot=0;rows.forEach(function(r){tot+=Number(r.amount)||0});
       var sw=mk('div','');sw.style.cssText='margin:0 0 10px;padding:0 0 8px;border-bottom:1px solid #eadfc9';
       var tl=mk('div','');tl.style.cssText='display:flex;gap:8px;margin-bottom:8px';[['🎁 शगुन देने वाले',String(rows.length)],['💰 कुल कलेक्शन','₹'+tot]].forEach(function(z){var c=mk('div','');c.style.cssText='flex:1;background:linear-gradient(135deg,#fff4d6,#ffe1a8);border-radius:12px;padding:8px 6px;text-align:center';var n=mk('b','',z[1]);n.style.cssText='display:block;font-size:22px;color:#0b3d2e';c.appendChild(n);c.appendChild(mk('span','k',z[0]));tl.appendChild(c)});sw.appendChild(tl);
@@ -564,7 +564,9 @@ async function invHome(){
       rows.forEach(function(r){var d=mk('div','');d.style.cssText='padding:8px 0;border-top:1px dashed #eadfc9';
         var t=mk('b','',r.name+(r.amount?' · ₹'+r.amount:''));d.appendChild(t);
         var sub=[r.mobile?'📞 '+r.mobile:'',new Date(r.created_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})].filter(Boolean).join(' · ');d.appendChild(mk('div','k',sub));
-        if(r.message)d.appendChild(mk('div','','💬 '+r.message));bd.appendChild(d)});
+        if(r.message)d.appendChild(mk('div','','💬 '+r.message));
+        if(r.shot){var sb3=mk('button','alt','📷 स्क्रीनशॉट देखें');sb3.type='button';sb3.style.cssText='margin:6px 0 0;padding:6px 12px;width:auto';sb3.onclick=async function(){sb3.disabled=true;var u=await sb.storage.from('studio-shagun').createSignedUrl(r.shot,300);sb3.disabled=false;if(u.data&&u.data.signedUrl)window.open(u.data.signedUrl,'_blank','noopener');else sb3.textContent='खुल नहीं पाया'};d.appendChild(sb3)}
+        bd.appendChild(d)});
       hd.onclick=function(){bd.hidden=!bd.hidden;hd.textContent=hd.textContent.replace(/[▼▲]$/,bd.hidden?'▼':'▲')};
       ins.insertBefore(sw,ins.firstChild)})();
     sb.rpc('studio_my_stats',{p_design:x.id}).then(function(st){var d=(st&&st.data)||{},c2=d.card||{};cv.textContent='👁 '+(c2.total||0)+' · आज '+(c2.today||0);

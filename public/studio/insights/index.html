@@ -37,11 +37,11 @@ function load(p){
       if(d.err==='wrong'){ask('PIN गलत है। दोबारा डालें।');return}
       bad('यह इनसाइट लिंक उपलब्ध नहीं है','');return}
     try{sessionStorage.setItem('si_'+k,p)}catch(e){}
-    show(d)});
+    PINV=p;show(d)});
 }
 function box(title){var b=el('div','box');b.appendChild(el('h2','',title));m.appendChild(b);return b}
 function row(b,a,c){var r=el('div','r');r.appendChild(el('span','',a));r.appendChild(el('b','',c));b.appendChild(r)}
-var SUR='card';
+var SUR='card',PINV='';
 function show(d0){
   var d=d0;
   if(d0.type==='visiting'&&d0.surf&&d0.surf[SUR]){var u=d0.surf[SUR];d=Object.assign({},d0,{total:u.total,unique:u.unique,today:u.today,days:u.days,clicks:u.clicks,devices:{},sources:{}})}
@@ -62,6 +62,11 @@ function show(d0){
     if((d.leads||[]).length){var cv=el('button','','⬇️ सूची डाउनलोड करें (CSV)');cv.style.cssText='width:100%;margin-top:10px';cv.onclick=function(){
       var q=function(v){return '"'+String(v).replace(/"/g,'""')+'"'},t2='\ufeffनाम,मोबाइल,आखिरी बार\n'+d.leads.map(function(x){return [q(x.n),q(x.m),q(new Date(x.at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}))].join(',')}).join('\n');
       var u=URL.createObjectURL(new Blob([t2],{type:'text/csv;charset=utf-8'})),a3=document.createElement('a');a3.href=u;a3.download='card-viewers.csv';document.body.appendChild(a3);a3.click();a3.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)};lbx.appendChild(cv)}}
+  sb.rpc('studio_insights_shagun',{p_key:k,p_pin:PINV}).then(function(r){var g2=r&&r.data;if(!g2||!(g2.rows||[]).length)return;
+    var sbx=box('🎁 शगुन · '+g2.count+' लोग · कुल कलेक्शन ₹'+g2.total);
+    g2.rows.forEach(function(x){var rw=el('div','r');rw.style.cssText='display:block;padding:8px 0;border-top:1px dashed #dde';var t=el('b','',x.n+(x.a?' · ₹'+x.a:'')+(x.s?' · 📷':''));rw.appendChild(t);
+      var sub=[x.m?'📞 '+x.m:'',new Date(x.at).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})].filter(Boolean).join(' · ');rw.appendChild(el('div','k',sub));if(x.msg)rw.appendChild(el('div','','💬 '+x.msg));sbx.appendChild(rw)});
+    m.insertBefore(sbx,m.children[4]||null)});
   if((d.recent||[]).length){var rb=box('ताज़ा गतिविधि');d.recent.forEach(function(x){row(rb,LB[x.k]||x.k,new Date(x.at).toLocaleString((window.spLoc?spLoc():'hi-IN'),{timeZone:'Asia/Kolkata',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))})}
   m.appendChild(el('small','','हर व्यक्ति का एक ही सत्र एक बार गिना जाता है।'));
 }
