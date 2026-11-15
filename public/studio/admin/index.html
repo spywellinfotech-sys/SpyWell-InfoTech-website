@@ -4,7 +4,7 @@
 <style>:root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}*{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
 .top{position:sticky;top:0;z-index:50;background:var(--wine);color:#fff;padding:10px 12px;display:flex;gap:8px;align-items:center}.top b{flex:1}.top a{color:#fff;font-size:14px}
-.wrap{max-width:760px;margin:auto;padding:12px}.msg{padding:30px 10px;text-align:center;color:var(--mut)}.msg.bad{color:#b00020}
+.svc,.svc *{font-weight:800!important}.wrap{max-width:760px;margin:auto;padding:12px}.msg{padding:30px 10px;text-align:center;color:var(--mut)}.msg.bad{color:#b00020}
 .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}.stat b{display:block;font-size:22px;color:var(--wine)}.stat span{font-size:12px;color:var(--mut)}
 .tabs{display:flex;gap:6px;margin:12px 0}.tabs button{flex:1;padding:9px;border-radius:20px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;cursor:pointer}.tabs button.on{background:var(--wine);color:#fff}
 input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);font:inherit;margin-bottom:8px}
@@ -372,7 +372,7 @@ async function svcTile(box,open){
     ['➕ अन्य','dir_price_inr','📒 डायरेक्टरी लिस्टिंग'],['','ai_price_inr','🤖 AI से पढ़ने का पैक'],['','ai_pack_credits','🔢 एक AI पैक में कितनी रीड (संख्या)']];
   var r=await sb.from('studio_settings').select('k,v').in('k',KEYS.map(function(x){return x[1]}).concat(['pay_bypass']));
   var V={};(r.data||[]).forEach(function(x){V[x.k]=x.v});
-  var c=h('div',{class:'svc',style:'background:linear-gradient(135deg,#0b4f6c,#1f8a70);color:#fff;border-radius:16px;padding:14px;margin-top:10px;box-shadow:0 6px 18px rgba(11,79,108,.3)'});box.appendChild(c);
+  var c=h('div',{class:'svc',style:'background:linear-gradient(135deg,#0b4f6c,#1f8a70);color:#fff;border-radius:0;padding:16px 14px;margin:10px -12px 0;box-shadow:0 6px 18px rgba(11,79,108,.3);font-weight:800'});box.appendChild(c);
   var hd=h('div',{style:'display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:18px;font-weight:800'});
   hd.appendChild(h('span',{text:'💰 सर्विस चार्जेज़'}));var ar=h('span',{style:'font-size:15px;background:rgba(255,255,255,.2);border-radius:99px;padding:2px 12px',text:'▼ खोलें'});hd.appendChild(ar);c.appendChild(hd);
   var hint=h('div',{style:'font-size:12px;opacity:.9;margin-top:2px',text:'सारी सर्विस की कीमतें और भुगतान चालू/बंद, दबाकर खोलें'});c.appendChild(hint);
