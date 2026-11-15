@@ -19,6 +19,7 @@ button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;backg
 <div class="card" id="gate" hidden></div>
 <div class="card" id="main" hidden>
 <div id="who" class="k" style="margin:4px 0 6px;font-weight:600"></div><label>QR पर कॉल का मोबाइल नंबर (बदल सकते हैं)</label><input id="m" type="tel" inputmode="numeric" maxlength="14" placeholder="10 अंक का नंबर">
+<div id="cars" style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px"></div>
 <label>स्टिकर पर लिखा वाक्य</label><input id="t" type="text" maxlength="40" value="Contact Car Owner">
 <label>आपका नाम (खाली छोड़ सकते हैं)</label><input id="n" type="text" maxlength="30">
 <label>गाड़ी नंबर (खाली छोड़ सकते हैं)</label><input id="v" type="text" maxlength="14" placeholder="UP11 AB 1234">
@@ -51,10 +52,17 @@ function draw(){var cm=num();$('err').textContent='';
   x.font='bold 70px sans-serif';if(vn)x.fillText(vn,W/2,two?860:920,W-80);
   x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('SpyWell Live Studio',W/2,962);
   try{$('pv').src=sc.toDataURL('image/png');$('pv').hidden=false}catch(e){$('pv').hidden=true}}
-var svT=null;function save(){clearTimeout(svT);svT=setTimeout(async function(){if(!window._SB||!window._UID)return;try{var cur=await window._SB.from('studio_profiles').select('card_json').eq('id',window._UID).maybeSingle();var cj=Object.assign({},(cur.data&&cur.data.card_json)||{},{carqr:{m:num(),t:$('t').value.trim().slice(0,40),n:$('n').value.trim().slice(0,30),v:$('v').value.trim().toUpperCase().slice(0,14),w:$('w').value}});var r=await window._SB.from('studio_profiles').update({card_json:cj}).eq('id',window._UID);$('sv').textContent=r.error?'सेव नहीं हो पाया':'✓ प्रोफ़ाइल में सेव हो गया'}catch(e){}},900)}
-['m','t','n','v'].forEach(function(i){$(i).oninput=function(){draw();save()}});$('w').onchange=function(){draw();save()};
+var svT=null,CARS=[],CI=0;
+function curToCar(){CARS[CI]={t:$('t').value.trim().slice(0,40),n:$('n').value.trim().slice(0,30),v:$('v').value.trim().toUpperCase().slice(0,14),w:$('w').value}}
+function loadCar(i){CI=i;var c=CARS[i]||{};$('t').value=c.t!=null?String(c.t).slice(0,40):'Contact Car Owner';$('n').value=c.n!=null?String(c.n).slice(0,30):'';$('v').value=c.v!=null?String(c.v).slice(0,14):'';$('w').value=/^(p|c|cw)$/.test(c.w||'')?c.w:'p';chips();draw()}
+function chips(){var b=$('cars');b.textContent='';CARS.forEach(function(c,i){var e=document.createElement('button');e.type='button';e.textContent='🚗 '+(c.v||('गाड़ी '+(i+1)));e.style.cssText='width:auto;margin:0;padding:7px 12px;border-radius:99px;font-size:13px;font-weight:700;border:1.5px solid #8b1a2b;'+(i===CI?'background:#8b1a2b;color:#fff':'background:#fff;color:#8b1a2b');e.onclick=function(){curToCar();loadCar(i);save()};b.appendChild(e)});
+  var a=document.createElement('button');a.type='button';a.textContent='➕ दूसरी गाड़ी';a.style.cssText='width:auto;margin:0;padding:7px 12px;border-radius:99px;font-size:13px;font-weight:700;border:1.5px dashed #8b1a2b;background:#fff;color:#8b1a2b';a.onclick=function(){curToCar();CARS.push({t:CARS[CI]&&CARS[CI].t||'Contact Car Owner',n:CARS[CI]&&CARS[CI].n||'',v:'',w:CARS[CI]&&CARS[CI].w||'p'});loadCar(CARS.length-1);save()};b.appendChild(a);
+  if(CARS.length>1){var d=document.createElement('button');d.type='button';d.textContent='🗑 यह गाड़ी हटाएँ';d.style.cssText='width:auto;margin:0;padding:7px 12px;border-radius:99px;font-size:13px;font-weight:700;border:1.5px solid #b00020;background:#fff;color:#b00020';d.onclick=function(){if(!confirm('इस गाड़ी का QR हटाएँ?'))return;CARS.splice(CI,1);loadCar(Math.max(0,CI-1));save()};b.appendChild(d)}}
+function save(){clearTimeout(svT);svT=setTimeout(async function(){if(!window._SB||!window._UID)return;try{curToCar();var cur=await window._SB.from('studio_profiles').select('card_json').eq('id',window._UID).maybeSingle();var cj=Object.assign({},(cur.data&&cur.data.card_json)||{},{carqr:{m:num(),cars:CARS.slice(0,50),i:CI}});var r=await window._SB.from('studio_profiles').update({card_json:cj}).eq('id',window._UID);$('sv').textContent=r.error?'सेव नहीं हो पाया':'✓ प्रोफ़ाइल में सेव हो गया'}catch(e){}},900)}
+window._initCars=function(sq){CARS=sq&&Array.isArray(sq.cars)&&sq.cars.length?sq.cars.slice(0,10):(sq&&(sq.t!=null||sq.v||sq.n)?[{t:sq.t,n:sq.n,v:sq.v,w:sq.w}]:[{t:'Contact Car Owner',n:'',v:'',w:'p'}]);var i=sq&&sq.i>=0&&sq.i<CARS.length?sq.i:0;loadCar(i)};
+['m','t','n','v'].forEach(function(i){$(i).oninput=function(){curToCar();if(i==='v')chips();draw();save()}});$('w').onchange=function(){curToCar();draw();save()};
 $('dl').onclick=function(){var cm=num();if(cm.length!==10){$('err').textContent='पहले 10 अंक का मोबाइल नंबर डालें';return}draw();save();
-  sc.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='car-call-qr-'+cm+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)},'image/png')};
+  sc.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='car-call-qr-'+(($('v').value||'').replace(/[^A-Za-z0-9]/g,'')||cm)+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)},'image/png')};
 function gate(msg,href,label){var g=$('gate');g.textContent='';var p=document.createElement('div');p.className='k';p.style.cssText='font-size:15px;margin-bottom:12px';p.textContent=msg;g.appendChild(p);
   if(href){var a=document.createElement('a');a.href=href;a.textContent=label;a.style.cssText='display:block;text-align:center;background:#12307f;color:#fff;border-radius:12px;padding:13px;text-decoration:none;font-weight:600';g.appendChild(a)}g.hidden=false;$('main').hidden=true}
 (async function(){
@@ -67,8 +75,8 @@ function gate(msg,href,label){var g=$('gate');g.textContent='';var p=document.cr
     var ph=String(d.phone||(d.card_json&&d.card_json.mobile)||'').replace(/\D/g,'').slice(-10);
     if(!/^[6-9][0-9]{9}$/.test(ph)){gate('QR बनाने के लिए प्रोफ़ाइल में अपना मोबाइल नंबर भरें। QR उसी नंबर से बनेगा।','/studio/#me','प्रोफ़ाइल में नंबर भरें');return}
     $('m').value=ph;$('who').textContent='';if(sq&&sq.m&&/^[6-9][0-9]{9}$/.test(String(sq.m)))$('m').value=String(sq.m);
-    if(sq){if(sq.t!=null)$('t').value=String(sq.t).slice(0,40);if(sq.n!=null)$('n').value=String(sq.n).slice(0,30);if(sq.v!=null)$('v').value=String(sq.v).slice(0,14);if(sq.w&&/^(p|c|cw)$/.test(sq.w))$('w').value=sq.w;$('sv').textContent='✓ आपका सेव किया हुआ QR प्रोफ़ाइल से खुला'}
-    $('main').hidden=false;draw();
+    if(sq){$('sv').textContent='✓ आपके सेव किए हुए QR प्रोफ़ाइल से खुले'}
+    $('main').hidden=false;window._initCars(sq);draw();
   }catch(e){gate('अभी लोड नहीं हो सका। दोबारा कोशिश करें।')}
 })();
 })();
