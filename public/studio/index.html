@@ -537,6 +537,9 @@ async function invHome(){
       vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
         if(!det.hidden&&!ld){ld=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,{card:d.card,leads:d.leads},dd.data||{})}};
       w.appendChild(vb);w.appendChild(det);
+       var pv=mk('div','');pv.style.cssText='width:150px;height:214px;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.25);position:relative;border:2px solid #fff;margin:12px auto 0';
+       var pf=document.createElement('iframe');pf.src='/inv/'+encodeURIComponent(x.slug);pf.loading='lazy';pf.tabIndex=-1;pf.setAttribute('aria-hidden','true');pf.style.cssText='border:0;width:360px;height:512px;transform:scale(.4167);transform-origin:0 0;pointer-events:none;background:#fff';
+       var ov=mk('a','');ov.href='/inv/'+x.slug;ov.target='_blank';ov.rel='noopener';ov.style.cssText='position:absolute;inset:0';pv.appendChild(pf);pv.appendChild(ov);w.appendChild(pv);
        var pd=x.published_at?new Date(x.published_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'';
        var vl=mk('div','k','🗓️ वैधता: लिंक हमेशा चालू रहेगा (एक बार का प्रकाशन शुल्क)'+(pd?' · प्रकाशित: '+pd:''));vl.style.marginTop='8px';w.appendChild(vl);
        var ar=mk('div','');ar.style.cssText='display:flex;gap:8px;margin-top:8px';
