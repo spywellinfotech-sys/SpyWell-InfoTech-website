@@ -333,7 +333,7 @@ var SUBI={},PLN2={card:'विज़िटिंग कार्ड',site:'म�
 async function loadSubs(){
   var ids=LIST.filter(function(x){return x.product_type==='visiting'}).map(function(x){return x.id});
   await Promise.all(ids.map(async function(id){try{var r=await sb.rpc('studio_sub_info',{p_id:id});if(!r.error&&r.data)SUBI[id]=r.data}catch(e){}}));
-  drawList();subDraw();loadEnq()}
+  drawList();subDraw();loadEnq();if(ADH){try{drawAddr(false);drawAddr(false,'office');locTile()}catch(e){}}}
 function subLine(x){var i=SUBI[x.id];if(!i||!i.enabled&&!i.plan)return null;
   var pu=i.paid_until?new Date(i.paid_until):null,life=pu&&pu.getFullYear()>=2099,
   dt=life?'लाइफटाइम':(pu?pu.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'');
@@ -942,6 +942,7 @@ async function addrTile(){
   drawAddr(false);drawAddr(false,'office');locTile()}
 function locTile(){
   var box=$('c-loc');if(!box)return;box.textContent='';
+  if(!pkgOK()){pkgLock(box,'📍','My saved locations','दुकान, ऑफ़िस, साइट की लोकेशन');return}
   var P=(ADH&&ADH.cj&&Array.isArray(ADH.cj.places))?ADH.cj.places:[];
   var IC={'घर':'🏠','दुकान':'🏪','ऑफ़िस':'🏢','फ़ैक्टरी':'🏭','साइट':'🚧','गोदाम':'📦'};
   function txt(p,promo){var t=(IC[p.label]||'📍')+' '+p.label+(p.name?' · '+p.name:'')+'\n';if(p.addr)t+='पता: '+p.addr+'\n';if(p.mob)t+='मोबाइल: +91 '+p.mob+'\n';if(p.map)t+='📍 लोकेशन (दबाते ही रास्ता खुलेगा): '+p.map+'\n';return t+'\n📲 अपना डिजिटल कार्ड और लोकेशन कार्ड मुफ़्त बनाएँ: '+promo}
@@ -956,9 +957,15 @@ function locTile(){
     box.appendChild(r)});
   var ad2=mk('a','','➕ नई जगह जोड़ें / बदलें');ad2.href='/studio/places/';ad2.style.cssText='display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:600;font-size:14px';box.appendChild(ad2);
   foldBox(box,'📍 My saved locations',P.length?P.length+' जगह':'जोड़ें');box.firstChild.style.marginTop='0';box.firstChild.style.border='0';box.firstChild.style.background='transparent';box.firstChild.style.padding='2px 0'}
+function pkgOK(){var en=false,ok=false;Object.keys(SUBI).forEach(function(id){var i=SUBI[id];if(i&&i.enabled)en=true});if(!en)return true;
+  LIST.forEach(function(x){var i=SUBI[x.id];if(x.product_type==='visiting'&&i&&(i.plan==='site'||i.plan==='domain'))ok=true});return ok}
+function pkgLock(box,ic,title,sub){box.textContent='';box.hidden=false;var t=mk('div','');t.style.cssText='display:flex;align-items:center;gap:10px';t.appendChild(mk('span','',ic)).style.fontSize='30px';var tt=mk('div','');tt.appendChild(mk('b','',title)).style.display='block';tt.appendChild(mk('span','k',sub));t.appendChild(tt);box.appendChild(t);
+  var l=mk('div','','🔒 यह सुविधा मिनी वेबसाइट प्लान के पैकेज में मिलती है (Address Cards + My saved locations + पूछताछ)।');l.style.cssText='margin-top:10px;background:#fff7e0;border:1px solid #f5d27a;border-radius:12px;padding:10px;font-size:14px';box.appendChild(l);
+  var b=mk('button','','⬆️ प्लान देखें / अपग्रेड करें');b.type='button';b.onclick=function(){setTab('me')};box.appendChild(b)}
 function mapOk(m){m=String(m||'').trim();if(!m)return '';if(!/^https?:/i.test(m))m='https://'+m;try{var u=new URL(m);return u.hostname.indexOf('.')>0?u.href:''}catch(e){return ''}}
 function drawAddr(edit,k){
-  k=k||'home';var OF=k==='office',IC=OF?'🏢':'🏠',NM=OF?'ऑफ़िस का पता':'घर का पता',box=$(OF?'c-addr2':'c-addr'),h=(ADH.cj&&ADH.cj[k])||{};box.textContent='';
+  k=k||'home';var OF=k==='office',IC=OF?'🏢':'🏠',NM=OF?'ऑफ़िस का पता':'घर का पता',box=$(OF?'c-addr2':'c-addr'),h=(ADH.cj&&ADH.cj[k])||{};
+  if(!pkgOK()){pkgLock(box,IC,OF?'Office Address Card':'Address Card',OF?'कंपनी / ऑफ़िस का पता':'घर का पता');return}box.textContent='';
   var top=mk('div','');top.style.cssText='display:flex;align-items:center;gap:10px';top.appendChild(mk('span','',IC)).style.fontSize='30px';
   var tt=mk('div','');tt.appendChild(mk('b','',OF?'Office Address Card':'Address Card'));tt.firstChild.style.display='block';tt.appendChild(mk('span','k',OF?'कंपनी / ऑफ़िस का पता — कार्ड की तरह भेजें':'घर का पता — सामान मँगवाने के लिए कार्ड की तरह भेजें'));top.appendChild(tt);box.appendChild(top);
   if(h.addr&&!edit){
