@@ -23,7 +23,7 @@ function page(kind, slug, d) {
   } else {
     const isWeb = kind === 'web', nm = f.name || f.business || d.title || 'डिजिटल कार्ड';
     if (isWeb) { // mini website: the shop / business name leads
-      title = clip(f.business || nm, 90);
+      title = clip((d.content_json && d.content_json.demo === true ? 'DEMO · ' : '') + (f.business || nm), 90);
       desc = clip([f.business && f.name ? f.name : '', f.designation, 'कॉल, WhatsApp, लोकेशन और सब जानकारी एक जगह'].filter(Boolean).join(' · '), 160);
     } else { // visiting card: the person's name leads
       title = clip((d.content_json && d.content_json.demo === true ? 'DEMO · ' : '') + nm, 90);
