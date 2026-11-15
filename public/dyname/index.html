@@ -91,7 +91,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #11
 <div class="hero"><div class="w"><div>
 <h1>Your Identity, <em>Dynamically Connected.</em></h1>
 <p>One digital identity for your business, personal profile, invitations and more. Create, share and stay connected, all from one app.</p>
-<div class="cta"><a class="btn" href="/studio/" data-t="hero_create">Create Your Free Digital Card</a><a class="btn o" href="#what" data-t="hero_explore">Explore Features</a></div>
+<div class="cta"><a class="btn" data-wizard href="/studio/" data-t="hero_create">Create Your Free Digital Card</a><a class="btn o" href="#what" data-t="hero_explore">Explore Features</a></div>
 <div class="tr">Designed for professionals, businesses and everyday users.</div></div>
 <div class="stage" aria-label="Illustration of a DynaMe digital card on a phone">
 <div class="ph"><div class="hd"></div><div class="av">👤</div><div class="nm">Your Name</div><div class="sb">Your business · Your city</div>
@@ -116,7 +116,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #11
 <section class="alt" id="card"><div class="w"><div class="two"><div>
 <h2 style="text-align:left">Your Business Card. <em>Reinvented.</em></h2>
 <ul class="chk"><li>Name and business details</li><li>Phone and WhatsApp buttons</li><li>Email and address</li><li>Social media links</li><li>Services and business information</li><li>QR code</li><li>Save Contact (.vcf)</li><li>Share through WhatsApp and other apps</li></ul>
-<a class="btn" href="/studio/" data-t="card_cta">Create My Digital Card</a></div>
+<a class="btn" data-wizard href="/studio/" data-t="card_cta">Create My Digital Card</a></div>
 <div class="card dc" aria-label="Sample digital card illustration"><div class="hd"><div class="av">👤</div><div><b>Sample Name</b><small>Your business · Your city</small></div></div>
 <div class="bd"><div class="row"><i>📞 Call</i><i class="w2">WhatsApp</i></div><div class="tg"><span>Service one</span><span>Service two</span><span>Service three</span></div><div class="tg"><span>📧 Email</span><span>📍 Location</span><span>🔗 Social</span></div></div>
 <div class="ft"><span>⬇ Save contact · 📤 Share</span><span class="mq" role="img" aria-label="QR code"></span></div></div></div></div></section>
@@ -173,7 +173,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #11
 <details><summary>Does DynaMe support Android?</summary><p>Yes, DynaMe has an Android app (package com.spywell.vicard). The web version also works in your browser at spywell.in/studio.</p></details></div></section>
 
 <div class="fin"><div class="w"><h2>Make Your Identity More Than Just a Card.</h2><p class="sub">Create your digital identity and connect with people in a smarter way.</p>
-<div class="cta" style="justify-content:center"><a class="btn" href="/studio/" data-t="final_start">Get Started with DynaMe</a><a class="btn o" href="/studio/" data-t="final_app">Explore the App</a></div></div></div>
+<div class="cta" style="justify-content:center"><a class="btn" data-wizard href="/studio/" data-t="final_start">Get Started with DynaMe</a><a class="btn o" href="/studio/" data-t="final_app">Explore the App</a></div></div></div>
 </main>
 <footer><img src="/dyname/logo.png" width="46" height="46" loading="lazy" alt="DynaMe"><p style="margin:8px 0"><b style="color:#fff">DynaMe</b> | Your Identity, Dynamically Connected<br>A product by SpyWell InfoTech</p>
 <p style="margin:0">Website: <a href="https://spywell.in">spywell.in</a> · App: <a href="https://spywell.in/studio/">spywell.in/studio</a></p><p style="margin:8px 0 0;font-size:13px"><a href="/dyname/privacy/" style="color:#fff">Privacy Policy</a> · <a href="/dyname/terms/" style="color:#fff">Terms</a> · <a href="/dyname/disclaimer/" style="color:#fff">Disclaimer</a> · <a href="/dyname/refund/" style="color:#fff">Refund</a></p></footer>
@@ -186,4 +186,4 @@ document.getElementById('pv').onclick=function(){mv(-1)};document.getElementById
 document.addEventListener('click',function(e){var a=e.target.closest('[data-t]');if(a&&window.gtag)try{gtag('event',a.getAttribute('data-t'))}catch(_){}});
 })();
 </script>
-<script src="/dyname/i18n.js" defer></script></body></html>
+<script src="/dyname/i18n.js" defer></script><script src="/studio/wizard.js"></script></body></html>

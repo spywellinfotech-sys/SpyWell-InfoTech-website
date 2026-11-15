@@ -70,7 +70,7 @@ button{min-height:48px;border-radius:12px}
   document.addEventListener('DOMContentLoaded',function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#7a0a10;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
   var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 DynaMe ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#7a0a10;padding:8px 14px;border-radius:8px;text-decoration:none';
   d.appendChild(document.createTextNode('लॉगिन हो गया।'));d.appendChild(a);document.body.appendChild(d)})}}catch(e){}})();</script>
-</head><body>
+<script src="/studio/wizard.js"></script></head><body>
 <div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:50%;vertical-align:middle;margin-right:9px">DynaMe<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px;font-size:10px">Your Identity, Dynamically Connected</small></b><span style="display:flex;gap:8px;align-items:center"><button type="button" id="rf" aria-label="रिफ़्रेश" title="रिफ़्रेश" style="width:38px;height:38px;min-height:0;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg></button><button type="button" id="ib" hidden style="position:relative">📥 Inbox<b id="ib-n" hidden style="position:absolute;top:-6px;right:-6px;background:#d93025;color:#fff;border-radius:99px;font-size:11px;padding:0 6px;min-width:18px;line-height:18px;text-align:center"></b></button></span></div>
 <div class="wrap">
 
@@ -135,6 +135,7 @@ button{min-height:48px;border-radius:12px}
 
 <div class="card" id="c-new">
 <b>नया बनाएँ</b>
+<button type="button" data-wizard class="btn" style="margin:8px 0 6px;background:linear-gradient(120deg,#f59a1a,#d4141c);color:#fff;border:0;border-radius:14px;padding:13px;font-weight:800;font-size:16px;width:100%">🚀 Get Started — सवाल-जवाब से कार्ड बनाएँ</button>
 <div class="grid ig" style="margin-top:10px">
 <button type="button" class="tile ig-t ig-inv" data-new="invitation"><div class="ig-art"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="30" y="6" width="60" height="68" rx="6" fill="#fff8e7" stroke="#c9a227" stroke-width="2"/><rect x="36" y="12" width="48" height="56" rx="4" fill="none" stroke="#d4141c" stroke-width="1" stroke-dasharray="3 2"/><path d="M60 24c-5-7-14-1-9 6 3 4 9 8 9 8s6-4 9-8c5-7-4-13-9-6z" fill="#d4141c"/><rect x="44" y="44" width="32" height="3" rx="1.5" fill="#c9a227"/><rect x="48" y="51" width="24" height="3" rx="1.5" fill="#e2c97a"/><rect x="52" y="58" width="16" height="3" rx="1.5" fill="#e2c97a"/><circle cx="18" cy="20" r="4" fill="#f3b6c1"/><circle cx="104" cy="58" r="5" fill="#f3b6c1"/><path d="M12 62l3 3 5-6" stroke="#2e7d32" stroke-width="2.5" fill="none" stroke-linecap="round"/><text x="98" y="22" font-size="14">✨</text></svg></div><b>इनविटेशन कार्ड</b><span>शादी, जन्मदिन, पूजा, गृह प्रवेश आदि</span><div class="ig-chips"><i>🎨 टेम्पलेट</i><i>🔗 एक लिंक</i><i>📊 इनसाइट</i></div></button>
 <button type="button" class="tile ig-t ig-vis" data-new="visiting"><div class="ig-art"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="8" y="22" width="64" height="40" rx="5" fill="#fff" stroke="#d4141c" stroke-width="2"/><rect x="8" y="22" width="64" height="9" rx="4" fill="#d4141c"/><circle cx="22" cy="43" r="6" fill="#e2c97a"/><rect x="33" y="40" width="30" height="3" rx="1.5" fill="#d4141c"/><rect x="33" y="47" width="22" height="3" rx="1.5" fill="#c9a227"/><rect x="14" y="54" width="48" height="2.5" rx="1" fill="#e8d5ad"/><rect x="78" y="10" width="30" height="58" rx="6" fill="#2b2b2b"/><rect x="81" y="16" width="24" height="44" rx="2" fill="#fffaf0"/><rect x="84" y="21" width="18" height="5" rx="2" fill="#d4141c"/><circle cx="93" cy="36" r="5" fill="#25d366"/><rect x="84" y="46" width="18" height="4" rx="2" fill="#c9a227"/><rect x="84" y="53" width="12" height="3" rx="1.5" fill="#e8d5ad"/></svg></div><b>विज़िटिंग कार्ड</b><span>टेम्पलेट चुनें और बनाएँ</span><div class="ig-chips"><i>📞 कॉल</i><i>💬 WhatsApp</i><i>🌐 मिनी वेबसाइट</i></div></button>
@@ -316,7 +317,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=d.data||[];drawList();loadSubs();myHome();refHome();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){var t=document.querySelector('[data-new=visiting]');if(t)t.click()};
+  LIST=d.data||[];drawList();loadSubs();myHome();refHome();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -388,6 +389,12 @@ $('t-car').onclick=function(){var ph=(ME&&ME.user_metadata&&ME.user_metadata.pho
 document.querySelectorAll('[data-new]').forEach(function(b){b.onclick=function(){pick(b.getAttribute('data-new'))}});
 $('pk-back').onclick=function(){if(OCCSEL){OCCSEL='';pickOcc();return}$('c-pick').hidden=true;$('c-new').hidden=false};
 $('q').oninput=drawList;
+
+window.SWWZ_RUN=async function(){var w=window.SWWizard&&SWWizard.pending();if(!w||!ME||!TPL.length)return false;
+  var rows=TPL.filter(function(t){return t.product_type===w.type&&(w.type!=='invitation'||((t.config&&t.config.occasion)||'wedding')===w.occ)});if(!rows.length)return false;
+  var cj=w.type==='visiting'?{fields:w.fields}:{fields:w.fields};if(w.site)cj.style={site:true};
+  var r=await sb.from('studio_designs').insert({user_id:ME.id,template_id:rows[0].id,product_type:w.type,title:w.type==='invitation'?'नया '+R.OCCASIONS[w.occ].name+' कार्ड':'नया विज़िटिंग कार्ड',content_json:cj}).select('id').single();
+  if(r.error||!r.data)return false;SWWizard.clear();location.href='/studio/editor/?id='+r.data.id;return true};
 var DOFF=0,DTOT=0,DTM=null,DBUSY=false;
 async function discGo(more){
   if(DBUSY)return;DBUSY=true;if(!more){DOFF=0;$('dres').textContent='खोज रहे हैं…'}
@@ -749,6 +756,7 @@ async function dash(user){
   var t=await sb.from('studio_templates').select('id,product_type,name,config,sort').eq('active',true).order('sort',{ascending:true});
   TPL=t.data||[];
   await loadList();
+  try{if(window.SWWizard&&SWWizard.pending()&&await window.SWWZ_RUN())return}catch(e){}
   pfLoad();addrTile();
   loadSaved();
 }
