@@ -32,6 +32,8 @@
       ['c1_phone', 'संपर्क 1 का मोबाइल', 'tel', 15],
       ['c2_name', 'संपर्क 2 का नाम', 'text', 50],
       ['c2_phone', 'संपर्क 2 का मोबाइल', 'tel', 15],
+      ['upi', '🎁 शगुन के लिए UPI ID, जैसे naam@upi (खाली हो तो शगुन का बटन नहीं दिखेगा)', 'text', 60],
+      ['upi_name', 'UPI पर नाम (शगुन लेने वाले का)', 'text', 50],
       ['extra', 'अन्य जानकारी', 'area', 400]
     ],
     visiting: [
@@ -115,6 +117,7 @@
       if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) v = 'https://' + v;
       try { var u = new URL(v); return (u.protocol === 'https:' || u.protocol === 'http:') && u.hostname.indexOf('.') > 0 ? u.href : ''; } catch (e) { return ''; }
     },
+    upi: function (v) { v = String(v || '').trim(); return /^[a-z0-9._-]{2,50}@[a-z][a-z0-9.-]{1,30}$/i.test(v) ? v : ''; },
     date: function (v) { return /^\d{4}-\d{2}-\d{2}$/.test(v || '') ? v : ''; },
     time: function (v) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(v || '') ? v : ''; }
   };
@@ -246,6 +249,18 @@
     if (cs.length) { var cw = el('div', 'sr-cs'); cw.appendChild(el('div', 'sr-sub', T('संपर्क'))); cs.forEach(function (x) { cw.appendChild(act(link('sr-call', '📞 ' + (x[0] ? x[0] + ' : ' : '') + x[1].slice(0, 5) + ' ' + x[1].slice(5), 'tel:+91' + x[1]), 'call')); }); box.appendChild(cw); }
     var mu = V.url(f.maplink) || ((f.venue || f.address) ? maps([f.venue, f.address].filter(Boolean).join(', ')) : '');
     if (mu) { var mw = el('div', 'sr-cs'); mw.appendChild(act(link('sr-call', '\uD83D\uDCCD ' + T('लोकेशन देखें / रास्ता खोलें'), mu), 'map')); box.appendChild(mw); }
+    var up = V.upi(f.upi);
+    if (up) {
+      var sg = el('div', 'sr-cs sr-sg'); sg.appendChild(el('div', 'sr-sub', '\uD83C\uDF81 ' + T('शगुन')));
+      sg.appendChild(el('div', 'sr-msg', T('आशीर्वाद के साथ शगुन भेजना चाहें तो UPI से भेज सकते हैं।')));
+      var upl = 'upi://pay?pa=' + encodeURIComponent(up) + (f.upi_name ? '&pn=' + encodeURIComponent(f.upi_name) : '') + '&cu=INR&tn=' + encodeURIComponent('Shagun');
+      sg.appendChild(act(link('sr-call', '\uD83C\uDF81 ' + T('UPI से शगुन भेजें') + (f.upi_name ? ' · ' + f.upi_name : ''), upl), 'shagun'));
+      var qd = el('div', ''); qd.style.cssText = 'text-align:center;margin:10px 0 2px';
+      try { if (window.StudioQR) { var qc = document.createElement('canvas'); window.StudioQR.draw(qc, unescape(encodeURIComponent(upl)), 300); qc.style.cssText = 'width:170px;height:170px;background:#fff;padding:8px;border-radius:12px'; qd.appendChild(qc); qd.appendChild(el('div', 'sr-sub', T('किसी भी UPI ऐप से स्कैन करें'))); } } catch (e) { }
+      sg.appendChild(qd);
+      var cp = el('button', 'sr-save', T('UPI ID कॉपी करें') + ': ' + up); cp.type = 'button'; cp.onclick = function () { try { navigator.clipboard.writeText(up); cp.textContent = T('✓ कॉपी हो गया'); } catch (e) { window.prompt(up, up); } };
+      sg.appendChild(cp); box.appendChild(sg);
+    }
     var sw = el('div', 'sr-cs'); sw.appendChild(saveCardBtn(root, f)); box.appendChild(sw);
     root.appendChild(box);
   }
