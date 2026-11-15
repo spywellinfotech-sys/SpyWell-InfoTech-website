@@ -84,7 +84,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     function mkb(txt,code){var b=document.createElement('button');b.type='button';b.textContent=txt;b.style.cssText='padding:9px 8px;border:1px solid #e8d5ad;border-radius:10px;background:#fffaf0;color:#3b2a14;font:600 15px system-ui,sans-serif;cursor:pointer';b.onclick=function(){apply(code,b)};return b}
     LG.forEach(function(x){pn.appendChild(mkb(x[1],x[0]))});
     var ob=mkb('↩ मूल कार्ड / Original','');ob.style.gridColumn='1/-1';pn.appendChild(ob);
-    tb.onclick=function(){pn.hidden=!pn.hidden};document.body.appendChild(tb);document.body.appendChild(pn);
+    tb.onclick=function(e){e.stopPropagation();pn.hidden=!pn.hidden};pn.onclick=function(e){e.stopPropagation()};document.addEventListener('click',function(){pn.hidden=true});document.body.appendChild(tb);document.body.appendChild(pn);
     var ERR={limit:'आज की अनुवाद सीमा पूरी हो गई। कल फिर कोशिश करें।',not_found:'कार्ड नहीं मिला।'};
     async function apply(code,btn){
       if(!code){cur='';paint(cj);pn.hidden=true;tb.textContent='🌐 भाषा';return}
@@ -101,7 +101,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
           else if(p[0]==='h'&&c2.highlights&&c2.highlights[+p[1]]!=null)c2.highlights[+p[1]]=data[k];
           else if(p[0]==='u'){var D=window.I18N_DATA=window.I18N_DATA||{},lab=keys[+p[1]];if(lab){D[lab]=D[lab]||{};if(!D[lab][code])D[lab][code]=data[k]}}});
         c2.style.lang=code;paint(c2);cur=code;pn.hidden=true;st.textContent='अपनी भाषा चुनें · Choose your language';
-        var nm=LG.filter(function(x){return x[0]===code})[0];tb.textContent='🌐 '+(nm?nm[1]:code)+' ✓';window.scrollTo(0,0);
+        var nm=LG.filter(function(x){return x[0]===code})[0];tb.textContent='🌐 भाषा';window.scrollTo(0,0);
       }catch(e){st.textContent=ERR[e.message]||'अनुवाद अभी नहीं हो पाया। थोड़ी देर बाद कोशिश करें।';st.style.color='#b00020'}
       btn.textContent=old}
   })()}catch(e){}
