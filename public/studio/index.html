@@ -942,7 +942,7 @@ function locTile(){
     if(p.map){var mp=mk('a','','📍');mp.href=p.map;mp.target='_blank';mp.rel='noopener';mp.style.cssText='flex:none;border:1px solid var(--line);border-radius:10px;padding:7px 10px;text-decoration:none;font-size:15px';r.appendChild(mp)}
     box.appendChild(r)});
   var ad2=mk('a','','➕ नई जगह जोड़ें / बदलें');ad2.href='/studio/places/';ad2.style.cssText='display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:600;font-size:14px';box.appendChild(ad2);
-  foldBox(box,'📍 मेरी लोकेशन',P.length?P.length+' जगह':'जोड़ें');box.firstChild.style.marginTop='0';box.firstChild.style.border='0';box.firstChild.style.background='transparent';box.firstChild.style.padding='2px 0'}
+  foldBox(box,'📍 My saved locations',P.length?P.length+' जगह':'जोड़ें');box.firstChild.style.marginTop='0';box.firstChild.style.border='0';box.firstChild.style.background='transparent';box.firstChild.style.padding='2px 0'}
 function drawAddr(edit){
   var box=$('c-addr'),h=(ADH.cj&&ADH.cj.home)||{};box.textContent='';
   var top=mk('div','');top.style.cssText='display:flex;align-items:center;gap:10px';top.appendChild(mk('span','','🏠')).style.fontSize='30px';
