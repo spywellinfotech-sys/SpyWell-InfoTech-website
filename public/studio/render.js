@@ -258,7 +258,7 @@
     if (cs.length) { var cw = el('div', 'sr-cs'); cw.appendChild(el('div', 'sr-sub', T('संपर्क'))); cs.forEach(function (x) { cw.appendChild(act(link('sr-call', '📞 ' + (x[0] ? x[0] + ' : ' : '') + x[1].slice(0, 5) + ' ' + x[1].slice(5), 'tel:+91' + x[1]), 'call')); }); box.appendChild(cw); }
     var mu = V.url(f.maplink) || ((f.venue || f.address) ? maps([f.venue, f.address].filter(Boolean).join(', ')) : '');
     if (mu) { var mw = el('div', 'sr-cs'); mw.appendChild(act(link('sr-call', '\uD83D\uDCCD ' + T('लोकेशन देखें / रास्ता खोलें'), mu), 'map')); box.appendChild(mw); }
-    var up = V.upi(f.upi);
+    var up = (opts && opts.noShagun) ? '' : V.upi(f.upi);
     if (up) {
       var sg = el('div', 'sr-cs sr-sg'); sg.appendChild(el('div', 'sr-sub', '\uD83C\uDF81 ' + T('शगुन')));
       sg.appendChild(el('div', 'sr-msg', T('आशीर्वाद के साथ शगुन भेजना चाहें तो UPI से भेज सकते हैं।')));

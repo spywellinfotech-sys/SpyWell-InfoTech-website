@@ -559,7 +559,15 @@ async function invHome(){
       sw.onclick=async function(){sw.disabled=true;var r=await sb.from('studio_designs').select('content_json').eq('id',x.id).maybeSingle();if(r.error||!r.data){sw.disabled=false;gs.textContent='बदला नहीं जा सका';return}
         var cj=r.data.content_json||{};cj.style=(cj.style&&typeof cj.style==='object')?cj.style:{};if(!on)cj.style.gate=true;else delete cj.style.gate;
         var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(u.error||!u.data||!u.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;paint()};
-      gr.appendChild(gl);gr.appendChild(sw);hero.insertBefore(gr,ar.nextSibling)})();
+      gr.appendChild(gl);gr.appendChild(sw);hero.insertBefore(gr,ins)})();
+    (async function(){var g=await sb.from('studio_designs').select('so:content_json->style->>shagun_off').eq('id',x.id).maybeSingle();if(g.error)return;var on=!(g.data&&g.data.so==='true');
+      var gr=mk('div','');gr.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
+      var gl=mk('div','');gl.appendChild(mk('b','','🎁 ऑनलाइन शगुन (QR और UPI ID)'));var gs=mk('div','');gs.style.cssText='font-size:12px;opacity:.9;margin-top:2px';gl.appendChild(gs);gl.style.flex='1';
+      var sw=mk('button','','');sw.type='button';sw.setAttribute('aria-label','ऑनलाइन शगुन');var paint=function(){sw.style.cssText='margin:0;flex:none;width:54px;height:30px;border-radius:99px;border:0;position:relative;padding:0;background:'+(on?'#ffc21a':'rgba(255,255,255,.35)');sw.textContent='';var kn=mk('span','');kn.style.cssText='position:absolute;top:3px;left:'+(on?'27px':'3px')+';width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s';sw.appendChild(kn);gs.textContent=on?'चालू: कार्ड पर शगुन भेजने का हिस्सा दिखता है (UPI ID भरी हो तो)':'बंद: कार्ड पर शगुन का हिस्सा नहीं दिखेगा'};paint();
+      sw.onclick=async function(){sw.disabled=true;var r=await sb.from('studio_designs').select('content_json').eq('id',x.id).maybeSingle();if(r.error||!r.data){sw.disabled=false;gs.textContent='बदला नहीं जा सका';return}
+        var cj=r.data.content_json||{};cj.style=(cj.style&&typeof cj.style==='object')?cj.style:{};if(on)cj.style.shagun_off=true;else delete cj.style.shagun_off;
+        var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(u.error||!u.data||!u.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;paint()};
+      gr.appendChild(gl);gr.appendChild(sw);hero.insertBefore(gr,ins)})();
     var ins=mk('div','');ins.style.cssText='margin-top:12px;background:#fff;color:#222;border-radius:14px;padding:10px';hero.appendChild(ins);
     box.appendChild(hero);
     (async function(){var sg=await sb.from('studio_shagun').select('name,amount,message,mobile,created_at,shot').eq('design_id',x.id).order('created_at',{ascending:false}).limit(200);
