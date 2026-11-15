@@ -34,6 +34,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   if(!st.error&&st.data){var g=h('div',{class:'stats'});[['customers','ग्राहक'],['invitations','इनविटेशन कार्ड'],['visiting','विज़िटिंग'],['published','प्रकाशित'],['drafts','ड्राफ़्ट'],['ai_calls_7d','AI (7 दिन)']].forEach(function(x){g.appendChild(h('div',{class:'stat'},[h('b',{text:String(st.data[x[0]]==null?0:st.data[x[0]])}),h('span',{text:x[1]})]))});app.appendChild(g)}
   var vc=await sb.rpc('studio_admin_view_counts');VC={};var tv=0,tc=0;(vc.data||[]).forEach(function(x){VC[x.design_id]=x;tv+=Number(x.views);tc+=Number(x.clicks)});
   if(!vc.error){var g2=h('div',{class:'stats'});[[tv,'कुल कार्ड व्यू'],[tc,'कुल बटन क्लिक']].forEach(function(x){g2.appendChild(h('div',{class:'stat'},[h('b',{text:String(x[0])}),h('span',{text:x[1]})]))});app.appendChild(g2)}
+  var at0=h('div');app.appendChild(at0);aiTile(at0);
   var sv0=h('div',{class:'svcw'});app.appendChild(sv0);svcTile(sv0);
   var ch=h('div');app.appendChild(ch);chatPanel(ch);
   var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
@@ -362,6 +363,19 @@ async function cardsView(){
       h('div',{id:'dt-'+d.id,style:'margin-top:6px'}),
       h('div',{id:'ins-'+d.id,style:'margin-top:6px'}),
       del,m]);row.insertBefore(bkRow,del);if(plRow)row.insertBefore(plRow,del);list.appendChild(row)})}
+async function aiTile(box){
+  var r=await sb.rpc('studio_admin_ai_cost');box.textContent='';if(r.error||!r.data)return;
+  var x=r.data,rem=x.remaining_usd,low=rem!=null&&Number(rem)<=Number(x.low_usd),empty=rem==null;
+  var bg=low?'linear-gradient(135deg,#7a1020,#d4141c)':'linear-gradient(135deg,#4a1a8c,#8e44ad 60%,#c04fd0)';
+  var c=h('div',{style:'background:'+bg+';color:#fff;border-radius:0;padding:16px 14px;margin:10px -12px 0;box-shadow:0 6px 18px rgba(74,26,140,.3);cursor:pointer'});
+  c.appendChild(h('div',{style:'display:flex;align-items:center;justify-content:space-between;gap:8px'},[h('span',{style:'font-size:18px;font-weight:800',text:'🤖 AI टोकन बैलेंस'}),h('span',{style:'font-size:13px;background:rgba(255,255,255,.2);border-radius:99px;padding:3px 12px;font-weight:700',text:low?'⚠️ कम है':(empty?'भरें':'ठीक है')})]));
+  c.appendChild(h('div',{style:'font-size:38px;font-weight:800;margin:6px 0 2px;line-height:1.1',text:empty?'—':'$'+Number(rem).toFixed(2)}));
+  c.appendChild(h('div',{style:'font-size:13px;opacity:.95',text:empty?'अभी बैलेंस भरा नहीं है। दबाकर कंसोल का बैलेंस डालें।':(low?'बैलेंस कम है! console.anthropic.com पर क्रेडिट जोड़ें।':'बचा हुआ अनुमानित बैलेंस')}));
+  var st=h('div',{style:'display:flex;gap:8px;margin-top:10px;flex-wrap:wrap'});
+  [['📞 कॉल',x.total_calls],['✅ सफल',x.ok_calls],['💸 कुल खर्च','$'+x.total_spent_usd]].forEach(function(z){st.appendChild(h('span',{style:'background:rgba(255,255,255,.18);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:700',text:z[0]+' '+z[1]}))});
+  c.appendChild(st);c.appendChild(h('div',{style:'font-size:11px;opacity:.85;margin-top:8px',text:'बैलेंस बदलने या कीमत ठीक करने के लिए दबाएँ (सर्विस चार्जेज़ में खुलेगा)'}));
+  c.onclick=function(){var t=document.querySelector('.svcw .svc div');var hd=document.querySelector('.svcw .svc');if(hd){var b=hd.children[2];if(b&&b.hidden&&hd.firstChild)hd.firstChild.click();hd.scrollIntoView({behavior:'smooth',block:'start'})}};
+  box.appendChild(c)}
 async function svcTile(box,open){
   box.textContent='';
   var KEYS=[['👑 प्रीमियम थीम','prem_price_visiting','📇 विज़िटिंग कार्ड थीम'],['','prem_price_site','🌐 मिनी वेबसाइट थीम'],['','prem_price_invitation','💌 इनविटेशन थीम'],
