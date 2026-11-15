@@ -788,7 +788,7 @@ async function myHome(){
   if(!st.error&&st.data){var cc=st.data.card||{};foldBox(sw,'📊 इनसाइट','👁 '+(cc.total||0)+' · आज '+(cc.today||0));sw.firstChild.style.cssText+=';margin-top:0;border:0;background:transparent;padding:2px 0'}
   loadEnq()}
 var ENQ={rows:[],un:0};
-function hasSite(){return LIST.some(function(x){var i=SUBI[x.id];return x.product_type==='visiting'&&i&&(i.plan==='site'||i.plan==='domain')})}
+function hasSite(){return LIST.some(function(x){var i=SUBI[x.id];return x.product_type==='visiting'})}
 async function loadEnq(){
   if(!hasSite()){$('c-enq').hidden=true;var i0=$('ib');if(i0)i0.hidden=true;var t0=$('tb-h');if(t0)t0.hidden=true;return}
   var r=await sb.rpc('studio_my_enquiries',{p_limit:50}),box=$('c-enq'),tb=$('tb-h');
