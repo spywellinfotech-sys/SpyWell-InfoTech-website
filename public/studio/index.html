@@ -526,8 +526,10 @@ function statRow(title,u){var w=mk('div','');w.style.marginTop='12px';var t=mk('
   var tx=mk('div','k','हर 100 व्यू में से '+pc+' लोगों ने कॉल या WhatsApp किया।');tx.style.fontSize='13px';rw.appendChild(tx);w.appendChild(rw);return w}
 async function dirInit(){try{var r=await sb.rpc('studio_dir_open');if(r&&r.data===true){$('tb-dir').hidden=false;if(location.hash==='#dir'&&typeof setTab==='function')setTab('dir',true)}}catch(e){}}
 async function invHome(){
-  var box=$('c-inv');if(!box)return;var iv=LIST.filter(function(x){return x.product_type==='invitation'&&x.status==='published'});
-  if(!iv.length){box.hidden=true;return}
+  var box=$('c-inv');if(!box)return;var iv0=LIST.filter(function(x){return x.product_type==='invitation'&&x.status==='published'});
+  var AR={};try{var ai=await sb.rpc('studio_inv_archive_info');(ai.data||[]).forEach(function(z){AR[z.design_id]=z})}catch(e){}
+  var iv=iv0.filter(function(x){return !(AR[x.id]&&AR[x.id].archived)}),arch=iv0.filter(function(x){return AR[x.id]&&AR[x.id].archived});
+  if(!iv0.length){box.hidden=true;return}
   box.hidden=false;box.textContent='';box.appendChild(mk('b','','💌 मेरे इनविटेशन कार्ड'));
   for(var i=0;i<iv.length;i++){(function(x){
     var hero=mk('div','');hero.style.cssText='margin-top:12px;background:linear-gradient(135deg,#0b3d2e,#145a43 55%,#b8860b);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(11,61,46,.35)';
@@ -571,7 +573,14 @@ async function invHome(){
       var det=mk('div','');det.hidden=true;det.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff7f6';var ld=false;
       vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
         if(!det.hidden&&!ld){ld=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,{card:d.card,leads:d.leads},dd.data||{})}};
-      ins.appendChild(vb);ins.appendChild(det)})})(iv[i])}}
+      ins.appendChild(vb);ins.appendChild(det)})})(iv[i])}
+  if(arch.length){var ab=mk('div','');ab.style.cssText='margin-top:14px;border:1px dashed #b9a98a;border-radius:14px;padding:10px;background:#f6f1e6';
+    var ah=mk('div','','📦 Archive · '+arch.length+'  ▼');ah.style.cssText='font-weight:800;color:#5a4630;cursor:pointer';ab.appendChild(ah);var abd=mk('div','');abd.hidden=true;ab.appendChild(abd);
+    arch.forEach(function(x){var r=mk('div','');r.style.cssText='padding:9px 0;border-top:1px dashed #d9ccb0';r.appendChild(mk('b','',x.title||'इनविटेशन'));var ed=AR[x.id]&&AR[x.id].end_date?new Date(AR[x.id].end_date).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'';r.appendChild(mk('div','k','कार्यक्रम '+ed+' को हुआ · लिंक बंद है (1 हफ़्ते बाद अपने आप)'));
+      var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:6px';var e2=mk('a','','✏️ तारीख़ बदलकर दोबारा चालू करें');e2.href='/studio/editor/?id='+x.id;e2.style.cssText='flex:2;text-align:center;background:#fff;color:#7a0a10;border:1px solid #d4141c;border-radius:10px;padding:10px 6px;text-decoration:none;font-weight:700;font-size:13px';
+      var d2=mk('button','','🗑');d2.type='button';d2.style.cssText='margin:0;flex:none;width:48px;background:#fff;color:#b00020;border:1px solid #b00020;border-radius:10px';d2.onclick=function(){if(!confirm('यह इनविटेशन कार्ड हमेशा के लिए मिट जाएगा। पक्का मिटाएँ?'))return;del(x.id,d2)};rw.appendChild(e2);rw.appendChild(d2);r.appendChild(rw);abd.appendChild(r)});
+    ah.onclick=function(){abd.hidden=!abd.hidden;ah.textContent=ah.textContent.replace(/[▼▲]$/,abd.hidden?'▼':'▲')};box.appendChild(ab)}
+}
 
 /* ---- Refer & Earn ---- */
 try{var _rq=new URLSearchParams(location.search).get('ref');if(_rq&&/^[A-Za-z0-9]{4,10}$/.test(_rq))localStorage.setItem('st_ref',_rq.toUpperCase())}catch(e){}
