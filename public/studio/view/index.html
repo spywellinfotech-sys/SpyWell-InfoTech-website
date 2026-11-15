@@ -69,6 +69,9 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     if(isSite)window.StudioRender.site(box,(tp.data&&tp.data.config)||{},c,{onAct:track,onEnquiry:async function(n,m,msg,c2,l){var x=await sb.rpc('studio_enquiry_add',{p_slug:s,p_name:n,p_mobile:m,p_message:msg,p_visitor:vid,p_city:c2||null,p_loc:l||null});return x.error?'err':x.data}});
     else window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},c,{onAct:track})}
   paint(cj);
+  if(cj.demo===true){try{var db=document.createElement('div');db.setAttribute('aria-label','Demo');db.style.cssText='position:fixed;top:0;left:0;z-index:70;width:120px;height:120px;overflow:hidden;pointer-events:none';
+    var dr=document.createElement('div');dr.textContent='DEMO';dr.style.cssText='position:absolute;top:24px;left:-34px;width:150px;text-align:center;transform:rotate(-45deg);background:linear-gradient(90deg,#f59a1a,#d4141c);color:#fff;font:800 15px/28px system-ui,sans-serif;letter-spacing:2px;box-shadow:0 3px 8px rgba(0,0,0,.35)';db.appendChild(dr);document.body.appendChild(db);
+    var dn=document.createElement('div');dn.textContent='यह सिर्फ़ डेमो कार्ड है। अपना कार्ड 2 मिनट में बनाइए।';dn.style.cssText='max-width:440px;margin:0 auto;text-align:center;background:#fff4e0;color:#7a0a10;font:700 13px/1.4 system-ui,sans-serif;padding:8px 12px;border-bottom:1px solid #f0c98a';box.parentNode.insertBefore(dn,box)}catch(e){}}
   /* ---- translate the whole card into the viewer's language ---- */
   try{(function(){
     try{if(window.frameElement&&window.frameElement.getAttribute('aria-hidden')==='true')return}catch(e){}

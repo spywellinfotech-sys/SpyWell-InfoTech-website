@@ -26,7 +26,7 @@ function page(kind, slug, d) {
       title = clip(f.business || nm, 90);
       desc = clip([f.business && f.name ? f.name : '', f.designation, 'कॉल, WhatsApp, लोकेशन और सब जानकारी एक जगह'].filter(Boolean).join(' · '), 160);
     } else { // visiting card: the person's name leads
-      title = clip(nm, 90);
+      title = clip((d.content_json && d.content_json.demo === true ? 'DEMO · ' : '') + nm, 90);
       desc = clip([f.designation, f.business && f.name ? f.business : '', 'डिजिटल विज़िटिंग कार्ड'].filter(Boolean).join(' · '), 160);
     }
     img = okImg(im.photo && im.photo.url) || okImg(im.logo && im.logo.url);
