@@ -400,14 +400,14 @@ async function svcTile(box,open){
   bd.appendChild(h('div',{style:'font-size:11px;opacity:.85;margin-top:6px',text:'अपग्रेड पर सिर्फ़ फ़र्क़ लगता है; समय ख़त्म होने पर छूट के दिन बाद लिंक बंद होता है और भुगतान करते ही फिर चालू। किसी एक टेम्पलेट की अलग कीमत "टेम्पलेट" टैब में उसी टेम्पलेट पर दबाकर बदलें।'}))}
 async function tplView(){
   var wrap=h('div');body.appendChild(wrap);
-  var r=await sb.from('studio_templates').select('id,name,product_type,active,sort,config').order('product_type').order('sort');
+  var r=await sb.from('studio_templates').select('id,name,product_type,active,sort,config,tno').order('product_type').order('sort');
   if(r.error){wrap.appendChild(h('div',{class:'msg bad',text:'टेम्पलेट नहीं आए'}));return}
   var DEF={};try{var ds=await sb.from('studio_settings').select('k,v').like('k','prem_price_%');(ds.data||[]).forEach(function(x){DEF[x.k.slice(11)]=parseInt(x.v)||0})}catch(e){}
   var rows=r.data,fT='all',fS='all',q='';
   function defPrice(t){var c=t.config||{};return DEF[c.site===true?'site':t.product_type]||99}
   function price(t){var c=t.config||{};if(c.premium!==true)return 0;var n=parseInt(c.premium_price);return n>0?n:defPrice(t)}
   var bar=h('div',{style:'display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px'});wrap.appendChild(bar);
-  var sr=h('input',{type:'search',placeholder:'🔎 नाम या कोड खोजें',style:'width:100%;box-sizing:border-box;margin:0 0 8px'});sr.oninput=function(){q=sr.value.trim().toLowerCase();draw()};wrap.appendChild(sr);
+  var sr=h('input',{type:'search',placeholder:'🔎 नाम, कोड या नंबर खोजें',style:'width:100%;box-sizing:border-box;margin:0 0 8px'});sr.oninput=function(){q=sr.value.trim().toLowerCase();draw()};wrap.appendChild(sr);
   var cnt=h('div',{class:'k',style:'margin-bottom:6px'});wrap.appendChild(cnt);
   var list=h('div');wrap.appendChild(list);
   function chip(label,on,fn){var b=h('button',{type:'button',text:label,style:'margin:0;padding:6px 12px;border-radius:99px;border:1px solid #d9c3a0;font-size:13px;font-weight:700;background:'+(on?'#8b1a2b':'#fff')+';color:'+(on?'#fff':'#8b1a2b')});b.onclick=fn;return b}
@@ -419,13 +419,13 @@ async function tplView(){
     rows.forEach(function(t){
       if(fT!=='all'&&t.product_type!==fT)return;
       var pr=price(t);if(fS==='free'&&pr>0)return;if(fS==='prem'&&!(pr>0))return;if(fS==='off'&&t.active)return;
-      if(q&&(t.name+' '+t.id).toLowerCase().indexOf(q)<0)return;n++;
+      if(q&&(t.name+' '+t.id+' '+(t.tno||'')+' no'+(t.tno||'')).toLowerCase().indexOf(q.replace(/^№|^#/,''))<0)return;n++;
       var sw=h('button',{type:'button',class:'sw'+(t.active?' on':''),'aria-label':t.active?'चालू':'बंद'});sw.appendChild(h('i'));
       var lb=h('span',{class:'swl',text:t.active?'चालू':'बंद'});
       sw.onclick=async function(e){e.stopPropagation();sw.disabled=true;var x=await sb.from('studio_templates').update({active:!t.active}).eq('id',t.id).select('id');
         if(x.error||!x.data.length){sw.disabled=false;lb.textContent='नहीं बदला';return}t.active=!t.active;sw.disabled=false;sw.className='sw'+(t.active?' on':'');lb.textContent=t.active?'चालू':'बंद'};
       var badge=h('span',{class:'st',style:'margin-left:6px;background:'+(pr>0?'#fff0c2':'#e6f6ec')+';color:'+(pr>0?'#8a5a00':'#0a6b2f'),text:pr>0?'👑 ₹'+pr:'🆓 फ़्री'});
-      var title=h('b',{style:'display:block;font-size:15px',text:t.name});title.appendChild(badge);
+      var title=h('b',{style:'display:block;font-size:15px',text:'№'+(t.tno||'?')+' · '+t.name});title.appendChild(badge);
       var info=h('div',{style:'flex:1;min-width:0;cursor:pointer'},[title,h('div',{class:'k',text:(TYN[t.product_type]||'')+' · '+t.id+' · क्रम '+t.sort+' · ✏️ बदलने के लिए दबाएँ'})]);
       var row=h('div',{class:'trow'},[info,lb,sw]);var box=h('div');box.hidden=true;
       info.onclick=function(){box.hidden=!box.hidden;if(!box.hidden&&!box.firstChild)build(t,box,function(){draw()})};

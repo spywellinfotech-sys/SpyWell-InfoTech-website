@@ -296,7 +296,7 @@ function pTpl(p){
   T.filter(function(t){var pm=premPrice(t)>0;if(tplCat==='free'&&pm)return false;if(tplCat==='prem'&&!pm)return false;return true}).filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
     var inner=h('div',{class:'in2'});R.render(inner,D.product_type,t.config,C,{demo:true});
     g.appendChild(h('button',{class:'mini'+(t.id===D.template_id?' on':''),onclick:function(){if(t.id===D.template_id)return;D.template_id=t.id;panel();changed()}},
-      [h('div',{class:'box'},[inner]),h('div',{class:'cap'},[document.createTextNode(t.name),h('span',{text:(premPrice(t)>0?(PREM.bypass?'👑 अभी फ्री · ₹'+premPrice(t)+' बाद में':'👑 ₹'+premPrice(t)):'🆓 फ्री')+' · '+((t.config&&t.config.style)||'')})])]));
+      [h('div',{class:'box'},[inner]),h('div',{class:'cap'},[document.createTextNode((t.tno?'№'+t.tno+' · ':'')+t.name),h('span',{text:(premPrice(t)>0?(PREM.bypass?'👑 अभी फ्री · ₹'+premPrice(t)+' बाद में':'👑 ₹'+premPrice(t)):'🆓 फ्री')+' · '+((t.config&&t.config.style)||'')})])]));
   });
   p.appendChild(g);if(!T.length)p.appendChild(h('div',{class:'k',text:'कोई टेम्पलेट उपलब्ध नहीं है।'}));
 }
@@ -784,7 +784,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   var r=await sb.from('studio_designs').select('id,user_id,template_id,product_type,title,slug,status,content_json,updated_at').eq('id',ID).maybeSingle();
   if(r.error||!r.data){state('यह डिज़ाइन नहीं मिला, या आपको इसे खोलने की अनुमति नहीं है।',true);return}
   D=r.data;D.__okTpl=D.template_id;C=shape(D.content_json);loadPrem();
-  var t=await sb.from('studio_templates').select('id,name,config,sort').eq('product_type',D.product_type).order('sort',{ascending:true});
+  var t=await sb.from('studio_templates').select('id,name,config,sort,tno').eq('product_type',D.product_type).order('sort',{ascending:true});
   T=t.data||[];
   try{var ir=await sb.from('studio_industries').select('id,name_en,name_hi,sort').order('sort',{ascending:true});IND=ir.data||[]}catch(x){}
   var restored=false;
