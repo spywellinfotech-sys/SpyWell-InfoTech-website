@@ -73,40 +73,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     var dr=document.createElement('div');dr.textContent='DEMO';dr.style.cssText='position:absolute;top:24px;left:-34px;width:150px;text-align:center;transform:rotate(-45deg);background:linear-gradient(90deg,#f59a1a,#d4141c);color:#fff;font:800 15px/28px system-ui,sans-serif;letter-spacing:2px;box-shadow:0 3px 8px rgba(0,0,0,.35)';db.appendChild(dr);document.body.appendChild(db);
     var dn=document.createElement('div');dn.textContent='यह सिर्फ़ डेमो कार्ड है। अपना कार्ड 2 मिनट में बनाइए।';dn.style.cssText='max-width:440px;margin:0 auto;text-align:center;background:#fff4e0;color:#7a0a10;font:700 13px/1.4 system-ui,sans-serif;padding:8px 12px;border-bottom:1px solid #f0c98a';box.parentNode.insertBefore(dn,box);
     var bb=document.createElement('a');bb.href='/studio/';bb.setAttribute('data-wizard','');bb.textContent='✨ अपना कार्ड बनाएँ  →';bb.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:80;width:calc(100% - 28px);max-width:400px;box-sizing:border-box;text-align:center;padding:15px 18px;border-radius:99px;background:linear-gradient(120deg,#f59a1a,#d4141c);color:#fff;font:800 18px system-ui,sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(212,20,28,.45)';var pv=false;try{pv=!!(window.frameElement&&window.frameElement.getAttribute('aria-hidden')==='true')}catch(e){}if(!pv)document.body.appendChild(bb);if(!pv)document.body.style.paddingBottom='84px';var fm=document.getElementById('mkb');if(fm)fm.style.display='none'}catch(e){}}
-  /* ---- translate the whole card into the viewer's language ---- */
-  try{(function(){
-    var TR_ON=false; /* AI translate button off: set true to bring it back */ if(!TR_ON)return;
-    try{if(window.frameElement&&window.frameElement.getAttribute('aria-hidden')==='true')return}catch(e){}
-    var LG=[['en','English'],['hi','हिन्दी'],['bn','বাংলা'],['ta','தமிழ்'],['te','తెలుగు'],['kn','ಕನ್ನಡ'],['ml','മലയാളം'],['mr','मराठी'],['gu','ગુજરાતી'],['pa','ਪੰਜਾਬੀ'],['or','ଓଡ଼ିଆ'],['ur','اردو']],CACHE={},cur='';
-    var LB={en:'Language',hi:'भाषा',bn:'ভাষা',ta:'மொழி',te:'భాష',kn:'ಭಾಷೆ',ml:'ഭാഷ',mr:'भाषा',gu:'ભાષા',pa:'ਭਾਸ਼ਾ',or:'ଭାଷା',ur:'زبان'},LBL='🌐 '+(LB[(cj&&cj.style&&cj.style.lang)||'hi']||'भाषा');
-    var tb=document.createElement('button');tb.type='button';tb.setAttribute('aria-label','Translate');tb.textContent=LBL;
-    tb.style.cssText='position:fixed;top:'+(cj&&cj.demo===true?'54px':'10px')+';right:10px;z-index:60;padding:8px 14px;border:0;border-radius:22px;background:#fff;color:#8b1a2b;font:700 13px system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.3);cursor:pointer';
-    var pn=document.createElement('div');pn.hidden=true;pn.style.cssText='position:fixed;top:'+(cj&&cj.demo===true?'96px':'52px')+';right:10px;z-index:61;background:#fff;border-radius:14px;padding:8px;box-shadow:0 6px 24px rgba(0,0,0,.35);display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:300px';
-    var st=document.createElement('div');st.style.cssText='grid-column:1/-1;font:12px system-ui,sans-serif;color:#6b5b3b;text-align:center;padding:2px 4px';st.textContent='अपनी भाषा चुनें · Choose your language';pn.appendChild(st);
-    function mkb(txt,code){var b=document.createElement('button');b.type='button';b.textContent=txt;b.style.cssText='padding:9px 8px;border:1px solid #e8d5ad;border-radius:10px;background:#fffaf0;color:#3b2a14;font:600 15px system-ui,sans-serif;cursor:pointer';b.onclick=function(){apply(code,b)};return b}
-    LG.forEach(function(x){pn.appendChild(mkb(x[1],x[0]))});
-    var ob=mkb('↩ मूल कार्ड / Original','');ob.style.gridColumn='1/-1';pn.appendChild(ob);
-    tb.onclick=function(e){e.stopPropagation();pn.hidden=!pn.hidden};pn.onclick=function(e){e.stopPropagation()};document.addEventListener('click',function(){pn.hidden=true});document.body.appendChild(tb);document.body.appendChild(pn);
-    var ERR={limit:'आज की अनुवाद सीमा पूरी हो गई। कल फिर कोशिश करें।',not_found:'कार्ड नहीं मिला।'};
-    async function apply(code,btn){
-      if(!code){cur='';paint(cj);pn.hidden=true;tb.textContent=LBL;return}
-      var old=btn.textContent;pn.hidden=true;tb.textContent='⏳ …';tb.disabled=true;st.textContent='अपनी भाषा चुनें · Choose your language';st.style.color='#6b5b3b';
-      try{
-        var data=CACHE[code],keys=window.StudioRender.uiKeys();
-        if(!data){var r=await fetch(B+'/functions/v1/studio-translate',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+K},body:JSON.stringify({slug:s,type:t,lang:code,ui:keys})});
-          var j=await r.json().catch(function(){return{}});if(!r.ok||!j.ok)throw new Error(j.code||'err');data=j.data||{};CACHE[code]=data}
-        var c2=JSON.parse(JSON.stringify(cj));c2.fields=c2.fields||{};c2.style=(c2.style&&typeof c2.style==='object')?c2.style:{};
-        Object.keys(data).forEach(function(k){var p=k.split(':');
-          if(p[0]==='f')c2.fields[p[1]]=data[k];
-          else if(p[0]==='e'&&c2.events&&c2.events[+p[1]])c2.events[+p[1]][p[2]]=data[k];
-          else if(p[0]==='s'&&c2.services&&c2.services[+p[1]]!=null)c2.services[+p[1]]=data[k];
-          else if(p[0]==='h'&&c2.highlights&&c2.highlights[+p[1]]!=null)c2.highlights[+p[1]]=data[k];
-          else if(p[0]==='u'){var D=window.I18N_DATA=window.I18N_DATA||{},lab=keys[+p[1]];if(lab){D[lab]=D[lab]||{};if(!D[lab][code])D[lab][code]=data[k]}}});
-        c2.style.lang=code;paint(c2);cur=code;pn.hidden=true;st.textContent='अपनी भाषा चुनें · Choose your language';
-        var nm=LG.filter(function(x){return x[0]===code})[0];tb.textContent=LBL;window.scrollTo(0,0);
-      }catch(e){st.textContent=ERR[e.message]||'अनुवाद अभी नहीं हो पाया। थोड़ी देर बाद कोशिश करें।';st.style.color='#b00020';pn.hidden=false}
-      tb.disabled=false;tb.textContent=LBL;btn.textContent=old}
-  })()}catch(e){}
+
   if(typeof sty.set==='string'&&/^[a-z0-9]{8,32}$/.test(sty.set)){
     var sr=await sb.from('studio_designs').select('slug,title,lbl:content_json->style->>setLabel,ord:created_at').eq('status','published').eq('product_type',t).eq('user_id',r.data.user_id).eq('content_json->style->>set',sty.set).order('created_at').limit(12);
     if(!sr.error&&sr.data&&sr.data.length>1){tabs.style.display='flex';sr.data.forEach(function(x,i){var a=document.createElement('a');a.textContent=String(x.lbl||x.title||('कार्ड '+(i+1))).slice(0,24);var cur=x.slug===s;a.href=cur?'#':'/'+(t==='invitation'?'inv':'v')+'/'+x.slug;a.style.cssText='flex:none;padding:7px 14px;border-radius:20px;text-decoration:none;font-size:14px;font-weight:600;border:1px solid #8b1a2b;'+(cur?'background:#8b1a2b;color:#fff':'color:#8b1a2b;background:#fff');tabs.appendChild(a)})}}
