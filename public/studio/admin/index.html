@@ -40,8 +40,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   var ch=h('div');app.appendChild(ch);chatPanel(ch);
   var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
   var mq=h('div');app.appendChild(mq);manPanel(mq);
-  var py=h('div');app.appendChild(py);subPanel(py);
-  var dp=h('div');app.appendChild(dp);dirPanel(dp);var rp=h('div');app.appendChild(rp);refPanel(rp);
+    var dp=h('div');app.appendChild(dp);dirPanel(dp);var rp=h('div');app.appendChild(rp);refPanel(rp);
   var cf=h('div');app.appendChild(cf);cfgPanel(cf);
   var dm=h('div');app.appendChild(dm);domPanel(dm);
   var ip=h('div');app.appendChild(ip);indPanel(ip);
@@ -366,26 +365,35 @@ async function cardsView(){
       h('div',{id:'ins-'+d.id,style:'margin-top:6px'}),
       del,m]);row.insertBefore(bkRow,del);if(plRow)row.insertBefore(plRow,del);list.appendChild(row)})}
 async function svcTile(box){
+  box.textContent='';
   var KEYS=[['👑 प्रीमियम थीम','prem_price_visiting','📇 विज़िटिंग कार्ड थीम'],['','prem_price_site','🌐 मिनी वेबसाइट थीम'],['','prem_price_invitation','💌 इनविटेशन थीम'],
     ['📤 प्रकाशन (एक बार)','pub_price_invitation','💌 इनविटेशन कार्ड'],['','pub_price_visiting','📇 विज़िटिंग कार्ड'],
-    ['📅 सालाना प्लान','sub_price_card','📇 डिजिटल कार्ड'],['','sub_price_site','🌐 मिनी वेबसाइट'],['','sub_price_domain','🔗 कस्टम डोमेन सहित'],
-    ['➕ अन्य','domain_price_inr','🌍 डोमेन अनुरोध शुल्क'],['','dir_price_inr','📒 डायरेक्टरी लिस्टिंग'],['','ai_price_inr','🤖 AI से पढ़ने का पैक'],['','ai_pack_credits','🔢 एक AI पैक में कितनी रीड (संख्या)']];
+    ['📅 सालाना प्लान','sub_price_card','📇 डिजिटल कार्ड'],['','sub_price_site','🌐 मिनी वेबसाइट'],['','sub_price_domain','🔗 फ़ुल वेबसाइट + अपना डोमेन'],['','sub_grace_days','⏳ बंद होने से पहले छूट के दिन (संख्या)'],
+    ['➕ अन्य','dir_price_inr','📒 डायरेक्टरी लिस्टिंग'],['','ai_price_inr','🤖 AI से पढ़ने का पैक'],['','ai_pack_credits','🔢 एक AI पैक में कितनी रीड (संख्या)']];
   var r=await sb.from('studio_settings').select('k,v').in('k',KEYS.map(function(x){return x[1]}).concat(['pay_bypass']));
   var V={};(r.data||[]).forEach(function(x){V[x.k]=x.v});
   var c=h('div',{class:'svc',style:'background:linear-gradient(135deg,#0b4f6c,#1f8a70);color:#fff;border-radius:16px;padding:14px;margin-top:10px;box-shadow:0 6px 18px rgba(11,79,108,.3)'});box.appendChild(c);
   c.appendChild(h('div',{style:'font-size:18px;font-weight:800',text:'💰 सर्विस चार्जेज़'}));
-  c.appendChild(h('div',{style:'font-size:12px;opacity:.9;margin:2px 0 6px',text:V.pay_bypass==='1'?'अभी सब फ़्री है (भुगतान बंद)। नीचे की कीमतें भुगतान चालू होने पर लगेंगी।':'भुगतान चालू है: ये कीमतें अभी लागू हैं।'}));
+  var payOn=V.pay_bypass==='0';
+  var ps=h('div',{style:'display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,255,255,.2);border-radius:12px;padding:9px 11px;margin:8px 0 4px'});
+  ps.appendChild(h('div',{style:'font-weight:800;font-size:14px',text:payOn?'✅ भुगतान चालू है':'⛔ भुगतान बंद है (सब कुछ फ़्री)'}));
+  var pt=h('button',{type:'button',text:payOn?'बंद करें':'चालू करें',style:'margin:0;padding:8px 12px;border-radius:10px;border:0;background:'+(payOn?'#ffd9d9':'#fff')+';color:#0b4f6c;font-weight:800;font-size:13px'});
+  var pm=h('div',{style:'font-size:12px;margin-top:4px;min-height:14px'});
+  pt.onclick=async function(){if(!pt.dataset.a){pt.dataset.a='1';pt.textContent=payOn?'पक्का? नए प्रकाशन फ़्री हो जाएँगे':'पक्का? पहले से लाइव कार्ड पर भी प्लान लगेगा';return}
+    pt.disabled=true;var e=await sb.rpc('studio_admin_set_payments',{p_on:!payOn});if(e.error){pm.textContent='बदला नहीं जा सका।';pt.disabled=false;return}svcTile(box)};
+  ps.appendChild(pt);c.appendChild(ps);c.appendChild(pm);
+  c.appendChild(h('div',{style:'font-size:12px;opacity:.9;margin:2px 0 4px',text:payOn?'नीचे की कीमतें अभी लागू हैं।':'नीचे की कीमतें भुगतान चालू होने पर लगेंगी। असली भुगतान के लिए Razorpay की चाबियाँ लगी होनी चाहिए।'}));
   var inputs={};
   KEYS.forEach(function(x){
     if(x[0])c.appendChild(h('div',{style:'margin:10px 0 2px;font-size:12px;font-weight:800;letter-spacing:.3px;color:#bff3df',text:x[0]}));
-    var inp=h('input',{type:'number',min:0,max:x[1]==='ai_pack_credits'?1000:100000,inputmode:'numeric',value:V[x[1]]||'',style:'width:86px;margin:0;padding:7px 8px;border-radius:9px;border:0;text-align:right;font-weight:800;font-size:16px;color:#0b4f6c'});inputs[x[1]]=inp;
-    c.appendChild(h('div',{style:'display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,255,255,.14);border-radius:10px;padding:7px 10px;margin-top:5px'},[h('span',{style:'font-size:14px',text:x[2]}),h('span',{style:'display:flex;align-items:center;gap:4px;font-weight:800',text:x[1]==='ai_pack_credits'?'':'₹'},[inp])]))});
+    var inp=h('input',{type:'number',min:0,max:(x[1]==='ai_pack_credits'||x[1]==='sub_grace_days')?1000:100000,inputmode:'numeric',value:V[x[1]]||'',style:'width:86px;margin:0;padding:7px 8px;border-radius:9px;border:0;text-align:right;font-weight:800;font-size:16px;color:#0b4f6c'});inputs[x[1]]=inp;
+    c.appendChild(h('div',{style:'display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,255,255,.14);border-radius:10px;padding:7px 10px;margin-top:5px'},[h('span',{style:'font-size:14px',text:x[2]}),h('span',{style:'display:flex;align-items:center;gap:4px;font-weight:800',text:(x[1]==='ai_pack_credits'||x[1]==='sub_grace_days')?'':'₹'},[inp])]))});
   var m=h('div',{style:'font-size:13px;margin-top:8px;min-height:16px'});
   var sv=h('button',{type:'button',text:'💾 सब कीमतें सेव करें',style:'margin:10px 0 0;width:100%;padding:12px;border-radius:12px;border:0;background:#fff;color:#0b4f6c;font-weight:800;font-size:15px'});
   sv.onclick=async function(){var o={};for(var k in inputs){var t=inputs[k].value.trim();if(t==='')continue;var n=parseInt(t);if(!(n>=0)||String(n)!==t){m.textContent='सिर्फ़ पूरी संख्या लिखें।';return}o[k]=n}
     sv.disabled=true;m.textContent='सेव हो रहा है…';var e=await sb.rpc('studio_admin_set_prices',{p:o});sv.disabled=false;m.textContent=e.error?'सेव नहीं हुआ।':'✓ सेव हो गया। नई कीमत नई ख़रीद पर लगेगी।'};
   c.appendChild(sv);c.appendChild(m);
-  c.appendChild(h('div',{style:'font-size:11px;opacity:.85;margin-top:6px',text:'किसी एक टेम्पलेट की अलग कीमत "टेम्पलेट" टैब में उसी टेम्पलेट पर दबाकर बदलें।'}))}
+  c.appendChild(h('div',{style:'font-size:11px;opacity:.85;margin-top:6px',text:'अपग्रेड पर सिर्फ़ फ़र्क़ लगता है; समय ख़त्म होने पर छूट के दिन बाद लिंक बंद होता है और भुगतान करते ही फिर चालू। किसी एक टेम्पलेट की अलग कीमत "टेम्पलेट" टैब में उसी टेम्पलेट पर दबाकर बदलें।'}))}
 async function tplView(){
   var wrap=h('div');body.appendChild(wrap);
   var r=await sb.from('studio_templates').select('id,name,product_type,active,sort,config').order('product_type').order('sort');
