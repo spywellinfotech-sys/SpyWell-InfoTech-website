@@ -319,7 +319,7 @@ $('ct-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)re
   bt.disabled=false};
 $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(o.hidden)o.value=''};
 async function loadList(){
-  var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
+  var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at,published_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
   LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
   var A=$('d-act');A.textContent='';
@@ -536,7 +536,15 @@ async function invHome(){
       var det=mk('div','');det.hidden=true;det.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff7f6';var ld=false;
       vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
         if(!det.hidden&&!ld){ld=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,{card:d.card,leads:d.leads},dd.data||{})}};
-      w.appendChild(vb);w.appendChild(det);var c2=d.card||{};w.removeChild(h);foldBox(w,'💌 '+(x.title||'इनविटेशन'),'👁 '+(c2.total||0)+' · आज '+(c2.today||0));w.style.cssText='margin-top:0'})})(iv[i])}}
+      w.appendChild(vb);w.appendChild(det);
+       var pd=x.published_at?new Date(x.published_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'';
+       var vl=mk('div','k','🗓️ वैधता: लिंक हमेशा चालू रहेगा (एक बार का प्रकाशन शुल्क)'+(pd?' · प्रकाशित: '+pd:''));vl.style.marginTop='8px';w.appendChild(vl);
+       var ar=mk('div','');ar.style.cssText='display:flex;gap:8px;margin-top:8px';
+       var vc=mk('a','','👁 View card');vc.href='/inv/'+x.slug;vc.target='_blank';vc.rel='noopener';vc.style.cssText='flex:1;text-align:center;background:#ffc21a;color:#5a0a10;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:800';
+       var ed=mk('a','','✏️ Edit');ed.href='/studio/editor/?id='+x.id;ed.style.cssText='flex:1;text-align:center;background:#fff;color:#7a0a10;border:1px solid #d4141c;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:800';
+       var dl2=mk('button','','🗑 Delete');dl2.type='button';dl2.style.cssText='margin:0;flex:1;background:#fff;color:#b00020;border:1px solid #b00020;border-radius:12px;padding:12px 6px;font-weight:800';
+       dl2.onclick=function(){if(!confirm('यह इनविटेशन कार्ड हमेशा के लिए मिट जाएगा। पक्का मिटाएँ?'))return;del(x.id,dl2)};
+       ar.appendChild(vc);ar.appendChild(ed);ar.appendChild(dl2);w.appendChild(ar);var c2=d.card||{};w.removeChild(h);foldBox(w,'💌 '+(x.title||'इनविटेशन'),'👁 '+(c2.total||0)+' · आज '+(c2.today||0));w.style.cssText='margin-top:0'})})(iv[i])}}
 
 /* ---- Refer & Earn ---- */
 try{var _rq=new URLSearchParams(location.search).get('ref');if(_rq&&/^[A-Za-z0-9]{4,10}$/.test(_rq))localStorage.setItem('st_ref',_rq.toUpperCase())}catch(e){}
