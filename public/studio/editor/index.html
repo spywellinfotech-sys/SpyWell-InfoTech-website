@@ -455,6 +455,12 @@ async function pIns(p){
     if(tab!=='ins')return;p.textContent='';
     p.appendChild(h('div',{class:'k',text:'इस लिंक और PIN से आप (या जिसे आप दें) देख सकते हैं कि कार्ड कितने लोगों ने खोला और किन बटनों पर क्लिक किया।'}));
   }
+  (async function(){var sg=await sb.from('studio_shagun').select('name,amount,message,mobile,created_at').eq('design_id',D.id).order('created_at',{ascending:false}).limit(200);
+    if(sg.error||!sg.data||!sg.data.length)return;var tot=0;sg.data.forEach(function(r){tot+=Number(r.amount)||0});
+    var b=h('div',{class:'item'},[h('b',{text:'🎁 शगुन · '+sg.data.length+' लोग · कुल कलेक्शन ₹'+tot})]);
+    sg.data.forEach(function(r){var d=h('div',{style:'padding:8px 0;border-top:1px dashed #e6d6b8'},[h('b',{text:r.name+(r.amount?' · ₹'+r.amount:'')}),h('div',{class:'k',text:[r.mobile?'📞 '+r.mobile:'',new Date(r.created_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})].filter(Boolean).join(' · ')})]);
+      if(r.message)d.appendChild(h('div',{text:'💬 '+r.message}));b.appendChild(d)});
+    if(tab==='ins')p.insertBefore(b,p.firstChild)})();
   var url=insUrl(INS.key),pin='';try{pin=localStorage.getItem(pinKey())||''}catch(e){}
   p.appendChild(h('div',{class:'item'},[h('b',{text:'इनसाइट लिंक'}),h('div',{class:'k',text:url,style:'word-break:break-all;margin-top:6px'})]));
   p.appendChild(h('button',{class:'btn',text:'लिंक कॉपी करें',onclick:function(){copyTxt(url,msg,'इनसाइट लिंक कॉपी हो गया।')}}));

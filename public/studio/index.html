@@ -554,8 +554,9 @@ async function invHome(){
     box.appendChild(hero);
     (async function(){var sg=await sb.from('studio_shagun').select('name,amount,message,mobile,created_at').eq('design_id',x.id).order('created_at',{ascending:false}).limit(200);
       if(sg.error)return;var rows=sg.data||[],tot=0;rows.forEach(function(r){tot+=Number(r.amount)||0});
-      var sw=mk('div','');sw.style.cssText='margin-top:12px;background:#fff;color:#222;border-radius:14px;padding:10px';
-      var hd=mk('div','','🎁 शगुन · '+rows.length+(tot?' · ₹'+tot:'')+'  ▼');hd.style.cssText='font-weight:800;color:#0b3d2e;cursor:pointer';sw.appendChild(hd);
+      var sw=mk('div','');sw.style.cssText='margin:0 0 10px;padding:0 0 8px;border-bottom:1px solid #eadfc9';
+      var tl=mk('div','');tl.style.cssText='display:flex;gap:8px;margin-bottom:8px';[['🎁 शगुन देने वाले',String(rows.length)],['💰 कुल कलेक्शन','₹'+tot]].forEach(function(z){var c=mk('div','');c.style.cssText='flex:1;background:linear-gradient(135deg,#fff4d6,#ffe1a8);border-radius:12px;padding:8px 6px;text-align:center';var n=mk('b','',z[1]);n.style.cssText='display:block;font-size:22px;color:#0b3d2e';c.appendChild(n);c.appendChild(mk('span','k',z[0]));tl.appendChild(c)});sw.appendChild(tl);
+      var hd=mk('div','','🎁 शगुन की सूची (नाम और जानकारी)  ▼');hd.style.cssText='font-weight:800;color:#0b3d2e;cursor:pointer';sw.appendChild(hd);
       var bd=mk('div','');bd.hidden=true;sw.appendChild(bd);
       if(!rows.length)bd.appendChild(mk('div','k','अभी किसी ने जानकारी नहीं भरी। शगुन सीधे आपकी UPI ID पर आता है; यहाँ सिर्फ़ वही दिखता है जो मेहमान "मैंने शगुन भेज दिया" दबाकर भरते हैं।'));
       rows.forEach(function(r){var d=mk('div','');d.style.cssText='padding:8px 0;border-top:1px dashed #eadfc9';
@@ -563,7 +564,7 @@ async function invHome(){
         var sub=[r.mobile?'📞 '+r.mobile:'',new Date(r.created_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})].filter(Boolean).join(' · ');d.appendChild(mk('div','k',sub));
         if(r.message)d.appendChild(mk('div','','💬 '+r.message));bd.appendChild(d)});
       hd.onclick=function(){bd.hidden=!bd.hidden;hd.textContent=hd.textContent.replace(/[▼▲]$/,bd.hidden?'▼':'▲')};
-      hero.appendChild(sw)})();
+      ins.insertBefore(sw,ins.firstChild)})();
     sb.rpc('studio_my_stats',{p_design:x.id}).then(function(st){var d=(st&&st.data)||{},c2=d.card||{};cv.textContent='👁 '+(c2.total||0)+' · आज '+(c2.today||0);
       ins.appendChild(statRow('📊 इनसाइट',c2));
       var vb=mk('button','alt','📋 View details');vb.type='button';vb.style.cssText='width:100%;margin-top:8px';
