@@ -263,13 +263,17 @@
       var sg = el('div', 'sr-cs sr-sg'); sg.appendChild(el('div', 'sr-sub', '\uD83C\uDF81 ' + T('शगुन')));
       sg.appendChild(el('div', 'sr-msg', T('आशीर्वाद के साथ शगुन भेजना चाहें तो UPI से भेज सकते हैं।')));
       var upl = 'upi://pay?pa=' + encodeURIComponent(up) + (f.upi_name ? '&pn=' + encodeURIComponent(f.upi_name) : '') + '&cu=INR&tn=' + encodeURIComponent('Shagun');
-      var pl = act(link('sr-call', '\uD83C\uDF81 ' + T('UPI से शगुन भेजें') + (f.upi_name ? ' · ' + f.upi_name : ''), upl), 'shagun'); pl.addEventListener('click', function () { if (!(opts && opts.demo)) shagunWatch(f, opts); }); sg.appendChild(pl);
+      var pl = act(link('sr-call', '🎁 ' + T('शगुन भेजें') + (f.upi_name ? ' · ' + f.upi_name : '') + '  ▼', '#'), 'shagun');
+      var dt = el('div', ''); dt.hidden = true; dt.style.cssText = 'margin-top:10px';
+      pl.addEventListener('click', function (e) { e.preventDefault(); dt.hidden = !dt.hidden; pl.textContent = pl.textContent.replace(/[▼▲]$/, dt.hidden ? '▼' : '▲'); });
+      sg.appendChild(pl); sg.appendChild(dt);
+      dt.appendChild(el('div', 'sr-msg', T('आशीर्वाद के साथ शगुन भेजना चाहें तो नीचे QR स्कैन करें या UPI ID कॉपी करके अपने किसी भी UPI ऐप से भेजें।')));
       var qd = el('div', ''); qd.style.cssText = 'text-align:center;margin:10px 0 2px';
       try { if (window.StudioQR) { var qc = document.createElement('canvas'); window.StudioQR.draw(qc, unescape(encodeURIComponent(upl)), 300); qc.style.cssText = 'width:170px;height:170px;background:#fff;padding:8px;border-radius:12px'; qd.appendChild(qc); qd.appendChild(el('div', 'sr-sub', T('किसी भी UPI ऐप से स्कैन करें'))); } } catch (e) { }
-      sg.appendChild(qd);
+      dt.appendChild(qd);
       var cp = el('button', 'sr-save', T('UPI ID कॉपी करें') + ': ' + up); cp.type = 'button'; cp.onclick = function () { try { navigator.clipboard.writeText(up); cp.textContent = T('✓ कॉपी हो गया'); } catch (e) { window.prompt(up, up); } };
-      sg.appendChild(cp);
-      var dn = el('button', 'sr-save', '\u2705 ' + T('मैंने शगुन भेज दिया')); dn.type = 'button'; dn.onclick = function () { shagunOverlay('form', f, opts); }; sg.appendChild(dn); box.appendChild(sg);
+      dt.appendChild(cp);
+      var dn = el('button', 'sr-save', '✅ ' + T('मैंने शगुन भेज दिया')); dn.type = 'button'; dn.style.cssText = 'font-size:1.25em;padding:1.05em 1em;margin-top:14px;width:100%;background:#1ea952;color:#fff;border-color:#1ea952;font-weight:800'; dn.onclick = function () { shagunOverlay('form', f, opts); }; dt.appendChild(dn); box.appendChild(sg);
     }
     var sw = el('div', 'sr-cs'); sw.appendChild(saveCardBtn(root, f)); box.appendChild(sw);
     root.appendChild(box);
