@@ -16,6 +16,10 @@
 .ab{font-size:14px;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .c.ft{border-left-color:#e0a100;background:linear-gradient(135deg,#fffbe8,#fff);border-color:#f0d98a;position:relative}.rb{display:inline-block;background:linear-gradient(120deg,#f59a1a,#e0a100);color:#fff;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;margin-bottom:6px}
 .acts{margin-top:6px}.acts a,.acts button{padding:8px 4px!important;min-width:70px!important}.adm summary{list-style:none}
+.sp{margin-top:12px;border:1.5px solid #f0d98a;border-radius:16px;background:linear-gradient(135deg,#fffbe8,#fff);overflow:hidden;position:relative}.sp .tr{display:flex;transition:transform .45s ease;touch-action:pan-y}.sp .sd{min-width:100%;box-sizing:border-box;padding:12px 12px 10px}
+.sp .bd{position:absolute;top:8px;right:10px;z-index:2;font-size:11px;font-weight:800;background:#1a1212;color:#fff;border-radius:99px;padding:2px 9px;letter-spacing:.3px}
+.sp .dots{display:flex;justify-content:center;gap:6px;padding:0 0 10px}.sp .dots i{width:7px;height:7px;border-radius:50%;background:#e8d9a8}.sp .dots i.on{background:#d4141c;width:18px;border-radius:99px}
+.sp .lk{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.sp .lk a{flex:none;text-decoration:none;font-size:13px;font-weight:700;border:1px solid #d4141c;color:#d4141c;border-radius:99px;padding:6px 11px;background:#fff}.sp .lk a.p{background:#d4141c;color:#fff}.sp .lk a.g{background:#e7f8ee;border-color:#1ea952;color:#0b6b32}
 </style></head><body>
 <div class="top" id="tp"><img src="/studio/vicard-icon.png" alt=""><b>बिज़नेस डायरेक्टरी</b><a href="/studio/">← ऐप</a></div>
 <div class="w"><div id="m" class="k" style="padding:30px 0;text-align:center">लोड हो रहा है…</div><div id="adm"></div><div id="bar" hidden>
@@ -23,7 +27,7 @@
 <input type="hidden" id="ind"><input type="hidden" id="city">
 <div id="fp" hidden><div class="k">📍 शहर</div><div class="chips" id="cch"></div><div class="k" style="margin-top:8px">🏷 व्यवसाय</div><div class="chips" id="ich"></div></div>
 <div class="chips" id="act"></div></div>
-<div class="sl" id="sum" hidden></div><div id="list"></div><button id="more" hidden style="margin-top:12px">और दिखाएँ</button></div>
+<div id="spon"></div><div class="sl" id="sum" hidden></div><div id="list"></div><button id="more" hidden style="margin-top:12px">और दिखाएँ</button></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
@@ -34,7 +38,7 @@ function $(i){return document.getElementById(i)}function mk(t,c,x){var e=documen
 var INDS=[],MYC='';try{MYC=localStorage.getItem('dir_city')||''}catch(e){}
 function emo(n){return /दुकान|रिटेल|किराना|कपड़|जनरल/.test(n)?'🏪':/आईटी|सॉफ्टवेयर|वेब|कंप्यूटर/.test(n)?'💻':/सर्विस|मरम्मत|रिपेयर|मैकेनिक/.test(n)?'🔧':/फ्रीलांस|सलाहकार|कंसल्ट/.test(n)?'🧑‍💼':/शिक्षा|कोचिंग|स्कूल|ट्यूशन/.test(n)?'🎓':/स्वास्थ्य|डॉक्टर|अस्पताल|दवा|क्लिनिक/.test(n)?'🏥':/खाना|रेस्तरां|होटल|मिठाई|केटरिंग/.test(n)?'🍽':/ट्रांसपोर्ट|गाड़ी|वाहन|टैक्सी/.test(n)?'🚚':/निर्माण|बिल्डर|प्रॉपर्टी|इलेक्ट्रिक|प्लंबर/.test(n)?'🏗':'🏷'}
 function chip(t,on,fn){var b=mk('button','ch'+(on?' on':''),t);b.type='button';b.onclick=fn;return b}
-function pick(id,v){$(id).value=v;if(id==='city'){try{if(v)localStorage.setItem('dir_city',v);MYC=v||MYC}catch(e){}}drawChips();go(false)}
+function pick(id,v){if(id==='city')setTimeout(function(){try{sponsored()}catch(e){}},0);$(id).value=v;if(id==='city'){try{if(v)localStorage.setItem('dir_city',v);MYC=v||MYC}catch(e){}}drawChips();go(false)}
 function drawChips(){var cc=$('cch'),ic=$('ich'),ac=$('act');cc.textContent='';ic.textContent='';ac.textContent='';
   var cv=$('city').value,iv=$('ind').value,cl=CITIES.slice();if(MYC&&cl.indexOf(MYC)>0){cl.splice(cl.indexOf(MYC),1);cl.unshift(MYC)}
   cc.appendChild(chip('सभी',!cv,function(){pick('city','')}));cl.forEach(function(c){cc.appendChild(chip((c===MYC?'📍 ':'')+c,cv===c,function(){pick('city',c)}))});
@@ -70,9 +74,26 @@ async function go(more){
       else{sv.disabled=false;sv.textContent='💾 सेव करें (दोबारा)'}};
     a.appendChild(sv);c.appendChild(a);$('list').appendChild(c)});
   OFF+=(d.rows||[]).length;$('more').hidden=OFF>=TOT}
+var SPT=null,SPS={};
+async function sponsored(){var box=$('spon');if(!box)return;var r=await sb.rpc('studio_dir_sponsored',{p_city:$('city').value||MYC||''});var rows=(r&&r.data)||[];box.textContent='';clearInterval(SPT);if(!Array.isArray(rows)||!rows.length)return;
+  var w=mk('div','sp'),tr=mk('div','tr'),dots=mk('div','dots'),cur=0,seen={};w.appendChild(mk('div','bd','Sponsored'));
+  function hit(sl,k){try{sb.rpc('studio_sponsor_hit',{p_slug:sl,p_kind:k})}catch(e){}}
+  function lnk(par,t,href,k,sl,cls,ext){var a=mk('a',cls||'',t);a.href=href;if(ext){a.target='_blank';a.rel='noopener noreferrer'}a.onclick=function(){hit(sl,k)};par.appendChild(a)}
+  rows.forEach(function(x,i){var sd=mk('div','sd'),hd=mk('div','hd'),av=mk('div','av'),tb=mk('div',''),h=mk('h3','',x.business||x.name||'कार्ड');h.style.margin='0';
+    if(x.img){var im=document.createElement('img');im.src=x.img;im.alt='';im.onerror=function(){im.remove();av.textContent=(x.business||x.name||'?').charAt(0)};av.appendChild(im)}else av.textContent=(x.business||x.name||'?').charAt(0);
+    tb.appendChild(h);if(x.verified)h.appendChild(mk('span','tag v','✓ वेरिफ़ाइड'));var meta=[x.name&&x.business?x.name:'',x.designation,x.industry_name,x.city].filter(Boolean).join(' · ');if(meta)tb.appendChild(mk('div','k',meta));
+    hd.appendChild(av);hd.appendChild(tb);sd.appendChild(hd);if(x.about)sd.appendChild(mk('div','ab',x.about));
+    var lk=mk('div','lk'),sl=x.slug;lnk(lk,'📇 कार्ड','/v/'+encodeURIComponent(sl),'card',sl,'p');if(x.site)lnk(lk,'🌐 मिनी वेबसाइट','/web/'+encodeURIComponent(sl),'site',sl);
+    var pn=x.mobile&&x.mobile.length>=10?x.mobile.slice(-10):'';if(pn)lnk(lk,'📞 कॉल','tel:+91'+pn,'call',sl);var wd=(x.wa||x.mobile||'').slice(-10);if(wd.length===10)lnk(lk,'💬 WhatsApp','https://wa.me/91'+wd,'wa',sl,'g',1);
+    if(x.website)lnk(lk,'🔗 वेबसाइट',x.website,'link',sl,'',1);if(x.map)lnk(lk,'📍 लोकेशन',x.map,'link',sl,'',1);if(x.instagram)lnk(lk,'📷 Instagram',x.instagram,'link',sl,'',1);if(x.facebook)lnk(lk,'📘 Facebook',x.facebook,'link',sl,'',1);if(x.youtube)lnk(lk,'▶️ YouTube',x.youtube,'link',sl,'',1);
+    sd.appendChild(lk);tr.appendChild(sd);dots.appendChild(mk('i',i?'':'on'))});
+  w.appendChild(tr);if(rows.length>1)w.appendChild(dots);else w.appendChild(mk('div','','')).style.height='4px';box.appendChild(w);
+  function show(i){cur=(i+rows.length)%rows.length;tr.style.transform='translateX(-'+cur*100+'%)';Array.prototype.forEach.call(dots.children,function(d,j){d.className=j===cur?'on':''});if(!seen[cur]){seen[cur]=1;hit(rows[cur].slug,'view')}}
+  show(0);if(rows.length>1){var go2=function(){clearInterval(SPT);SPT=setInterval(function(){if(!document.hidden)show(cur+1)},4500)};go2();
+    var x0=null;w.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;clearInterval(SPT)},{passive:true});w.addEventListener('touchend',function(e){if(x0!=null){var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40)show(cur+(dx<0?1:-1));x0=null}go2()},{passive:true})}}
 async function admin(){
   var a=await sb.rpc('studio_is_admin');if(a.data!==true)return;ISADM=true;
-  var l=await sb.rpc('studio_dir_admin_list');if(!l.data)return;var box=$('adm');box.textContent='';var w=mk('details','adm');var sm=mk('summary','','⚙️ एडमिन मैनेज · सिर्फ़ आपको दिखता है ▾');sm.style.cssText='cursor:pointer;font-weight:700;color:#7a5b00';w.appendChild(sm);box.appendChild(w);
+  var l=await sb.rpc('studio_dir_admin_list');if(!l.data)return;var ss=await sb.rpc('studio_dir_sponsor_stats');SPS={};((ss&&ss.data)||[]).forEach(function(z){SPS[z.design_id]=z});var box=$('adm');box.textContent='';var w=mk('details','adm');var sm=mk('summary','','⚙️ एडमिन मैनेज · सिर्फ़ आपको दिखता है ▾');sm.style.cssText='cursor:pointer;font-weight:700;color:#7a5b00';w.appendChild(sm);box.appendChild(w);
   var open=l.data.open==='1';w.appendChild(mk('b','','🛠 एडमिन: डायरेक्टरी '+(open?'सबके लिए चालू है':'अभी सिर्फ़ एडमिन को दिखती है')));
   var tg=mk('button','',open?'सबके लिए बंद करें':'सबके लिए चालू करें');tg.type='button';tg.onclick=async function(){if(!confirm(open?'डायरेक्टरी सिर्फ़ एडमिन तक सीमित करें?':'डायरेक्टरी सबके लिए चालू करें?'))return;await sb.rpc('studio_dir_flag',{p_on:!open});location.reload()};w.appendChild(tg);
   (l.data.rows||[]).forEach(function(x){var r=mk('div','');r.style.cssText='border-top:1px dashed #f0d98a;margin-top:8px;padding-top:6px;font-size:14px';
@@ -83,12 +104,17 @@ async function admin(){
     bt('+1 साल',function(){var b=pu&&pu>new Date()?pu:new Date();b=new Date(b.getTime());b.setFullYear(b.getFullYear()+1);return sb.rpc('studio_dir_admin_set',{p_design:x.design_id,p_paid_until:b.toISOString()})});
     bt(x.verified?'वेरिफ़ाई हटाएँ':'वेरिफ़ाई',function(){return sb.rpc('studio_dir_admin_set',{p_design:x.design_id,p_verified:!x.verified})});
     bt(x.featured?'खास हटाएँ':'खास करें',function(){return sb.rpc('studio_dir_admin_set',{p_design:x.design_id,p_featured:!x.featured})});
+    var sp=SPS[x.design_id],spu=sp&&sp.until?new Date(sp.until):null,spa=spu&&spu>new Date();
+    r.appendChild(mk('div','k','⭐ Sponsored: '+(spa?'चालू · '+spu.toLocaleDateString('hi-IN')+(sp.city?' · '+sp.city:'')+' तक · 👀'+((sp.stats&&sp.stats.view)||0)+' 📇'+((sp.stats&&sp.stats.card)||0)+' 📞'+((sp.stats&&sp.stats.call)||0)+' 💬'+((sp.stats&&sp.stats.wa)||0)+' 🔗'+((sp.stats&&sp.stats.link)||0):'बंद')));
+    bt('⭐ +7 दिन',function(){return sb.rpc('studio_dir_sponsor_set',{p_design:x.design_id,p_days:7})});
+    bt('⭐ +30 दिन',function(){return sb.rpc('studio_dir_sponsor_set',{p_design:x.design_id,p_days:30})});
+    if(spa)bt('⭐ बंद',function(){return sb.rpc('studio_dir_sponsor_set',{p_design:x.design_id,p_days:0})});
     bt(x.suspended?'चालू करें':'बंद करें',function(){return sb.rpc('studio_dir_admin_set',{p_design:x.design_id,p_suspended:!x.suspended})});
     w.appendChild(r)})}
 async function init(){
   var si=await sb.from('studio_industries').select('id,name_hi,sort').order('sort',{ascending:true});INDS=si.data||[];drawChips();
   $('q').oninput=function(){clearTimeout(TM);TM=setTimeout(function(){go(false)},350)};$('fb').onclick=function(){$('fp').hidden=!$('fp').hidden;$('fb').style.background=$('fp').hidden?'#fff':'#fff1f0'};$('more').onclick=function(){go(true)};
-  await loadSaved();await go(false);admin()}
+  await loadSaved();await go(false);sponsored();admin()}
 init();
 })();
 </script></body></html>
