@@ -44,7 +44,7 @@ function page(kind, slug, d) {
     '<meta property="og:type" content="website"><meta property="og:site_name" content="' + esc(BRAND) + '"><meta property="og:url" content="' + esc(url) + '">' +
     (THUMB[slug] && img === THUMB[slug] ? '<meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="200"><meta property="og:image:height" content="200">' : '') + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(desc) + '"><meta property="og:image" content="' + esc(img) + '">' +
     '<meta name="twitter:card" content="' + (big ? 'summary_large_image' : 'summary') + '"><meta name="twitter:title" content="' + esc(title) + '"><meta name="twitter:image" content="' + esc(img) + '">' +
-    '<meta name="robots" content="noindex"><script>setTimeout(function(){location.replace(' + JSON.stringify(to) + ')},900)</script></head>' +
+    '<meta name="robots" content="noindex"><script>(function(){var u=' + JSON.stringify(to) + ';if(window.top!==window)location.replace(u);else setTimeout(function(){location.replace(u)},900)})()</script></head>' +
     '<body style="font-family:sans-serif;text-align:center;padding:40px"><p>' + esc(title) + '</p><p><a href="' + esc(to) + '">खोलें</a></p></body></html>';
 }
 
