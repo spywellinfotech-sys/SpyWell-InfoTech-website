@@ -165,12 +165,13 @@
   function act(e, k) { e.setAttribute('data-act', k); return e; }
   var actA = act;
   function rgba(hex, a) { var n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
-  var CARDL = 'hi', CLANGS = ['en', 'pa', 'mr', 'gu', 'ur'], LOC = { hi: 'hi-IN', en: 'en-IN', pa: 'pa-IN', mr: 'mr-IN', gu: 'gu-IN', ur: 'ur-IN' };
+  var CARDL = 'hi', CLANGS = ['en', 'pa', 'mr', 'gu', 'ur', 'bn', 'ta', 'te', 'kn', 'ml', 'or'], LOC = { hi: 'hi-IN', en: 'en-IN', pa: 'pa-IN', mr: 'mr-IN', gu: 'gu-IN', ur: 'ur-IN', bn: 'bn-IN', ta: 'ta-IN', te: 'te-IN', kn: 'kn-IN', ml: 'ml-IN', or: 'or-IN' }, UIK = {};
   var TW = { hi: ['सुबह', 'दोपहर', 'शाम', 'रात', 'बजे'], pa: ['ਸਵੇਰ', 'ਦੁਪਹਿਰ', 'ਸ਼ਾਮ', 'ਰਾਤ', 'ਵਜੇ'], mr: ['सकाळी', 'दुपारी', 'संध्याकाळी', 'रात्री', 'वाजता'], gu: ['સવારે', 'બપોરે', 'સાંજે', 'રાત્રે', 'વાગ્યે'], ur: ['صبح', 'دوپہر', 'شام', 'رات', 'بجے'] };
-  function T(s) { return window.I18N ? window.I18N.tr(s, CARDL) : s; }
+  function T(s) { if (typeof s === 'string' && s.length < 90) UIK[s] = 1; return window.I18N ? window.I18N.tr(s, CARDL) : s; }
+  function uiKeys() { return Object.keys(UIK).filter(function (k) { return /[\u0900-\u097F]/.test(k) && k.length < 90; }).slice(0, 80); }
   var PA_M = ['ਜਨਵਰੀ', 'ਫ਼ਰਵਰੀ', 'ਮਾਰਚ', 'ਅਪ੍ਰੈਲ', 'ਮਈ', 'ਜੂਨ', 'ਜੁਲਾਈ', 'ਅਗਸਤ', 'ਸਤੰਬਰ', 'ਅਕਤੂਬਰ', 'ਨਵੰਬਰ', 'ਦਸੰਬਰ'], PA_D = ['ਐਤਵਾਰ', 'ਸੋਮਵਾਰ', 'ਮੰਗਲਵਾਰ', 'ਬੁੱਧਵਾਰ', 'ਵੀਰਵਾਰ', 'ਸ਼ੁੱਕਰਵਾਰ', 'ਸ਼ਨੀਵਾਰ'];
   function fmtDate(v) { if (!V.date(v)) return ''; var p = v.split('-'); if (CARDL === 'pa') { var dd = new Date(+p[0], +p[1] - 1, +p[2]); return PA_D[dd.getDay()] + ', ' + (+p[2]) + ' ' + PA_M[+p[1] - 1] + ' ' + p[0]; } try { return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(LOC[CARDL] || 'hi-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return p[2] + '-' + p[1] + '-' + p[0]; } }
-  function fmtTime(v) { if (!V.time(v)) return ''; var h = +v.slice(0, 2), m = v.slice(3); if (CARDL === 'en') return ((h % 12) || 12) + ':' + m + ' ' + (h < 12 ? 'AM' : 'PM'); var w = TW[CARDL] || TW.hi, s = h < 12 ? w[0] : h < 16 ? w[1] : h < 19 ? w[2] : w[3]; return s + ' ' + ((h % 12) || 12) + ':' + m + ' ' + w[4]; }
+  function fmtTime(v) { if (!V.time(v)) return ''; var h = +v.slice(0, 2), m = v.slice(3); if (CARDL === 'en' || (CARDL !== 'hi' && !TW[CARDL])) return ((h % 12) || 12) + ':' + m + ' ' + (h < 12 ? 'AM' : 'PM'); var w = TW[CARDL] || TW.hi, s = h < 12 ? w[0] : h < 16 ? w[1] : h < 19 ? w[2] : w[3]; return s + ' ' + ((h % 12) || 12) + ':' + m + ' ' + w[4]; }
   function maps(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
 
   /* Tolerant normaliser: whatever is stored, the renderer only sees this safe shape. */
@@ -217,7 +218,7 @@
     i.style.objectPosition = '50% ' + im.pos + '%'; return i;
   }
 
-  function buildInvitation(root, d, t) {
+  function buildInvitation(root, d, t, opts) {
     var f = d.fields, box = el('div', 'in');
     if (f.heading) box.appendChild(el('div', 'sr-h', f.heading));
     if (t.ornament) box.appendChild(el('div', 'sr-or', t.ornament));
@@ -262,12 +263,13 @@
       var sg = el('div', 'sr-cs sr-sg'); sg.appendChild(el('div', 'sr-sub', '\uD83C\uDF81 ' + T('शगुन')));
       sg.appendChild(el('div', 'sr-msg', T('आशीर्वाद के साथ शगुन भेजना चाहें तो UPI से भेज सकते हैं।')));
       var upl = 'upi://pay?pa=' + encodeURIComponent(up) + (f.upi_name ? '&pn=' + encodeURIComponent(f.upi_name) : '') + '&cu=INR&tn=' + encodeURIComponent('Shagun');
-      sg.appendChild(act(link('sr-call', '\uD83C\uDF81 ' + T('UPI से शगुन भेजें') + (f.upi_name ? ' · ' + f.upi_name : ''), upl), 'shagun'));
+      var pl = act(link('sr-call', '\uD83C\uDF81 ' + T('UPI से शगुन भेजें') + (f.upi_name ? ' · ' + f.upi_name : ''), upl), 'shagun'); pl.addEventListener('click', function () { if (!(opts && opts.demo)) shagunWatch(f); }); sg.appendChild(pl);
       var qd = el('div', ''); qd.style.cssText = 'text-align:center;margin:10px 0 2px';
       try { if (window.StudioQR) { var qc = document.createElement('canvas'); window.StudioQR.draw(qc, unescape(encodeURIComponent(upl)), 300); qc.style.cssText = 'width:170px;height:170px;background:#fff;padding:8px;border-radius:12px'; qd.appendChild(qc); qd.appendChild(el('div', 'sr-sub', T('किसी भी UPI ऐप से स्कैन करें'))); } } catch (e) { }
       sg.appendChild(qd);
       var cp = el('button', 'sr-save', T('UPI ID कॉपी करें') + ': ' + up); cp.type = 'button'; cp.onclick = function () { try { navigator.clipboard.writeText(up); cp.textContent = T('✓ कॉपी हो गया'); } catch (e) { window.prompt(up, up); } };
-      sg.appendChild(cp); box.appendChild(sg);
+      sg.appendChild(cp);
+      var dn = el('button', 'sr-save', '\u2705 ' + T('मैंने शगुन भेज दिया')); dn.type = 'button'; dn.onclick = function () { shagunOverlay('video', f); }; sg.appendChild(dn); box.appendChild(sg);
     }
     var sw = el('div', 'sr-cs'); sw.appendChild(saveCardBtn(root, f)); box.appendChild(sw);
     root.appendChild(box);
@@ -369,6 +371,36 @@
       try { var qc = document.createElement('canvas'); window.StudioQR.draw(qc, unescape(encodeURIComponent(url)), 360); x.fillStyle = '#fff'; x.fillRect(W - 290, H - 290, 230, 230); x.drawImage(qc, W - 285, H - 285, 220, 220); } catch (e) { }
       x.fillStyle = '#5a6a8c'; x.font = '400 30px ' + FF; x.textAlign = 'left'; x.fillText('DynaMe', 90, H - 70);
       return new Promise(function (ok) { cv.toBlob(function (b) { ok(b); }, 'image/png'); });
+    });
+  }
+  function shagunOverlay(kind, f, opts) {
+    var ov = el('div', ''); ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:14px;text-align:center;font-family:system-ui,sans-serif';
+    function close() { try { var v = ov.querySelector('video'); if (v) v.pause(); } catch (e) { } ov.remove(); }
+    function btn(t, bg, fg, fn) { var b = el('button', '', t); b.type = 'button'; b.style.cssText = 'padding:12px 22px;border-radius:12px;border:0;font:700 16px system-ui,sans-serif;background:' + bg + ';color:' + fg + ';cursor:pointer'; b.onclick = fn; return b; }
+    if (kind === 'ask') {
+      var cd = el('div', ''); cd.style.cssText = 'background:#fff;border-radius:18px;padding:22px 20px;max-width:340px;width:100%';
+      var h = el('div', '', '\uD83C\uDF81 ' + T('क्या आपने शगुन भेज दिया?')); h.style.cssText = 'font:700 19px system-ui,sans-serif;color:#7a0a10;margin-bottom:6px';
+      var m = el('div', '', T('अपने UPI ऐप में भुगतान पूरा होने के बाद "हाँ" दबाएँ।')); m.style.cssText = 'font-size:14px;color:#555;margin-bottom:14px';
+      var row = el('div', ''); row.style.cssText = 'display:flex;gap:10px;justify-content:center';
+      row.appendChild(btn(T('✅ हाँ, भेज दिया'), '#1ea952', '#fff', function () { close(); shagunOverlay('video', f, opts); }));
+      row.appendChild(btn(T('अभी नहीं'), '#eee', '#333', close));
+      cd.appendChild(h); cd.appendChild(m); cd.appendChild(row); ov.appendChild(cd); document.body.appendChild(ov); return;
+    }
+    var who = (f.bride && f.groom) ? f.bride + ' & ' + f.groom : (f.bride || f.groom || '');
+    var v = document.createElement('video'); v.src = '/studio/media/shagun-thanks.mp4'; v.poster = '/studio/media/shagun-thanks.jpg'; v.autoplay = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.controls = true;
+    v.style.cssText = 'width:100%;max-width:560px;max-height:60vh;border-radius:14px;background:#000'; ov.appendChild(v);
+    var t1 = el('div', '', '\uD83D\uDE4F ' + T('आपके शगुन और आशीर्वाद के लिए हार्दिक धन्यवाद!')); t1.style.cssText = 'color:#fff;font:700 19px system-ui,sans-serif;max-width:520px';
+    ov.appendChild(t1); if (who) { var t2 = el('div', '', who); t2.style.cssText = 'color:#f5d77a;font:600 17px system-ui,sans-serif'; ov.appendChild(t2); }
+    ov.appendChild(btn(T('बंद करें'), '#fff', '#333', close)); document.body.appendChild(ov);
+    try { var pr = v.play(); if (pr && pr.catch) pr.catch(function () { }); } catch (e) { }
+  }
+  var SG_WAIT = 0, SG_F = null, SG_BOUND = false;
+  function shagunWatch(f) {
+    SG_WAIT = Date.now(); SG_F = f;
+    if (SG_BOUND) return; SG_BOUND = true;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden || !SG_WAIT) return; var dt = Date.now() - SG_WAIT; SG_WAIT = 0;
+      if (dt > 2500 && dt < 20 * 60 * 1000) shagunOverlay('ask', SG_F);
     });
   }
   function drawInviteImage(root, f, photoUrl) {
@@ -489,7 +521,7 @@
     var fx = FXLIST.indexOf(s.fx || t.fx) >= 0 ? (s.fx || t.fx) : ''; if (fx && !(opts.demo && !opts.play)) { root.className += ' fx-' + fx; fxOverlay(root, fx); }
     if (type === 'invitation' && d.images.bg) { st.backgroundImage = 'url("' + d.images.bg.url + '")'; st.backgroundPosition = '50% ' + d.images.bg.pos + '%'; st.setProperty('--pane', rgba(bg, 0.88)); } else st.setProperty('--pane', 'transparent');
     var mo = type === 'visiting' && t.motif ? txt(t.motif, 8) : '';
-    if (type === 'visiting') buildVisiting(root, d, opts); else buildInvitation(root, d, { ornament: s.ornament === 'none' ? '' : (s.ornament || (t.ornament === 'none' ? '' : txt(t.ornament, 4))) });
+    if (type === 'visiting') buildVisiting(root, d, opts); else buildInvitation(root, d, { ornament: s.ornament === 'none' ? '' : (s.ornament || (t.ornament === 'none' ? '' : txt(t.ornament, 4))) }, opts);
     if (mo) root.insertBefore(motifStrip(mo), root.firstChild);
     var anim = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich'), play = !!opts.play || !opts.demo;
     if (anim !== 'none' && play) {
@@ -745,6 +777,6 @@
     document.head.appendChild(l);
   }
 
-  window.StudioRender = { shareInvite: shareInvite, fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
+  window.StudioRender = { uiKeys: uiKeys, shareInvite: shareInvite, fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
     FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, MAX_HIGH: MAX_HIGH, svParts: svParts, BUCKET: BUCKET };
 })();
