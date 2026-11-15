@@ -22,7 +22,8 @@ body.vw .top,body.vw h1,body.vw .wrap>.k,body.vw .wrap>.card:not(#outc){display:
 <div class="wrap"><h1>अपने घर का पता कार्ड की तरह भेजें</h1>
 <div class="k">कहीं से सामान मँगवाना हो, तो अपने घर का पता विज़िटिंग कार्ड की तरह फ़ोटो में भेजिए। यह पता एक बार भरिए, अगली बार अपने आप भरा मिलेगा। नीचे जानकारी जाँचिए और शेयर दबाइए।</div>
 <div class="card">
-<label>नाम</label><input id="a-name" maxlength="60" placeholder="जिसे सामान पहुँचाना है">
+<div id="a-cowrap" hidden><label>कंपनी / ऑफ़िस का नाम</label><input id="a-co" maxlength="80" placeholder="जैसे: SpyWell InfoTech Pvt. Ltd."></div>
+<label id="a-nml">नाम</label><input id="a-name" maxlength="60" placeholder="जिसे सामान पहुँचाना है">
 <label>मोबाइल नंबर</label><input id="a-mob" inputmode="numeric" maxlength="12" placeholder="9876543210">
 <label>घर का पूरा पता</label><textarea id="a-addr" rows="3" maxlength="200" placeholder="मकान नंबर, गली, मोहल्ला, गाँव / कॉलोनी"></textarea>
 <label>लैंडमार्क (खाली छोड़ सकते हैं)</label><input id="a-land" maxlength="80" placeholder="जैसे: शिव मंदिर के सामने">
@@ -49,12 +50,14 @@ body.vw .top,body.vw h1,body.vw .wrap>.k,body.vw .wrap>.card:not(#outc){display:
 <script src="/studio/qr.js"></script>
 <script>
 (function(){
-var $=function(i){return document.getElementById(i)},F=['name','mob','addr','land','city','state','pin','map'],cv=document.createElement('canvas'),blob=null;
+var OF=/[?&]t=office/.test(location.search),KEY=OF?'office':'home',LSK=OF?'vc_addr_office':'vc_addr',IC=OF?'🏢':'🏠',NM=OF?'ऑफ़िस का पता':'घर का पता',BIG=OF?'OFFICE ADDRESS':'HOME ADDRESS',TIT=OF?'🏢 मेरे ऑफ़िस का पता':'🏠 मेरे घर का पता';
+function wk(pc,h){var o=Object.assign({},pc);o[KEY]=h;return o}
+var $=function(i){return document.getElementById(i)},F=['co','name','mob','addr','land','city','state','pin','map'],cv=document.createElement('canvas'),blob=null;
 function val(k){return $('a-'+k).value.trim()}
 function mob(){return val('mob').replace(/\D/g,'').slice(-10)}
 function mapUrl(){var m=val('map');if(!m)return '';if(!/^https?:/i.test(m))m='https://'+m;try{var u=new URL(m);return u.hostname.indexOf('.')>0?u.href:''}catch(e){return ''}}
 function lineAddr(){return [val('addr'),val('land')?'('+val('land')+')':'',[val('city'),val('state')].filter(Boolean).join(', '),val('pin')].filter(Boolean).join(', ')}
-function text(){var t='🏠 घर का पता\n';if(val('name'))t+='नाम: '+val('name')+'\n';if(mob().length===10)t+='मोबाइल: +91 '+mob()+'\n';t+='पता: '+lineAddr();if(mapUrl())t+='\nलोकेशन: '+mapUrl();return t}
+function text(){var t=IC+' '+NM+'\n';if(OF&&val('co'))t+='कंपनी: '+val('co')+'\n';if(val('name'))t+='नाम: '+val('name')+'\n';if(mob().length===10)t+='मोबाइल: +91 '+mob()+'\n';t+='पता: '+lineAddr();if(mapUrl())t+='\nलोकेशन: '+mapUrl();return t}
 function wrap(x,t,mx,font,max){x.font=font;var w=String(t).split(/\s+/),L=[],c='';w.forEach(function(q){var tt=c?c+' '+q:q;if(x.measureText(tt).width>mx&&c){L.push(c);c=q}else c=tt});if(c)L.push(c);if(L.length>max){L=L.slice(0,max);L[max-1]=L[max-1].replace(/.{0,2}$/,'…')}return L}
 function draw(){
   var err=$('a-err');err.textContent='';
@@ -64,24 +67,25 @@ function draw(){
   var FF='"Hind","Noto Sans Devanagari",system-ui,sans-serif',W=1080,x=cv.getContext('2d'),rows=[];
   x.font='400 42px '+FF;
   var addrL=wrap(x,lineAddr(),W-190-(mapUrl()?300:0),'400 42px '+FF,5);
-  var H=Math.max(1000,590+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+170);
+  var H=Math.max(1000,590+(OF&&val('co')?150:0)+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+170);
   cv.width=W;cv.height=H;x.fillStyle='#fff';x.fillRect(0,0,W,H);
   x.fillStyle='#12307f';x.fillRect(0,0,W,250);x.fillStyle='#f59a1a';x.fillRect(0,250,W,10);
   x.fillStyle='#fff';x.textAlign='center';x.textBaseline='alphabetic';x.font='700 38px '+FF;x.fillText('ADDRESS CARD',W/2,95);
-  x.font='700 78px '+FF;x.fillText('🏠 मेरे घर का पता',W/2,190);
+  x.font='700 78px '+FF;x.fillText(TIT,W/2,190);
   var y=350;x.textAlign='left';x.fillStyle='#14203d';
+  if(OF&&val('co')){x.font='800 58px '+FF;x.fillStyle='#12307f';wrap(x,val('co'),W-180,'800 58px '+FF,2).forEach(function(l){x.fillText(l,90,y);y+=70});x.fillStyle='#14203d';y+=8}
   if(val('name')){x.font='700 62px '+FF;x.fillText(val('name').slice(0,40),90,y);y+=90}
   if(mob().length===10){x.font='500 50px '+FF;x.fillStyle='#12307f';x.fillText('📞 +91 '+mob().slice(0,5)+' '+mob().slice(5),90,y);y+=80;x.fillStyle='#14203d'}
   /* big HOME ADDRESS label */
   y+=24;var lw=W-180;x.fillStyle='#f59a1a';x.beginPath();if(x.roundRect)x.roundRect(90,y-58,lw,110,26);else x.rect(90,y-58,lw,110);x.fill();
-  x.fillStyle='#14203d';x.textAlign='center';x.font='800 70px '+FF;x.fillText('🏠 HOME ADDRESS',W/2,y+22);x.textAlign='left';y+=130;x.fillStyle='#14203d';
+  x.fillStyle='#14203d';x.textAlign='center';x.font='800 70px '+FF;x.fillText(IC+' '+BIG,W/2,y+22);x.textAlign='left';y+=130;x.fillStyle='#14203d';
   x.font='400 42px '+FF;var ay=y;addrL.forEach(function(l,i){x.fillText(l,90,y);y+=60});
   var mu=mapUrl();
   if(mu){try{var qc=document.createElement('canvas');window.StudioQR.draw(qc,unescape(encodeURIComponent(mu)),260);x.fillStyle='#fff';x.fillRect(W-340,H-400,260,260);x.drawImage(qc,W-340,H-400,260,260);x.fillStyle='#5a6a8c';x.font='400 28px '+FF;x.textAlign='center';x.fillText('स्कैन करें: लोकेशन',W-210,H-100);x.textAlign='left'}catch(e){}}
   x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('DynaMe · Address Card',90,H-60);
   try{$('pv').src=cv.toDataURL('image/png')}catch(e){}
   cv.toBlob(function(b){blob=b},'image/png');$('outc').hidden=false;
-  try{localStorage.setItem('vc_addr',JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
+  try{localStorage.setItem(LSK,JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
   if(window.__saveHome)window.__saveHome();
   shr();return true}
 function toB64(b,cb){var r=new FileReader();r.onload=function(){cb(String(r.result).split(',')[1])};r.readAsDataURL(b)}
@@ -96,12 +100,12 @@ function deliver(b,nm,mode){
   try{var f=new File([b],nm+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],title:'Address Card'}).catch(function(){});return}}catch(e){}
   overlay()}
 $('b-store').onclick=function(){var e=$('a-err'),m=$('a-saved');e.textContent='';m.textContent='';
-  if(!val('addr')){e.textContent='पहले घर का पता लिखें';return}
+  if(!val('addr')){e.textContent='पहले '+NM+' लिखें';return}
   if(val('mob')&&mob().length!==10){e.textContent='10 अंक का सही मोबाइल नंबर डालें';return}
   if(val('pin')&&!/^[0-9]{6}$/.test(val('pin'))){e.textContent='पिन कोड 6 अंकों का होना चाहिए';return}
   var b=$('b-store');b.disabled=true;b.textContent='सेव हो रहा है…';
-  Promise.resolve(window.__storeNow&&window.__storeNow()).then(function(r){b.disabled=false;b.textContent='💾 घर का पता सेव करें';
-    if(r==='ok')m.textContent='✓ घर का पता सेव हो गया';else if(r==='local')m.textContent='✓ इस फ़ोन में सेव हो गया (लॉगिन करने पर आपके खाते में भी रहेगा)';else e.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।'})};
+  Promise.resolve(window.__storeNow&&window.__storeNow()).then(function(r){b.disabled=false;b.textContent='💾 '+NM+' सेव करें';
+    if(r==='ok')m.textContent='✓ '+NM+' सेव हो गया';else if(r==='local')m.textContent='✓ इस फ़ोन में सेव हो गया (लॉगिन करने पर आपके खाते में भी रहेगा)';else e.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।'})};
 $('b-share').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','share',function(ok){if(ok){$('a-ok').textContent='✓ शेयर मेन्यू खुल गया';return}deliver(b,'address-card-'+(mob()||'vicard'))})},'image/png')};
 $('b-save').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','save',function(ok){if(ok){$('a-ok').textContent='✓ फ़ोटो गैलरी में सेव हो गई (Pictures/DynaMe)';return}
   /* not inside the app: try download, then fallback to long-press overlay */
@@ -114,27 +118,28 @@ $('a-loc').onclick=function(){var e=$('a-err');e.textContent='';if(!navigator.ge
   navigator.geolocation.getCurrentPosition(function(p){b.disabled=false;b.textContent='📍 मेरी अभी की लोकेशन जोड़ें';$('a-map').value='https://www.google.com/maps?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);draw()},
     function(){b.disabled=false;b.textContent='📍 मेरी अभी की लोकेशन जोड़ें';e.textContent='लोकेशन नहीं मिली। फ़ोन की लोकेशन चालू करके दोबारा कोशिश करें।'},{enableHighAccuracy:true,timeout:15000})};
 function openExt(u){if(window.parent&&window.parent!==window){window.parent.postMessage({vcOpen:u},location.origin)}else{location.href=u}}
-function shr(){var t=encodeURIComponent(text());$('s-wa').href='https://wa.me/?text='+t;$('s-tg').href='https://t.me/share/url?url='+encodeURIComponent('https://spywell.in/studio/')+'&text='+t;$('s-sms').href='sms:?&body='+t;$('s-ml').href='mailto:?subject='+encodeURIComponent('मेरे घर का पता')+'&body='+t}
+function shr(){var t=encodeURIComponent(text());$('s-wa').href='https://wa.me/?text='+t;$('s-tg').href='https://t.me/share/url?url='+encodeURIComponent('https://spywell.in/studio/')+'&text='+t;$('s-sms').href='sms:?&body='+t;$('s-ml').href='mailto:?subject='+encodeURIComponent('मेरे '+NM)+'&body='+t}
 $('s-go').onclick=function(){var n=$('s-num').value.replace(/\D/g,'').slice(-10);if(n.length!==10){$('s-num').style.borderColor='#d33';$('s-num').value='';$('s-num').placeholder='10 अंक का सही नंबर डालें';return}$('s-num').style.borderColor='';openExt('https://wa.me/91'+n+'?text='+encodeURIComponent(text()))};
 ['s-wa','s-tg','s-sms','s-ml'].forEach(function(i){$(i).onclick=function(e){e.preventDefault();openExt(this.href)}});
 var NV=null;try{NV=window.ViNative||(window.parent&&window.parent!==window&&window.parent.ViNative)||null}catch(e){}
 $('s-wa').style.cssText='background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32';if(NV&&NV.openWa){$('s-wb').hidden=false;$('s-wb').style.cssText='background:#075e54;border:1px solid #075e54;color:#fff';$('s-wb').textContent='🛍 WhatsApp Business';$('s-wb').onclick=function(e){e.preventDefault();if(!NV.openWa('',text(),true))NV.shareText(text())}}
 if(NV&&NV.shareText){$('s-more').hidden=false;$('s-more').onclick=function(e){e.preventDefault();NV.shareText(text())}}
+if(OF){$('a-cowrap').hidden=false;$('a-nml').textContent='संपर्क व्यक्ति का नाम';document.title='Office Address Card | DynaMe';document.querySelector('.top b').lastChild.textContent='🏢 Office Address Card';document.querySelector('h1').textContent='अपने ऑफ़िस का पता कार्ड की तरह भेजें';document.querySelector('.wrap>.k').textContent='कंपनी का पता विज़िटिंग कार्ड की तरह फ़ोटो में भेजिए। एक बार भरिए, अगली बार अपने आप भरा मिलेगा।';document.querySelector('label[for],#a-addr')&&0;var l=$('a-addr').previousElementSibling;l.textContent='ऑफ़िस का पूरा पता';$('a-addr').placeholder='बिल्डिंग / प्लॉट नंबर, गली, एरिया, शहर';$('b-store').textContent='💾 ऑफ़िस का पता सेव करें'}
 if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 F.forEach(function(k){$('a-'+k).oninput=function(){draw()}});
 (async function(){
-  var d={},sb=null,u=null,pcj={};try{d=JSON.parse(localStorage.getItem('vc_addr')||'{}')}catch(e){}
+  var d={},sb=null,u=null,pcj={};try{d=JSON.parse(localStorage.getItem(LSK)||'{}')}catch(e){}
   try{if(window.supabase){sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});
     var s=await sb.auth.getSession();u=s.data&&s.data.session&&s.data.session.user;
     if(u){var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',u.id).maybeSingle(),pd=p.data||{};pcj=pd.card_json||{};
-      var home=pcj.home||{};
+      var home=pcj[KEY]||{};
       /* home address comes from the saved home address only (never the business address) */
-      ['addr','land','city','state','pin','map'].forEach(function(k){if(home[k]&&!d[k])d[k]=home[k]});
-      if(!d.name)d.name=home.name||pcj.name||pd.full_name||'';if(!d.mob)d.mob=home.mob||pcj.mobile||pd.phone||'';if(!d.mob){try{var vd=await sb.from('studio_designs').select('content_json').eq('user_id',u.id).eq('product_type','visiting').order('updated_at',{ascending:false}).limit(1);var vf=(vd.data&&vd.data[0]&&vd.data[0].content_json&&vd.data[0].content_json.fields)||{};d.mob=String(vf.mobile||vf.whatsapp||'').replace(/\D/g,'').slice(-10)}catch(e2){}}}}}catch(e){}
-  window.__storeNow=function(){var h=F.reduce(function(o,k){o[k]=val(k);return o},{});try{localStorage.setItem('vc_addr',JSON.stringify(h))}catch(e){}
-    if(!sb||!u)return Promise.resolve('local');var cj=Object.assign({},pcj,{home:h});pcj=cj;
+      ['co','addr','land','city','state','pin','map'].forEach(function(k){if(home[k]&&!d[k])d[k]=home[k]});
+      if(!d.name)d.name=home.name||pcj.name||pd.full_name||'';if(OF&&!d.co)d.co=pcj.business||'';if(!d.mob)d.mob=home.mob||pcj.mobile||pd.phone||'';if(!d.mob){try{var vd=await sb.from('studio_designs').select('content_json').eq('user_id',u.id).eq('product_type','visiting').order('updated_at',{ascending:false}).limit(1);var vf=(vd.data&&vd.data[0]&&vd.data[0].content_json&&vd.data[0].content_json.fields)||{};d.mob=String(vf.mobile||vf.whatsapp||'').replace(/\D/g,'').slice(-10)}catch(e2){}}}}}catch(e){}
+  window.__storeNow=function(){var h=F.reduce(function(o,k){o[k]=val(k);return o},{});try{localStorage.setItem(LSK,JSON.stringify(h))}catch(e){}
+    if(!sb||!u)return Promise.resolve('local');var cj=wk(pcj,h);pcj=cj;
     return sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(r){return r&&r.error?'err':'ok'},function(){return 'err'})};
-  var tmr=null;window.__saveHome=function(){if(!sb||!u)return;clearTimeout(tmr);tmr=setTimeout(function(){var h=F.reduce(function(o,k){o[k]=val(k);return o},{});var cj=Object.assign({},pcj,{home:h});pcj=cj;try{sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(){})}catch(e){}},1200)};
+  var tmr=null;window.__saveHome=function(){if(!sb||!u)return;clearTimeout(tmr);tmr=setTimeout(function(){var h=F.reduce(function(o,k){o[k]=val(k);return o},{});var cj=wk(pcj,h);pcj=cj;try{sb.from('studio_profiles').update({card_json:cj}).eq('id',u.id).then(function(){})}catch(e){}},1200)};
   F.forEach(function(k){if(d[k])$('a-'+k).value=d[k]});draw();
   if(/[?&]go=share/.test(location.search)){try{history.replaceState(null,'','/studio/address/')}catch(e){}if(val('addr'))setTimeout(function(){$('b-share').click()},300)}})();
 })();
