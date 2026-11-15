@@ -956,6 +956,7 @@ function locTile(){
     box.appendChild(r)});
   var ad2=mk('a','','➕ नई जगह जोड़ें / बदलें');ad2.href='/studio/places/';ad2.style.cssText='display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:600;font-size:14px';box.appendChild(ad2);
   foldBox(box,'📍 My saved locations',P.length?P.length+' जगह':'जोड़ें');box.firstChild.style.marginTop='0';box.firstChild.style.border='0';box.firstChild.style.background='transparent';box.firstChild.style.padding='2px 0'}
+function mapOk(m){m=String(m||'').trim();if(!m)return '';if(!/^https?:/i.test(m))m='https://'+m;try{var u=new URL(m);return u.hostname.indexOf('.')>0?u.href:''}catch(e){return ''}}
 function drawAddr(edit,k){
   k=k||'home';var OF=k==='office',IC=OF?'🏢':'🏠',NM=OF?'ऑफ़िस का पता':'घर का पता',box=$(OF?'c-addr2':'c-addr'),h=(ADH.cj&&ADH.cj[k])||{};box.textContent='';
   var top=mk('div','');top.style.cssText='display:flex;align-items:center;gap:10px';top.appendChild(mk('span','',IC)).style.fontSize='30px';
@@ -967,7 +968,7 @@ function drawAddr(edit,k){
     var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:12px';
     var s1=mk('a','','🖼 कार्ड भेजें');s1.href='/studio/address/';s1.onclick=function(e){e.preventDefault();openAd(k)};s1.style.cssText='flex:1.3;text-align:center;background:#d4141c;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600';
     var s2=mk('button','alt','✏️ बदलें');s2.type='button';s2.style.cssText='flex:1;margin:0';s2.onclick=function(){drawAddr(true,k)};
-    rw.appendChild(s1);rw.appendChild(s2);box.appendChild(rw);return}
+    rw.appendChild(s1);rw.appendChild(s2);if(h.map){var s3=mk('a','','📍');s3.href=h.map;s3.target='_blank';s3.rel='noopener';s3.setAttribute('aria-label','लोकेशन');s3.style.cssText='flex:none;text-align:center;border:1.5px solid #d4141c;border-radius:12px;padding:12px 14px;text-decoration:none;font-size:18px';rw.appendChild(s3)}box.appendChild(rw);return}
   var f=mk('div','');f.style.marginTop='10px';var P=k+'-';
   function fld(lbl,id,ph,area,mx,val){f.appendChild(mk('label','',lbl));var i=document.createElement(area?'textarea':'input');if(area)i.rows=2;i.id=id;i.placeholder=ph||'';i.maxLength=mx;i.value=val||'';f.appendChild(i);return i}
   if(OF)fld('कंपनी / ऑफ़िस का नाम',P+'ad-co','जैसे: SpyWell InfoTech',false,80,h.co);
@@ -975,11 +976,16 @@ function drawAddr(edit,k){
   fld('लैंडमार्क (खाली छोड़ सकते हैं)',P+'ad-l','जैसे: शिव मंदिर के सामने',false,80,h.land);
   fld('शहर',P+'ad-c','',false,40,h.city);fld('राज्य',P+'ad-s','',false,40,h.state);
   var pn=fld('पिन कोड',P+'ad-p','247121',false,6,h.pin);pn.setAttribute('inputmode','numeric');
+  f.appendChild(mk('label','','📍 गूगल मैप लोकेशन (खाली छोड़ सकते हैं)'));var mi=document.createElement('input');mi.id=P+'ad-m';mi.maxLength=300;mi.placeholder='मैप लिंक या नीचे बटन दबाएँ';mi.setAttribute('inputmode','url');mi.value=h.map||'';f.appendChild(mi);
+  var lb=mk('button','alt','📍 मेरी अभी की लोकेशन जोड़ें');lb.type='button';f.appendChild(lb);
+  lb.onclick=function(){if(!navigator.geolocation){er.textContent='इस फ़ोन में लोकेशन उपलब्ध नहीं है';return}lb.disabled=true;lb.textContent='लोकेशन ली जा रही है…';
+    navigator.geolocation.getCurrentPosition(function(p){lb.disabled=false;lb.textContent='✓ लोकेशन जुड़ गई · फिर से लें';mi.value='https://www.google.com/maps?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);er.textContent=''},
+      function(){lb.disabled=false;lb.textContent='📍 मेरी अभी की लोकेशन जोड़ें';er.textContent='लोकेशन नहीं मिली। फ़ोन की लोकेशन चालू करके दोबारा कोशिश करें।'},{enableHighAccuracy:true,timeout:15000})};
   var er=mk('div','err');f.appendChild(er);
   var sv=mk('button','','💾 '+NM+' सेव करें');sv.type='button';
   sv.onclick=async function(){er.textContent='';var a=$(P+'ad-a').value.trim(),pin=$(P+'ad-p').value.trim();
     if(OF&&!$(P+'ad-co').value.trim()){er.textContent='कंपनी का नाम लिखें';return}if(!a){er.textContent=NM+' लिखें';return}if(pin&&!/^[0-9]{6}$/.test(pin)){er.textContent='पिन कोड 6 अंकों का होना चाहिए';return}
-    sv.disabled=true;var home={co:OF?$(P+'ad-co').value.trim():undefined,name:h.name||ADH.name,mob:h.mob||ADH.mob,addr:a,land:$(P+'ad-l').value.trim(),city:$(P+'ad-c').value.trim(),state:$(P+'ad-s').value.trim(),pin:pin,map:h.map||''};
+    sv.disabled=true;var home={co:OF?$(P+'ad-co').value.trim():undefined,name:h.name||ADH.name,mob:h.mob||ADH.mob,addr:a,land:$(P+'ad-l').value.trim(),city:$(P+'ad-c').value.trim(),state:$(P+'ad-s').value.trim(),pin:pin,map:mapOk($(P+'ad-m').value)};
     var cur=await sb.from('studio_profiles').select('card_json').eq('id',ME.id).maybeSingle();var cj=Object.assign({},(cur.data&&cur.data.card_json)||{},(function(){var o={};o[k]=home;return o})());
     var r=await sb.from('studio_profiles').update({card_json:cj}).eq('id',ME.id);sv.disabled=false;
     if(r.error){er.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।';return}
