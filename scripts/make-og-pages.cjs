@@ -18,7 +18,7 @@ function page(kind, slug, d) {
     const dm = /^(\d{4})-(\d{2})-(\d{2})/.exec(f.date || ''), when = dm ? (+dm[3]) + ' ' + MON[+dm[2] - 1] + ' ' + dm[1] : '';
     title = clip(d.title || (f.heading && who ? f.heading.replace(/\s+/g, ' ').trim() + ' · ' + who : who) || f.heading || 'डिजिटल निमंत्रण', 90);
     desc = clip([when, f.venue, f.message || 'आप सपरिवार सादर आमंत्रित हैं।'].filter(Boolean).join(' · '), 160);
-    img = okImg(im.bg && im.bg.url) || okImg(im.photo && im.photo.url) || okImg(im.cover && im.cover.url);
+    img = okImg(im.couple && im.couple.url) || okImg(im.family && im.family.url) || okImg(im.bg && im.bg.url); // the person / couple first, then family, then background
   } else {
     const isWeb = kind === 'web', nm = f.name || f.business || d.title || 'डिजिटल कार्ड';
     if (isWeb) { // mini website: the shop / business name leads
