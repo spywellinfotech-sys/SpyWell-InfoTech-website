@@ -595,7 +595,7 @@ async function myHome(){
       c.style.cssText='flex:1;text-align:center;border-radius:12px;padding:7px 2px;font-size:12px;font-weight:700;background:'+(on?'#fff':'rgba(255,255,255,.18)')+';color:'+(on?'#7a0a10':'#fff');
       c.textContent=p[2]+' '+p[1];st.appendChild(c)});
     hero.appendChild(st);
-    var ec=mk('a','','✏️ कार्ड एडिट करें');ec.href='/studio/editor/?id='+x.id;ec.style.cssText='display:block;text-align:center;margin-top:10px;background:#fff;color:#7a0a10;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';hero.appendChild(ec);
+    var ec=mk('a','','✏️ एडिट करें');ec.href='/studio/editor/?id='+x.id;ec.style.cssText='display:block;text-align:center;margin-top:10px;background:#fff;color:#7a0a10;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';hero.appendChild(ec);
     box.appendChild(hero)})();
 
   if(x.status==='published'&&x.slug){var r2=mk('div','');r2.style.cssText='display:flex;gap:8px;margin-top:8px';var u=location.origin+'/v/'+x.slug;
@@ -621,7 +621,7 @@ async function myHome(){
     go.style.cssText='width:100%;margin:14px 0 0;background:#ffc21a;color:#0b3d5c;font-size:18px;font-weight:800;border:0;border-radius:14px;padding:14px 10px;box-shadow:0 4px 0 #c98d00';
     go.onclick=function(){if(pub)openVw(x.slug,'visiting',x.title,'w');else location.href='/studio/editor/?id='+x.id+'&tab=pub'};hero.appendChild(go);
     var r3=mk('div','');r3.style.cssText='display:flex;gap:8px;margin-top:10px';
-    var ed=mk('a','','✏️ वेबसाइट एडिट');ed.href='/studio/editor/?id='+x.id+'&tab=info';
+    var ed=mk('a','','✏️ एडिट करें');ed.href='/studio/editor/?id='+x.id+'&tab=info';
     ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d5c;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(ed);
     if(pub){var wl=location.origin+'/web/'+x.slug;var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent((x.title||'मेरी')+' की मिनी वेबसाइट: '+wl);wa.target='_blank';wa.rel='noopener';
       wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(wa)}
