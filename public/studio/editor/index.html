@@ -726,7 +726,7 @@ function pPub(p){
     var r=await sb.rpc('studio_slug_free',{p_slug:v,p_id:D.id});if(me!==seq)return;
     if(r.error){er.className='e';er.textContent='जाँच नहीं हो पाई, दोबारा कोशिश करें';return}
     if(r.data===true){ok=true;er.className='k';er.textContent='✓ यह लिंक उपलब्ध है'}else{er.className='e';er.textContent='यह नाम कोई और ले चुका है, दूसरा चुनें'}}
-  inp.oninput=function(){clearTimeout(tm);tm=setTimeout(check,400)};check();
+  inp.oninput=function(){clearTimeout(tm);tm=setTimeout(check,400)};(async function(){await check();if(!ok&&!D.slug&&D.product_type==='visiting'){var bz=slugify((C.fields&&C.fields.business)||''),mb=mobSlug();if(mb&&bz){inp.value=(mb+'-'+bz).slice(0,60).replace(/-+$/,'');check()}}})();
   var needs=R.isEmpty(D.product_type,C);
   if(needs){er.className='e';er.textContent='पहले कार्ड में कुछ जानकारी भरें।'}
   var PI=null;
