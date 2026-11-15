@@ -353,13 +353,14 @@
     return Promise.all([loadImg(phEl && phEl.src), loadImg(lgEl && lgEl.src)]).then(function (im) {
       var W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d');
       var FF = '"Hind","Noto Sans Devanagari",system-ui,sans-serif';
-      x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H); x.fillStyle = ac; x.fillRect(0, 0, W, 340);
+      var bz0 = f.business || f.name || '', bn0 = wrapText(x, bz0, 900, '700 60px ' + FF, 2).length, y0 = (im[1] ? 50 + 90 + 20 : 105), hh = Math.max(340, y0 + 60 + (bn0 - 1) * 68 + 24 + 142);
+      x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H); x.fillStyle = ac; x.fillRect(0, 0, W, hh);
       x.textAlign = 'center'; x.textBaseline = 'alphabetic';
       var y = (im[1] ? 50 : 105);
       if (im[1]) { var lh = 90, lw = Math.min(360, im[1].width * lh / im[1].height); x.drawImage(im[1], (W - lw) / 2, y, lw, lh); y += lh + 20; }
       x.fillStyle = fg;
       var biz = f.business || f.name || ''; var bl = wrapText(x, biz, 900, '700 60px ' + FF, 2); bl.forEach(function (l, i) { x.font = '700 60px ' + FF; x.fillText(l, W / 2, y + 60 + i * 68); });
-      var cx = W / 2, cy = 340, r = 130;
+      var cx = W / 2, cy = hh, r = 130;
       x.fillStyle = '#ffffff'; x.beginPath(); x.arc(cx, cy, r + 12, 0, Math.PI * 2); x.fill();
       if (im[0]) { x.save(); x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.clip(); var s = Math.max(2 * r / im[0].width, 2 * r / im[0].height); x.drawImage(im[0], cx - im[0].width * s / 2, cy - im[0].height * s / 2, im[0].width * s, im[0].height * s); x.restore(); }
       else { x.fillStyle = ac; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill(); x.fillStyle = fg; x.font = '700 120px ' + FF; x.fillText(String(f.name || f.business || '?').trim().charAt(0).toUpperCase(), cx, cy + 42); }
