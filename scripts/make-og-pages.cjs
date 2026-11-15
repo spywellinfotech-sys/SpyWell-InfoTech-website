@@ -13,8 +13,11 @@ function page(kind, slug, d) {
   const inv = d.product_type === 'invitation';
   let title, desc, img;
   if (inv) {
-    title = clip(d.title || [f.bride, f.groom].filter(Boolean).join(' संग ') || 'डिजिटल निमंत्रण', 90);
-    desc = clip(f.message || 'आप सपरिवार सादर आमंत्रित हैं।', 160);
+    const who = [f.bride, f.groom].filter(Boolean).join(' संग '); // birthday / puja etc. have only one name
+    const MON = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+    const dm = /^(\d{4})-(\d{2})-(\d{2})/.exec(f.date || ''), when = dm ? (+dm[3]) + ' ' + MON[+dm[2] - 1] + ' ' + dm[1] : '';
+    title = clip(d.title || (f.heading && who ? f.heading.replace(/\s+/g, ' ').trim() + ' · ' + who : who) || f.heading || 'डिजिटल निमंत्रण', 90);
+    desc = clip([when, f.venue, f.message || 'आप सपरिवार सादर आमंत्रित हैं।'].filter(Boolean).join(' · '), 160);
     img = okImg(im.bg && im.bg.url) || okImg(im.photo && im.photo.url) || okImg(im.cover && im.cover.url);
   } else {
     const isWeb = kind === 'web', nm = f.name || f.business || d.title || 'डिजिटल कार्ड';
