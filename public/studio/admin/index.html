@@ -395,7 +395,7 @@ async function svcTile(box,open){
   sv.onclick=async function(){var o={};for(var k in inputs){var t=inputs[k].value.trim();if(t==='')continue;var n=parseInt(t);if(!(n>=0)||String(n)!==t){m.textContent='सिर्फ़ पूरी संख्या लिखें।';return}o[k]=n}
     sv.disabled=true;m.textContent='सेव हो रहा है…';var e=await sb.rpc('studio_admin_set_prices',{p:o});sv.disabled=false;m.textContent=e.error?'सेव नहीं हुआ।':'✓ सेव हो गया। नई कीमत नई ख़रीद पर लगेगी।'};
   bd.appendChild(sv);bd.appendChild(m);
-  bd.appendChild(h('div',{style:'font-size:11px;opacity:.85;margin-top:6px',text:'अपग्रेड पर सिर्फ़ फ़र्क़ लगता है; समय ख़त्म होने पर छूट के दिन बाद लिंक बंद होता है और भुगतान करते ही फिर चालू। किसी एक टेम्पलेट की अलग कीमत "टेम्पलेट" टैब में उसी टेम्पलेट पर दबाकर बदलें।'})));
+  bd.appendChild(h('div',{style:'font-size:11px;opacity:.85;margin-top:6px',text:'अपग्रेड पर सिर्फ़ फ़र्क़ लगता है; समय ख़त्म होने पर छूट के दिन बाद लिंक बंद होता है और भुगतान करते ही फिर चालू। किसी एक टेम्पलेट की अलग कीमत "टेम्पलेट" टैब में उसी टेम्पलेट पर दबाकर बदलें।'}));
   var bx=h('div',{style:'margin-top:12px;color:#222'});bd.appendChild(bx);balPanel(bx)}
 async function tplView(){
   var wrap=h('div');body.appendChild(wrap);
