@@ -551,10 +551,17 @@
     if (em) row.appendChild(actA(link('', '✉️ ' + P('ईमेल', 'Email'), 'mailto:' + em), 'email'));
     if (row.children.length) bd.appendChild(row);
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save pf-save', '👤 ' + P('कॉन्टैक्ट सेव करें', 'Save Contact')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; bd.appendChild(sv0); }
-    function sec(h, node) { var b = el('div', 'pf-panel pf-sec'); b.appendChild(el('b', 'pf-sh', h)); b.appendChild(node); bd.appendChild(b); }
-    if (f.about) sec('🏢 ' + P('हमारे बारे में', 'About Us'), el('p', 'pf-about', f.about));
-    if (d.services.length) { var sw = el('div', 'sr-svs'); d.services.forEach(function (x) { sw.appendChild(el('span', 'sr-chip', svName(x))); }); sec('⚙️ ' + P('सेवाएँ', 'Our Services'), sw); }
-    if (mini) { var tm = link('pf-mini', '🌐 ' + P('मिनी वेबसाइट देखें', 'View Mini Website'), mini); bd.appendChild(actA(tm, 'miniweb')); }
+    var panel = el('div', 'pf-panel'); panel.hidden = true;
+    var tiles = el('div', 'pf-tiles'), cur = '';
+    function tile(ic, label, key, build) {
+      var t = el('button', 'pf-tile'); t.type = 'button'; t.appendChild(el('i', '', ic)); t.appendChild(el('span', '', label));
+      t.onclick = function () { if (cur === key) { cur = ''; panel.hidden = true; t.classList.remove('on'); return; } cur = key; panel.hidden = false; panel.textContent = ''; build(panel); Array.prototype.forEach.call(tiles.children, function (x) { x.classList.remove('on'); }); t.classList.add('on'); };
+      tiles.appendChild(t);
+    }
+    if (f.about) tile('🏢', P('हमारे बारे में', 'About Us'), 'a', function (pn) { pn.appendChild(el('p', 'pf-about', f.about)); });
+    if (d.services.length) tile('⚙️', P('सेवाएँ', 'Our Services'), 's', function (pn) { var w = el('div', 'sr-svs'); d.services.forEach(function (x) { w.appendChild(el('span', 'sr-chip', svName(x))); }); pn.appendChild(w); });
+    if (mini) { var tm = link('pf-tile', '', mini); tm.appendChild(el('i', '', '🌐')); tm.appendChild(el('span', '', P('मिनी वेबसाइट', 'Mini Website'))); tiles.appendChild(actA(tm, 'miniweb')); }
+    if (tiles.children.length) { bd.appendChild(tiles); bd.appendChild(panel); }
     var ib = el('div', 'pf-info'), ad2 = [f.address, f.city, f.state].filter(Boolean).join(', '), wb2 = web || mini;
     [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(el('span', '', q[1])); ib.appendChild(rw); });
     if (ib.children.length) bd.appendChild(ib);
@@ -563,8 +570,9 @@
     if (soc.children.length) { bd.appendChild(el('div', 'pf-fu', P('फ़ॉलो करें', 'Follow Us'))); bd.appendChild(soc); }
     var q2 = el('div', 'pf-2');
     var qmsg = encodeURIComponent((f.business || f.name || '') + ': ' + P('कृपया कोटेशन भेजें', 'Please send a quote'));
-    var qf = el('div', 'pf-panel pf-qf'); qf.appendChild(el('b', 'pf-sh', '📝 ' + P('कोटेशन माँगें', 'Get Quote')));
+    var qf = el('div', 'pf-panel pf-qf'); qf.hidden = true;
     if (typeof opts.onEnquiry === 'function') {
+      var qb = el('button', 'pf-q', '📝 ' + P('कोटेशन', 'Get Quote')); qb.type = 'button';
       var qn = el('input', 'sr-eq'), qm = el('input', 'sr-eq'), qx = el('textarea', 'sr-eq'), qs = el('button', 'sr-save', P('📩 कोटेशन माँगें', '📩 Request Quote')), qr = el('div', 'sr-eqm');
       qn.placeholder = P('आपका नाम', 'Your name'); qn.maxLength = 60; qm.placeholder = P('मोबाइल नंबर', 'Mobile number'); qm.maxLength = 12; qm.type = 'tel'; qm.inputMode = 'numeric'; qx.placeholder = P('आपको क्या चाहिए?', 'What do you need?'); qx.maxLength = 500; qx.rows = 3; qs.type = 'button';
       qs.onclick = function () {
@@ -578,14 +586,17 @@
         }, function () { qs.disabled = false; qr.textContent = P('अभी नहीं भेजा जा सका।', 'Could not send now.'); });
       };
       [qn, qm, qx, qs, qr].forEach(function (x) { qf.appendChild(x); });
+      qb.onclick = function () { qf.hidden = !qf.hidden; };
+      q2.appendChild(qb);
     }
     var mpu = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address, f.city].filter(Boolean).join(', '))) : '';
     if (mpu) q2.appendChild(actA(link('pf-chat', '📍 ' + P('लोकेशन', 'Location'), mpu), 'location'));
     if (q2.children.length) bd.appendChild(q2);
     bd.appendChild(qf);
-    var shp = el('div', 'pf-sharep'), acts = el('div', 'sr-act');
-    bd.appendChild(el('div', 'pf-fu', '🔗 ' + P('विज़िटिंग कार्ड शेयर करें', 'Share Visiting Card')));
-    acts.appendChild(saveCardBtn(root, f)); shp.appendChild(acts); shp.appendChild(shareBar(f, opts, root)); bd.appendChild(shp);
+    var shp = el('div', 'pf-sharep'); shp.hidden = true; var built = false;
+    var shb = el('button', 'pf-share', '🔗 ' + P('विज़िटिंग कार्ड शेयर करें', 'Share Visiting Card')); shb.type = 'button';
+    shb.onclick = function () { if (!built) { built = true; var acts = el('div', 'sr-act'); acts.appendChild(saveCardBtn(root, f)); shp.appendChild(acts); shp.appendChild(shareBar(f, opts, root)); } shp.hidden = !shp.hidden; };
+    bd.appendChild(shb); bd.appendChild(shp);
   }
   function buildVisiting(root, d, opts) {
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd'), biz = / l-biz\b/.test(' ' + root.className), pf = / bzv-7\b/.test(' ' + root.className);
@@ -930,7 +941,7 @@
     '.pf-panel{border:1px solid var(--ac);border-radius:14px;padding:.7em .9em;text-align:left;font-size:.92em}.pf-panel[hidden]{display:none}.pf-about{white-space:pre-line;margin:0}' +
     '.pf-soc{display:flex;justify-content:center;gap:.6em;margin:.3em 0}.pf-sc{width:1.9em;height:1.9em;border-radius:.5em;display:flex;align-items:center;justify-content:center;color:#fff!important;font-weight:800;text-decoration:none}' +
     '.pf-2{display:flex;gap:.5em;margin:.5em 0}.pf-q,.pf-chat{flex:1;display:flex;align-items:center;justify-content:center;border-radius:10px;padding:.5em .3em;font-size:.88em;font-weight:800;text-decoration:none;border:2px solid var(--ac)}.pf-q{background:#fff;color:#10213f!important}.pf-chat{background:#1a73e8;color:#fff!important;border-color:#fff}' +
-    '.pf-share{width:100%;background:linear-gradient(90deg,#f59a1a,#d4141c);color:#fff;border:0;border-radius:12px;padding:.6em;font:inherit;font-size:.92em;font-weight:800;cursor:pointer;margin:.2em 0 .5em}.pf-qf .sr-eq{display:block;width:100%;box-sizing:border-box;margin:.3em 0}.pf-sec,.pf-qf{margin:.4em 0}.pf-qf .sr-save{width:100%;background:var(--ac);color:#10213f!important;border:0;border-radius:10px;padding:.55em;font:inherit;font-weight:800;margin:.2em 0}.pf-sec .sr-svs{margin:0;padding:0}.pf-qf .sr-eq{padding:.45em .6em}.pf-qf textarea{height:4em}.pf-sh{display:block;margin-bottom:.3em}.pf-mini{display:flex;justify-content:center;border:2px solid var(--ac);border-radius:10px;padding:.45em;margin:.4em 0;color:var(--fg)!important;text-decoration:none;font-weight:700;font-size:.9em}.pf-sharep{margin:.3em 0}.pf-sharep[hidden]{display:none}' +
+    '.pf-share{width:100%;background:linear-gradient(90deg,#f59a1a,#d4141c);color:#fff;border:0;border-radius:12px;padding:.6em;font:inherit;font-size:.92em;font-weight:800;cursor:pointer;margin:.2em 0 .5em}.pf-qf .sr-eq{display:block;width:100%;box-sizing:border-box;margin:.3em 0}.pf-qf[hidden]{display:none}.pf-sharep{margin:.3em 0}.pf-sharep[hidden]{display:none}' +
     '.bzv-7 .bd{margin-top:6px;padding-top:0;background:transparent}.bzv-7 .sr-act a{border-radius:12px}.pf-info{border:1px solid var(--ac);border-radius:16px;padding:.2em .8em;margin:.5em 0;text-align:left}.pf-ir{display:flex;gap:.7em;align-items:center;margin:.3em 0;font-size:.85em;word-break:break-all}.pf-ir a{color:inherit!important;text-decoration:none}.pf-fu{text-align:center;font-weight:700;margin-top:.5em;font-size:.9em}' +
     '.sr-vc.l-biz .bd{margin-top:8px;border-radius:0;background:transparent}.sr-vc.l-biz .bd.noph{margin-top:8px}' +
     '.ws-grid:has(.ws-sv){grid-template-columns:1fr;gap:.45em}.ws-sv{display:grid!important;grid-template-columns:2.2em 1fr;column-gap:.7em;align-items:center;text-align:left!important;padding:.55em 1.6em .55em .8em!important}.ws-sv .ws-ic{grid-row:1/3;width:2.2em;height:2.2em;margin:0;font-size:.95em}.ws-sv b{font-size:.98em}.ws-sv .ws-sd{margin-top:.1em;font-size:.82em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.ws-sv .ws-no{top:.35em;right:.6em}' +
