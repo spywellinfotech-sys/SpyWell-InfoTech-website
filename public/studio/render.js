@@ -589,7 +589,7 @@
     if (f.dealsin && !pf) bd.appendChild(el('div', 'sr-deal', 'Deals in: ' + f.dealsin));
     if (f.about) bd.appendChild(el('div', 'sr-msg', f.about));
     var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), mini = V.url(f.miniweb), act = el('div', 'sr-act'); if (mini) web = '';
-    if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
+    if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call'));
     if (wa) act.appendChild(actA(link('', 'WhatsApp', 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('💬 मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (em) act.appendChild(actA(link('', T('ईमेल'), 'mailto:' + em), 'email'));
@@ -766,7 +766,7 @@
     if (f.business || f.name) hin.appendChild(el('h1', 'sr-nm', f.business || f.name));
     if (f.tagline) hin.appendChild(el('p', 'ws-tag', f.tagline));
     var act = el('div', 'sr-act ws-act');
-    if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
+    if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call'));
     if (wa) act.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (mapUrl) act.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map'));
@@ -796,7 +796,7 @@
     tools.appendChild(saveCardBtn(root, f));
     ci.appendChild(tools);
     drop(ci);
-    if (tel || wa || mapUrl) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); if (V.tel(f.sms)) ca.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms')); if (mapUrl) ca.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
+    if (tel || wa || mapUrl) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); if (V.tel(f.sms)) ca.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms')); if (mapUrl) ca.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
     if (typeof opts.onEnquiry === 'function') {
       var es = el('div', 'ws-sec'), ei = el('div', 'ws-in'); ei.appendChild(el('h2', '', T('पूछताछ भेजें'))); ei.appendChild(el('div', 'ws-bar'));
       var en = el('input', 'sr-eq'), em = el('input', 'sr-eq'), ex = el('textarea', 'sr-eq'), eb = el('button', 'sr-save', T('📩 पूछताछ भेजें')), er = el('div', 'sr-eqm'), ec = el('input', 'sr-eq'), lb = el('button', 'sr-save', T('📍 मेरी लोकेशन जोड़ें')), locUrl = '';
