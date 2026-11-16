@@ -328,7 +328,7 @@ function filterBar(){
   if(SVD)fill();else sb.rpc('studio_admin_services').then(function(r){SVD=r.error?[]:(r.data||[]);fill();if(SVF!=='all')window.__draw()});
   function wide(ic,t,sub,bg,fn){var d=h('div',{style:'cursor:pointer;border-radius:16px;padding:14px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.18);display:flex;align-items:center;gap:12px;margin-top:10px;background:linear-gradient(135deg,'+bg+')'},[h('div',{text:ic,style:'font-size:28px'}),h('div',{style:'flex:1'},[h('b',{text:t,style:'display:block;font-size:16px'}),h('span',{text:sub,style:'font-size:13px;opacity:.92'})])]);d.onclick=fn;tabs.appendChild(d)}
   wide('🎨','टेम्पलेट','सारे टेम्पलेट चालू/बंद, नाम, क्रम और कीमत','#be185d,#f472b6',function(){tab='tpl';sel=null;window.__draw()});
-  wide('📣','प्रमोशन','लैंडिंग पेज · फ़ोटो · वीडियो · वीडियो URL','#c2410c,#fb923c',function(){tab='promo';sel=null;window.__draw()})}
+  wide('📣','प्रमोशन','लैंडिंग पेज · फ़ोटो · वीडियो · वीडियो URL','#c2410c,#fb923c',function(){tab='promo';sel=null;window.__draw()});tabs.appendChild(gr);gr.style.marginTop='10px'}
 function custView(){
   var q=h('input',{type:'search',placeholder:'नाम, फ़ोन या ईमेल से खोजें'}),list=h('div'),tm;body.appendChild(q);body.appendChild(list);compact(list,true);
   async function load(){list.textContent='';list.appendChild(h('div',{class:'msg',text:'लोड हो रहा है…'}));
