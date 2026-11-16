@@ -137,6 +137,11 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-enq" hidden style="padding:10px 14px"></div>
 <div class="card" id="c-my" hidden></div>
+<div class="card" id="c-sendaddr"><div class="sa-h" id="sa-h" style="cursor:pointer" onclick="var b=document.getElementById('sa-body');b.hidden=!b.hidden;document.getElementById('sa-sum').hidden=!b.hidden;document.getElementById('sa-ar').textContent=b.hidden?'▾':'▴'"><span class="sa-i">📨</span><div style="flex:1;min-width:0"><b>Address cards</b><span>घर और ऑफ़िस का पता कार्ड की तरह किसी को भी भेजें</span></div><span class="sa-n" id="sa-n"></span><span id="sa-ar" style="font-size:16px">▾</span></div>
+<div id="sa-sum" onclick="document.getElementById('sa-h').click()"></div>
+<div id="sa-body" hidden><div class="card" id="c-addr"></div>
+<div class="card" id="c-addr2"></div></div></div>
+<div class="card" id="c-loc" style="padding:10px 14px"></div>
 <div class="card" id="c-inv" hidden></div>
 
 <div class="card" id="c-new">
@@ -155,11 +160,6 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <div class="minis" id="pk-grid"></div>
 <button type="button" class="alt" id="pk-back">वापस</button>
 </div>
-<div class="card" id="c-sendaddr"><div class="sa-h" id="sa-h" style="cursor:pointer" onclick="var b=document.getElementById('sa-body');b.hidden=!b.hidden;document.getElementById('sa-sum').hidden=!b.hidden;document.getElementById('sa-ar').textContent=b.hidden?'▾':'▴'"><span class="sa-i">📨</span><div style="flex:1;min-width:0"><b>Address cards</b><span>घर और ऑफ़िस का पता कार्ड की तरह किसी को भी भेजें</span></div><span class="sa-n" id="sa-n"></span><span id="sa-ar" style="font-size:16px">▾</span></div>
-<div id="sa-sum" onclick="document.getElementById('sa-h').click()"></div>
-<div id="sa-body" hidden><div class="card" id="c-addr"></div>
-<div class="card" id="c-addr2"></div></div></div>
-<div class="card" id="c-loc" style="padding:10px 14px"></div>
 <div class="card" id="c-ins" hidden style="padding:10px 14px"></div>
 <div class="card" id="c-insinv" hidden style="padding:10px 14px"></div>
 <div class="card" id="c-ref" hidden></div>
