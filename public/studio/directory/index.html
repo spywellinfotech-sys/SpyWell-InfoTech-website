@@ -22,7 +22,7 @@
 .sp .lk{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.sp .lk a{flex:none;text-decoration:none;font-size:13px;font-weight:700;border:1px solid #d4141c;color:#d4141c;border-radius:99px;padding:6px 11px;background:#fff}.sp .lk a.p{background:#d4141c;color:#fff}.sp .lk a.g{background:#e7f8ee;border-color:#1ea952;color:#0b6b32}
 </style></head><body>
 <div class="top" id="tp"><img src="/studio/vicard-icon.png" alt=""><b>बिज़नेस डायरेक्टरी</b><a href="/studio/">← ऐप</a></div>
-<div class="w"><div id="m" class="k" style="padding:30px 0;text-align:center">लोड हो रहा है…</div><div id="adm"></div><div id="bar" hidden>
+<div class="w"><div id="bl" hidden style="background:linear-gradient(135deg,#fff4c2,#fff);border:1.5px solid #f0d98a;border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:28px">🎯</span><div><b style="display:block">Buy Leads</b><span class="k">ग्राहकों की ज़रूरतें देखें, या अपनी ज़रूरत डालें</span></div></div><a href="/studio/leads/" target="_top" style="display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;border-radius:10px;padding:11px 6px;text-decoration:none;font-weight:700">🎯 Buy Leads खोलें</a></div><div id="m" class="k" style="padding:30px 0;text-align:center">लोड हो रहा है…</div><div id="adm"></div><div id="bar" hidden>
 <div style="display:flex;gap:8px"><input id="q" type="search" placeholder="🔍 नाम, दुकान, व्यवसाय या शहर से खोजें"><button id="fb" type="button" style="width:auto;flex:none;padding:11px 14px;font-weight:700;color:#b30e15">🎚 फ़िल्टर</button></div>
 <input type="hidden" id="ind"><input type="hidden" id="city">
 <div id="fp" hidden><div class="k">📍 शहर</div><div class="chips" id="cch"></div><div class="k" style="margin-top:8px">🏷 व्यवसाय</div><div class="chips" id="ich"></div></div>
@@ -114,6 +114,7 @@ async function admin(){
 async function init(){
   var si=await sb.from('studio_industries').select('id,name_hi,sort').order('sort',{ascending:true});INDS=si.data||[];drawChips();
   $('q').oninput=function(){clearTimeout(TM);TM=setTimeout(function(){go(false)},350)};$('fb').onclick=function(){$('fp').hidden=!$('fp').hidden;$('fb').style.background=$('fp').hidden?'#fff':'#fff1f0'};$('more').onclick=function(){go(true)};
+  try{var lo=await sb.rpc('studio_lead_ok_me');$('bl').hidden=!(lo&&lo.data===true)}catch(e){}
   await loadSaved();await go(false);sponsored();admin()}
 init();
 })();

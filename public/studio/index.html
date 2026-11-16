@@ -222,7 +222,7 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 </div>
 
 <div class="wrap" style="padding:0 0 10px;text-align:center"><a href="/dyname/" style="display:inline-block;font-size:13px;color:var(--wine);font-weight:700;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 14px">✨ DynaMe क्या है? →</a>
-<div class="card" id="c-leads" hidden><div style="display:flex;align-items:center;gap:10px"><span style="font-size:30px">🎯</span><div><b style="display:block">Buy Leads</b><span class="k">ग्राहकों की ज़रूरतें देखें, या अपनी ज़रूरत डालें</span></div></div><a href="/studio/leads/" style="display:block;text-align:center;margin-top:12px;background:#d4141c;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700">🎯 Buy Leads खोलें</a></div>
+
 <div class="k" style="margin:10px 0 0;font-size:11px;line-height:1.8"><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/terms/">Terms</a> · <a href="/dyname/disclaimer/">Disclaimer</a> · <a href="/dyname/refund/">Refund</a></div></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -854,7 +854,7 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[dc[0],'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-ins'),'home'],[$('c-insinv'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-leads'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[dc[0],'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-ins'),'home'],[$('c-insinv'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'home'],[$('c-pick'),'home'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden))t='home';
   if(t==='dir'){var cd=$('c-dir');if(!cd.firstChild){var fr=document.createElement('iframe');fr.src='/studio/directory/?embed=1';fr.style.cssText='width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);border:0;display:block';cd.appendChild(fr)}}
@@ -880,7 +880,6 @@ async function dash(user){
   $('d-name').textContent=prof.full_name||'ग्राहक';try{var _fn=(prof.full_name||'').trim().split(/\s+/)[0];$('hl-n').textContent=_fn?', '+_fn+'!':'!'}catch(e){}
   PFP=prof;
   var a=await sb.rpc('studio_is_admin');
-  try{var lo=await sb.rpc('studio_lead_ok_me');var lc=$('c-leads');if(lc)lc.hidden=!(lo&&lo.data===true)}catch(e){}
   $('d-admin').hidden=true;
   try{var _ps=$('v-prof');var _ob=document.getElementById('adm-sw');if(_ob)_ob.remove();
     if(a&&a.data===true&&_ps){var sw=document.createElement('div');sw.id='adm-sw';sw.style.cssText='margin:0 0 12px;padding:10px;border-radius:14px;background:#fff1f0;border:1px solid #f0b4b0';
