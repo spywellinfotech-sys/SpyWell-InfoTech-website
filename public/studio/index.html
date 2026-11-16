@@ -948,16 +948,20 @@ function locTile(){
   var IC={'घर':'🏠','दुकान':'🏪','ऑफ़िस':'🏢','फ़ैक्टरी':'🏭','साइट':'🚧','गोदाम':'📦'};
   function txt(p,promo){var t=(IC[p.label]||'📍')+' '+p.label+(p.name?' · '+p.name:'')+'\n';if(p.addr)t+='पता: '+p.addr+'\n';if(p.mob)t+='मोबाइल: +91 '+p.mob+'\n';if(p.map)t+='📍 लोकेशन (दबाते ही रास्ता खुलेगा): '+p.map+'\n';return t+'\n📲 अपना डिजिटल कार्ड और लोकेशन कार्ड मुफ़्त बनाएँ: '+promo}
   var PROMO='https://spywell.in/studio/';sb.rpc('studio_ref_me').then(function(r){if(r&&r.data&&r.data.enabled&&r.data.code)PROMO='https://spywell.in/studio/?ref='+r.data.code},function(){});
-  if(!P.length){var e=mk('div','k','अभी कोई जगह सेव नहीं है। दुकान, ऑफ़िस, फ़ैक्टरी, साइट की लोकेशन सेव करें और कहीं से भी भेजें।');box.appendChild(e)}
-  P.forEach(function(p){var r=mk('div','');r.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line)';
+  if(!P.length){var e=mk('div','','अभी कोई जगह सेव नहीं है। दुकान, ऑफ़िस, फ़ैक्टरी, साइट की लोकेशन सेव करें और कहीं से भी भेजें।');e.style.cssText='color:#fff;font-size:14px;margin-top:10px;opacity:.95';box.appendChild(e)}
+  P.forEach(function(p){var r=mk('div','');r.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 12px;margin-top:8px;background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.18);color:#14203d';
     var n=mk('div','');n.style.cssText='flex:1;min-width:0';var b=mk('b','',(IC[p.label]||'📍')+' '+p.label+(p.name?' · '+p.name:''));b.style.cssText='display:block;font-size:15px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';n.appendChild(b);
     if(p.addr){var ad=mk('span','k',p.addr);ad.style.cssText='display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin:0';n.appendChild(ad)}r.appendChild(n);
     var w=mk('a','','💬 भेजें');w.href='#';w.style.cssText='flex:none;background:#1ea952;color:#fff;border-radius:10px;padding:8px 12px;text-decoration:none;font-weight:700;font-size:14px';
     w.onclick=function(ev){ev.preventDefault();window.open('https://wa.me/?text='+encodeURIComponent(txt(p,PROMO)),'_blank','noopener')};r.appendChild(w);
     if(p.map){var mp=mk('a','','📍');mp.href=p.map;mp.target='_blank';mp.rel='noopener';mp.style.cssText='flex:none;border:1px solid var(--line);border-radius:10px;padding:7px 10px;text-decoration:none;font-size:15px';r.appendChild(mp)}
     box.appendChild(r)});
-  var ad2=mk('a','','➕ नई जगह जोड़ें / बदलें');ad2.href='/studio/places/';ad2.style.cssText='display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:600;font-size:14px';box.appendChild(ad2);
-  foldBox(box,'📍 My saved locations',P.length?P.length+' जगह':'जोड़ें');box.firstChild.style.marginTop='0';box.firstChild.style.border='0';box.firstChild.style.background='transparent';box.firstChild.style.padding='2px 0'}
+  var ad2=mk('a','','➕ नई जगह जोड़ें / बदलें');ad2.href='/studio/places/';ad2.style.cssText='display:block;text-align:center;margin-top:12px;background:#ffc21a;color:#3a2a00;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:800;font-size:15px;box-shadow:0 3px 0 #c98d00';box.appendChild(ad2);
+  foldBox(box,'📍 My saved locations',P.length?P.length+' जगह':'जोड़ें');var h0=box.firstChild;h0.style.cssText='display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;padding:4px 0;border:0;background:transparent;font-weight:800;color:#fff;font-size:18px';
+  h0.children[1].style.cssText='font-size:12px;font-weight:700;color:#0a5c4a;background:#fff;border-radius:99px;padding:3px 10px';h0.children[2].style.cssText='font-size:13px;color:#fff';
+  var sub=mk('div','','📌 दुकान · ऑफ़िस · साइट की लोकेशन सेव करें और एक दबाव में भेजें');sub.style.cssText='font-size:13px;color:#fff;opacity:.92;margin-top:2px';box.insertBefore(sub,h0.nextSibling);
+  box.style.cssText+=';background:linear-gradient(135deg,#0a5c4a,#14b87a);border:0;color:#fff;box-shadow:0 8px 20px rgba(20,184,122,.35);position:relative;overflow:hidden';
+  var wm=mk('div','','📍');wm.style.cssText='position:absolute;right:-6px;bottom:-14px;font-size:84px;opacity:.12;pointer-events:none';box.appendChild(wm)}
 function pkgOK(){var en=false,ok=false;Object.keys(SUBI).forEach(function(id){var i=SUBI[id];if(i&&i.enabled)en=true});if(!en)return true;
   LIST.forEach(function(x){var i=SUBI[x.id];if(x.product_type==='visiting'&&i&&(i.plan==='site'||i.plan==='domain'))ok=true});return ok}
 function pkgLock(box,ic,title,sub){box.textContent='';box.hidden=false;var t=mk('div','');t.style.cssText='display:flex;align-items:center;gap:10px';t.appendChild(mk('span','',ic)).style.fontSize='30px';var tt=mk('div','');tt.appendChild(mk('b','',title)).style.display='block';tt.appendChild(mk('span','k',sub));t.appendChild(tt);box.appendChild(t);
