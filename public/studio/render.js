@@ -696,12 +696,12 @@
     if (wa) act.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (mapUrl) act.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map'));
-    if (act.children.length) hin.appendChild(act);
+    if (f.about) { var hab = el('p', 'ws-tag ws-habout', f.about.length > 200 ? f.about.slice(0, 197) + '…' : f.about); hin.appendChild(hab); }
     hero.appendChild(hin); hero.appendChild(waveEl()); var smo = t.motif ? txt(t.motif, 8) : ''; if (smo) hero.insertBefore(motifStrip(smo), hero.firstChild); root.appendChild(hero);
     function sec(title) { var x = el('div', 'ws-sec'), i = el('div', 'ws-in'); i.appendChild(el('h2', '', title)); i.appendChild(el('div', 'ws-bar')); x.appendChild(i); root.appendChild(x); return i; }
     var yr = /^\d{4}$/.test(f.since || '') ? f.since : '';
     if (yr || f.hours || d.services.length) { var stt = el('div', 'ws-stats'); if (yr) { var a1 = el('div', 'ws-stat'); a1.appendChild(el('i', 'ws-si', '🏆')); a1.appendChild(el('b', '', String(Math.max(1, new Date().getFullYear() - (+yr)) ) + '+')); a1.appendChild(el('small', '', T('साल का अनुभव'))); stt.appendChild(a1); } if (d.services.length) { var a2 = el('div', 'ws-stat'); a2.appendChild(el('i', 'ws-si', '🧰')); a2.appendChild(el('b', '', String(d.services.length))); a2.appendChild(el('small', '', T('सेवाएँ'))); stt.appendChild(a2); } if (f.hours) { var a3 = el('div', 'ws-stat'); a3.appendChild(el('i', 'ws-si', '🕘')); a3.appendChild(el('b', 'ws-hrs', T('खुलने का समय'))); a3.appendChild(el('small', '', f.hours)); stt.appendChild(a3); } root.appendChild(stt); }
-    if (f.about || f.dealsin) { var abx = sec(T('हमारे बारे में')); if (f.about) abx.appendChild(el('p', 'ws-about', f.about)); if (f.dealsin) abx.appendChild(el('p', 'ws-about sr-deal', 'Deals in: ' + f.dealsin)); }
+    if (f.dealsin) { var abx = sec(T('हमारे बारे में')); if (f.dealsin) abx.appendChild(el('p', 'ws-about sr-deal', 'Deals in: ' + f.dealsin)); }
     if (d.services.length) { var si = sec(T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { var c = el('div', 'ws-card ws-sv'), p2 = svParts(x); c.appendChild(el('div', 'ws-ic', svIcon(p2[0], g.children.length))); c.appendChild(el('em', 'ws-no', String(g.children.length + 1))); c.appendChild(el('b', '', p2[0])); if (p2[1]) c.appendChild(el('p', 'ws-sd', p2[1])); g.appendChild(c); }); si.appendChild(g); }
     if (d.highlights.length) { var hi = sec(T('हमें क्यों चुनें')), hg = el('div', 'ws-grid ws-hl'); d.highlights.forEach(function (x) { var c = el('div', 'ws-card ws-hi'); c.appendChild(el('div', 'ws-ic ws-ic2', '✔')); c.appendChild(el('span', '', x)); hg.appendChild(c); }); hi.appendChild(hg); }
     var gk = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6'].filter(function (k) { return d.images[k]; });
@@ -720,7 +720,7 @@
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('📇 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; tools.appendChild(sv0); }
     tools.appendChild(saveCardBtn(root, f));
     ci.appendChild(tools);
-    if (tel || wa) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
+    if (tel || wa || mapUrl) { var cb = el('div', 'ws-cta'), cin = el('div', 'ws-in'); cin.appendChild(el('h2', '', T('आज ही संपर्क करें'))); var ca = el('div', 'sr-act ws-act'); if (tel) ca.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call')); if (wa) ca.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp')); if (V.tel(f.sms)) ca.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms')); if (mapUrl) ca.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map')); cin.appendChild(ca); cb.appendChild(cin); root.appendChild(cb); }
     if (typeof opts.onEnquiry === 'function') {
       var es = el('div', 'ws-sec'), ei = el('div', 'ws-in'); ei.appendChild(el('h2', '', T('पूछताछ भेजें'))); ei.appendChild(el('div', 'ws-bar'));
       var en = el('input', 'sr-eq'), em = el('input', 'sr-eq'), ex = el('textarea', 'sr-eq'), eb = el('button', 'sr-save', T('📩 पूछताछ भेजें')), er = el('div', 'sr-eqm'), ec = el('input', 'sr-eq'), lb = el('button', 'sr-save', T('📍 मेरी लोकेशन जोड़ें')), locUrl = '';
@@ -799,12 +799,13 @@
     '.sr-site{max-width:820px;margin:0 auto;min-height:100vh;text-align:center}.ws-in{padding:0 1.2em}' +
     '.ws-nav{display:flex;justify-content:space-between;align-items:center;padding:.8em 1.2em;background:var(--bg);border-bottom:1px solid var(--soft);position:sticky;top:0;z-index:3}' +
     '.ws-navbtn{background:var(--ac);color:var(--bg)!important;text-decoration:none;padding:.4em .9em;border-radius:2em;font-size:.85em;font-weight:600}' +
+    '.ws-owner{display:flex;flex-direction:column;align-items:center;text-align:center}.ws-owner .ph{display:block;border-radius:50%;object-fit:cover;border:3px solid var(--ac);margin:0 auto .6em;max-width:150px;max-height:150px}.ws-owner .sr-nm{font-family:var(--nf);font-size:1.25em;font-weight:700}' +
     '.ws-hero{background:var(--ac);color:var(--bg);padding:2.2em 0 2.6em}.ws-hero .ph{border-radius:50%;object-fit:cover;border:4px solid var(--bg);margin:0 auto .7em}' +
     '.ws-hero .sr-nm{font-family:var(--nf);font-size:2em;font-weight:700}.ws-hero .sr-des{opacity:.85}.ws-hero .sr-lg{margin:0 auto .6em;object-fit:contain}' +
     '.ws-hero .sr-act{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}' +
     '.ws-hero .sr-act a,.ws-hero .sr-act button{width:auto;margin:0;background:var(--bg);color:var(--ac)!important}' +
     '.ws-hero .sr-act a.sr-call,.ws-cta .ws-act a.sr-call{flex:1 1 100%;max-width:none;width:100%;box-sizing:border-box;font-size:1.05em;padding:.85em 1em;white-space:nowrap}' +
-    '.ws-sec{padding:1.8em 0;border-bottom:1px solid var(--soft)}.ws-sec h2{font-family:var(--nf);font-size:1.35em;margin-bottom:.7em;color:var(--ac)}' +
+    '.ws-sec{padding:1.1em 0;border-bottom:1px solid var(--soft)}.ws-sec h2{font-family:var(--nf);font-size:1.35em;margin-bottom:.7em;color:var(--ac)}' +
     '.ws-about{max-width:34em;margin:0 auto;white-space:pre-line}.ws-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.7em}' +
     '.ws-card{background:var(--soft);border-radius:12px;padding:.9em;font-weight:600}.ws-card small{display:block;opacity:.65;font-weight:400;margin-bottom:.2em}' +
     '.ws-card a{text-decoration:none;word-break:break-all}' +
