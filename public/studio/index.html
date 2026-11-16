@@ -215,7 +215,8 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <div class="k" id="d-act" style="margin-top:8px"></div>
 </div>
 <div class="card" id="c-sub">
-<b>💳 मेरा सब्सक्रिप्शन</b>
+<div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('sub-body');q.hidden=!q.hidden;document.getElementById('sub-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">💳 मेरा सब्सक्रिप्शन</b><span id="sub-ar" style="font-size:16px">▾</span></div>
+<div id="sub-body" hidden>
 <div id="sub-list" style="margin-top:8px"><div class="k">लोड हो रहा है…</div></div>
 <div class="k" id="sub-cr" hidden style="margin-top:8px"></div>
 <div hidden style="margin-top:12px;border-top:1px dashed var(--line);padding-top:10px"><b>🔊 DynaMe Voice</b>
@@ -225,7 +226,7 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <select id="vo-rate" style="flex:1"><option value="0.8">धीमी</option><option value="1">सामान्य</option><option value="1.25">तेज़</option></select></div>
 <div style="display:flex;gap:8px;margin-top:8px"><button type="button" id="vo-say" style="flex:1">▶ अभी सुनें</button><button type="button" id="vo-stop" style="flex:1">⏹ रोकें</button></div>
 <div class="k" id="vo-msg"></div></div>
-</div>
+</div></div>
 <button type="button" id="out" hidden style="margin-top:4px;width:100%;background:#fff;color:#b3261e;border:1.5px solid #b3261e">🚪 लॉगआउट</button>
 </div>
 
