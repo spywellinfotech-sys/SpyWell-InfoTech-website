@@ -18,7 +18,7 @@ input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);fo
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
-var app=document.getElementById('app');if(/[?&]embed=1/.test(location.search))document.body.classList.add('emb');
+var app=document.getElementById('app');if(/[?&]embed=1/.test(location.search))document.body.classList.add('emb');if(/[?&]embed=1/.test(location.search)&&window.parent!==window){var _lh=0;function _ph(){var h=document.documentElement.scrollHeight;if(Math.abs(h-_lh)>2){_lh=h;window.parent.postMessage({t:'adm-h',h:h},location.origin)}}try{new ResizeObserver(_ph).observe(document.body)}catch(e){}setInterval(_ph,700);_ph()}
 function h(t,p,k){var e=document.createElement(t);for(var a in p||{}){if(a==='class')e.className=p[a];else if(a==='text')e.textContent=p[a];else if(a.slice(0,2)==='on')e[a]=p[a];else if(p[a]!=null)e.setAttribute(a,p[a])}(k||[]).forEach(function(c){if(c)e.appendChild(c)});return e}
 function say(t,bad){app.textContent='';app.appendChild(h('div',{class:'msg'+(bad?' bad':''),text:t}))}
 if(!window.supabase){say('लोड नहीं हो पाया',true);return}
