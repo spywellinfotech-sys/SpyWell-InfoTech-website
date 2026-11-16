@@ -266,7 +266,7 @@ window.addEventListener('pageshow',heal);document.addEventListener('visibilitych
 setInterval(heal,1200);
 if(!window.supabase){$('v-load').textContent='लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।';return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
-var HERE=/^https:\/\/(www\.)?spywell\.in$/.test(location.origin)?location.origin+'/studio/':'https://spywell.in/studio/';
+var HERE='https://spywell.in/studio/';
 var recovering=false;
 function msg(e){
   var m=(e&&e.message)||'कुछ गड़बड़ हुई';
