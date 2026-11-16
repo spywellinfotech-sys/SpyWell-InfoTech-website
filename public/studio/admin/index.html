@@ -24,7 +24,7 @@ function say(t,bad){app.textContent='';app.appendChild(h('div',{class:'msg'+(bad
 if(!window.supabase){say('लोड नहीं हो पाया',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
 var STN={draft:'ड्राफ़्ट',published:'प्रकाशित',unpublished:'बंद'},TYN={invitation:'इनविटेशन कार्ड',visiting:'विज़िटिंग कार्ड'};
-var tab='cust',body,sel=null;
+var tab='cust',body,sel=null,tabs;
 var SKEY='st_adm_state',ST={},GOPEN=[];try{ST=JSON.parse(localStorage.getItem(SKEY)||'{}');if(!ST.ts||Date.now()-ST.ts>1800000)ST={}}catch(e){ST={}}GOPEN=ST.g||[];
 function saveSt(){try{localStorage.setItem(SKEY,JSON.stringify({ts:Date.now(),tab:tab,f:SVF,s:sel?{id:sel.id,full_name:sel.full_name,phone:sel.phone,email:sel.email}:null,g:GOPEN,y:window.scrollY}))}catch(e){}}
 window.addEventListener('pagehide',saveSt);window.addEventListener('beforeunload',saveSt);document.addEventListener('visibilitychange',function(){if(document.hidden)saveSt()});
@@ -47,7 +47,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   var g3=grp('🌐 डायरेक्टरी, डोमेन और इंडस्ट्री','बिज़नेस डायरेक्टरी · डोमेन अनुरोध · Industry-wise कार्ड');put(g3,dirPanel);put(g3,domPanel);put(g3,indPanel);
   var g4=grp('📜 एडमिन लॉग','Admin के कामों का लॉग');put(g4,auditPanel);
   Array.prototype.forEach.call(app.querySelectorAll('.gb>div'),function(el){if(!el.className)compact(el)});
-  var tabs=h('div');app.appendChild(tabs);body=h('div');app.appendChild(body);tab=(['cust','tpl','promo'].indexOf(ST.tab)>=0?ST.tab:'cust');SVF=ST.f||'all';sel=tab==='cust'?(ST.s||null):null;
+  tabs=h('div');app.appendChild(tabs);body=h('div');app.appendChild(body);tab=(['cust','tpl','promo'].indexOf(ST.tab)>=0?ST.tab:'cust');SVF=ST.f||'all';sel=tab==='cust'?(ST.s||null):null;
   function draw(){tabs.textContent='';body.textContent='';saveSt();
     if(tab==='cust'){if(sel){cardsView();return}filterBar();custView();return}
     tabs.appendChild(h('button',{class:'btn',text:'← ग्राहक',style:'margin:12px 0 0',onclick:function(){tab='cust';sel=null;draw()}}));
@@ -322,13 +322,13 @@ function filterBar(){
   var BG={all:'#334155,#64748b',inv:'#8b1a2b,#c23a50',card:'#b45309,#f59e0b',mini:'#0b5d8a,#2aa1d6',dir:'#6d28d9,#a78bfa',web:'#0f766e,#2dd4bf'};
   var gr=h('div',{style:'display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px'});tabs.appendChild(gr);var cnt={};
   function tile(k,ic,t){var on=SVF===k,d=h('div',{style:'cursor:pointer;border-radius:14px;padding:10px 6px;text-align:center;color:#fff;background:linear-gradient(135deg,'+BG[k]+');box-shadow:'+(on?'0 0 0 3px #fff,0 0 0 5px #8b1a2b':'0 2px 6px rgba(0,0,0,.18)')+';opacity:'+(on||SVF==='all'?'1':'.72')},[h('div',{text:ic,style:'font-size:22px'}),h('b',{text:t,style:'display:block;font-size:13px;line-height:1.25'}),h('span',{text:'…',style:'font-size:12px;opacity:.95'})]);
-    d.onclick=function(){SVF=k;draw()};cnt[k]=d.querySelector('span');gr.appendChild(d)}
+    d.onclick=function(){SVF=k;window.__draw()};cnt[k]=d.querySelector('span');gr.appendChild(d)}
   tile('all','👥','सभी ग्राहक');SVCS.forEach(function(x){tile(x[0],x[1],x[2])});
   function fill(){var all={};(SVD||[]).forEach(function(r){all[r.uid]=1});cnt.all.textContent=SVD?Object.keys(all).length+' ग्राहक':'—';SVCS.forEach(function(x){cnt[x[0]].textContent=SVD?Object.keys(userSet(x[0])).length+' ग्राहक':'—'})}
-  if(SVD)fill();else sb.rpc('studio_admin_services').then(function(r){SVD=r.error?[]:(r.data||[]);fill();if(SVF!=='all')draw()});
+  if(SVD)fill();else sb.rpc('studio_admin_services').then(function(r){SVD=r.error?[]:(r.data||[]);fill();if(SVF!=='all')window.__draw()});
   function wide(ic,t,sub,bg,fn){var d=h('div',{style:'cursor:pointer;border-radius:16px;padding:14px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.18);display:flex;align-items:center;gap:12px;margin-top:10px;background:linear-gradient(135deg,'+bg+')'},[h('div',{text:ic,style:'font-size:28px'}),h('div',{style:'flex:1'},[h('b',{text:t,style:'display:block;font-size:16px'}),h('span',{text:sub,style:'font-size:13px;opacity:.92'})])]);d.onclick=fn;tabs.appendChild(d)}
-  wide('🎨','टेम्पलेट','सारे टेम्पलेट चालू/बंद, नाम, क्रम और कीमत','#be185d,#f472b6',function(){tab='tpl';sel=null;draw()});
-  wide('📣','प्रमोशन','लैंडिंग पेज · फ़ोटो · वीडियो · वीडियो URL','#c2410c,#fb923c',function(){tab='promo';sel=null;draw()})}
+  wide('🎨','टेम्पलेट','सारे टेम्पलेट चालू/बंद, नाम, क्रम और कीमत','#be185d,#f472b6',function(){tab='tpl';sel=null;window.__draw()});
+  wide('📣','प्रमोशन','लैंडिंग पेज · फ़ोटो · वीडियो · वीडियो URL','#c2410c,#fb923c',function(){tab='promo';sel=null;window.__draw()})}
 function custView(){
   var q=h('input',{type:'search',placeholder:'नाम, फ़ोन या ईमेल से खोजें'}),list=h('div'),tm;body.appendChild(q);body.appendChild(list);compact(list,true);
   async function load(){list.textContent='';list.appendChild(h('div',{class:'msg',text:'लोड हो रहा है…'}));
