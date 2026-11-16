@@ -64,7 +64,7 @@
     ]
   };
   var IMAGES = {
-    invitation: [['couple', 'जोड़े की फ़ोटो', 150], ['family', 'परिवार की फ़ोटो', 280], ['bg', 'बैकग्राउंड फ़ोटो', 0]],
+    invitation: [['couple', 'जोड़े की फ़ोटो', 150], ['bride', 'वधू की फ़ोटो (वैकल्पिक)', 110], ['groom', 'वर की फ़ोटो (वैकल्पिक)', 110], ['family', 'परिवार की फ़ोटो', 280], ['bg', 'बैकग्राउंड फ़ोटो', 0]],
     visiting: [['logo', 'लोगो', 56], ['photo', 'प्रोफ़ाइल फ़ोटो', 108], ['g1', 'गैलरी फ़ोटो 1 (मिनी वेबसाइट)', 0], ['g2', 'गैलरी फ़ोटो 2 (मिनी वेबसाइट)', 0], ['g3', 'गैलरी फ़ोटो 3 (मिनी वेबसाइट)', 0], ['g4', 'गैलरी फ़ोटो 4 (मिनी वेबसाइट)', 0], ['g5', 'गैलरी फ़ोटो 5 (मिनी वेबसाइट)', 0], ['g6', 'गैलरी फ़ोटो 6 (मिनी वेबसाइट)', 0]]
   };
   var EVENT_PRESETS_W = ['सगाई', 'हल्दी', 'मेहंदी', 'संगीत', 'शादी', 'रिसेप्शन'], EVENT_PRESETS = EVENT_PRESETS_W;
@@ -224,9 +224,11 @@
     if (f.heading) box.appendChild(el('div', 'sr-h', f.heading));
     if (t.ornament) box.appendChild(el('div', 'sr-or', t.ornament));
     if (d.images.couple) box.appendChild(picture('sr-ph', d.images.couple, 'circle'));
+    if (d.images.bride) box.appendChild(picture('sr-ph', d.images.bride, 'circle'));
     if (f.bride) box.appendChild(el('div', 'sr-nm', f.bride));
     if (f.bride_parents) box.appendChild(el('div', 'sr-par', f.bride_parents));
     if (f.bride && f.groom) box.appendChild(el('div', 'sr-amp', '&'));
+    if (d.images.groom) box.appendChild(picture('sr-ph', d.images.groom, 'circle'));
     if (f.groom) box.appendChild(el('div', 'sr-nm', f.groom));
     if (f.groom_parents) box.appendChild(el('div', 'sr-par', f.groom_parents));
     if (f.message) box.appendChild(el('div', 'sr-msg', f.message));

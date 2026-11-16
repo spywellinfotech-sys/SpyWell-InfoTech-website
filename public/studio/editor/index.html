@@ -14,7 +14,7 @@ input,textarea,select{min-height:46px}
 .top button,.top a{width:auto;margin:0;padding:7px 11px;background:#fff;color:var(--wine);font-size:14px;border-radius:8px;border:0;font-weight:600;text-decoration:none;font-family:inherit;cursor:pointer}
 .top button:disabled{opacity:.4}
 .wrap{max-width:1040px;margin:auto;padding:10px 10px 86px}
-#fpv{position:fixed;right:8px;bottom:84px;z-index:20;width:112px;height:196px;border:2px solid #7a0a10;border-radius:14px;background:#fff;box-shadow:0 6px 20px rgba(0,0,0,.35);overflow:hidden;display:none}#fpv.on{display:block}#fpv .fin{width:340px;transform:scale(.33);transform-origin:0 0;pointer-events:none}#fpv .fx{position:absolute;top:0;right:0;z-index:2;border:0;background:rgba(0,0,0,.55);color:#fff;width:24px;height:24px;border-radius:0 0 0 10px;font-size:14px;line-height:1}#fpv .fl{position:absolute;left:0;right:0;bottom:0;z-index:2;background:rgba(122,10,16,.88);color:#fff;text-align:center;font:700 11px/1.6 system-ui,sans-serif}@media(min-width:860px){#fpv{display:none!important}}
+#fpv{position:fixed;left:8px;top:64px;z-index:20;width:112px;height:196px;border:2px solid #7a0a10;border-radius:14px;background:#fff;box-shadow:0 6px 20px rgba(0,0,0,.35);overflow:hidden;display:none}#fpv.on{display:block}#fpv .fin{width:340px;transform:scale(.33);transform-origin:0 0;pointer-events:none}#fpv .fx{position:absolute;top:0;right:0;z-index:2;border:0;background:rgba(0,0,0,.55);color:#fff;width:24px;height:24px;border-radius:0 0 0 10px;font-size:14px;line-height:1}#fpv .fl{position:absolute;left:0;right:0;bottom:0;z-index:2;background:rgba(122,10,16,.88);color:#fff;text-align:center;font:700 11px/1.6 system-ui,sans-serif}@media(min-width:860px){#fpv{display:none!important}}
 #pubbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -2px 10px rgba(0,0,0,.08)}#pubbar .pbrow{display:flex;gap:8px;max-width:520px;margin:0 auto}#pubbar button{flex:1;margin:0;display:block;padding:13px;border:0;border-radius:12px;background:var(--wine);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
 .state{font-size:13px;color:var(--mut);padding:4px 2px;min-height:24px}.state.bad{color:#b00020}
 .cols{display:block}
@@ -67,7 +67,7 @@ button:active{transform:scale(.96);filter:brightness(.9)}button{-webkit-tap-high
 <div id="pubbar" hidden><div class="pbrow"><button type="button" id="pubbtn">🚀 प्रकाशित करें</button><button type="button" id="pinbtn" hidden>🔑 PIN</button></div></div>
 <div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/render.js?v=20261117a"></script>
+<script src="/studio/render.js?v=20261117b"></script>
 <script src="/studio/qr.js"></script>
 <script>
 (function(){
@@ -230,6 +230,7 @@ function pPhoto(p){
   var msg=h('div',{class:'e',id:'uperr'});
   R.IMAGES[D.product_type].forEach(function(d){
     if(/^g\d$/.test(d[0])&&C.style.site!==true)return;
+    if((d[0]==='bride'||d[0]==='groom')&&(cfg().occasion||'wedding')!=='wedding')return;
     var k=d[0],im=C.images[k],box=h('div',{class:'item'},[h('b',{text:d[1]})]);
     var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp'});file.style.marginTop='8px';
     file.onchange=function(){if(file.files[0])upload(k,file.files[0],d[2],msg)};
