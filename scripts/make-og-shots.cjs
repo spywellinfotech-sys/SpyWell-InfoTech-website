@@ -15,7 +15,7 @@ const server = http.createServer((req, res) => {
 (async () => {
   await new Promise((r) => server.listen(8799, r));
   const jobs = [];
-  for (const k of ['v', 'web']) {
+  for (const k of ['v', 'web', 'inv']) {
     const dir = path.join(DIST, k); if (!fs.existsSync(dir)) continue;
     for (const slug of fs.readdirSync(dir)) { if (fs.existsSync(path.join(dir, slug, 'index.html')) && /^[a-z0-9-]+$/.test(slug)) jobs.push([k, slug]); }
   }
@@ -25,10 +25,20 @@ const server = http.createServer((req, res) => {
   for (const [k, slug] of jobs.slice(0, LIMIT)) {
     const page = await ctx.newPage();
     try {
-      await page.goto('http://localhost:8799/studio/view/?t=' + (k === 'web' ? 'w' : 'v') + '&s=' + slug + '&nt=1', { waitUntil: 'networkidle', timeout: 25000 });
+      await page.goto('http://localhost:8799/studio/view/?t=' + (k === 'web' ? 'w' : k === 'inv' ? 'i' : 'v') + '&s=' + slug + '&nt=1', { waitUntil: 'networkidle', timeout: 25000 });
       await page.waitForFunction(() => { const b = document.getElementById('sheet'); return b && b.children.length > 0 && !/उपलब्ध नहीं|नहीं खुल|चालू नहीं/.test(b.innerText); }, { timeout: 15000 });
       await page.waitForTimeout(1200);
       await page.evaluate(() => { document.querySelectorAll('*').forEach((e) => { const s = getComputedStyle(e); if (s.position === 'fixed') e.style.display = 'none'; }); window.scrollTo(0, 0); });
+      if (k === 'inv') { // invitations: a small square preview of the cover
+        await page.waitForTimeout(1800);
+        const sq = await page.screenshot({ clip: { x: 0, y: 0, width: 408, height: 408 } });
+        await sharp(sq).resize(360, 360, { fit: 'cover' }).jpeg({ quality: 80 }).toFile(path.join(DIST, 'og', 'inv-' + slug + '.jpg'));
+        const u2 = ORIGIN + '/og/inv-' + slug + '.jpg';
+        for (const kk of ['inv', 'i']) { const pf2 = path.join(DIST, kk, slug, 'index.html'); if (!fs.existsSync(pf2)) continue; let h2 = fs.readFileSync(pf2, 'utf8');
+          h2 = h2.replace(/(<meta property="og:image" content=")[^"]*(">)/, '$1' + u2 + '$2<meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="360"><meta property="og:image:height" content="360">')
+            .replace(/(<meta name="twitter:image" content=")[^"]*(">)/, '$1' + u2 + '$2').replace(/(<meta name="twitter:card" content=")[^"]*(">)/, '$1summary$2'); fs.writeFileSync(pf2, h2); }
+        ok++; await page.close(); continue;
+      }
       let buf;
       if (k === 'v') { const el = await page.$('#sheet .sr-vc, #sheet .sr'); if (!el) throw new Error('no card'); buf = await el.screenshot(); const mt = await sharp(buf).metadata(); const ch = Math.min(mt.height - 8, 700); buf = await sharp(buf).extract({ left: 6, top: 4, width: mt.width - 12, height: ch }).toBuffer(); }
       else buf = await page.screenshot({ clip: { x: 0, y: 0, width: 408, height: 500 } });
