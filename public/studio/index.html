@@ -46,7 +46,7 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 .isw{position:relative!important;flex:none!important;width:52px!important;height:30px!important;min-height:0!important;border-radius:15px!important;border:0!important;background:#9aa8a0!important;padding:0!important;margin:0!important;cursor:pointer;transition:background .2s;box-shadow:none!important}.isw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:left .2s}.isw.on{background:#1fc260!important}.isw.on i{left:25px}.isw:disabled{opacity:.6}.swl2{font-size:13px;font-weight:800;min-width:34px;text-align:right;color:#fff}
 #tabbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;background:#fff;border-radius:22px 22px 0 0;padding:12px 6px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -6px 22px rgba(122,10,16,.14)}
 #tabbar button{flex:1;margin:0;border-radius:0;background:transparent;color:#7a6248;padding:2px 2px 0;font-size:11px;font-weight:700;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;--c1:#f59a1a;--c2:#d4141c;--t:#fff1e0}
-#tabbar .t-h{--c1:#ff9a3c;--c2:#e8421c;--t:#ffeede}#tabbar .t-d{--c1:#38a3ff;--c2:#1558d6;--t:#e4f1ff}#tabbar .t-s{--c1:#2fd08a;--c2:#0e8f5a;--t:#dcf7ea}#tabbar .t-p{--c1:#b06bff;--c2:#6d2bd9;--t:#f0e6ff}
+#tabbar .t-h{--c1:#ff9a3c;--c2:#e8421c;--t:#ffeede}#tabbar .t-d{--c1:#38a3ff;--c2:#1558d6;--t:#e4f1ff}#tabbar .t-s{--c1:#2fd08a;--c2:#0e8f5a;--t:#dcf7ea}#tabbar .t-p{--c1:#b06bff;--c2:#6d2bd9;--t:#f0e6ff}#tabbar .t-a{--c1:#ff5d7a;--c2:#8b1a2b;--t:#ffe3e8}
 #tabbar button i{font-style:normal;width:42px;height:34px;border-radius:14px;background:var(--t);color:var(--c2);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s,background .2s}
 #tabbar button.on{color:var(--c2)}#tabbar button.on i{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;transform:translateY(-8px) scale(1.12);box-shadow:0 8px 16px -4px var(--c2)}#tabbar button.on span{transform:translateY(-6px)}
 #tabbar button span{transition:transform .2s}
@@ -195,6 +195,7 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <div id="dres" style="margin-top:10px"></div><button type="button" id="dmore" hidden style="margin-top:8px">और दिखाएँ</button>
 </div>
 <div class="card tab-h" id="c-dir" style="padding:0;overflow:hidden"></div>
+<div class="card tab-h" id="c-adm" style="padding:0;overflow:hidden"></div>
 <div class="card" id="c-saved">
 <b>📇 सेव किए हुए कार्ड और कॉन्टैक्ट्स</b>
 <div class="k">कार्ड "सेव करें" दबाकर या नंबर जोड़कर यहीं से कॉल और WhatsApp करें।</div>
@@ -880,9 +881,10 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
-  if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden))t='home';
+  if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me','adm'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden)||(t==='adm'&&$('tb-adm').hidden))t='home';
+  if(t==='adm'){var ca=$('c-adm');if(!ca.firstChild){var fa=document.createElement('iframe');fa.src='/studio/admin/?embed=1';fa.style.cssText='width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);border:0;display:block';ca.appendChild(fa)}}
   if(t==='dir'){var cd=$('c-dir');if(!cd.firstChild){var fr=document.createElement('iframe');fr.src='/studio/directory/?embed=1';fr.style.cssText='width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);border:0;display:block';cd.appendChild(fr)}}
   TABMAP.forEach(function(x){x[0].classList.toggle('tab-h',x[1]!==t)});
   document.body.setAttribute('data-tab',t);
@@ -908,11 +910,16 @@ async function dash(user){
   var a=await sb.rpc('studio_is_admin');
   $('d-admin').hidden=true;
   try{var _ob=document.getElementById('adm-sw');if(_ob)_ob.remove()}catch(e){}
-  try{var _gc=$('pf-th'),_o2=document.getElementById('adm-top');if(_o2)_o2.remove();
-    if(a&&a.data===true&&_gc){var tp=document.createElement('div');tp.id='adm-top';tp.style.cssText='display:flex;gap:4px;margin-top:6px;background:#fff1f0;border-radius:10px;padding:3px;border:1px solid #f0b4b0';
-      var u1=document.createElement('button');u1.type='button';u1.textContent='👤 User मोड';u1.style.cssText='flex:1;margin:0;border:0;border-radius:9px;background:#d4141c;color:#fff;font-weight:700;padding:6px 4px;font-size:13px;min-height:0';
-      var a1=document.createElement('button');a1.type='button';a1.textContent='🛡️ Super Admin';a1.style.cssText='flex:1;margin:0;border:0;border-radius:9px;background:transparent;color:#7a0a10;font-weight:700;padding:6px 4px;font-size:13px;min-height:0';
-      a1.onclick=function(){location.href='/studio/admin/'};tp.appendChild(u1);tp.appendChild(a1);_gc.parentNode.insertBefore(tp,_gc.nextSibling)}}catch(e){}
+  try{var MD='user';try{MD=localStorage.getItem('st_mode')||'user'}catch(e){}var isA=!!(a&&a.data===true);if(!isA)MD='user';
+    var tba=$('tb-adm');if(tba)tba.hidden=!(isA&&MD==='both');
+    var _gc=$('pf-th'),_o2=document.getElementById('adm-top');if(_o2)_o2.remove();
+    if(isA&&_gc){var tp=document.createElement('div');tp.id='adm-top';tp.style.cssText='display:flex;gap:4px;margin-top:6px;background:#fff1f0;border-radius:10px;padding:3px;border:1px solid #f0b4b0';
+      var MBS=[];function paint(m){MBS.forEach(function(x){x[0].style.background=x[1]===m?'#d4141c':'transparent';x[0].style.color=x[1]===m?'#fff':'#7a0a10'})}
+      function mb(txt,key,fn){var b=document.createElement('button');b.type='button';b.textContent=txt;b.style.cssText='flex:1;margin:0;border:0;border-radius:9px;font-weight:700;padding:6px 2px;font-size:12px;min-height:0';b.onclick=fn;MBS.push([b,key]);tp.appendChild(b)}
+      mb('👤 User','user',function(){try{localStorage.setItem('st_mode','user')}catch(e){}$('tb-adm').hidden=true;paint('user');if(CURT==='adm')setTab('home')});
+      mb('🔀 Combined','both',function(){try{localStorage.setItem('st_mode','both')}catch(e){}$('tb-adm').hidden=false;paint('both');setTab('adm')});
+      mb('🛡️ Super Admin','admin',function(){try{localStorage.setItem('st_mode','admin')}catch(e){}location.href='/studio/admin/'});
+      paint(MD);_gc.parentNode.insertBefore(tp,_gc.nextSibling)}}catch(e){}
   $('d-list').textContent='लोड हो रहा है…';drawFilters();
   var t=await sb.from('studio_templates').select('id,product_type,name,config,sort,tno').eq('active',true).order('sort',{ascending:true});
   TPL=t.data||[];
@@ -1090,7 +1097,7 @@ sb.auth.onAuthStateChange(function(ev,session){
 });
 })();
 </script>
-<nav id="tabbar" hidden><button type="button" data-tab="home" class="t-h"><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg></i><span>होम</span><b id="tb-h" hidden></b></button><button type="button" data-tab="dir" id="tb-dir" class="t-d" hidden><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 8h6M9 12h4"/></svg></i><span>डायरेक्टरी</span></button><button type="button" data-tab="saved" class="t-s"><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.6 1.7-2.3 3-2.3s2.4.7 3 2.3M14.5 10h4M14.5 13h3"/></svg></i><span>सेव कार्ड</span><b id="tb-n" hidden></b></button><button type="button" data-tab="me" class="t-p"><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.6-3.8 3.7-6 7.5-6s6.9 2.2 7.5 6"/></svg></i><span>प्रोफ़ाइल</span></button></nav>
+<nav id="tabbar" hidden><button type="button" data-tab="home" class="t-h"><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg></i><span>होम</span><b id="tb-h" hidden></b></button><button type="button" data-tab="dir" id="tb-dir" class="t-d" hidden><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 8h6M9 12h4"/></svg></i><span>डायरेक्टरी</span></button><button type="button" data-tab="saved" class="t-s"><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.6 1.7-2.3 3-2.3s2.4.7 3 2.3M14.5 10h4M14.5 13h3"/></svg></i><span>सेव कार्ड</span><b id="tb-n" hidden></b></button><button type="button" data-tab="me" class="t-p"><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.6-3.8 3.7-6 7.5-6s6.9 2.2 7.5 6"/></svg></i><span>प्रोफ़ाइल</span></button><button type="button" data-tab="adm" id="tb-adm" class="t-a" hidden><i><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></i><span>एडमिन</span></button></nav>
 <script>(function(){var b=document.getElementById('a2hs'),dp=null;if(!b)return;
 var sa=false;try{sa=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())}catch(e){}
 if(sa)return;b.hidden=false;
