@@ -48,7 +48,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   function draw(){tabs.textContent='';body.textContent='';
     if(tab==='home'){boardView();return}
     tabs.appendChild(h('button',{class:'btn',text:'← सेवाएँ',style:'margin:12px 0 0',onclick:function(){tab='home';sel=null;draw()}}));
-    if(tab==='cust'){(sel?cardsView:custView)()}else if(tab==='tpl'){tplView()}else if(tab.slice(0,4)==='svc:'){svcView(tab.slice(4))}}
+    if(tab==='cust'){(sel?cardsView:custView)()}else if(tab==='tpl'){tplView()}else if(tab==='promo'){promoView()}else if(tab.slice(0,4)==='svc:'){svcView(tab.slice(4))}}
   window.__draw=draw;draw();
 })();
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#rfa');if(!b)return;b.style.transition='transform .6s';b.style.transform='rotate(360deg)';setTimeout(function(){location.reload()},250)});
@@ -259,6 +259,51 @@ async function balPanel(box){
   c.appendChild(h('div',{class:'k',text:'नोट: Anthropic असली बैलेंस नहीं बताता, इसलिए यह टोकन खपत और ऊपर की कीमतों से अनुमान है। कीमतें Anthropic की प्राइसिंग पेज से मिलाकर सही रखें। कभी-कभी कंसोल से मिलान करके बैलेंस दोबारा भरें।'}));
   box.appendChild(c);
 }
+var PRK=[['landing','🌐','लैंडिंग पेज'],['image','🖼️','फ़ोटो'],['video','🎬','वीडियो'],['video_url','▶️','वीडियो URL']];
+function promoUrl(r){if(r.file_path)return sb.storage.from('studio-promo').getPublicUrl(r.file_path).data.publicUrl;var u=String(r.url||'');return u}
+function ytId(u){var m=String(u).match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([A-Za-z0-9_-]{11})/);return m?m[1]:''}
+async function promoView(){
+  body.appendChild(h('div',{class:'card',style:'margin-top:10px'},[h('b',{text:'📣 प्रमोशन'}),h('div',{class:'k',text:'यहाँ प्रमोशन के लैंडिंग पेज, फ़ोटो, वीडियो और वीडियो के लिंक सेव करें। सिर्फ़ Admin देख और बदल सकता है।'})]));
+  var flt='all',rows=[];
+  var fb=h('div',{style:'display:flex;gap:6px;flex-wrap:wrap;margin:10px 0'});body.appendChild(fb);
+  var form=h('div',{class:'card'});body.appendChild(form);var list=h('div');body.appendChild(list);
+  var fo=false;
+  function drawForm(){form.textContent='';var hd=h('b',{text:'➕ नया जोड़ें '+(fo?'▲':'▼'),style:'cursor:pointer;display:block'});hd.onclick=function(){fo=!fo;drawForm()};form.appendChild(hd);if(!fo)return;
+    var kind=h('select',{style:'width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);font:inherit;margin:8px 0'});PRK.forEach(function(k){kind.appendChild(h('option',{value:k[0],text:k[1]+' '+k[2]}))});
+    var ti=h('input',{type:'text',placeholder:'नाम / शीर्षक',maxlength:'100'}),ur=h('input',{type:'url',placeholder:'लिंक (https://…)',inputmode:'url'}),fi=h('input',{type:'file',style:'margin-bottom:8px'}),nt=h('input',{type:'text',placeholder:'नोट (खाली छोड़ सकते हैं)',maxlength:'300'}),ms=h('div',{class:'k'});
+    function sw(){var f=kind.value==='image'||kind.value==='video';ur.style.display=f?'none':'block';fi.style.display=f?'block':'none';fi.accept=kind.value==='image'?'image/jpeg,image/png,image/webp':'video/mp4,video/webm'}
+    kind.onchange=sw;sw();
+    var sv=h('button',{class:'btn',text:'💾 सेव करें'});
+    sv.onclick=async function(){ms.className='k';ms.textContent='';var k=kind.value,t=ti.value.trim();if(!t){ms.textContent='नाम लिखें';return}
+      var row={kind:k,title:t,note:nt.value.trim()||null};
+      if(k==='image'||k==='video'){var f=fi.files&&fi.files[0];if(!f){ms.textContent='फ़ाइल चुनें';return}if(f.size>52428800){ms.textContent='फ़ाइल 50 MB से छोटी होनी चाहिए';return}
+        var ext=(f.name.split('.').pop()||(k==='image'?'jpg':'mp4')).toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5);
+        var path=k+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;sv.disabled=true;ms.textContent='अपलोड हो रहा है…';
+        var up=await sb.storage.from('studio-promo').upload(path,f,{contentType:f.type||undefined,upsert:false});
+        if(up.error){sv.disabled=false;ms.className='e';ms.textContent='अपलोड नहीं हुआ: '+up.error.message;return}row.file_path=path}
+      else{var u=ur.value.trim();if(u&&!/^https?:\/\//i.test(u)&&u.charAt(0)!=='/')u='https://'+u;if(!u){ms.textContent='लिंक डालें';return}row.url=u;sv.disabled=true}
+      var ins=await sb.from('studio_promos').insert(row);sv.disabled=false;
+      if(ins.error){ms.className='e';ms.textContent='सेव नहीं हुआ';return}fo=false;await load()};
+    form.appendChild(kind);form.appendChild(ti);form.appendChild(ur);form.appendChild(fi);form.appendChild(nt);form.appendChild(sv);form.appendChild(ms)}
+  function drawF(){fb.textContent='';[['all','🗂 सभी']].concat(PRK.map(function(k){return [k[0],k[1]+' '+k[2]]})).forEach(function(k){var n=k[0]==='all'?rows.length:rows.filter(function(r){return r.kind===k[0]}).length;
+    fb.appendChild(h('button',{class:'btn'+(flt===k[0]?'':' alt'),text:k[1]+' ('+n+')',style:'margin:0;'+(flt===k[0]?'background:#8b1a2b;color:#fff':''),onclick:function(){flt=k[0];drawF();drawL()}}))})}
+  function drawL(){list.textContent='';var rs=rows.filter(function(r){return flt==='all'||r.kind===flt});
+    if(!rs.length){list.appendChild(h('div',{class:'msg',text:'अभी कुछ सेव नहीं है'}));return}
+    rs.forEach(function(r){var u=promoUrl(r),kd=PRK.filter(function(k){return k[0]===r.kind})[0]||PRK[0];
+      var c=h('div',{class:'card'},[h('b',{text:kd[1]+' '+r.title,style:'display:block'})]);
+      if(r.note)c.appendChild(h('div',{class:'k',text:r.note}));
+      if(r.kind==='image'){var im=h('img',{src:u,loading:'lazy',alt:r.title,style:'max-width:100%;max-height:220px;border-radius:10px;margin-top:8px;display:block'});c.appendChild(im)}
+      else if(r.kind==='video'){c.appendChild(h('video',{src:u,controls:'',preload:'metadata',playsinline:'',style:'width:100%;max-height:260px;border-radius:10px;margin-top:8px;background:#000'}))}
+      else if(r.kind==='video_url'&&ytId(u)){c.appendChild(h('img',{src:'https://img.youtube.com/vi/'+ytId(u)+'/hqdefault.jpg',loading:'lazy',alt:r.title,style:'width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:8px;display:block'}))}
+      c.appendChild(h('div',{class:'k',text:u,style:'margin-top:6px'}));
+      var full=/^https?:/i.test(u)?u:location.origin+u;
+      var cp=h('button',{class:'btn',text:'📋 लिंक कॉपी'});cp.onclick=async function(){try{await navigator.clipboard.writeText(full);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='📋 लिंक कॉपी'},1800)};
+      var dl=h('button',{class:'btn',text:'🗑 हटाएँ',style:'color:#b00020;border-color:#b00020'});dl.onclick=async function(){if(!dl.dataset.a){dl.dataset.a='1';dl.textContent='पक्का? फिर दबाएँ';return}dl.disabled=true;
+        if(r.file_path)await sb.storage.from('studio-promo').remove([r.file_path]);var e=await sb.from('studio_promos').delete().eq('id',r.id);if(e.error){dl.disabled=false;dl.textContent='नहीं हटा';return}load()};
+      c.appendChild(h('div',{},[h('a',{class:'btn',text:'🔗 खोलें',href:full,target:'_blank',rel:'noopener'}),cp,h('a',{class:'btn',text:'💬 WhatsApp',href:'https://wa.me/?text='+encodeURIComponent(r.title+'\n'+full),target:'_blank',rel:'noopener'}),dl]));
+      list.appendChild(c)})}
+  async function load(){var q=await sb.from('studio_promos').select('*').order('created_at',{ascending:false});rows=q.data||[];if(q.error)list.appendChild(h('div',{class:'msg bad',text:'सूची नहीं आई'}));drawForm();drawF();drawL()}
+  load()}
 var SVD=null;
 var SVCS=[['inv','💌','इनविटेशन कार्ड'],['card','💳','विज़िटिंग कार्ड'],['mini','🌐','मिनी वेबसाइट'],['dir','📒','डायरेक्टरी'],['web','🖥️','वेबसाइट (डोमेन)']];
 function svcPick(k,r){var on=r.pu?new Date(r.pu)>new Date():true;
@@ -270,6 +315,7 @@ async function boardView(){
   var BG={inv:'#8b1a2b,#c23a50',card:'#b45309,#f59e0b',mini:'#0b5d8a,#2aa1d6',dir:'#6d28d9,#a78bfa',web:'#0f766e,#2dd4bf'};
   function tile(ic,t,n,fn,bg,full){var d=h('div',{style:'cursor:pointer;border-radius:16px;padding:16px 14px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.18);background:linear-gradient(135deg,'+bg+');'+(full?'grid-column:1/-1;display:flex;align-items:center;gap:12px;':'' )},[h('div',{text:ic,style:'font-size:'+(full?'30':'28')+'px'}),h('div',{style:'flex:1'},[h('b',{text:t,style:'display:block;font-size:16px'}),h('span',{text:n,style:'font-size:13px;opacity:.92'})])]);d.onclick=fn;return d}
   var cells={};SVCS.forEach(function(x){var d=tile(x[1],x[2],'लोड हो रहा है…',function(){tab='svc:'+x[0];draw()},BG[x[0]]);cells[x[0]]=d;gr.appendChild(d)});
+  body.appendChild(h('div',{style:'margin-top:10px'},[tile('📣','प्रमोशन','लैंडिंग पेज · फ़ोटो · वीडियो · वीडियो URL',function(){tab='promo';sel=null;draw()},'#c2410c,#fb923c',true)]));
   body.appendChild(h('div',{style:'margin-top:10px'},[tile('👥','सभी ग्राहक','सूची, वॉलेट, ब्लॉक, कार्ड देखें',function(){tab='cust';sel=null;draw()},'#334155,#64748b',true)]));
   body.appendChild(h('div',{style:'margin-top:10px'},[tile('🎨','टेम्पलेट','सारे टेम्पलेट चालू/बंद, नाम, क्रम और कीमत',function(){tab='tpl';sel=null;draw()},'#be185d,#f472b6',true)]));
   var r=await sb.rpc('studio_admin_services');SVD=r.error?null:(r.data||[]);
