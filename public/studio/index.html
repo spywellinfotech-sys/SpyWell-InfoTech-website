@@ -891,11 +891,11 @@ async function dash(user){
   var a=await sb.rpc('studio_is_admin');
   $('d-admin').hidden=true;
   try{var _ob=document.getElementById('adm-sw');if(_ob)_ob.remove()}catch(e){}
-  try{var _gc=$('d-name').closest('.card'),_o2=document.getElementById('adm-top');if(_o2)_o2.remove();
+  try{var _gc=$('pf-th'),_o2=document.getElementById('adm-top');if(_o2)_o2.remove();
     if(a&&a.data===true&&_gc){var tp=document.createElement('div');tp.id='adm-top';tp.style.cssText='display:flex;gap:4px;margin-top:6px;background:#fff1f0;border-radius:10px;padding:3px;border:1px solid #f0b4b0';
       var u1=document.createElement('button');u1.type='button';u1.textContent='👤 User मोड';u1.style.cssText='flex:1;margin:0;border:0;border-radius:9px;background:#d4141c;color:#fff;font-weight:700;padding:6px 4px;font-size:13px;min-height:0';
       var a1=document.createElement('button');a1.type='button';a1.textContent='🛡️ Super Admin';a1.style.cssText='flex:1;margin:0;border:0;border-radius:9px;background:transparent;color:#7a0a10;font-weight:700;padding:6px 4px;font-size:13px;min-height:0';
-      a1.onclick=function(){location.href='/studio/admin/'};tp.appendChild(u1);tp.appendChild(a1);_gc.appendChild(tp)}}catch(e){}
+      a1.onclick=function(){location.href='/studio/admin/'};tp.appendChild(u1);tp.appendChild(a1);_gc.parentNode.insertBefore(tp,_gc.nextSibling)}}catch(e){}
   $('d-list').textContent='लोड हो रहा है…';drawFilters();
   var t=await sb.from('studio_templates').select('id,product_type,name,config,sort,tno').eq('active',true).order('sort',{ascending:true});
   TPL=t.data||[];
