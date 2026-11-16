@@ -74,7 +74,7 @@ button{min-height:48px;border-radius:12px}
 html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-transform:translateZ(0)}#c-sendaddr{background:linear-gradient(135deg,#3a1d8f,#7b5cf0);border:0;color:#fff;box-shadow:0 8px 20px rgba(91,60,220,.35);padding:14px 12px;position:relative;overflow:hidden}
 #c-sendaddr::after{content:'📨';position:absolute;right:-8px;top:-14px;font-size:90px;opacity:.1;pointer-events:none}
 #c-sendaddr .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-sendaddr .sa-i{font-size:30px}#c-sendaddr .sa-h b{display:block;font-size:19px;color:#fff}#c-sendaddr .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}
-#sa-body>.card{margin:10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.2);border:0;color:var(--ink)}#sa-body>.card button{white-space:nowrap}#sa-n{flex:none;font-size:12px;font-weight:700;color:#3a1d8f;background:#fff;border-radius:99px;padding:3px 10px}#sa-n:empty{display:none}
+#sa-body>.card{margin:10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.2);border:0;color:var(--ink)}#sa-body>.card button{white-space:nowrap}#sa-n{flex:none;font-size:12px;font-weight:700;color:#3a1d8f;background:#fff;border-radius:99px;padding:3px 10px}#sa-n:empty{display:none}#sa-sum{margin:8px 4px 0}#sa-sum div{background:rgba(255,255,255,.16);border-radius:10px;padding:6px 10px;margin-top:5px;font-size:13px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 </style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script>(function(){try{if(!window.Capacitor&&!window.ViNative&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){
   document.addEventListener('DOMContentLoaded',function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#7a0a10;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
   var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 DynaMe ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#7a0a10;padding:8px 14px;border-radius:8px;text-decoration:none';
@@ -155,7 +155,8 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <div class="minis" id="pk-grid"></div>
 <button type="button" class="alt" id="pk-back">वापस</button>
 </div>
-<div class="card" id="c-sendaddr"><div class="sa-h" id="sa-h" style="cursor:pointer" onclick="var b=document.getElementById('sa-body');b.hidden=!b.hidden;document.getElementById('sa-ar').textContent=b.hidden?'▾':'▴'"><span class="sa-i">📨</span><div style="flex:1;min-width:0"><b>Address cards</b><span>घर और ऑफ़िस का पता कार्ड की तरह किसी को भी भेजें</span></div><span class="sa-n" id="sa-n"></span><span id="sa-ar" style="font-size:16px">▾</span></div>
+<div class="card" id="c-sendaddr"><div class="sa-h" id="sa-h" style="cursor:pointer" onclick="var b=document.getElementById('sa-body');b.hidden=!b.hidden;document.getElementById('sa-sum').hidden=!b.hidden;document.getElementById('sa-ar').textContent=b.hidden?'▾':'▴'"><span class="sa-i">📨</span><div style="flex:1;min-width:0"><b>Address cards</b><span>घर और ऑफ़िस का पता कार्ड की तरह किसी को भी भेजें</span></div><span class="sa-n" id="sa-n"></span><span id="sa-ar" style="font-size:16px">▾</span></div>
+<div id="sa-sum" onclick="document.getElementById('sa-h').click()"></div>
 <div id="sa-body" hidden><div class="card" id="c-addr"></div>
 <div class="card" id="c-addr2"></div></div></div>
 <div class="card" id="c-loc" style="padding:10px 14px"></div>
@@ -982,6 +983,8 @@ async function delAddr(k){var h=(ADH.cj&&ADH.cj[k])||{},nm=k==='home'?'घर �
   ADH.cj=cj;try{localStorage.removeItem(k==='home'?'vc_addr':'vc_addr_'+k)}catch(e){}
   if(k==='home'||k==='office')drawAddr(false,k);else{var b=$('c-addr-'+k);if(b)b.remove()}addrSync()}
 function addrSync(){var w=$('sa-body');if(!w||!ADH)return;var ks=offKeys();var nn=(ADH.cj.home&&ADH.cj.home.addr?1:0)+(ADH.cj.office&&ADH.cj.office.addr?1:0)+ks.filter(function(x){return x!=='office'}).length;$('sa-n').textContent=nn?nn+' कार्ड':'';
+  var sm=$('sa-sum');sm.textContent='';var sl=[];function ln(h){return [h.addr,h.city].filter(Boolean).join(', ')}if(ADH.cj.home&&ADH.cj.home.addr)sl.push('🏠 घर: '+ln(ADH.cj.home));if(ADH.cj.office&&ADH.cj.office.addr)sl.push('🏢 '+(ADH.cj.office.co||'ऑफ़िस')+': '+ln(ADH.cj.office));ks.forEach(function(kk){if(kk!=='office')sl.push('🏢 '+(ADH.cj[kk].co||'ऑफ़िस')+': '+ln(ADH.cj[kk]))});
+  sl.forEach(function(t){sm.appendChild(mk('div','',t))});if(!sl.length)sm.appendChild(mk('div','','अभी कोई पता सेव नहीं है — दबाकर जोड़ें'));
   Array.prototype.slice.call(w.querySelectorAll('[id^="c-addr-office"]')).forEach(function(b){var kk=b.id.slice(7);if(ks.indexOf(kk)<0&&!(b.dataset.new==='1'))b.remove()});
   ks.forEach(function(kk){var b=$('c-addr-'+kk);if(!b){b=document.createElement('div');b.className='card';b.id='c-addr-'+kk;w.insertBefore(b,$('c-addmore')||null)}drawAddr(false,kk)});
   var am=$('c-addmore');if(!am){am=document.createElement('div');am.id='c-addmore';w.appendChild(am)}am.textContent='';
