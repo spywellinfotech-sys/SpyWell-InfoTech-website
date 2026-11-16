@@ -569,30 +569,9 @@
     [['in', f.linkedin, '#0a66c2'], ['📸', f.instagram, '#c13584'], ['▶', f.youtube, '#e00'], ['f', f.facebook, '#1877f2']].forEach(function (x) { var u = V.url(x[1]); if (!u) return; var a = link('pf-sc', x[0], u); a.style.background = x[2]; soc.appendChild(a); });
     if (soc.children.length) { bd.appendChild(el('div', 'pf-fu', P('फ़ॉलो करें', 'Follow Us'))); bd.appendChild(soc); }
     var q2 = el('div', 'pf-2');
-    var qmsg = encodeURIComponent((f.business || f.name || '') + ': ' + P('कृपया कोटेशन भेजें', 'Please send a quote'));
-    var qf = el('div', 'pf-panel pf-qf'); qf.hidden = true;
-    if (typeof opts.onEnquiry === 'function') {
-      var qb = el('button', 'pf-q', '📝 ' + P('कोटेशन', 'Get Quote')); qb.type = 'button';
-      var qn = el('input', 'sr-eq'), qm = el('input', 'sr-eq'), qx = el('textarea', 'sr-eq'), qs = el('button', 'sr-save', P('📩 कोटेशन माँगें', '📩 Request Quote')), qr = el('div', 'sr-eqm');
-      qn.placeholder = P('आपका नाम', 'Your name'); qn.maxLength = 60; qm.placeholder = P('मोबाइल नंबर', 'Mobile number'); qm.maxLength = 12; qm.type = 'tel'; qm.inputMode = 'numeric'; qx.placeholder = P('आपको क्या चाहिए?', 'What do you need?'); qx.maxLength = 500; qx.rows = 3; qs.type = 'button';
-      qs.onclick = function () {
-        var nm = qn.value.trim(), mb = qm.value.replace(/\D/g, '').slice(-10), ms = qx.value.trim();
-        if (!nm || !/^[6-9][0-9]{9}$/.test(mb) || !ms) { qr.textContent = P('नाम, सही मोबाइल नंबर और संदेश भरें।', 'Enter name, valid mobile and message.'); return; }
-        qs.disabled = true; qr.textContent = P('भेजा जा रहा है…', 'Sending…');
-        Promise.resolve(opts.onEnquiry(nm, mb, '[' + P('कोटेशन', 'Quote') + '] ' + ms, '', '')).then(function (r) {
-          qs.disabled = false;
-          if (r === 'ok') { qr.textContent = P('✓ आपकी माँग भेज दी गई। जल्दी संपर्क करेंगे।', '✓ Request sent. We will contact you soon.'); qn.value = qm.value = qx.value = ''; }
-          else qr.textContent = r === 'limit' ? P('बहुत संदेश भेजे गए, थोड़ी देर बाद कोशिश करें।', 'Too many messages, try later.') : P('अभी नहीं भेजा जा सका।', 'Could not send now.');
-        }, function () { qs.disabled = false; qr.textContent = P('अभी नहीं भेजा जा सका।', 'Could not send now.'); });
-      };
-      [qn, qm, qx, qs, qr].forEach(function (x) { qf.appendChild(x); });
-      qb.onclick = function () { qf.hidden = !qf.hidden; };
-      q2.appendChild(qb);
-    }
     var mpu = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address, f.city].filter(Boolean).join(', '))) : '';
     if (mpu) q2.appendChild(actA(link('pf-chat', '📍 ' + P('लोकेशन', 'Location'), mpu), 'location'));
     if (q2.children.length) bd.appendChild(q2);
-    bd.appendChild(qf);
     var shp = el('div', 'pf-sharep'); shp.hidden = true; var built = false;
     var shb = el('button', 'pf-share', '🔗 ' + P('विज़िटिंग कार्ड शेयर करें', 'Share Visiting Card')); shb.type = 'button';
     shb.onclick = function () { if (!built) { built = true; var acts = el('div', 'sr-act'); acts.appendChild(saveCardBtn(root, f)); shp.appendChild(acts); shp.appendChild(shareBar(f, opts, root)); } shp.hidden = !shp.hidden; };
