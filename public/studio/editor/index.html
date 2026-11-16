@@ -52,7 +52,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 button:active{transform:scale(.96);filter:brightness(.9)}button{-webkit-tap-highlight-color:rgba(139,26,43,.25);transition:transform .08s}
 #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);max-width:90vw;z-index:30;background:#2b2b2b;color:#fff;padding:11px 18px;border-radius:24px;font-size:15px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.3);text-align:center}#toast.bad{background:#b00020}#toast.ok{background:#1b7a3a}
 @media(min-width:860px){.cols{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}#pvbox{max-height:calc(100vh - 130px)}.left{position:sticky;top:60px}}
-</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script><script src="/studio/wizard.js"></script></head><body>
+</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script><script src="/studio/wizard.js?v=20261117a"></script></head><body>
 <div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
 <button id="undo" disabled title="Undo">↶</button><button id="redo" disabled title="Redo">↷</button><button id="save">सेव</button></div>
 <div class="wrap">
@@ -108,14 +108,14 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
   else timer=setTimeout(save,1500)}
 
 /* ---------- panels ---------- */
-var TABS=[['info','1 · जानकारी'],['list',''],['photo','फ़ोटो'],['design','रंग-रूप'],['tpl','टेम्पलेट'],['ai','🤖 AI से भरें'],['pub','🚀 प्रकाशित करें'],['ins','📊 इनसाइट']];
+var TABS=[['info','1 · जानकारी'],['list',''],['photo','2 · फ़ोटो'],['tpl','3 · डिज़ाइन'],['ai','🤖 AI से भरें'],['pub','4 · प्रकाशित करें'],['ins','📊 इनसाइट']];
 var HINT={info:['अपनी जानकारी भरें','नाम, मोबाइल नंबर और व्यवसाय लिखें। बाकी खाने बाद में भी भर सकते हैं। ऊपर कार्ड का नमूना साथ-साथ बदलता दिखेगा।'],list:['सेवाएँ / कार्यक्रम जोड़ें','जो सेवाएँ देते हैं वे जोड़ें। नहीं हैं तो सीधे "अगला" दबाएँ।'],photo:['फ़ोटो और लोगो','अपनी फ़ोटो और लोगो लगाएँ। यह ज़रूरी नहीं है।'],design:['रंग और अक्षर','पसंद का रंग चुनें।'],tpl:['टेम्पलेट बदलें','कार्ड का दूसरा डिज़ाइन चुनना हो तो यहाँ से चुनें।'],ai:['AI की मदद लें','AI आपके व्यवसाय के बारे में लिखकर दे सकता है।'],pub:['प्रकाशित करें और शेयर करें','कार्ड लाइव करें, लिंक और QR पाएँ, WhatsApp पर भेजें।'],ins:['इनसाइट','कितने लोगों ने कार्ड देखा।']};
-var ORDER=['info','list','photo','design','tpl','pub'];
+var ORDER=['info','list','photo','tpl','pub'];
 function tabs(){var w=$('tabs');w.textContent='';var ab=$('aibtn');ab.hidden=false;ab.className='aib'+(tab==='ai'?' on':'');ab.textContent='';ab.appendChild(document.createTextNode(D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से AI भरें':'🤖 AI से भरें'));ab.onclick=function(){tab='ai';tabs();panel()};var wb=$('wzbtn');if(wb){wb.hidden=!window.SWWizard;wb.onclick=function(){SWWizard.open({mode:'fill',type:D.product_type,occ:(cfg().occasion||'wedding'),fields:C.fields||{},done:function(f){C.fields=C.fields||{};for(var k in f)C.fields[k]=f[k];tab='info';tabs();panel();changed()}})}};TABS.forEach(function(t){if(t[0]==='ai')return;var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel();draw()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;
   var hn=HINT[tab];if(hn)p.appendChild(h('div',{class:'step'},[h('b',{text:hn[0]}),document.createTextNode(hn[1])]));
-  ({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p);
+  ({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:function(q){pTpl(q);var dt=h('details',{style:'margin-top:12px'});if(window.__dOpen)dt.open=true;dt.ontoggle=function(){window.__dOpen=dt.open};dt.appendChild(h('summary',{text:'🎨 रंग और स्टाइल बदलें (वैकल्पिक)',style:'font-weight:700;cursor:pointer;padding:8px 0'}));pDesign(dt);q.appendChild(dt)},ai:pAI,pub:pPub,ins:pIns})[tab](p);
   var ix=ORDER.indexOf(tab);if(ix>=0){var row=h('div',{class:'navrow'});
     if(ix>0)row.appendChild(h('button',{class:'btn alt',text:'⬅ पिछला',onclick:function(){tab=ORDER[ix-1];tabs();panel();window.scrollTo(0,0)}}));
     if(ix<ORDER.length-1)row.appendChild(h('button',{class:'btn',text:'अगला ➡',onclick:function(){tab=ORDER[ix+1];tabs();panel();window.scrollTo(0,0)}}));
@@ -163,7 +163,11 @@ function hoursPicker(p,d){
 function pInfo(p){
   var bad=R.invalid(D.product_type,C);
   if(D.product_type==='visiting')urlBox(p);
+  var root=p,more=h('details',{style:'margin-top:12px'}),vis=D.product_type==='visiting',ESS={name:1,designation:1,business:1,mobile:1,whatsapp:1,industry:1,industry_other:1,city:1,address:1};
+  more.appendChild(h('summary',{text:'➕ और जानकारी भरें (वैकल्पिक)',style:'font-weight:700;cursor:pointer;padding:8px 0'}));
+  if(window.__mOpen)more.open=true;more.ontoggle=function(){window.__mOpen=more.open};
   R.fieldsFor(D.product_type,cfg()).forEach(function(d){
+    p=(vis&&!ESS[d[0]])?more:root;
     var k=d[0],typ=d[2],inp;
     if(k==='hours'){hoursPicker(p,d);return}
     if(k==='industry_other'){var iw=h('div',{id:'io-wrap'}),io=h('input',{type:'text',maxlength:40,id:'f-industry_other',placeholder:'जैसे: कोयला व्यापार, बैंड बाजा, ड्रोन सर्विस'});io.value=C.fields[k]||'';io.oninput=function(){C.fields[k]=io.value;changed()};iw.appendChild(h('label',{text:d[1],for:'f-industry_other'}));iw.appendChild(io);iw.style.display=C.fields.industry==='other'?'':'none';p.appendChild(iw);return}
@@ -177,6 +181,7 @@ function pInfo(p){
     inp.oninput=function(){C.fields[k]=inp.value;chk();changed()};
     p.appendChild(h('label',{text:d[1],for:'f-'+k}));p.appendChild(inp);p.appendChild(er);if(bad.indexOf(k)>=0)chk();
   });
+  p=root;if(vis&&more.children.length>1)root.appendChild(more);
 }
 function field(label,type,val,max,on){var i=h('input',{type:type,maxlength:max});i.value=val||'';i.oninput=function(){on(i.value)};return h('div',{},[h('label',{text:label}),i])}
 function pList(p){
@@ -801,6 +806,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   try{var b=JSON.parse(localStorage.getItem(LS)||'null');if(b&&b.at>new Date(D.updated_at).getTime()){C=shape(b.c);if(b.t)D.template_id=b.t;restored=true}}catch(e){}
   if(R.isEmpty(D.product_type,C)&&!restored)tab='info';
   $('main').hidden=false;tabs();panel();draw();pushHist();
+  try{if(window.SWWizard&&D.product_type==='visiting'&&!String((C.fields&&C.fields.name)||'').trim()&&!sessionStorage.getItem('wz_auto_'+D.id)){sessionStorage.setItem('wz_auto_'+D.id,'1');setTimeout(function(){var b=$('wzbtn');if(b&&!b.hidden)b.click()},400)}}catch(e){}
   sb.rpc('studio_insights_setup',{p_design:D.id}).then(function(r){if(r.error||!r.data)return;INS={id:D.id,key:r.data.key};if(r.data.pin){try{localStorage.setItem(pinKey(),r.data.pin)}catch(x){}state('📊 इनसाइट लिंक और PIN तैयार हैं। "📊 इनसाइट" टैब से कॉपी करें।')}},function(){});
   if(restored){dirty=true;state('पिछली बार के बिना सेव बदलाव वापस लाए गए हैं, सेव हो रहे हैं…');timer=setTimeout(save,800)}
   else state((D.status==='published'?'यह कार्ड प्रकाशित है; बदलाव सेव होते ही लाइव कार्ड में दिखेंगे · ':'')+'आख़िरी बदलाव: '+new Date(D.updated_at).toLocaleString((window.spLoc?spLoc():'hi-IN'),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));
