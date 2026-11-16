@@ -381,7 +381,6 @@ function drawList(){
     r.appendChild(mk('div','k',TYN[x.product_type]+' · आख़िरी बदलाव '+when(x.updated_at)));
     var sl=subLine(x);if(sl){var sd=mk('div','k',sl);sd.style.cssText='margin-top:4px;font-weight:600';r.appendChild(sd)}
     var a=mk('div','acts'),e=mk('a','','✏️ एडिट करें');e.href='/studio/editor/?id='+x.id;a.appendChild(e);
-    var n=mk('a','','📊 इनसाइट');n.href='/studio/editor/?id='+x.id+'&tab=ins';a.appendChild(n);
     if(x.status==='published'&&x.slug){var u=location.origin+'/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug,cp=mk('button','','🔗 लिंक कॉपी');cp.type='button';
       cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent=u}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2500)};a.appendChild(cp)}
     var c=mk('button','','कॉपी बनाएँ');c.type='button';c.onclick=function(){dup(x.id,c)};a.appendChild(c);
