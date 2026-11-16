@@ -876,7 +876,6 @@
         root.appendChild(fab); root.appendChild(sh);
       }
     }
-    var shs = el('div', 'ws-sec'), shi = el('div', 'ws-in'); shi.appendChild(shareBar(f, opts, root)); shs.appendChild(shi); root.appendChild(shs);
     root.appendChild(el('div', 'ws-foot', '© ' + new Date().getFullYear() + ' ' + (f.business || f.name || '')));
     if (typeof opts.onAct === 'function') root.addEventListener('click', function (ev) { var x = ev.target.closest ? ev.target.closest('[data-act]') : null; if (x) { try { opts.onAct(x.getAttribute('data-act')); } catch (e) { } } });
     var wan = s.anim || (['rich', 'soft', 'none'].indexOf(t.anim) >= 0 ? t.anim : 'rich');
