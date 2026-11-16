@@ -665,17 +665,17 @@ async function refHome(){
   var r=await sb.rpc('studio_ref_me');var m=r&&r.data;
   if(!m||!m.enabled){box.hidden=true;return}
   try{var pc=localStorage.getItem('st_ref');if(pc&&!m.referred_by){var ap=await sb.rpc('studio_ref_apply',{p_code:pc});if(ap&&ap.data&&(ap.data.ok||ap.data.error!=='login')){localStorage.removeItem('st_ref');if(ap.data.ok)m.referred_by=true}}}catch(e){}
-  box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#fff4d6,#ffe1a8);border:1px solid #f0c56a';
-  box.appendChild(mk('b','','🎁 Refer & Earn · दोस्त को बुलाओ, कमाओ'));
+  box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#fff4d6,#ffe1a8);border:1px solid #f0c56a;padding:20px 16px';
+  var rt=mk('b','','🎁 Refer & Earn · दोस्त को बुलाओ, कमाओ');rt.style.cssText='display:block;font-size:20px';box.appendChild(rt);
   var u=location.origin+'/studio/?ref='+m.code;
-  var tx=mk('div','k','दोस्त पहली बार पेमेंट करे तो उसके भुगतान का '+m.pct+'% आपके वॉलेट में। वॉलेट से अगला प्लान सस्ता।');tx.style.margin='6px 0 8px';box.appendChild(tx);
+  var tx=mk('div','k','दोस्त पहली बार पेमेंट करे तो उसके भुगतान का '+m.pct+'% आपके वॉलेट में। वॉलेट से अगला प्लान सस्ता।');tx.style.cssText='margin:8px 0 12px;font-size:14px;line-height:1.5';box.appendChild(tx);
   var st=mk('div','');st.style.cssText='display:flex;gap:6px;margin-bottom:8px';
-  [['👥','जुड़े',m.joined],['✅','पेमेंट किया',m.paid],['💰','वॉलेट','₹'+m.balance]].forEach(function(p){var c=mk('div','');c.style.cssText='flex:1;background:#fff;border-radius:12px;padding:8px 4px;text-align:center';var n=mk('b','',String(p[2]));n.style.cssText='display:block;font-size:18px;color:#b3141c';c.appendChild(n);c.appendChild(mk('span','k',p[0]+' '+p[1]));st.appendChild(c)});box.appendChild(st);
-  var cd=mk('div','','आपका कोड: '+m.code);cd.style.cssText='text-align:center;font-weight:800;font-size:20px;letter-spacing:2px;background:#fff;border:2px dashed #d4141c;border-radius:12px;padding:10px;color:#7a0a10';box.appendChild(cd);
+  [['👥','जुड़े',m.joined],['✅','पेमेंट किया',m.paid],['💰','वॉलेट','₹'+m.balance]].forEach(function(p){var c=mk('div','');c.style.cssText='flex:1;background:#fff;border-radius:14px;padding:14px 4px;text-align:center';var n=mk('b','',String(p[2]));n.style.cssText='display:block;font-size:24px;color:#b3141c';c.appendChild(n);c.appendChild(mk('span','k',p[0]+' '+p[1]));st.appendChild(c)});box.appendChild(st);
+  var cd=mk('div','','आपका कोड: '+m.code);cd.style.cssText='text-align:center;font-weight:800;font-size:26px;letter-spacing:3px;background:#fff;border:2px dashed #d4141c;border-radius:14px;padding:16px;color:#7a0a10';box.appendChild(cd);
   var row=mk('div','');row.style.cssText='display:flex;gap:8px;margin-top:8px';
   var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent('मैं SpyWell DynaMe पर अपना डिजिटल विज़िटिंग कार्ड बनाता हूँ। आप भी बनाइए: '+u+'  (कोड: '+m.code+')');wa.target='_blank';wa.rel='noopener';
-  wa.style.cssText='flex:1;text-align:center;background:#1ea952;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700';
-  var cp=mk('button','alt','🔗 लिंक कॉपी');cp.type='button';cp.style.cssText='margin:0;flex:1';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2000)};
+  wa.style.cssText='flex:1;text-align:center;background:#1ea952;color:#fff;border-radius:14px;padding:16px 6px;text-decoration:none;font-weight:800;font-size:16px';
+  var cp=mk('button','alt','🔗 लिंक कॉपी');cp.type='button';cp.style.cssText='margin:0;flex:1;padding:16px 6px;font-size:16px;border-radius:14px';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2000)};
   row.appendChild(wa);row.appendChild(cp);box.appendChild(row);
   if(!m.referred_by&&!m.paid&&!m.joined){var q=mk('div','k','किसी दोस्त ने कोड दिया है?');q.style.marginTop='10px';box.appendChild(q);
     var rw=mk('div','');rw.style.cssText='display:flex;gap:6px;margin-top:4px';var inp=document.createElement('input');inp.placeholder='रेफ़रल कोड';inp.maxLength=10;inp.style.cssText='flex:1;margin:0;text-transform:uppercase';
