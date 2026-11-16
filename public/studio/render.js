@@ -563,7 +563,7 @@
     if (mini) { var tm = link('pf-tile', '', mini); tm.appendChild(el('i', '', '🌐')); tm.appendChild(el('span', '', P('मिनी वेबसाइट', 'Mini Website'))); tiles.appendChild(actA(tm, 'miniweb')); }
     if (tiles.children.length) { bd.appendChild(tiles); bd.appendChild(panel); }
     var ib = el('div', 'pf-info'), ad2 = [f.address, f.city, f.state].filter(Boolean).join(', '), wb2 = web || mini;
-    [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(q[2] ? link('', q[1], q[2]) : el('span', '', q[1])); ib.appendChild(rw); });
+    [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(el('span', '', q[1])); ib.appendChild(rw); });
     if (ib.children.length) bd.appendChild(ib);
     var soc = el('div', 'pf-soc');
     [['in', f.linkedin, '#0a66c2'], ['📸', f.instagram, '#c13584'], ['▶', f.youtube, '#e00'], ['f', f.facebook, '#1877f2']].forEach(function (x) { var u = V.url(x[1]); if (!u) return; var a = link('pf-sc', x[0], u); a.style.background = x[2]; soc.appendChild(a); });
@@ -588,8 +588,7 @@
       [qn, qm, qx, qs, qr].forEach(function (x) { qf.appendChild(x); });
       qb.onclick = function () { qf.hidden = !qf.hidden; };
       q2.appendChild(qb);
-    } else
-    if (wa || tel) q2.appendChild(actA(link('pf-q', '📝 ' + P('कोटेशन', 'Get Quote'), wa ? 'https://wa.me/91' + wa + '?text=' + qmsg : 'tel:+91' + tel), wa ? 'whatsapp' : 'call'));
+    }
     var mpu = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address, f.city].filter(Boolean).join(', '))) : '';
     if (mpu) q2.appendChild(actA(link('pf-chat', '📍 ' + P('लोकेशन', 'Location'), mpu), 'location'));
     if (q2.children.length) bd.appendChild(q2);
@@ -623,7 +622,7 @@
     if (!biz) [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')], ['मिनी वेबसाइट', mini && mini.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
       if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', T(r[0]))); if (r[0] === 'मोबाइल') row.appendChild(actA(link('', r[1], 'tel:+91' + tel), 'call')); else if (r[0] === 'मिनी वेबसाइट') row.appendChild(actA(link('', r[1], mini), 'miniweb')); else row.appendChild(el('div', '', r[1])); bd.appendChild(row);
     });
-    if (pf) { var ib = el('div', 'pf-info'), ad2 = [f.address, f.city, f.state].filter(Boolean).join(', '), wb2 = V.url(f.website) || V.url(f.miniweb); [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(q[2] ? link('', q[1], q[2]) : el('span', '', q[1])); ib.appendChild(rw); }); if (ib.children.length) bd.appendChild(ib); }
+    if (pf) { var ib = el('div', 'pf-info'), ad2 = [f.address, f.city, f.state].filter(Boolean).join(', '), wb2 = V.url(f.website) || V.url(f.miniweb); [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(el('span', '', q[1])); ib.appendChild(rw); }); if (ib.children.length) bd.appendChild(ib); }
     var soc = el('div', 'sr-soc');
     [['Facebook', f.facebook], ['Instagram', f.instagram], ['YouTube', f.youtube], ['LinkedIn', f.linkedin]].forEach(function (s) { var u = V.url(s[1]); if (u) soc.appendChild(link('', s[0], u)); });
     if (soc.children.length) { if (pf) bd.appendChild(el('div', 'pf-fu', T('फ़ॉलो करें'))); bd.appendChild(soc); }
