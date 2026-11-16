@@ -74,7 +74,7 @@ button{min-height:48px;border-radius:12px}
 html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-transform:translateZ(0)}#c-sendaddr{background:linear-gradient(135deg,#3a1d8f,#7b5cf0);border:0;color:#fff;box-shadow:0 8px 20px rgba(91,60,220,.35);padding:14px 12px;position:relative;overflow:hidden}
 #c-sendaddr::after{content:'📨';position:absolute;right:-8px;top:-14px;font-size:90px;opacity:.1;pointer-events:none}
 #c-sendaddr .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-sendaddr .sa-i{font-size:30px}#c-sendaddr .sa-h b{display:block;font-size:19px;color:#fff}#c-sendaddr .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}
-#c-sendaddr>.card{margin:10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.2);border:0}
+#c-sendaddr>.card{margin:10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.2);border:0;color:var(--ink)}#c-sendaddr>.card button{white-space:nowrap}
 </style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script>(function(){try{if(!window.Capacitor&&!window.ViNative&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){
   document.addEventListener('DOMContentLoaded',function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#7a0a10;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
   var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 DynaMe ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#7a0a10;padding:8px 14px;border-radius:8px;text-decoration:none';
@@ -1005,7 +1005,7 @@ function drawAddr(edit,k){
     var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:12px';
     var s1=mk('a','','🖼 कार्ड भेजें');s1.href='/studio/address/';s1.onclick=function(e){e.preventDefault();openAd(k)};s1.style.cssText='flex:1.3;text-align:center;background:#d4141c;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600';
     var s2=mk('button','alt','✏️ बदलें');s2.type='button';s2.style.cssText='flex:1;margin:0';s2.onclick=function(){drawAddr(true,k)};
-    var s4=mk('button','alt','🗑');s4.type='button';s4.setAttribute('aria-label','डिलीट करें');s4.style.cssText='flex:none;margin:0;padding:12px 14px;color:#b00020';s4.onclick=function(){delAddr(k)};
+    var s4=mk('button','alt','🗑');s4.type='button';s4.setAttribute('aria-label','डिलीट करें');s4.style.cssText='flex:none;width:auto;margin:0;padding:12px 14px;color:#b00020';s4.onclick=function(){delAddr(k)};
     rw.appendChild(s1);rw.appendChild(s2);if(h.map){var s3=mk('a','','📍');s3.href=h.map;s3.target='_blank';s3.rel='noopener';s3.setAttribute('aria-label','लोकेशन');s3.style.cssText='flex:none;text-align:center;border:1.5px solid #d4141c;border-radius:12px;padding:12px 14px;text-decoration:none;font-size:18px';rw.appendChild(s3)}rw.appendChild(s4);box.appendChild(rw);return}
   var f=mk('div','');f.style.marginTop='10px';var P=k+'-';
   function fld(lbl,id,ph,area,mx,val){f.appendChild(mk('label','',lbl));var i=document.createElement(area?'textarea':'input');if(area)i.rows=2;i.id=id;i.placeholder=ph||'';i.maxLength=mx;i.value=val||'';f.appendChild(i);return i}
