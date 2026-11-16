@@ -42,6 +42,7 @@
       ['industry', 'व्यवसाय का प्रकार (Industry)', 'select', 30],
       ['industry_other', 'अपना व्यवसाय लिखें', 'text', 40],
       ['designation', 'पद', 'text', 60],
+      ['dealsin', 'Deals in: (छोटा विवरण, जैसे TV, फ्रिज, मोबाइल)', 'text', 160],
       ['mobile', 'मोबाइल नंबर', 'tel', 15],
       ['whatsapp', 'WhatsApp नंबर', 'tel', 15],
       ['sms', 'मैसेज (SMS) नंबर', 'tel', 15],
@@ -512,6 +513,7 @@
     if (d.images.photo) bd.appendChild(picture('ph', d.images.photo, 'circle')); else bd.className += ' noph';
     if (f.name) bd.appendChild(el('div', 'sr-nm', f.name));
     if (f.designation) bd.appendChild(el('div', 'sr-des', f.designation));
+    if (f.dealsin) bd.appendChild(el('div', 'sr-deal', 'Deals in: ' + f.dealsin));
     if (f.about) bd.appendChild(el('div', 'sr-msg', f.about));
     var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), mini = V.url(f.miniweb), act = el('div', 'sr-act'); if (mini) web = '';
     if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
@@ -605,7 +607,7 @@
     '.sr-vc .hd{background:var(--ac);color:var(--bg);padding:1.6em 1.1em 4em}.sr-biz{font-weight:700;font-size:1.15em}.sr-lg{object-fit:contain;margin-bottom:.5em}' +
     '.sr-vc .bd{padding:0 1.1em 1.6em}.sr-vc .bd.noph{padding-top:1.2em;margin-top:-2.4em;background:var(--bg);border-radius:18px 18px 0 0}' +
     '.sr-vc .ph{border-radius:50%;object-fit:cover;border:4px solid var(--bg);background:var(--bg);margin-top:-3.4em;margin-bottom:.5em}' +
-    '.sr-vc .sr-nm{font-family:var(--nf);font-size:1.5em;font-weight:700}.sr-des{opacity:.75;font-size:.9em}' +
+    '.sr-vc .sr-nm{font-family:var(--nf);font-size:1.5em;font-weight:700}.sr-des{opacity:.75;font-size:.9em}.sr-deal{font-size:.88em;font-weight:600;margin:.35em 0 .1em;line-height:1.35}' +
     '.sr-act{display:flex;flex-wrap:wrap;gap:.5em;margin:1em 0}' +
     '.sr-act a{flex:1 1 6.2em;min-width:0;box-sizing:border-box;display:flex;align-items:center;justify-content:center;min-height:2.9em;background:var(--ac);color:var(--bg)!important;border-radius:10px;padding:.55em .6em;text-decoration:none;font-size:.82em;font-weight:600;text-align:center;line-height:1.25}' +
     '.sr-svs{margin:1em 0}.sr-chip{display:inline-block;border:1px solid var(--ac);color:var(--ac);border-radius:2em;padding:.15em .7em;margin:.2em;font-size:.82em}' +
@@ -690,6 +692,7 @@
     if (d.images.photo) hin.appendChild(picture('ph', d.images.photo, 'circle'));
     if (f.name) hin.appendChild(el('h1', 'sr-nm', f.name));
     if (f.designation) hin.appendChild(el('div', 'sr-des', f.designation));
+    if (f.dealsin) hin.appendChild(el('div', 'sr-deal', 'Deals in: ' + f.dealsin));
     if (f.tagline) hin.appendChild(el('p', 'ws-tag', f.tagline));
     var act = el('div', 'sr-act ws-act');
     if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
