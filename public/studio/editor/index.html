@@ -159,7 +159,7 @@ function hoursPicker(p,d){
   var tw=h('div',{style:'display:flex;gap:8px;margin-top:6px;align-items:center'});
   var t1=h('input',{type:'time',value:'10:00'}),t2=h('input',{type:'time',value:'19:00'});t1.style.flex=t2.style.flex='1';
   tw.appendChild(t1);tw.appendChild(h('span',{text:'से'}));tw.appendChild(t2);
-  var dw=h('div',{style:'display:none;flex-wrap:wrap;gap:6px;margin-top:6px'}),cbs=DAYS.map(function(n,i){var c=h('input',{type:'checkbox','data-ck':'1'});c.checked=i<6;c.style.cssText='width:auto;margin-right:4px';var l=h('label',{style:'display:flex;align-items:center;font-weight:400'},[c,h('span',{text:n})]);dw.appendChild(l);return c});
+  var dw=h('div',{style:'display:none;flex-wrap:wrap;gap:6px;margin-top:6px'}),cbs=DAYS.map(function(n,i){var c=h('input',{type:'checkbox'});c.checked=i<6;c.style.cssText='width:auto;margin-right:4px';var l=h('label',{style:'display:flex;align-items:center;font-weight:400'},[c,h('span',{text:n})]);dw.appendChild(l);return c});
   function f12(t){var m=/^(\d{1,2}):(\d{2})$/.exec(t||'');if(!m)return'';var H=+m[1],ap=H>=12?'PM':'AM';H=H%12;if(H===0)H=12;return H+':'+m[2]+' '+ap}
   function compose(){var v=pat.value,days=v==='ms'?'सोम–शनि':v==='mu'?'रोज़ (सोम–रवि)':v==='mf'?'सोम–शुक्र':v==='cu'?DAYS.filter(function(n,i){return cbs[i].checked}).join(', '):'';
     if(v==='h24')return '24 घंटे खुला (रोज़)';
@@ -431,7 +431,7 @@ function pAI(p){
         var info=h('div',{text:'PDF में '+n+' पेज हैं। जो पेज AI को भेजने हैं उन्हें चुनें (अधिकतम 4)।'+(n>12?' पहले 12 पेज दिख रहे हैं।':'')});box.appendChild(info);
         var row=h('div',{style:'display:flex;flex-wrap:wrap;gap:6px;margin-top:4px'});box.appendChild(row);
         for(var pn=1;pn<=Math.min(n,12);pn++){(function(pn){
-          var cb=h('input',{type:'checkbox','data-ck':'1',style:'width:auto;margin:0'});cb.checked=sel.indexOf(pn)>=0;
+          var cb=h('input',{type:'checkbox',style:'width:auto;margin:0'});cb.checked=sel.indexOf(pn)>=0;
           var cv=h('canvas',{style:'max-width:90px;border:1px solid #e8d5ad;border-radius:4px;display:block'});
           var cell=h('label',{style:'display:block;text-align:center;font-size:12px;margin:0'},[cv,cb,document.createTextNode(' पेज '+pn)]);row.appendChild(cell);
           cb.onchange=function(){var cur=pick[key];if(cb.checked){if(cur.length>=AILIM.pages){cb.checked=false;return}cur.push(pn)}else pick[key]=cur.filter(function(x){return x!==pn})};
