@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PropDeal: प्रॉपर्टी डीलरों का अपना ऐप | PropDeal for Property Dealers</title>
+<meta name="description" content="PropDeal: प्रॉपर्टी डीलरों के लिए Android ऐप। लिस्टिंग, क्लाइंट फ़ॉलो-अप, ज़मीन की नाप, मैप रूलर और दूसरे डीलरों से कॉल व WhatsApp नेटवर्किंग। PropDeal, an Android app for property dealers by SpyWell InfoTech.">
+<link rel="canonical" href="https://spywell.in/propdeal/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SpyWell InfoTech">
+<meta property="og:title" content="PropDeal: प्रॉपर्टी डीलरों का अपना ऐप">
+<meta property="og:description" content="लिस्टिंग, क्लाइंट, ज़मीन की नाप और डीलर नेटवर्क, सब एक ऐप में।">
+<meta property="og:url" content="https://spywell.in/propdeal/">
+<meta property="og:image" content="https://spywell.in/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#FFF8EF;--surface:#FFFFFF;--soft:#FFEFDB;--fg:#23150D;--muted:#6B5244;--line:#F3DFC6;--saffron:#FF9933;--on-saffron:#2E1A00;--brand:#F5871F;--deep:#B35C00;--yellow:#F5B800;--hero:#FFEFDB;--hero-fg:#23150D;--f-d:'Baloo 2','Trebuchet MS',system-ui,sans-serif;--f-b:'Inter','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1A110A;--surface:#26180F;--soft:#33200F;--fg:#FFF1E2;--muted:#D9B9A0;--line:#4A3020;--saffron:#FFA846;--on-saffron:#2E1A00;--brand:#FFA846;--deep:#FFB866;--hero:#33200F;--hero-fg:#FFF1E2;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1A110A;--surface:#26180F;--soft:#33200F;--fg:#FFF1E2;--muted:#D9B9A0;--line:#4A3020;--saffron:#FFA846;--on-saffron:#2E1A00;--brand:#FFA846;--deep:#FFB866;--hero:#33200F;--hero-fg:#FFF1E2;color-scheme:dark}
+*{box-sizing:border-box}
+html[lang=hi] .en,html[lang=en] .hi{display:none}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 var(--f-b);margin:0;-webkit-text-size-adjust:100%;overflow-x:hidden}
+.w{max-width:960px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-d);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(34px,7vw,56px);font-weight:800}
+h2{font-size:clamp(26px,5vw,36px);font-weight:800}
+h3{font-size:19px;font-weight:600}
+p{margin:0}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.top{background:var(--soft);border-bottom:3px solid var(--saffron)}
+.top .w{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-d);font-weight:800;font-size:22px;text-decoration:none}
+.brand img{width:40px;height:40px;border-radius:10px;background:#fff;padding:3px;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.lang{display:flex;border:2px solid var(--saffron);border-radius:99px;overflow:hidden}
+.lang button{font:600 14px var(--f-b);padding:6px 14px;border:0;background:transparent;color:var(--fg);cursor:pointer;min-height:36px}
+html[lang=hi] .lang [data-l=hi],html[lang=en] .lang [data-l=en]{background:var(--saffron);color:var(--on-saffron)}
+.hero{background:var(--hero);color:var(--hero-fg);padding-block:44px 56px}
+.hero .grid{display:grid;gap:28px;align-items:center}
+.eyebrow{display:inline-block;font:600 13px var(--f-b);letter-spacing:.04em;background:var(--saffron);color:var(--on-saffron);padding:5px 12px;border-radius:99px;margin-bottom:14px}
+.hero p.lead{font-size:18px;margin-top:16px;max-width:52ch}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 22px;border-radius:14px;font:600 16px var(--f-b);text-decoration:none;background:var(--saffron);color:var(--on-saffron);border:2px solid var(--saffron);text-align:center}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--deep)}
+.btn.soon{background:var(--surface);color:var(--deep);border:2px dashed var(--deep);cursor:default}
+.phone{justify-self:center;width:min(260px,70vw);aspect-ratio:9/18;border-radius:34px;border:8px solid #2E1A00;background:var(--surface);padding:18px 14px;box-shadow:0 18px 40px rgba(90,40,0,.25);display:flex;flex-direction:column;gap:10px}
+.phone .bar{height:34px;border-radius:10px;background:var(--saffron);display:flex;align-items:center;padding:0 10px;gap:8px;font:700 13px var(--f-d);color:var(--on-saffron)}
+.phone .bar img{width:22px;height:22px;border-radius:6px;background:#fff}
+.card-mini{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--bg)}
+.card-mini b{display:block;font:600 14px var(--f-b)}
+.card-mini small{color:var(--muted);font-size:12px}
+.tag{display:inline-block;font:600 11px var(--f-b);background:var(--soft);color:var(--deep);padding:2px 8px;border-radius:99px;margin-top:4px}
+section{padding-block:52px}
+.feat{display:grid;gap:14px;margin-top:26px;grid-template-columns:1fr}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.ico{width:44px;height:44px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
+.box p{color:var(--muted);margin-top:6px;font-size:15px}
+.steps{counter-reset:s;display:grid;gap:14px;margin-top:26px}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+.step .n{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--saffron);color:var(--on-saffron);font:800 18px var(--f-d);display:flex;align-items:center;justify-content:center}
+.step p{color:var(--muted);font-size:15px;margin-top:4px}
+.zone{background:var(--soft);border-radius:22px;padding:24px;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chips span{background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:14px}
+.final{text-align:center}
+.final p.sub{color:var(--muted);margin-top:10px}
+.final .btns{justify-content:center}
+footer{border-top:1px solid var(--line);padding-block:24px;color:var(--muted);font-size:14px}
+footer a{color:var(--deep)}
+@media (min-width:760px){
+ .hero .grid{grid-template-columns:1.1fr .9fr}
+ .feat{grid-template-columns:repeat(3,1fr)}
+ .steps{grid-template-columns:repeat(3,1fr)}
+ .step{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="w">
+  <a class="brand" href="./"><img src="logo.png" alt="PropDeal logo" width="40" height="40"><span>PropDeal</span></a>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-l="hi">हिंदी</button>
+    <button type="button" data-l="en">English</button>
+  </div>
+</div></header>
+
+<main>
+<section class="hero"><div class="w grid">
+  <div>
+    <span class="eyebrow"><span class="en">Android app for property dealers</span><span class="hi">प्रॉपर्टी डीलरों के लिए Android ऐप</span></span>
+    <h1><span class="en">Your listings, clients and dealer network, in one app</span><span class="hi">आपकी लिस्टिंग, क्लाइंट और डीलर नेटवर्क, सब एक ऐप में</span></h1>
+    <p class="lead"><span class="en">PropDeal helps you post plots, houses and shops, follow up with every client, measure land in bigha, gaj or kanal, and stay connected with other dealers by call and WhatsApp.</span><span class="hi">PropDeal से आप प्लॉट, मकान और दुकान की लिस्टिंग डालें, हर क्लाइंट का फ़ॉलो-अप रखें, बीघा, गज़ या कनाल में ज़मीन नापें, और दूसरे डीलरों से कॉल व WhatsApp पर जुड़े रहें।</span></p>
+    <div class="btns">
+      <span class="btn soon"><span class="en">Coming soon on Google Play</span><span class="hi">Google Play पर जल्द आ रहा है</span></span>
+      <a class="btn ghost" href="https://wa.me/919837900303?text=PropDeal%20ke%20baare%20me%20jaankari%20chahiye" rel="noopener"><span class="en">Ask on WhatsApp</span><span class="hi">WhatsApp पर पूछें</span></a>
+    </div>
+  </div>
+  <div class="phone" aria-hidden="true">
+    <div class="bar"><img src="logo.png" alt=""> PropDeal</div>
+    <div class="card-mini"><b>Plot for sale</b><small>Size and price in your listing</small><br><span class="tag">Listing</span></div>
+    <div class="card-mini"><b>Client lead</b><small>Next follow-up date set</small><br><span class="tag">Follow-up</span></div>
+    <div class="card-mini"><b>Farmland</b><small>Measured on map, converted to bigha, gaj, sq ft</small><br><span class="tag">Zameen Naap</span></div>
+    <div class="card-mini"><b>Dealers in your city</b><small>Call or WhatsApp in one tap</small><br><span class="tag">Network</span></div>
+  </div>
+</div></section>
+
+<section><div class="w">
+  <h2><span class="en">What you get</span><span class="hi">PropDeal में क्या मिलता है</span></h2>
+  <div class="feat">
+    <div class="box"><div class="ico">🏠</div><h3><span class="en">Your listings</span><span class="hi">आपकी लिस्टिंग</span></h3><p><span class="en">Add plots, houses, shops and farmland with price, size and location. Share them on WhatsApp in a few taps.</span><span class="hi">प्लॉट, मकान, दुकान और खेती की ज़मीन, कीमत, साइज़ और लोकेशन के साथ डालें। कुछ टैप में WhatsApp पर शेयर करें।</span></p></div>
+    <div class="box"><div class="ico">📐</div><h3><span class="en">Zameen Naap</span><span class="hi">ज़मीन की नाप</span></h3><p><span class="en">Convert between bigha, gaj, kanal and sq ft in one place.</span><span class="hi">बीघा, गज़, कनाल और वर्ग फ़ुट के बीच तुरंत बदलें, अपने इलाके की सही इकाइयों के साथ।</span></p></div>
+    <div class="box"><div class="ico">📍</div><h3><span class="en">Map ruler</span><span class="hi">मैप रूलर</span></h3><p><span class="en">Search a place on the map, then mark plot corners with a pencil-tip pointer for exact area and length.</span><span class="hi">मैप पर जगह खोजें, फिर पेंसिल वाले पॉइंटर से प्लॉट के कोने चिह्नित करके सही क्षेत्रफल और लंबाई पाएं।</span></p></div>
+    <div class="box"><div class="ico">👥</div><h3><span class="en">Client follow-up</span><span class="hi">क्लाइंट फ़ॉलो-अप</span></h3><p><span class="en">Track every lead from first call to deal: stages, visit notes and follow-up dates.</span><span class="hi">पहली कॉल से डील तक हर लीड का रिकॉर्ड रखें: स्टेज, विज़िट नोट्स और फ़ॉलो-अप की तारीख।</span></p></div>
+    <div class="box"><div class="ico">🤝</div><h3><span class="en">Dealer network</span><span class="hi">डीलर नेटवर्क</span></h3><p><span class="en">Find dealers in Saharanpur, Karnal, Yamunanagar, Dehradun and Haridwar, and call or WhatsApp them directly.</span><span class="hi">सहारनपुर, करनाल, यमुनानगर, देहरादून और हरिद्वार के डीलर खोजें, और सीधे कॉल या WhatsApp करें।</span></p></div>
+    <div class="box"><div class="ico">🎁</div><h3><span class="en">Refer and get badges</span><span class="hi">रेफ़र करें, बैज पाएं</span></h3><p><span class="en">Invite fellow dealers with your code. Earn badges as your network grows. Referral rewards are badges, not cash.</span><span class="hi">अपने कोड से साथी डीलरों को बुलाएं। नेटवर्क बढ़ने पर बैज पाएं। रेफ़रल का इनाम बैज है, नकद नहीं।</span></p></div>
+  </div>
+</div></section>
+
+<section><div class="w">
+  <h2><span class="en">How it works</span><span class="hi">ये कैसे काम करता है</span></h2>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div><h3><span class="en">Sign up and create your profile</span><span class="hi">साइन अप करें और प्रोफ़ाइल बनाएं</span></h3><p><span class="en">Create your dealer profile with your name, firm and city.</span><span class="hi">अपना नाम, फ़र्म और शहर डालकर डीलर प्रोफ़ाइल बनाएं।</span></p></div></div>
+    <div class="step"><div class="n">2</div><div><h3><span class="en">Post and measure</span><span class="hi">लिस्टिंग डालें और नापें</span></h3><p><span class="en">Add your properties, mark their location on the map and convert the land size.</span><span class="hi">अपनी प्रॉपर्टी डालें, मैप पर लोकेशन चिह्नित करें और ज़मीन का साइज़ बदलें।</span></p></div></div>
+    <div class="step"><div class="n">3</div><div><h3><span class="en">Follow up and connect</span><span class="hi">फ़ॉलो-अप करें और जुड़ें</span></h3><p><span class="en">Keep clients on track and connect with dealers across the region.</span><span class="hi">क्लाइंट को सही ट्रैक पर रखें और पूरे इलाके के डीलरों से जुड़ें।</span></p></div></div>
+  </div>
+</div></section>
+
+<section><div class="w"><div class="zone final">
+  <h2><span class="en">Be among the first dealers on PropDeal</span><span class="hi">PropDeal के शुरुआती डीलरों में शामिल हों</span></h2>
+  <p class="sub"><span class="en">PropDeal is coming to Google Play soon. Questions? Write to us.</span><span class="hi">PropDeal जल्द Google Play पर आएगा। कोई सवाल है? हमें लिखें।</span></p>
+  <div class="btns">
+    <a class="btn" href="https://wa.me/919837900303?text=PropDeal%20ke%20baare%20me%20jaankari%20chahiye" rel="noopener"><span class="en">Chat on WhatsApp</span><span class="hi">WhatsApp पर बात करें</span></a>
+    <a class="btn ghost" href="mailto:info@spywell.in?subject=PropDeal"><span class="en">Email info@spywell.in</span><span class="hi">info@spywell.in पर ईमेल करें</span></a>
+  </div>
+  <div class="chips"><span>Saharanpur</span><span>Karnal</span><span>Yamunanagar</span><span>Dehradun</span><span>Haridwar</span></div>
+</div></div></section>
+</main>
+
+<footer><div class="w">
+  <p>© PropDeal by <a href="../">SpyWell InfoTech</a> · <span class="en">Saharanpur, Uttar Pradesh, India</span><span class="hi">सहारनपुर, उत्तर प्रदेश, भारत</span></p>
+  <p style="margin-top:6px"><span class="en">Coming soon on Google Play. Android app.</span><span class="hi">Google Play पर जल्द। Android ऐप।</span></p>
+</div></footer>
+
+<script>
+(function(){var d=document.documentElement,k='pd-lang';
+function set(l){d.lang=l;try{localStorage.setItem(k,l)}catch(e){}}
+try{var s=localStorage.getItem(k);if(s==='en'||s==='hi')d.lang=s}catch(e){}
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.l)})});})();
+</script>
+</body>
+</html>
