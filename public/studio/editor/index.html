@@ -53,6 +53,7 @@ input.bad{border-color:#b00020}.e{color:#b00020;font-size:12px;margin-top:2px}
 button:active{transform:scale(.96);filter:brightness(.9)}button{-webkit-tap-highlight-color:rgba(139,26,43,.25);transition:transform .08s}
 #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);max-width:90vw;z-index:30;background:#2b2b2b;color:#fff;padding:11px 18px;border-radius:24px;font-size:15px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.3);text-align:center}#toast.bad{background:#b00020}#toast.ok{background:#1b7a3a}
 @media(min-width:860px){.cols{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}#pvbox{max-height:calc(100vh - 130px)}.left{position:sticky;top:60px}}
+input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance:none!important;position:relative!important;flex:none!important;width:52px!important;height:30px!important;min-height:0!important;border-radius:15px!important;border:0!important;background:#9aa8a0!important;padding:0!important;margin:0 10px 0 0!important;cursor:pointer;transition:background .2s;box-shadow:none!important;vertical-align:middle}input[type=checkbox]:not([data-ck])::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:left .2s}input[type=checkbox]:not([data-ck]):checked{background:#1fc260!important}input[type=checkbox]:not([data-ck]):checked::after{left:25px}input[type=checkbox]:not([data-ck]):disabled{opacity:.6}
 </style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script><script src="/studio/wizard.js?v=20261117a"></script></head><body>
 <div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
 <button id="undo" disabled title="Undo">↶</button><button id="redo" disabled title="Redo">↷</button><button id="save">सेव</button></div>
@@ -158,7 +159,7 @@ function hoursPicker(p,d){
   var tw=h('div',{style:'display:flex;gap:8px;margin-top:6px;align-items:center'});
   var t1=h('input',{type:'time',value:'10:00'}),t2=h('input',{type:'time',value:'19:00'});t1.style.flex=t2.style.flex='1';
   tw.appendChild(t1);tw.appendChild(h('span',{text:'से'}));tw.appendChild(t2);
-  var dw=h('div',{style:'display:none;flex-wrap:wrap;gap:6px;margin-top:6px'}),cbs=DAYS.map(function(n,i){var c=h('input',{type:'checkbox'});c.checked=i<6;c.style.cssText='width:auto;margin-right:4px';var l=h('label',{style:'display:flex;align-items:center;font-weight:400'},[c,h('span',{text:n})]);dw.appendChild(l);return c});
+  var dw=h('div',{style:'display:none;flex-wrap:wrap;gap:6px;margin-top:6px'}),cbs=DAYS.map(function(n,i){var c=h('input',{type:'checkbox','data-ck':'1'});c.checked=i<6;c.style.cssText='width:auto;margin-right:4px';var l=h('label',{style:'display:flex;align-items:center;font-weight:400'},[c,h('span',{text:n})]);dw.appendChild(l);return c});
   function f12(t){var m=/^(\d{1,2}):(\d{2})$/.exec(t||'');if(!m)return'';var H=+m[1],ap=H>=12?'PM':'AM';H=H%12;if(H===0)H=12;return H+':'+m[2]+' '+ap}
   function compose(){var v=pat.value,days=v==='ms'?'सोम–शनि':v==='mu'?'रोज़ (सोम–रवि)':v==='mf'?'सोम–शुक्र':v==='cu'?DAYS.filter(function(n,i){return cbs[i].checked}).join(', '):'';
     if(v==='h24')return '24 घंटे खुला (रोज़)';
@@ -430,7 +431,7 @@ function pAI(p){
         var info=h('div',{text:'PDF में '+n+' पेज हैं। जो पेज AI को भेजने हैं उन्हें चुनें (अधिकतम 4)।'+(n>12?' पहले 12 पेज दिख रहे हैं।':'')});box.appendChild(info);
         var row=h('div',{style:'display:flex;flex-wrap:wrap;gap:6px;margin-top:4px'});box.appendChild(row);
         for(var pn=1;pn<=Math.min(n,12);pn++){(function(pn){
-          var cb=h('input',{type:'checkbox',style:'width:auto;margin:0'});cb.checked=sel.indexOf(pn)>=0;
+          var cb=h('input',{type:'checkbox','data-ck':'1',style:'width:auto;margin:0'});cb.checked=sel.indexOf(pn)>=0;
           var cv=h('canvas',{style:'max-width:90px;border:1px solid #e8d5ad;border-radius:4px;display:block'});
           var cell=h('label',{style:'display:block;text-align:center;font-size:12px;margin:0'},[cv,cb,document.createTextNode(' पेज '+pn)]);row.appendChild(cell);
           cb.onchange=function(){var cur=pick[key];if(cb.checked){if(cur.length>=AILIM.pages){cb.checked=false;return}cur.push(pn)}else pick[key]=cur.filter(function(x){return x!==pn})};
