@@ -145,6 +145,23 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <h1>नमस्ते, <span id="d-name"></span><span class="badge" id="d-admin" hidden>Admin</span></h1>
 <div class="k" id="d-mail"></div>
 </div>
+<form class="card" id="v-prof">
+<div id="pf-th" style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('pf-body');q.hidden=!q.hidden;document.getElementById('pf-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">👤 मेरी प्रोफ़ाइल</b><span id="pf-ar" style="font-size:16px">▾</span></div>
+<div id="pf-body" hidden>
+<div class="k" style="margin:4px 0 8px">यहाँ बदलने पर आपका विज़िटिंग कार्ड भी बदल जाएगा, और कार्ड एडिट करने पर यह प्रोफ़ाइल भी।</div>
+<div id="pf-sum" style="margin:6px 0"></div>
+<div id="pf-addrmgr"></div></div>
+<button type="button" id="pf-open" class="alt" style="width:100%;margin:6px 0 0">✏️ प्रोफ़ाइल एडिट करें</button>
+<div id="pf-edit" hidden>
+<button type="button" id="pf-scan" style="width:100%;margin:0 0 4px;background:#d4141c;color:#fff;border:0">📷 अपने कार्ड से भरें (मुफ़्त)</button><input id="pf-scanf" type="file" accept="image/*" hidden>
+<div class="k" id="pf-scanm" style="margin-bottom:8px">अपने छपे विज़िटिंग कार्ड की फ़ोटो लें, जानकारी अपने-आप भर जाएगी। फिर जाँचकर सेव करें।</div>
+<div id="pf-fields"></div>
+<div class="err" id="pf-err"></div><div class="ok" id="pf-ok"></div>
+<button type="submit" id="pf-save">सेव करें</button>
+<button type="button" id="pf-cancel" class="alt" style="width:100%;margin-top:8px">रद्द करें</button>
+</div>
+<div class="ok" id="pf-ok2"></div>
+</form>
 <div id="c-hello"><b><span class="hw">👋</span> Welcome<span id="hl-n"></span></b><small>Your Identity, Dynamically Connected</small><i style="right:16px;top:10px">✨</i><i style="right:52px;top:34px;animation-delay:.7s;font-size:12px">✨</i><i style="right:24px;bottom:8px;animation-delay:1.3s;font-size:13px">⭐</i></div>
 <div class="card" id="c-welcome" hidden style="background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff"><b style="font-size:18px">🎉 स्वागत है! अपना डिजिटल कार्ड बनाइए</b>
 <div style="margin-top:8px;font-size:15px">1️⃣ अपनी जानकारी भरें<br>2️⃣ कार्ड प्रकाशित करें<br>3️⃣ WhatsApp पर शेयर करें और QR बाँटें</div>
@@ -209,24 +226,7 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <div style="display:flex;gap:8px;margin-top:8px"><button type="button" id="vo-say" style="flex:1">▶ अभी सुनें</button><button type="button" id="vo-stop" style="flex:1">⏹ रोकें</button></div>
 <div class="k" id="vo-msg"></div></div>
 </div>
-<form class="card" id="v-prof">
-<div id="pf-th" style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('pf-body');q.hidden=!q.hidden;document.getElementById('pf-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">👤 मेरी प्रोफ़ाइल</b><span id="pf-ar" style="font-size:16px">▾</span></div>
-<div id="pf-body" hidden>
-<div class="k" style="margin:4px 0 8px">यहाँ बदलने पर आपका विज़िटिंग कार्ड भी बदल जाएगा, और कार्ड एडिट करने पर यह प्रोफ़ाइल भी।</div>
-<div id="pf-sum" style="margin:6px 0"></div>
-<div id="pf-addrmgr"></div></div>
-<button type="button" id="pf-open" class="alt" style="width:100%;margin:6px 0 0">✏️ प्रोफ़ाइल एडिट करें</button>
-<div id="pf-edit" hidden>
-<button type="button" id="pf-scan" style="width:100%;margin:0 0 4px;background:#d4141c;color:#fff;border:0">📷 अपने कार्ड से भरें (मुफ़्त)</button><input id="pf-scanf" type="file" accept="image/*" hidden>
-<div class="k" id="pf-scanm" style="margin-bottom:8px">अपने छपे विज़िटिंग कार्ड की फ़ोटो लें, जानकारी अपने-आप भर जाएगी। फिर जाँचकर सेव करें।</div>
-<div id="pf-fields"></div>
-<div class="err" id="pf-err"></div><div class="ok" id="pf-ok"></div>
-<button type="submit" id="pf-save">सेव करें</button>
-<button type="button" id="pf-cancel" class="alt" style="width:100%;margin-top:8px">रद्द करें</button>
-</div>
-<div class="ok" id="pf-ok2"></div>
-<button type="button" id="out" hidden style="margin-top:14px;width:100%;background:#fff;color:#b3261e;border:1.5px solid #b3261e">🚪 लॉगआउट</button>
-</form>
+<button type="button" id="out" hidden style="margin-top:4px;width:100%;background:#fff;color:#b3261e;border:1.5px solid #b3261e">🚪 लॉगआउट</button>
 </div>
 
 <div class="wrap" style="padding:0 0 10px;text-align:center"><a href="/dyname/" style="display:inline-block;font-size:13px;color:var(--wine);font-weight:700;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 14px">✨ DynaMe क्या है? →</a>
@@ -862,7 +862,7 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-ins'),'home'],[$('c-insinv'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-ins'),'home'],[$('c-insinv'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden))t='home';
   if(t==='dir'){var cd=$('c-dir');if(!cd.firstChild){var fr=document.createElement('iframe');fr.src='/studio/directory/?embed=1';fr.style.cssText='width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);border:0;display:block';cd.appendChild(fr)}}
