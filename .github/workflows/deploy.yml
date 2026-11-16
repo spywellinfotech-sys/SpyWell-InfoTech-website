@@ -32,6 +32,13 @@ jobs:
       - name: Per-card link previews (Studio)
         continue-on-error: true
         run: node scripts/make-og-pages.cjs
+      - name: Card screenshots for link previews
+        continue-on-error: true
+        timeout-minutes: 14
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          node scripts/make-og-shots.cjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
