@@ -30,9 +30,9 @@ const server = http.createServer((req, res) => {
       await page.waitForTimeout(1200);
       await page.evaluate(() => { document.querySelectorAll('*').forEach((e) => { const s = getComputedStyle(e); if (s.position === 'fixed') e.style.display = 'none'; }); window.scrollTo(0, 0); });
       let buf;
-      if (k === 'v') { const el = await page.$('#sheet .sr-vc, #sheet .sr'); if (!el) throw new Error('no card'); buf = await el.screenshot(); }
-      else buf = await page.screenshot({ clip: { x: 0, y: 0, width: 420, height: 740 } });
-      const card = await sharp(buf).resize({ height: 570, fit: 'inside' }).png().toBuffer(); const m = await sharp(card).metadata();
+      if (k === 'v') { const el = await page.$('#sheet .sr-vc, #sheet .sr'); if (!el) throw new Error('no card'); buf = await el.screenshot(); const mt = await sharp(buf).metadata(); const ch = Math.min(mt.height - 8, 700); buf = await sharp(buf).extract({ left: 6, top: 4, width: mt.width - 12, height: ch }).toBuffer(); }
+      else buf = await page.screenshot({ clip: { x: 0, y: 0, width: 408, height: 500 } });
+      const card = await sharp(buf).resize({ height: 600, fit: 'inside' }).png().toBuffer(); const m = await sharp(card).metadata();
       const bg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a0a10"/><stop offset="1" stop-color="#d4141c"/></linearGradient></defs><rect width="1200" height="630" fill="url(#g)"/></svg>');
       await sharp(bg).composite([{ input: card, left: Math.round((1200 - m.width) / 2), top: Math.round((630 - m.height) / 2) }]).jpeg({ quality: 82 }).toFile(path.join(DIST, 'og', k + '-' + slug + '.jpg'));
       const pf = path.join(DIST, k, slug, 'index.html'); let h = fs.readFileSync(pf, 'utf8'); const u = ORIGIN + '/og/' + k + '-' + slug + '.jpg';
