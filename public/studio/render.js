@@ -540,11 +540,49 @@
     if (f.dealsin) pw.appendChild(el('div', 'pf-deal', f.dealsin));
     root.appendChild(pw);
   }
+  /* Compact body for the profile layout: 3 action buttons, save contact, About/Services tiles, info box, follow icons, quote/chat, share toggle. */
+  function pfBody(root, d, opts, bd) {
+    var f = d.fields, L = (CARDL === 'hi' || !CARDL) ? 0 : 1;
+    function P(a, b) { return L ? b : a; }
+    var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website), mini = V.url(f.miniweb);
+    var row = el('div', 'pf-3');
+    if (tel) row.appendChild(actA(link('', '📞 ' + P('कॉल', 'Call'), 'tel:+91' + tel), 'call'));
+    if (wa) row.appendChild(actA(link('', '💬 WhatsApp', 'https://wa.me/91' + wa), 'whatsapp'));
+    if (em) row.appendChild(actA(link('', '✉️ ' + P('ईमेल', 'Email'), 'mailto:' + em), 'email'));
+    if (row.children.length) bd.appendChild(row);
+    if (vcardText(f, false)) { var sv0 = el('button', 'sr-save pf-save', '👤 ' + P('कॉन्टैक्ट सेव करें', 'Save Contact')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; bd.appendChild(sv0); }
+    var panel = el('div', 'pf-panel'); panel.hidden = true;
+    var tiles = el('div', 'pf-tiles'), cur = '';
+    function tile(ic, label, key, build) {
+      var t = el('button', 'pf-tile'); t.type = 'button'; t.appendChild(el('i', '', ic)); t.appendChild(el('span', '', label));
+      t.onclick = function () { if (cur === key) { cur = ''; panel.hidden = true; t.classList.remove('on'); return; } cur = key; panel.hidden = false; panel.textContent = ''; build(panel); Array.prototype.forEach.call(tiles.children, function (x) { x.classList.remove('on'); }); t.classList.add('on'); };
+      tiles.appendChild(t);
+    }
+    if (f.about) tile('🏢', P('हमारे बारे में', 'About Us'), 'a', function (pn) { pn.appendChild(el('p', 'pf-about', f.about)); });
+    if (d.services.length) tile('⚙️', P('सेवाएँ', 'Our Services'), 's', function (pn) { var w = el('div', 'sr-svs'); d.services.forEach(function (x) { w.appendChild(el('span', 'sr-chip', svName(x))); }); pn.appendChild(w); });
+    if (mini) { var tm = link('pf-tile', '', mini); tm.appendChild(el('i', '', '🌐')); tm.appendChild(el('span', '', P('मिनी वेबसाइट', 'Mini Website'))); tiles.appendChild(actA(tm, 'miniweb')); }
+    if (tiles.children.length) { bd.appendChild(tiles); bd.appendChild(panel); }
+    var ib = el('div', 'pf-info'), ad2 = [f.address, f.city, f.state].filter(Boolean).join(', '), wb2 = web || mini;
+    [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(q[2] ? link('', q[1], q[2]) : el('span', '', q[1])); ib.appendChild(rw); });
+    if (ib.children.length) bd.appendChild(ib);
+    var soc = el('div', 'pf-soc');
+    [['in', f.linkedin, '#0a66c2'], ['📸', f.instagram, '#c13584'], ['▶', f.youtube, '#e00'], ['f', f.facebook, '#1877f2']].forEach(function (x) { var u = V.url(x[1]); if (!u) return; var a = link('pf-sc', x[0], u); a.style.background = x[2]; soc.appendChild(a); });
+    if (soc.children.length) { bd.appendChild(el('div', 'pf-fu', P('फ़ॉलो करें', 'Follow Us'))); bd.appendChild(soc); }
+    var q2 = el('div', 'pf-2');
+    var qmsg = encodeURIComponent((f.business || f.name || '') + ': ' + P('कृपया कोटेशन भेजें', 'Please send a quote'));
+    if (wa || tel) q2.appendChild(actA(link('pf-q', '📝 ' + P('कोटेशन', 'Get Quote'), wa ? 'https://wa.me/91' + wa + '?text=' + qmsg : 'tel:+91' + tel), wa ? 'whatsapp' : 'call'));
+    if (wa) q2.appendChild(actA(link('pf-chat', '💬 ' + P('चैट करें', 'Chat Now'), 'https://wa.me/91' + wa), 'whatsapp'));
+    if (q2.children.length) bd.appendChild(q2);
+    var shp = el('div', 'pf-sharep'); shp.hidden = true; var built = false;
+    var shb = el('button', 'pf-share', '🔗 ' + P('विज़िटिंग कार्ड शेयर करें', 'Share Visiting Card')); shb.type = 'button';
+    shb.onclick = function () { if (!built) { built = true; var acts = el('div', 'sr-act'); acts.appendChild(saveCardBtn(root, f)); shp.appendChild(acts); shp.appendChild(shareBar(f, opts, root)); } shp.hidden = !shp.hidden; };
+    bd.appendChild(shb); bd.appendChild(shp);
+  }
   function buildVisiting(root, d, opts) {
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd'), biz = / l-biz\b/.test(' ' + root.className), pf = / bzv-7\b/.test(' ' + root.className);
     if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hd.appendChild(lg); }
     if (f.business) hd.appendChild(el('div', 'sr-biz', f.business));
-    if (biz) { if (pf) profileCard(root, d); else bizCards(root, d, root.style.getPropertyValue('--ac')); bd.className += ' noph'; } else {
+    if (biz) { if (pf) profileCard(root, d); else bizCards(root, d, root.style.getPropertyValue('--ac')); bd.className += ' noph'; if (pf) { pfBody(root, d, opts, bd); root.appendChild(bd); return; } } else {
     root.appendChild(hd);
     if (d.images.photo) bd.appendChild(picture('ph', d.images.photo, 'circle')); else bd.className += ' noph';
     if (f.name) bd.appendChild(el('div', 'sr-nm', f.name));
@@ -877,6 +915,13 @@
     '.bzv-6 .bz-f{background:var(--ac)}.bzv-6 .bz-top{background:transparent;height:auto;padding:6% 7% 0}.bzv-6 .bz-ls{left:5%;right:5%;bottom:6%;top:auto;width:auto;background:#fff;border-radius:14px;padding:2% 5%;display:grid;grid-template-columns:1fr 1fr;column-gap:.6em}.bzv-6 .bz-r,.bzv-6 .bz-r a{font-size:.68em;color:#111!important}.bzv-6 .bz-c{top:6%;width:25%;padding:2%;right:6%;border-color:#fff;background:transparent}' +
     '.bzv-7{padding:0!important}.pf-hd{background:var(--ac);color:#10213f;text-align:center;padding:1.1em 1em 3.4em;border-radius:0 0 50% 50%/0 0 2.4em 2.4em}.pf-lg{max-width:70%;max-height:4.2em;object-fit:contain}.pf-biz{font-family:var(--nf);font-weight:800;font-size:1.5em;line-height:1.1}.pf-tag{font-weight:600;font-size:.95em;margin-top:.3em}' +
     '.pf-id{text-align:center;margin-top:-2.6em;padding:0 1em}.pf-id.nop{margin-top:.7em}.pf-ph{width:7.4em!important;height:7.4em!important;border-radius:50%;object-fit:cover;border:3px solid var(--ac);background:var(--bg)}.pf-nm{font-family:var(--nf);font-weight:800;font-size:1.55em;margin-top:.25em}.pf-ds{opacity:.9}.pf-co{font-weight:700;margin-top:.15em}.pf-deal{margin-top:.3em;font-size:.92em;opacity:.9}' +
+    '.pf-3{display:flex;gap:.5em;margin:.2em 0}.pf-3 a{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;background:var(--ac);color:#10213f!important;font-weight:800;border-radius:12px;padding:.7em .3em;text-decoration:none;font-size:.9em;white-space:nowrap}' +
+    '.pf-save{width:100%;margin:.5em 0;background:transparent;border:2px solid var(--ac);color:var(--fg)!important;border-radius:12px;padding:.6em;font:inherit;font-weight:700}' +
+    '.pf-tiles{display:flex;gap:.5em;margin:.5em 0}.pf-tile{flex:1;min-width:0;background:rgba(255,255,255,.07);border:1px solid var(--ac);border-radius:14px;color:var(--fg)!important;padding:.55em .2em;text-align:center;font:inherit;font-size:.85em;display:flex;flex-direction:column;align-items:center;gap:.15em;text-decoration:none;cursor:pointer}.pf-tile i{font-style:normal;font-size:1.5em}.pf-tile.on{background:var(--ac);color:#10213f!important}' +
+    '.pf-panel{border:1px solid var(--ac);border-radius:14px;padding:.7em .9em;text-align:left;font-size:.92em}.pf-panel[hidden]{display:none}.pf-about{white-space:pre-line;margin:0}' +
+    '.pf-soc{display:flex;justify-content:center;gap:.7em;margin:.5em 0}.pf-sc{width:2.2em;height:2.2em;border-radius:.5em;display:flex;align-items:center;justify-content:center;color:#fff!important;font-weight:800;text-decoration:none}' +
+    '.pf-2{display:flex;gap:.6em;margin:.7em 0}.pf-q,.pf-chat{flex:1;display:flex;align-items:center;justify-content:center;border-radius:12px;padding:.7em .3em;font-weight:800;text-decoration:none;border:2px solid var(--ac)}.pf-q{background:#fff;color:#10213f!important}.pf-chat{background:#15913a;color:#fff!important;border-color:#fff}' +
+    '.pf-share{width:100%;background:linear-gradient(90deg,#f59a1a,#d4141c);color:#fff;border:0;border-radius:14px;padding:.8em;font:inherit;font-weight:800;cursor:pointer;margin:.3em 0 .6em}.pf-sharep{margin:.3em 0}.pf-sharep[hidden]{display:none}' +
     '.bzv-7 .bd{margin-top:10px;background:transparent}.bzv-7 .sr-act a{border-radius:12px}.pf-info{border:1px solid var(--ac);border-radius:16px;padding:.5em .9em;margin:.7em 0;text-align:left}.pf-ir{display:flex;gap:.7em;align-items:center;margin:.45em 0;font-size:.92em;word-break:break-all}.pf-ir a{color:inherit!important;text-decoration:none}.pf-fu{text-align:center;font-weight:700;margin-top:.8em}' +
     '.sr-vc.l-biz .bd{margin-top:8px;border-radius:0;background:transparent}.sr-vc.l-biz .bd.noph{margin-top:8px}' +
     '.ws-grid:has(.ws-sv){grid-template-columns:1fr;gap:.45em}.ws-sv{display:grid!important;grid-template-columns:2.2em 1fr;column-gap:.7em;align-items:center;text-align:left!important;padding:.55em 1.6em .55em .8em!important}.ws-sv .ws-ic{grid-row:1/3;width:2.2em;height:2.2em;margin:0;font-size:.95em}.ws-sv b{font-size:.98em}.ws-sv .ws-sd{margin-top:.1em;font-size:.82em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.ws-sv .ws-no{top:.35em;right:.6em}' +
