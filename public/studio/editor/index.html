@@ -76,11 +76,11 @@ function state(t,bad){var s=$('state');s.textContent=t;s.className='state'+(bad?
 if(!window.supabase||!R){state('लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
 var ID=new URLSearchParams(location.search).get('id')||'';
-var IND=[],tplInd='',D=null,T=[],C=null,UID='',tab=(/[?&]tab=ins/.test(location.search)?'ins':/[?&]tab=pub/.test(location.search)?'pub':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
+var IND=[],tplInd='',D=null,T=[],C=null,UID='',tab=(/[?&]tab=tpl/.test(location.search)?'tpl':/[?&]tab=ins/.test(location.search)?'ins':/[?&]tab=pub/.test(location.search)?'pub':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
 var LS='studio-draft-'+ID;
 
 function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],highlights:Array.isArray(c.highlights)?c.highlights:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
-var PREM={bypass:true,visiting:99,invitation:999,site:199},tplCat='all';
+var PREM={bypass:true,visiting:99,invitation:999,site:199},tplCat=/[?&]site=1/.test(location.search)?'site':'all';
 function premPrice(t){var c=(t&&t.config)||{};if(c.premium!==true)return 0;var n=parseInt(c.premium_price);if(n>0)return n;return PREM[c.site?'site':D.product_type]||99}
 async function loadPrem(){try{var r=await sb.from('studio_settings').select('k,v').in('k',['pay_bypass','prem_price_visiting','prem_price_invitation','prem_price_site']);(r.data||[]).forEach(function(x){if(x.k==='pay_bypass')PREM.bypass=x.v==='1';else PREM[x.k.replace('prem_price_','')]=parseInt(x.v)||PREM[x.k.replace('prem_price_','')]});if(D&&typeof panel==='function')panel()}catch(e){}}
 function cfg(id){var t=T.filter(function(x){return x.id===(id||D.template_id)})[0];return t?t.config:{}}
@@ -291,9 +291,9 @@ function pTpl(p){
   var myInd=D.product_type==='visiting'?(C.fields.industry||''):'';
   var hasInd=myInd&&T.some(function(t){return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0});
   if(hasInd){var ic=h('div',{class:'chips'});[['mine','⭐ मेरी industry के लिए'],['all','सभी']].forEach(function(o){ic.appendChild(h('button',{class:(tplInd||'mine')===o[0]?'on':'',text:o[1],onclick:function(){tplInd=o[0];panel()}}))});p.appendChild(ic)}
-  var cc=h('div',{class:'chips'});[['all','सभी'],['free','🆓 फ्री'],['prem','👑 प्रीमियम (एनिमेटेड)']].forEach(function(o){cc.appendChild(h('button',{class:tplCat===o[0]?'on':'',text:o[1],onclick:function(){tplCat=o[0];panel()}}))});p.appendChild(cc);
+  var cc=h('div',{class:'chips'});[['all','सभी'],['free','🆓 फ्री'],['prem','👑 प्रीमियम (एनिमेटेड)']].concat(D.product_type==='visiting'?[['site','🌐 वेबसाइट']]:[]).forEach(function(o){cc.appendChild(h('button',{class:tplCat===o[0]?'on':'',text:o[1],onclick:function(){tplCat=o[0];panel()}}))});p.appendChild(cc);
   var g=h('div',{class:'grid'});
-  T.filter(function(t){var pm=premPrice(t)>0;if(tplCat==='free'&&pm)return false;if(tplCat==='prem'&&!pm)return false;return true}).filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
+  T.filter(function(t){var pm=premPrice(t)>0;if(tplCat==='free'&&pm)return false;if(tplCat==='prem'&&!pm)return false;if(tplCat==='site'&&!(t.config&&t.config.site))return false;return true}).filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
     var inner=h('div',{class:'in2'});R.render(inner,D.product_type,t.config,C,{demo:true});
     g.appendChild(h('button',{class:'mini'+(t.id===D.template_id?' on':''),onclick:function(){if(t.id===D.template_id)return;D.template_id=t.id;panel();changed()}},
       [h('div',{class:'box'},[inner]),h('div',{class:'cap'},[document.createTextNode((t.tno?'№'+t.tno+' · ':'')+t.name),h('span',{text:(premPrice(t)>0?(PREM.bypass?'👑 अभी फ्री · ₹'+premPrice(t)+' बाद में':'👑 ₹'+premPrice(t)):'🆓 फ्री')+' · '+((t.config&&t.config.style)||'')})])]));
