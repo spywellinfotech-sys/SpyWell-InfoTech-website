@@ -94,10 +94,11 @@ $('a-go').onclick=async function(){var e=$('a-err'),o=$('a-ok');e.textContent=''
   if(t.length<3){e.textContent='ज़रूरत लिखें (कम से कम 3 अक्षर)';return}if(m.length!==10){e.textContent='10 अंक का सही मोबाइल नंबर डालें';return}
   var b=$('a-go');b.disabled=true;var r=await sb.rpc('studio_lead_post',{p_title:t,p_details:$('a-det').value,p_qty:$('a-qty').value,p_city:$('a-city').value,p_cat:CAT,p_name:$('a-name').value,p_mobile:m,p_days:parseInt($('a-days').value,10)});b.disabled=false;
   if(r.data==='ok'){o.textContent='✓ आपकी ज़रूरत भेज दी गई।';['a-title','a-qty','a-det'].forEach(function(i){$(i).value=''});setTimeout(function(){tab('mine')},900)}
-  else e.textContent=r.data==='limit'?'आज की सीमा पूरी हो गई। कल फिर कोशिश करें।':r.data==='auth'?'फिर से लॉगिन करें।':r.data==='bad'?'जानकारी जाँचें।':'अभी नहीं जा पाया। दोबारा कोशिश करें।'};
+  else e.textContent=r.data==='off'?'यह सुविधा अभी चालू नहीं है।':r.data==='limit'?'आज की सीमा पूरी हो गई। कल फिर कोशिश करें।':r.data==='auth'?'फिर से लॉगिन करें।':r.data==='bad'?'जानकारी जाँचें।':'अभी नहीं जा पाया। दोबारा कोशिश करें।'};
 (async function(){
   try{sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});var s=await sb.auth.getSession();ME=s.data&&s.data.session&&s.data.session.user}catch(e){}
   if(!ME){$('gate').hidden=false;return}
+  try{var ok=await sb.rpc('studio_lead_ok_me');if(!(ok&&ok.data===true)){$('gate').hidden=false;$('gate').firstChild.textContent='🎯 Buy Leads जल्द आ रहा है';$('gate').children[1].textContent='यह सुविधा अभी सबके लिए चालू नहीं हुई है।';var ga=$('gate').querySelector('a');if(ga)ga.textContent='← होम पर वापस';return}}catch(e){}
   $('app').hidden=false;credits();
   try{var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};$('a-name').value=cj.name||pd.full_name||'';$('a-mob').value=String(cj.mobile||pd.phone||'').replace(/\D/g,'').slice(-10);$('a-city').value=cj.city||''}catch(e){}
   browse()})();
