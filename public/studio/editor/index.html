@@ -55,6 +55,7 @@ button:active{transform:scale(.96);filter:brightness(.9)}button{-webkit-tap-high
 @media(min-width:860px){.cols{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}#pvbox{max-height:calc(100vh - 130px)}.left{position:sticky;top:60px}}
 input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance:none!important;position:relative!important;flex:none!important;width:52px!important;height:30px!important;min-height:0!important;border-radius:15px!important;border:0!important;background:#9aa8a0!important;padding:0!important;margin:0 10px 0 0!important;cursor:pointer;transition:background .2s;box-shadow:none!important;vertical-align:middle}input[type=checkbox]:not([data-ck])::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:left .2s}input[type=checkbox]:not([data-ck]):checked{background:#1fc260!important}input[type=checkbox]:not([data-ck]):checked::after{left:25px}input[type=checkbox]:not([data-ck]):disabled{opacity:.6}
 .row2>*,.row3>*{min-width:0}#panel label{font-size:11.5px;margin-top:7px}#panel select,#panel input,#panel textarea{min-height:34px!important;padding:5px 8px!important;font-size:13px!important;border-radius:8px!important}#panel input[type=color]{height:34px!important;padding:1px!important}#panel .row2,#panel .row3{gap:6px}#panel .btn{min-height:0;padding:8px 10px;font-size:13px}#panel .k{font-size:11.5px}#panel .seg button{padding:6px 4px;font-size:13px;min-height:0}#panel input[type=range]{min-height:0!important;height:22px}#panel textarea{min-height:60px!important}#panel input[type=file]{padding:4px 6px!important;font-size:12px!important;min-height:0!important}#panel input[type=file]::file-selector-button{font-size:12px;padding:5px 8px}#panel .item{padding:10px!important;margin-top:8px}#panel .step{padding:9px 11px;font-size:13px}#panel .step b{font-size:14px}#panel .thumb{max-width:110px;max-height:110px}#panel .btn.sm,#panel .btn.alt{font-size:13px}#panel h3,#panel .item b{font-size:14px}#panel .k{margin-top:4px}
+#panel .ph .phr{display:flex;gap:10px;align-items:center}#panel .ph .thumb{width:64px;height:64px;object-fit:cover;flex:none;border-radius:10px;margin:0}#panel .ph .phs{flex:1;min-width:0}#panel .ph .phb{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}#panel .ph .phb .btn{margin:0;padding:6px 10px;width:auto;min-height:0}#panel .ph .phd{margin-top:6px}#panel .ph .phd summary{font-size:12.5px;color:var(--mut);cursor:pointer;padding:4px 0}
 </style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script><script src="/studio/wizard.js?v=20261117a"></script></head><body>
 <div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
 <button id="undo" disabled title="Undo">↶</button><button id="redo" disabled title="Redo">↷</button><button id="save">सेव</button></div>
@@ -237,16 +238,21 @@ function pPhoto(p){
   R.IMAGES[D.product_type].forEach(function(d){
     if(/^g\d$/.test(d[0])&&C.style.site!==true)return;
     if((d[0]==='bride'||d[0]==='groom')&&(cfg().occasion||'wedding')!=='wedding')return;
-    var k=d[0],im=C.images[k],box=h('div',{class:'item'},[h('b',{text:d[1]})]);
-    var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp'});file.style.marginTop='8px';
+    var k=d[0],im=C.images[k],box=h('div',{class:'item ph'});
+    var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp'});file.style.display='none';
     file.onchange=function(){if(file.files[0])upload(k,file.files[0],d[2],msg)};
-    if(im&&im.url){
-      var th=h('img',{class:'thumb',src:im.url,alt:''});box.appendChild(th);
-      box.appendChild(h('div',{class:'k',text:'फ़ोटो बदलने के लिए नई चुनें'}));box.appendChild(file);
-      if(d[2])box.appendChild(range('आकार',40,340,im.size||d[2],function(v){im.size=v;changed()}));
-      if(k!=='logo')box.appendChild(range('फ़ोटो का कौन सा हिस्सा दिखे (ऊपर ↔ नीचे)',0,100,im.pos==null?50:im.pos,function(v){im.pos=v;changed()}));
-      box.appendChild(h('button',{class:'btn alt sm',text:'फ़ोटो हटाएँ',onclick:function(){delete C.images[k];panel();changed()}}));
-    }else box.appendChild(file);
+    var pick=h('button',{type:'button',class:'btn alt sm',text:(im&&im.url)?'🔄 बदलें':'＋ फ़ोटो चुनें',onclick:function(){file.click()}});
+    var top=h('div',{class:'phr'});
+    if(im&&im.url)top.appendChild(h('img',{class:'thumb',src:im.url,alt:''}));
+    var side=h('div',{class:'phs'},[h('b',{text:d[1]})]);
+    var bt=h('div',{class:'phb'},[pick]);
+    if(im&&im.url)bt.appendChild(h('button',{type:'button',class:'btn alt sm',text:'🗑 हटाएँ',onclick:function(){delete C.images[k];panel();changed()}}));
+    side.appendChild(bt);top.appendChild(side);box.appendChild(top);box.appendChild(file);
+    if(im&&im.url&&(d[2]||k!=='logo')){
+      var dt=h('details',{class:'phd'});dt.appendChild(h('summary',{text:'आकार / स्थिति बदलें'}));
+      if(d[2])dt.appendChild(range('आकार',40,340,im.size||d[2],function(v){im.size=v;changed()}));
+      if(k!=='logo')dt.appendChild(range('कौन सा हिस्सा दिखे (ऊपर ↔ नीचे)',0,100,im.pos==null?50:im.pos,function(v){im.pos=v;changed()}));
+      box.appendChild(dt)}
     p.appendChild(box);
   });
   p.appendChild(h('div',{class:'k',text:'JPG, PNG या WEBP, 5 MB तक।'}));p.appendChild(msg);
