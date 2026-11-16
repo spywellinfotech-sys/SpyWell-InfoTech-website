@@ -878,7 +878,7 @@ setInterval(function(){if(!document.hidden&&ME&&$('c-enq'))loadEnq()},25000);$('
 (function(){var w=document.getElementById('c-insall');if(!w)return;var a=document.getElementById('c-ins'),b=document.getElementById('c-insinv');
   function f(){w.hidden=a.hidden&&b.hidden}f();var o=new MutationObserver(f);[a,b].forEach(function(x){o.observe(x,{attributes:true,attributeFilter:['hidden']})})})();
 var TABMAP=null;
-var CURT=null;
+var CURT=null;var H0=location.hash,ADMR=0;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
     var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
@@ -911,7 +911,7 @@ async function dash(user){
   $('d-admin').hidden=true;
   try{var _ob=document.getElementById('adm-sw');if(_ob)_ob.remove()}catch(e){}
   try{var MD='user';try{MD=localStorage.getItem('st_mode')||'user'}catch(e){}var isA=!!(a&&a.data===true);if(!isA)MD='user';
-    var tba=$('tb-adm');if(tba)tba.hidden=!(isA&&MD==='both');
+    var tba=$('tb-adm');if(tba)tba.hidden=!(isA&&MD==='both');if(isA&&MD==='both'&&H0==='#adm'&&!ADMR){ADMR=1;setTab('adm',true)}
     var _gc=$('pf-th'),_o2=document.getElementById('adm-top');if(_o2)_o2.remove();
     if(isA&&_gc){var tp=document.createElement('div');tp.id='adm-top';tp.style.cssText='display:flex;gap:4px;margin-top:6px;background:#fff1f0;border-radius:10px;padding:3px;border:1px solid #f0b4b0';
       var MBS=[];function paint(m){MBS.forEach(function(x){x[0].style.background=x[1]===m?'#d4141c':'transparent';x[0].style.color=x[1]===m?'#fff':'#7a0a10'})}
