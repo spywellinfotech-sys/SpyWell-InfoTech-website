@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Yada+ : डॉक्टर, लैब और अस्पताल की अपॉइंटमेंट एक ऐप में</title>
+<meta name="description" content="Yada+ से अपने शहर के जाँचे हुए डॉक्टर ढूँढें, क्लिनिक या WhatsApp वीडियो पर अपॉइंटमेंट बुक करें, लैब टेस्ट और अस्पताल की रिक्वेस्ट भेजें। Find doctors, labs and hospitals and book appointments. By SpyWell InfoTech.">
+<link rel="canonical" href="https://spywell.in/yada/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SpyWell InfoTech">
+<meta property="og:title" content="Yada+ : डॉक्टर की अपॉइंटमेंट, घर बैठे">
+<meta property="og:description" content="जाँचे हुए डॉक्टर, लैब और अस्पताल। क्लिनिक में मिलें या WhatsApp वीडियो पर।">
+<meta property="og:url" content="https://spywell.in/yada/">
+<meta property="og:image" content="https://spywell.in/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0B57C2">
+<link rel="icon" href="../favicon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#F3F8FD;--surface:#FFF;--soft:#DCEAFB;--soft2:#E8F1FC;--fg:#0E1F36;--muted:#4A5F7A;--line:#D5E3F2;--brand:#0B57C2;--brand-d:#084A9E;--on-brand:#FFF;--green:#1B7F5C;--green-soft:#DDF1E7;--hero:#0B3F8F;--hero-fg:#FFF;--hero-mut:#CFE0F7;--warm:#FFE9B8;--on-warm:#3A2A00;
+--f-d:'Baloo 2','Noto Sans Devanagari','Trebuchet MS',system-ui,sans-serif;--f-b:'Inter','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0A1522;--surface:#101F31;--soft:#16304F;--soft2:#12263D;--fg:#E8F0FA;--muted:#9DB2CC;--line:#223A55;--brand:#5AA2FF;--brand-d:#3D8BEF;--on-brand:#04172E;--green:#4FD1A0;--green-soft:#0F3328;--hero:#0A2A5C;--hero-mut:#B5CCEB;--warm:#3A2E10;--on-warm:#FFE9B8}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 var(--f-b);-webkit-font-smoothing:antialiased}
+img{max-width:100%}a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:var(--f-d);line-height:1.25;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:14px;font-weight:600;text-decoration:none;border:2px solid transparent;font-size:16px}
+.btn-p{background:var(--brand);color:var(--on-brand)}
+.btn-p:hover{background:var(--brand-d)}
+.btn-o{border-color:var(--brand);color:var(--brand);background:transparent}
+.btn-w{background:#fff;color:#0B3F8F}
+.btn-ow{border-color:rgba(255,255,255,.7);color:#fff}
+header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .row{display:flex;align-items:center;gap:14px;min-height:60px}
+header img{height:34px;width:auto}
+header nav{display:none;margin-left:auto;gap:22px}
+header nav a{text-decoration:none;font-weight:500;color:var(--muted)}
+header nav a:hover{color:var(--brand)}
+header .btn{margin-left:auto;min-height:42px;padding:0 16px;font-size:15px}
+.hero{background:linear-gradient(160deg,var(--hero),#0B57C2);color:var(--hero-fg);padding:36px 0 46px;overflow:hidden}
+.hero .wrap{display:grid;gap:30px}
+.badge{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);padding:4px 12px;border-radius:99px;font-size:13px;font-weight:500;margin-bottom:14px}
+.hero h1{font-size:clamp(30px,6.4vw,50px);font-weight:800}
+.hero p.lead{font-size:18px;color:var(--hero-mut);margin:14px 0 22px;max-width:34em}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px}
+.hero small{display:block;margin-top:14px;color:var(--hero-mut);font-size:14px}
+.phone{justify-self:center;width:250px;background:#0E1F36;border-radius:34px;padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.screen{background:#F3F8FD;border-radius:26px;padding:14px 12px 12px;color:#0E1F36;min-height:430px;position:relative}
+.screen .loc{font:600 12px var(--f-b);color:#4A5F7A}
+.screen .sr{margin:8px 0;background:#fff;border:1px solid #D5E3F2;border-radius:12px;padding:9px 10px;font-size:12px;color:#7a8ca3}
+.screen .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.screen .two div{background:#DCEAFB;border-radius:12px;padding:10px 8px;font:700 12px var(--f-b)}
+.screen .two div small{display:block;font:400 10px var(--f-b);color:#4A5F7A;margin-top:2px}
+.screen h4{font:700 12px var(--f-b);margin:12px 0 8px}
+.screen .g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 4px;text-align:center;font-size:9.5px;line-height:1.2}
+.screen .g i{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#DCEAFB;margin:0 auto 3px;font-style:normal;font-size:18px}
+.screen .nav{position:absolute;left:10px;right:10px;bottom:10px;background:#fff;border:1px solid #D5E3F2;border-radius:16px;display:grid;grid-template-columns:repeat(4,1fr);padding:6px 2px;text-align:center;font-size:9px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.screen .nav b{background:#0B57C2;color:#fff;border-radius:11px;padding:4px 0;font-weight:600}
+.screen .nav span{padding:4px 0;color:#4A5F7A}
+section{padding:54px 0}
+.sec-h{text-align:center;max-width:640px;margin:0 auto 30px}
+.sec-h h2{font-size:clamp(25px,4.6vw,36px);font-weight:800}
+.sec-h p{color:var(--muted);margin:10px 0 0}
+.trust{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:-26px;position:relative;z-index:2}
+.trust div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;font-weight:600;font-size:14px;line-height:1.4;box-shadow:0 6px 18px rgba(11,87,194,.08)}
+.trust span{display:block;font-size:22px;margin-bottom:4px}
+.cards{display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.card .ic{width:46px;height:46px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:23px;margin-bottom:12px}
+.card h3{font-size:19px;margin-bottom:6px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.steps{counter-reset:s;display:grid;gap:14px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 20px 20px 68px;position:relative}
+.step:before{counter-increment:s;content:counter(s);position:absolute;left:18px;top:18px;width:36px;height:36px;border-radius:50%;background:var(--brand);color:var(--on-brand);display:grid;place-items:center;font:800 18px var(--f-d)}
+.step h3{font-size:18px;margin-bottom:4px}.step p{margin:0;color:var(--muted);font-size:15px}
+.alt{background:var(--soft2);border-block:1px solid var(--line)}
+.two-col{display:grid;gap:16px}
+.who{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px}
+.who h3{font-size:22px;margin-bottom:10px}
+.who ul{margin:0 0 18px;padding:0;list-style:none}
+.who li{padding:7px 0 7px 28px;position:relative;font-size:15.5px}
+.who li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700}
+.refer{background:var(--warm);color:var(--on-warm);border-radius:22px;padding:28px;display:grid;gap:12px}
+.refer h2{font-size:clamp(24px,4.4vw,32px)}
+.refer p{margin:0;max-width:38em}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;padding:0 16px}
+.faq summary{cursor:pointer;font-weight:600;padding:15px 0;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.faq summary::after{content:"+";color:var(--brand);font-size:22px;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq details p{margin:0 0 15px;color:var(--muted)}
+.cta{background:linear-gradient(160deg,var(--hero),#0B57C2);color:#fff;text-align:center;border-radius:26px;padding:42px 20px}
+.cta h2{font-size:clamp(26px,5vw,38px);font-weight:800}
+.cta p{color:var(--hero-mut);margin:10px auto 22px;max-width:30em}
+.cta .ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+footer{padding:34px 0 40px;color:var(--muted);font-size:14px;text-align:center}
+footer a{color:var(--brand);text-decoration:none;font-weight:500}
+footer .l{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;margin-bottom:10px}
+@media (min-width:720px){
+ header nav{display:flex}header .btn{margin-left:22px}
+ .hero{padding:60px 0 70px}.hero .wrap{grid-template-columns:1.15fr .85fr;align-items:center}
+ .trust{grid-template-columns:repeat(4,1fr)}
+ .cards{grid-template-columns:repeat(3,1fr)}
+ .steps{grid-template-columns:repeat(3,1fr)}
+ .two-col{grid-template-columns:1fr 1fr}
+ .refer{grid-template-columns:1.4fr auto;align-items:center}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+:focus-visible{outline:3px solid #FFB300;outline-offset:2px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap row">
+  <a href="./" aria-label="Yada+"><img src="logo.png" alt="Yada+" width="77" height="34"></a>
+  <nav aria-label="Main"><a href="#features">फ़ीचर</a><a href="#how">कैसे काम करता है</a><a href="#join">डॉक्टर और सुविधाएँ</a><a href="#faq">सवाल-जवाब</a></nav>
+  <a class="btn btn-p" href="app/">वेब ऐप खोलें</a>
+</div></header>
+
+<main>
+<div class="hero"><div class="wrap">
+  <div>
+    <span class="badge">Early access · शुरुआती वर्शन</span>
+    <h1>अपने शहर के डॉक्टर, लैब और अस्पताल, एक ही ऐप में</h1>
+    <p class="lead">घर बैठे अपॉइंटमेंट बुक करें। क्लिनिक में मिलें या WhatsApp वीडियो पर बात करें। Find doctors, labs and hospitals near you and book in minutes.</p>
+    <div class="ctas"><a class="btn btn-w" href="app/">वेब ऐप खोलें</a><a class="btn btn-ow" href="#join">डॉक्टर के रूप में जुड़ें</a></div>
+    <small>Android ऐप जल्द ही Google Play पर आएगा। अभी ब्राउज़र में पूरा ऐप चलता है।</small>
+  </div>
+  <div class="phone" aria-hidden="true"><div class="screen">
+    <div class="loc">📍 आपका शहर ▾</div>
+    <div class="sr">🔍 डॉक्टर, स्पेशलिटी या क्लिनिक खोजें</div>
+    <div class="two"><div>🏥 क्लिनिक विज़िट<small>क्लिनिक में मिलें</small></div><div>📹 वीडियो परामर्श<small>WhatsApp पर बात करें</small></div></div>
+    <h4>स्पेशलिटी से डॉक्टर ढूँढें</h4>
+    <div class="g"><div><i>🩺</i>सामान्य</div><div><i>🧴</i>त्वचा</div><div><i>🤰</i>महिला रोग</div><div><i>🦷</i>दाँत</div><div><i>👶</i>बच्चों के</div><div><i>👂</i>ENT</div><div><i>🦴</i>हड्डी</div><div><i>❤️</i>हृदय</div></div>
+    <div class="nav"><b>Home</b><span>Facilities</span><span>Bookings</span><span>Account</span></div>
+  </div></div>
+</div></div>
+
+<div class="wrap"><div class="trust">
+  <div><span>✅</span>दस्तावेज़ों से जाँचे गए डॉक्टर</div>
+  <div><span>📹</span>क्लिनिक या वीडियो, आपकी पसंद</div>
+  <div><span>🧪</span>लैब, अस्पताल, फार्मेसी, एम्बुलेंस</div>
+  <div><span>📄</span>डिजिटल प्रिस्क्रिप्शन, PDF के साथ</div>
+</div></div>
+
+<section id="features"><div class="wrap">
+  <div class="sec-h"><h2>मरीज़ों के लिए सब कुछ</h2><p>डॉक्टर ढूँढने से लेकर पर्ची सँभालने तक, एक जगह।</p></div>
+  <div class="cards">
+    <div class="card"><div class="ic">🔎</div><h3>आसान खोज</h3><p>शहर चुनें, स्पेशलिटी या आम समस्या (बुखार, त्वचा, दाँत दर्द) से डॉक्टर ढूँढें। फ़ीस और रेटिंग से छाँटें।</p></div>
+    <div class="card"><div class="ic">📅</div><h3>अपनी पसंद का स्लॉट</h3><p>डॉक्टर के खाली समय में से स्लॉट चुनें। डॉक्टर मंज़ूर करते ही आपको नोटिफ़िकेशन मिलता है।</p></div>
+    <div class="card"><div class="ic">📹</div><h3>WhatsApp वीडियो परामर्श</h3><p>जिन डॉक्टरों के पास वीडियो है, उनसे घर बैठे WhatsApp वीडियो कॉल पर मिलें। अलग ऐप की ज़रूरत नहीं।</p></div>
+    <div class="card"><div class="ic">🧪</div><h3>लैब, अस्पताल, फार्मेसी</h3><p>टेस्ट या सेवा की रिक्वेस्ट सीधे लैब, अस्पताल या फार्मेसी को भेजें और स्टेटस देखें।</p></div>
+    <div class="card"><div class="ic">📄</div><h3>प्रिस्क्रिप्शन और रिकॉर्ड</h3><p>डॉक्टर की लिखी पर्ची और पुरानी विज़िट अकाउंट में सुरक्षित रहती हैं। PDF में डाउनलोड करें।</p></div>
+    <div class="card"><div class="ic">🎁</div><h3>रेफ़र करें, वॉलेट में इनाम</h3><p>दोस्तों, परिवार और डॉक्टरों को बुलाइए। हर रेफ़रल पर आपके वॉलेट में इनाम जुड़ता है।</p></div>
+  </div>
+</div></section>
+
+<section id="how" class="alt"><div class="wrap">
+  <div class="sec-h"><h2>कैसे काम करता है</h2><p>तीन कदम, बस।</p></div>
+  <div class="steps">
+    <div class="step"><h3>डॉक्टर ढूँढें</h3><p>शहर और स्पेशलिटी चुनें, या सीधे नाम से खोजें।</p></div>
+    <div class="step"><h3>स्लॉट चुनकर बुक करें</h3><p>क्लिनिक या वीडियो, जो आपको ठीक लगे। Google से लॉगिन करें और अपनी जानकारी भरें।</p></div>
+    <div class="step"><h3>मंज़ूरी के बाद मिलें</h3><p>डॉक्टर के कन्फ़र्म करने पर समय पर पहुँचें, या वीडियो कॉल उठाएँ।</p></div>
+  </div>
+</div></section>
+
+<section id="join"><div class="wrap">
+  <div class="sec-h"><h2>डॉक्टर और स्वास्थ्य सुविधाओं के लिए</h2><p>अपना काम ऑनलाइन लाइए, मरीज़ खुद आपके पास आएँगे।</p></div>
+  <div class="two-col">
+    <div class="who"><h3>👩‍⚕️ डॉक्टर</h3>
+      <ul><li>अपनी प्रोफ़ाइल, क्लिनिक, फ़ीस और समय खुद तय करें</li><li>बुकिंग मंज़ूर करें और अपॉइंटमेंट की सूची सँभालें (आने वाली, आए, नहीं आए)</li><li>टाइप करके या फ़ोटो से प्रिस्क्रिप्शन दें</li><li>अपनी प्रोफ़ाइल WhatsApp पर मरीज़ों को भेजें</li><li>रजिस्ट्रेशन सर्टिफ़िकेट से वेरिफ़िकेशन, जिससे मरीज़ों का भरोसा बनता है</li></ul>
+      <a class="btn btn-p" href="app/">डॉक्टर के रूप में रजिस्टर करें</a></div>
+    <div class="who"><h3>🏥 लैब · अस्पताल · फार्मेसी · एम्बुलेंस</h3>
+      <ul><li>अपनी सेवाएँ और दाम सूची में डालें</li><li>मरीज़ों की रिक्वेस्ट एक जगह पर पाएँ</li><li>रिक्वेस्ट मंज़ूर या अस्वीकार करें, स्टेटस मरीज़ को अपने आप दिखे</li><li>नए मरीज़ों तक पहुँचें</li></ul>
+      <a class="btn btn-o" href="app/">सुविधा जोड़ें</a></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <div class="refer">
+    <div><h2>बुलाइए और कमाइए</h2><p>अपना रेफ़रल कोड दोस्तों और जानने वाले डॉक्टरों को भेजिए। जब वे जुड़ते हैं, आपके वॉलेट में इनाम आता है। वॉलेट की रकम बुकिंग की प्लेटफ़ॉर्म फ़ीस में काम आती है और बाकी UPI से निकाली जा सकती है।</p></div>
+    <a class="btn btn-p" href="app/">रेफ़रल कोड पाएँ</a>
+  </div>
+</div></section>
+
+<section id="faq" class="faq"><div class="wrap" style="max-width:760px">
+  <div class="sec-h"><h2>अक्सर पूछे जाने वाले सवाल</h2></div>
+  <details><summary>लॉगिन कैसे होता है?</summary><p>Google अकाउंट से। लॉगिन के बाद नाम, मोबाइल नंबर और कुछ बुनियादी जानकारी भरनी होती है ताकि डॉक्टर आपसे संपर्क कर सकें।</p></details>
+  <details><summary>वीडियो परामर्श कैसे होता है?</summary><p>बुकिंग मंज़ूर होने के बाद डॉक्टर आपके दिए मोबाइल नंबर पर WhatsApp वीडियो कॉल करते हैं। उस समय WhatsApp खुला रखिए।</p></details>
+  <details><summary>डॉक्टर कैसे जाँचे जाते हैं?</summary><p>हर डॉक्टर को रजिस्ट्रेशन सर्टिफ़िकेट और दस्तावेज़ अपलोड करने होते हैं। एडमिन की जाँच के बाद ही प्रोफ़ाइल मरीज़ों को दिखती है।</p></details>
+  <details><summary>क्या मेरी जानकारी सुरक्षित है?</summary><p>आपकी जानकारी सिर्फ़ बुकिंग और इलाज के काम आती है। विस्तार के लिए <a href="app/privacy.html" style="color:var(--brand)">प्राइवेसी पॉलिसी</a> पढ़ें। चाहें तो <a href="app/delete-account.html" style="color:var(--brand)">अकाउंट और डेटा हटाने</a> का तरीका भी वहाँ है।</p></details>
+  <details><summary>Android ऐप कब मिलेगा?</summary><p>ऐप Google Play की टेस्टिंग में है और जल्द आएगा। तब तक यही वेब ऐप फ़ोन के ब्राउज़र में पूरा चलता है, और आप इसे "Add to Home screen" से ऐप की तरह भी रख सकते हैं।</p></details>
+</div></section>
+
+<section style="padding-top:10px"><div class="wrap">
+  <div class="cta"><h2>आज ही Yada+ आज़माइए</h2><p>पूरा ऐप आपके ब्राउज़र में तैयार है। कोई इंस्टॉल नहीं, कोई इंतज़ार नहीं।</p>
+    <div class="ctas"><a class="btn btn-w" href="app/">वेब ऐप खोलें</a><a class="btn btn-ow" href="mailto:info@spywell.in">info@spywell.in</a></div></div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="l"><a href="app/privacy.html">प्राइवेसी पॉलिसी</a><a href="app/delete-account.html">अकाउंट हटाएँ</a><a href="mailto:info@spywell.in">info@spywell.in</a><a href="../">SpyWell InfoTech</a></div>
+  Yada+ का निर्माण SpyWell InfoTech द्वारा। यह प्लेटफ़ॉर्म डॉक्टर की सलाह का विकल्प नहीं है; आपात स्थिति में नज़दीकी अस्पताल जाएँ।
+</div></footer>
+</body>
+</html>
