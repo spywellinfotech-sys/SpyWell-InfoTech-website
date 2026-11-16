@@ -120,12 +120,12 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
 var TABS=[['info','1 · जानकारी'],['list',''],['photo','2 · फ़ोटो'],['tpl','3 · डिज़ाइन'],['ai','🤖 AI से भरें'],['pub','4 · प्रकाशित करें'],['ins','📊 इनसाइट']];
 var HINT={info:['अपनी जानकारी भरें','नाम, मोबाइल नंबर और व्यवसाय लिखें। बाकी खाने बाद में भी भर सकते हैं। ऊपर कार्ड का नमूना साथ-साथ बदलता दिखेगा।'],list:['सेवाएँ / कार्यक्रम जोड़ें','जो सेवाएँ देते हैं वे जोड़ें। नहीं हैं तो सीधे "अगला" दबाएँ।'],photo:['फ़ोटो और लोगो','अपनी फ़ोटो और लोगो लगाएँ। यह ज़रूरी नहीं है।'],design:['रंग और अक्षर','पसंद का रंग चुनें।'],tpl:['टेम्पलेट बदलें','कार्ड का दूसरा डिज़ाइन चुनना हो तो यहाँ से चुनें।'],ai:['AI की मदद लें','AI आपके व्यवसाय के बारे में लिखकर दे सकता है।'],pub:['प्रकाशित करें और शेयर करें','कार्ड लाइव करें, लिंक और QR पाएँ, WhatsApp पर भेजें।'],ins:['इनसाइट','कितने लोगों ने कार्ड देखा।']};
 var ORDER=['info','list','photo','tpl','pub'];
-function tabs(){var w=$('tabs');w.textContent='';var ab=$('aibtn');ab.hidden=false;ab.className='aib'+(tab==='ai'?' on':'');ab.textContent='';ab.appendChild(document.createTextNode(D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से AI भरें':'🤖 AI से भरें'));ab.onclick=function(){tab='ai';tabs();panel()};var wb=$('wzbtn');if(wb){wb.hidden=!window.SWWizard;wb.onclick=function(){SWWizard.open({mode:'fill',type:D.product_type,occ:(cfg().occasion||'wedding'),fields:C.fields||{},done:function(f){C.fields=C.fields||{};for(var k in f)C.fields[k]=f[k];tab='info';tabs();panel();changed()}})}};TABS.forEach(function(t){if(t[0]==='ai')return;if(t[0]==='pub'&&D.status==='published')return;var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
+function tabs(){var w=$('tabs');w.textContent='';var ab=$('aibtn');ab.hidden=false;ab.className='aib'+(tab==='ai'?' on':'');ab.textContent='';ab.appendChild(document.createTextNode(D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से AI भरें':'🤖 AI से भरें'));ab.onclick=function(){tab='ai';tabs();panel()};var wb=$('wzbtn');if(wb){wb.hidden=!window.SWWizard;wb.onclick=function(){SWWizard.open({mode:'fill',type:D.product_type,occ:(cfg().occasion||'wedding'),fields:C.fields||{},done:function(f){C.fields=C.fields||{};for(var k in f)C.fields[k]=f[k];tab='info';tabs();panel();changed()}})}};TABS.forEach(function(t){if(t[0]==='ai')return;if(t[0]==='pub')return;var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel();draw()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;
   var hn=HINT[tab];if(hn)p.appendChild(h('div',{class:'step'},[h('b',{text:hn[0]}),document.createTextNode(hn[1])]));
-  ({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:function(q){pTpl(q);var dt=h('details',{style:'margin-top:12px'});if(window.__dOpen)dt.open=true;dt.ontoggle=function(){window.__dOpen=dt.open};dt.appendChild(h('summary',{text:'🎨 रंग और स्टाइल बदलें (वैकल्पिक)',style:'font-weight:700;cursor:pointer;padding:8px 0'}));pDesign(dt);q.appendChild(dt);if(D.status==='published'){var d2=h('details',{style:'margin-top:8px'});d2.appendChild(h('summary',{text:'🌐 मिनी वेबसाइट और दूसरे विकल्प',style:'font-weight:700;cursor:pointer;padding:8px 0'}));pExtra(d2);q.appendChild(d2)}},ai:pAI,pub:pPub,ins:pIns})[tab](p);
-  var ORD=D.status==='published'?ORDER.filter(function(x){return x!=='pub'}):ORDER;var ix=ORD.indexOf(tab);if(ix>=0){var row=h('div',{class:'navrow'});
+  ({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:function(q){pTpl(q);var dt=h('details',{style:'margin-top:12px'});if(window.__dOpen)dt.open=true;dt.ontoggle=function(){window.__dOpen=dt.open};dt.appendChild(h('summary',{text:'🎨 रंग और स्टाइल बदलें (वैकल्पिक)',style:'font-weight:700;cursor:pointer;padding:8px 0'}));pDesign(dt);q.appendChild(dt);if(D.status!=='published'){var pb2=h('div',{class:'item',style:'margin-top:14px'});pb2.appendChild(h('b',{text:'🚀 प्रकाशित करें'}));pPub(pb2);q.appendChild(pb2)}if(D.status==='published'){var d2=h('details',{style:'margin-top:8px'});d2.appendChild(h('summary',{text:'🌐 मिनी वेबसाइट और दूसरे विकल्प',style:'font-weight:700;cursor:pointer;padding:8px 0'}));pExtra(d2);q.appendChild(d2)}},ai:pAI,pub:pPub,ins:pIns})[tab](p);
+  var ORD=ORDER.filter(function(x){return x!=='pub'});var ix=ORD.indexOf(tab);if(ix>=0){var row=h('div',{class:'navrow'});
     if(ix>0)row.appendChild(h('button',{class:'btn alt',text:'⬅ पिछला',onclick:function(){tab=ORD[ix-1];tabs();panel();window.scrollTo(0,0)}}));
     if(ix<ORD.length-1)row.appendChild(h('button',{class:'btn',text:'अगला ➡',onclick:function(){tab=ORD[ix+1];tabs();panel();window.scrollTo(0,0)}}));
     p.appendChild(row)}
@@ -723,7 +723,7 @@ function pPub(p){
     var ub=h('button',{class:'btn danger',text:'प्रकाशन बंद करें'});
     ub.onclick=async function(){if(!ub.dataset.a){ub.dataset.a='1';ub.textContent='पक्का? लिंक खुलना बंद हो जाएगा। हाँ, बंद करें';return}
       if(dirty)await save();var r=await sb.from('studio_designs').update({status:'unpublished'}).eq('id',D.id).select('status').single();
-      if(r.error){info.className='e';info.textContent='बंद नहीं हुआ। दोबारा कोशिश करें।';return}D.status='unpublished';panel();state('प्रकाशन बंद कर दिया गया')};
+      if(r.error){info.className='e';info.textContent='बंद नहीं हुआ। दोबारा कोशिश करें।';return}D.status='unpublished';tabs();panel();state('प्रकाशन बंद कर दिया गया')};
     p.appendChild(more);p.appendChild(info);
     p.appendChild(h('div',{class:'k',text:'कार्ड में बदलाव सेव होते ही लाइव लिंक पर दिखेंगे। लिंक का नाम बदलने के लिए पहले प्रकाशन बंद करें।'}));
     return}
@@ -785,7 +785,7 @@ function pPub(p){
     var r=await sb.from('studio_designs').update({slug:v,status:'published'}).eq('id',D.id).select('slug,status').single();
     pb.disabled=false;pb.textContent=pbOld;
     if(r.error||!r.data){er.className='e';er.textContent=(r.error&&/premium_required/.test(r.error.message||''))?'इस प्रीमियम थीम का भुगतान ज़रूरी है। फिर से "प्रकाशित करें" दबाएँ।':(r.error&&/payment_required/.test(r.error.message||''))?'पहले भुगतान ज़रूरी है।':'प्रकाशित नहीं हुआ। नाम दूसरा चुनकर दोबारा कोशिश करें।';toast(er.textContent,'bad');return}
-    D.slug=r.data.slug;D.status='published';panel();state('कार्ड प्रकाशित हो गया');toast('🎉 कार्ड प्रकाशित हो गया!','ok');window.scrollTo(0,0)};
+    D.slug=r.data.slug;D.status='published';tabs();panel();state('कार्ड प्रकाशित हो गया');toast('🎉 कार्ड प्रकाशित हो गया!','ok');window.scrollTo(0,0)};
 }
 
 /* ---------- start ---------- */
