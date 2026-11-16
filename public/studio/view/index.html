@@ -14,7 +14,7 @@
 <div class="foot" id="foot" hidden><img src="/logo.png" alt="SpyWell" width="18" height="18" style="vertical-align:middle;margin-right:4px">SpyWell Live Studio से बनाया गया<a class="mk" href="/studio/" id="mkb">अपना कार्ड बनाएँ</a><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/disclaimer/">Disclaimer</a></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/studio/qr.js"></script>
-<script src="/studio/qr.js"></script><script src="/studio/render.js?v=20261116i"></script>
+<script src="/studio/qr.js"></script><script src="/studio/render.js?v=20261116j"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -73,7 +73,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   function paint(c){var c2=c;if(VL&&c&&typeof c==='object'){c2=Object.assign({},c,{style:Object.assign({},(c.style&&typeof c.style==='object')?c.style:{},{lang:VL==='hi'?'':VL})})}paint0(c2)}
   function paint0(c){box.textContent='';
     if(isSite)window.StudioRender.site(box,(tp.data&&tp.data.config)||{},c,{cardUrl:'/v/'+encodeURIComponent(s),onAct:track,onShagun:shagunSave,noShagun:sty.shagun_off===true,onThread:async function(){var x=await sb.rpc('studio_enquiry_thread',{p_slug:s,p_visitor:vid});return x.error?[]:(x.data||[])},onThreadReply:async function(id,txt){var x=await sb.rpc('studio_enquiry_visitor_reply',{p_slug:s,p_visitor:vid,p_enquiry:id,p_body:txt});return x.error?'err':x.data},onEnquiry:async function(n,m,msg,c2,l){var x=await sb.rpc('studio_enquiry_add',{p_slug:s,p_name:n,p_mobile:m,p_message:msg,p_visitor:vid,p_city:c2||null,p_loc:l||null});return x.error?'err':x.data}});
-    else window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},c,{onAct:track,onShagun:shagunSave,noShagun:sty.shagun_off===true})}
+    else window.StudioRender.render(box,t,(tp.data&&tp.data.config)||{},c,{onAct:track,onEnquiry:async function(n,m,msg,c2,l){var x=await sb.rpc('studio_enquiry_add',{p_slug:s,p_name:n,p_mobile:m,p_message:msg,p_visitor:vid,p_city:c2||null,p_loc:l||null});return x.error?'err':x.data},onShagun:shagunSave,noShagun:sty.shagun_off===true})}
   paint(cj);
   if(t==='visiting'){try{var lw=document.createElement('div');lw.style.cssText='max-width:'+(isSite?'820px':'440px')+';margin:6px auto 0;padding:0 14px;text-align:right';
     var ls=document.createElement('select');ls.setAttribute('aria-label','Language');ls.style.cssText='font:inherit;font-size:13px;padding:5px 8px;border:1px solid #d9c9a8;border-radius:99px;background:#fff;color:#5a0509';
