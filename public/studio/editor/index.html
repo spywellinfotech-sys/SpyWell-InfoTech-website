@@ -81,11 +81,11 @@ var IND=[],tplInd='',D=null,T=[],C=null,UID='',tab=(/[?&]tab=tpl/.test(location.
 var LS='studio-draft-'+ID;
 
 function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],highlights:Array.isArray(c.highlights)?c.highlights:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
-var PREM={bypass:true,visiting:99,invitation:999,site:199},tplCat=/[?&]site=1/.test(location.search)?'site':'all';
+var PREM={bypass:true,visiting:99,invitation:999,site:199},tplCat='all',webMode=/[?&]site=1/.test(location.search);
 function premPrice(t){var c=(t&&t.config)||{};if(c.premium!==true)return 0;var n=parseInt(c.premium_price);if(n>0)return n;return PREM[c.site?'site':D.product_type]||99}
 async function loadPrem(){try{var r=await sb.from('studio_settings').select('k,v').in('k',['pay_bypass','prem_price_visiting','prem_price_invitation','prem_price_site']);(r.data||[]).forEach(function(x){if(x.k==='pay_bypass')PREM.bypass=x.v==='1';else PREM[x.k.replace('prem_price_','')]=parseInt(x.v)||PREM[x.k.replace('prem_price_','')]});if(D&&typeof panel==='function')panel()}catch(e){}}
 function cfg(id){var t=T.filter(function(x){return x.id===(id||D.template_id)})[0];return t?t.config:{}}
-function draw(){try{var vb=$('pvbox'),cardish=D.product_type==='visiting'&&!(C.style&&C.style.site===true);vb.classList.toggle('cardlk',cardish)}catch(e){}R.render($('pv'),D.product_type,cfg(),C,{demo:true});$('ttl').textContent=R.title(D.product_type,C);if(!$('full').hidden)R.render($('fullpv'),D.product_type,cfg(),C,{demo:true,play:true})}
+function draw(){try{var vb=$('pvbox'),cardish=D.product_type==='visiting'&&!(C.style&&C.style.site===true)&&!(webMode&&tab==='tpl');vb.classList.toggle('cardlk',cardish)}catch(e){}if(webMode&&tab==='tpl'&&D.product_type==='visiting'){R.site($('pv'),cfg(C.style.webtpl||D.template_id),C,{demo:true})}else R.render($('pv'),D.product_type,cfg(),C,{demo:true});$('ttl').textContent=R.title(D.product_type,C);if(!$('full').hidden)R.render($('fullpv'),D.product_type,cfg(),C,{demo:true,play:true})}
 function btns(){$('undo').disabled=hi<=0;$('redo').disabled=hi>=hist.length-1}
 function snap(){return JSON.stringify({c:C,t:D.template_id})}
 function pushHist(){clearTimeout(htimer);htimer=null;var s=snap();if(hist[hi]===s)return;hist=hist.slice(0,hi+1);hist.push(s);if(hist.length>60)hist.shift();hi=hist.length-1;btns()}
@@ -112,7 +112,7 @@ var TABS=[['info','1 · जानकारी'],['list',''],['photo','फ़ो�
 var HINT={info:['अपनी जानकारी भरें','नाम, मोबाइल नंबर और व्यवसाय लिखें। बाकी खाने बाद में भी भर सकते हैं। ऊपर कार्ड का नमूना साथ-साथ बदलता दिखेगा।'],list:['सेवाएँ / कार्यक्रम जोड़ें','जो सेवाएँ देते हैं वे जोड़ें। नहीं हैं तो सीधे "अगला" दबाएँ।'],photo:['फ़ोटो और लोगो','अपनी फ़ोटो और लोगो लगाएँ। यह ज़रूरी नहीं है।'],design:['रंग और अक्षर','पसंद का रंग चुनें।'],tpl:['टेम्पलेट बदलें','कार्ड का दूसरा डिज़ाइन चुनना हो तो यहाँ से चुनें।'],ai:['AI की मदद लें','AI आपके व्यवसाय के बारे में लिखकर दे सकता है।'],pub:['प्रकाशित करें और शेयर करें','कार्ड लाइव करें, लिंक और QR पाएँ, WhatsApp पर भेजें।'],ins:['इनसाइट','कितने लोगों ने कार्ड देखा।']};
 var ORDER=['info','list','photo','design','tpl','pub'];
 function tabs(){var w=$('tabs');w.textContent='';var ab=$('aibtn');ab.hidden=false;ab.className='aib'+(tab==='ai'?' on':'');ab.textContent='';ab.appendChild(document.createTextNode(D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से AI भरें':'🤖 AI से भरें'));ab.onclick=function(){tab='ai';tabs();panel()};var wb=$('wzbtn');if(wb){wb.hidden=!window.SWWizard;wb.onclick=function(){SWWizard.open({mode:'fill',type:D.product_type,occ:(cfg().occasion||'wedding'),fields:C.fields||{},done:function(f){C.fields=C.fields||{};for(var k in f)C.fields[k]=f[k];tab='info';tabs();panel();changed()}})}};TABS.forEach(function(t){if(t[0]==='ai')return;var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
-  w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel()}}))})}
+  w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel();draw()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;
   var hn=HINT[tab];if(hn)p.appendChild(h('div',{class:'step'},[h('b',{text:hn[0]}),document.createTextNode(hn[1])]));
   ({info:pInfo,list:pList,photo:pPhoto,design:pDesign,tpl:pTpl,ai:pAI,pub:pPub,ins:pIns})[tab](p);
@@ -283,6 +283,7 @@ function pDesign(p){
 }
 var tplOcc='';
 function pTpl(p){
+  if(D.product_type==='visiting'){var mc=h('div',{class:'chips'});[[false,'📇 कार्ड का टेम्पलेट'],[true,'🌐 वेबसाइट का टेम्पलेट']].forEach(function(o){mc.appendChild(h('button',{class:webMode===o[0]?'on':'',text:o[1],onclick:function(){webMode=o[0];tplCat='all';panel();draw()}}))});p.appendChild(mc);p.appendChild(h('div',{class:'k',text:webMode?'यह सिर्फ़ मिनी वेबसाइट का रूप बदलेगा, कार्ड का नहीं।':'यह सिर्फ़ कार्ड का रूप बदलेगा, मिनी वेबसाइट का नहीं।'}))}
   if(D.product_type==='invitation'){
     var chips=h('div',{class:'chips'});
     [['','सभी']].concat(Object.keys(R.OCCASIONS).map(function(k){return [k,R.OCCASIONS[k].name]})).forEach(function(o){
@@ -292,11 +293,11 @@ function pTpl(p){
   var myInd=D.product_type==='visiting'?(C.fields.industry||''):'';
   var hasInd=myInd&&T.some(function(t){return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0});
   if(hasInd){var ic=h('div',{class:'chips'});[['mine','⭐ मेरी industry के लिए'],['all','सभी']].forEach(function(o){ic.appendChild(h('button',{class:(tplInd||'mine')===o[0]?'on':'',text:o[1],onclick:function(){tplInd=o[0];panel()}}))});p.appendChild(ic)}
-  var cc=h('div',{class:'chips'});[['all','सभी'],['free','🆓 फ्री'],['prem','👑 प्रीमियम (एनिमेटेड)']].concat(D.product_type==='visiting'?[['site','🌐 वेबसाइट']]:[]).forEach(function(o){cc.appendChild(h('button',{class:tplCat===o[0]?'on':'',text:o[1],onclick:function(){tplCat=o[0];panel()}}))});p.appendChild(cc);
+  var cc=h('div',{class:'chips'});[['all','सभी'],['free','🆓 फ्री'],['prem','👑 प्रीमियम (एनिमेटेड)']].forEach(function(o){cc.appendChild(h('button',{class:tplCat===o[0]?'on':'',text:o[1],onclick:function(){tplCat=o[0];panel()}}))});p.appendChild(cc);
   var g=h('div',{class:'grid'});
-  T.filter(function(t){var pm=premPrice(t)>0;if(tplCat==='free'&&pm)return false;if(tplCat==='prem'&&!pm)return false;if(tplCat==='site'&&!(t.config&&t.config.site))return false;return true}).filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
+  T.filter(function(t){var pm=premPrice(t)>0;if(tplCat==='free'&&pm)return false;if(tplCat==='prem'&&!pm)return false;return true}).filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
     var inner=h('div',{class:'in2'});R.render(inner,D.product_type,t.config,C,{demo:true});
-    g.appendChild(h('button',{class:'mini'+(t.id===D.template_id?' on':''),onclick:function(){if(t.id===D.template_id)return;D.template_id=t.id;panel();changed()}},
+    var curT=(webMode&&D.product_type==='visiting')?(C.style.webtpl||D.template_id):D.template_id;g.appendChild(h('button',{class:'mini'+(t.id===curT?' on':''),onclick:function(){if(t.id===curT)return;if(webMode&&D.product_type==='visiting'){C.style.webtpl=t.id}else D.template_id=t.id;panel();changed()}},
       [h('div',{class:'box'},[inner]),h('div',{class:'cap'},[document.createTextNode((t.tno?'№'+t.tno+' · ':'')+t.name),h('span',{text:(premPrice(t)>0?(PREM.bypass?'👑 अभी फ्री · ₹'+premPrice(t)+' बाद में':'👑 ₹'+premPrice(t)):'🆓 फ्री')+' · '+((t.config&&t.config.style)||'')})])]));
   });
   p.appendChild(g);if(!T.length)p.appendChild(h('div',{class:'k',text:'कोई टेम्पलेट उपलब्ध नहीं है।'}));
