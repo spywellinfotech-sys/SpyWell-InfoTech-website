@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>CCTV ProMate Web</title>
+<link rel="icon" href="../../favicon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+:root{--bg:#f4f6fa;--fg:#0f1b2d;--mut:#55627a;--card:#fff;--line:#dbe2ee;--navy:#0b2a4a;--red:#d62828;--teal:#0e8f86;--chip:#e8eef7;--bad:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#0a121e;--fg:#e8eef8;--mut:#9aa9c0;--card:#111c2c;--line:#22324a;--navy:#8fb4e8;--teal:#3cc5b8;--chip:#17263b;--bad:#ff8a80;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 Inter,"Noto Sans Devanagari",system-ui,sans-serif}
+h1,h2,h3{font-family:"Space Grotesk","Noto Sans Devanagari",sans-serif;margin:0}
+.wrap{max-width:980px;margin:0 auto;padding:0 max(14px,env(safe-area-inset-left,0px))}
+header{background:var(--navy);color:#fff}
+@media (prefers-color-scheme:dark){header{background:#0d2038}}
+header .wrap{display:flex;align-items:center;gap:10px;padding-block:12px;flex-wrap:wrap}
+header b{font-family:"Space Grotesk";font-size:19px}
+.sp{flex:1}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 0}
+nav button,.btn{font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--chip);color:var(--fg);cursor:pointer;font-weight:600;min-height:42px}
+nav button[aria-current="true"]{background:var(--red);color:#fff}
+.btn.p{background:var(--red);color:#fff}.btn.g{background:var(--teal);color:#fff}.btn.d{background:transparent;color:var(--bad);border:1.5px solid var(--bad)}
+.btn.s{padding:6px 10px;min-height:34px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;min-width:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+label{display:block;font-size:13px;color:var(--mut);margin-bottom:3px}
+input,select,textarea{width:100%;font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);min-width:0}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--teal);outline-offset:1px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{padding:6px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}
+td input{padding:6px}
+.num{text-align:right}
+.tot{font-family:"Space Grotesk";font-size:22px;font-weight:700}
+.mut{color:var(--mut);font-size:13px}
+.err{color:var(--bad);font-weight:600}
+.hide{display:none!important}
+#login{text-align:center;padding:60px 0}
+#print{display:none}
+@media print{body{background:#fff;color:#000}header,nav,#app,#login,.noprint{display:none!important}#print{display:block;padding:0}}
+#print h1{font-size:24px}#print table{min-width:0;font-size:12px}#print th{background:#eee;color:#000}#print td,#print th{border:1px solid #bbb;color:#000}
+</style>
+</head>
+<body>
+<header><div class="wrap"><b>CCTV ProMate Web</b><span class="sp"></span><span id="who" class="mut" style="color:#b7c6dc"></span><button class="btn s" id="lang">English</button><button class="btn s hide" id="out">Logout</button></div></header>
+
+<main class="wrap">
+<div id="login" class="hide">
+  <h2 data-t="loginTitle"></h2>
+  <p class="mut" data-t="loginSub"></p>
+  <button class="btn p" id="gbtn" data-t="loginBtn" style="font-size:17px;padding:14px 22px"></button>
+  <p class="mut" data-t="sameAcc" style="max-width:46ch;margin:18px auto"></p>
+  <p class="err" id="lerr"></p>
+</div>
+
+<div id="app" class="hide">
+  <nav id="nav"></nav>
+
+  <section id="v-list"></section>
+
+  <section id="v-new" class="hide">
+    <div class="card">
+      <div class="grid">
+        <div><label data-t="client"></label><select id="q-client"></select></div>
+        <div><label data-t="system"></label><select id="q-sys"><option value="ANALOG">Analog (DVR)</option><option value="IP">IP (NVR)</option><option value="HYBRID">Hybrid (HVR)</option></select></div>
+        <div><label data-t="indoor"></label><input id="q-in" type="number" min="0" value="4" inputmode="numeric"></div>
+        <div><label data-t="outdoor"></label><input id="q-out" type="number" min="0" value="4" inputmode="numeric"></div>
+        <div id="q-ipw" class="hide"><label data-t="ipCams"></label><input id="q-ip" type="number" min="0" value="0" inputmode="numeric"></div>
+        <div><label data-t="cablePer"></label><input id="q-cab" type="number" min="1" value="22.5" step="0.5" inputmode="decimal"></div>
+      </div>
+      <div class="row" style="margin-top:10px"><button class="btn g" id="q-build" data-t="build"></button><span class="mut" id="q-info"></span></div>
+    </div>
+    <div id="q-edit" class="hide">
+      <div class="card tw"><table><thead><tr><th>#</th><th data-t="item"></th><th data-t="qty"></th><th data-t="unit"></th><th data-t="rate"></th><th class="num" data-t="amt"></th><th></th></tr></thead><tbody id="q-rows"></tbody></table>
+        <div class="row" style="margin-top:8px"><button class="btn s" id="q-add" data-t="addRow"></button></div></div>
+      <div class="card"><div class="grid">
+        <div><label data-t="labour"></label><input id="c-lab" type="number" min="0" value="0" inputmode="decimal"></div>
+        <div><label data-t="transport"></label><input id="c-tr" type="number" min="0" value="0" inputmode="decimal"></div>
+        <div><label data-t="discount"></label><input id="c-dis" type="number" min="0" value="0" inputmode="decimal"></div>
+        <div><label data-t="gst"></label><select id="c-gst"><option value="0">No GST</option><option value="5">5%</option><option value="12">12%</option><option value="18">18%</option></select></div>
+        <div><label data-t="advance"></label><input id="c-adv" type="number" min="0" value="0" inputmode="decimal"></div>
+        <div style="grid-column:1/-1"><label data-t="notes"></label><textarea id="c-note" rows="2"></textarea></div>
+      </div>
+      <div style="margin-top:12px" id="q-sum"></div>
+      <div class="row" style="margin-top:12px"><button class="btn p" id="q-save" data-t="save"></button><button class="btn" id="q-cancel" data-t="cancel"></button><span id="q-err" class="err"></span></div></div>
+    </div>
+  </section>
+
+  <section id="v-cli" class="hide"></section>
+  <section id="v-prof" class="hide"></section>
+</div>
+</main>
+
+<div id="print"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+"use strict";
+var B="https://rxhanrtoaplwphmwpgqg.supabase.co",K="sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d";
+var HERE=location.origin+"/cctvpromate/app/";
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function money(n){return "₹"+(Math.round((+n||0)*100)/100).toLocaleString("en-IN",{maximumFractionDigits:2})}
+var L={
+hi:{loginTitle:"CCTV ProMate वेब",loginSub:"कोटेशन, क्लाइंट और PDF कंप्यूटर या मोबाइल ब्राउज़र से।",loginBtn:"Google से लॉगिन करें",sameAcc:"ऐप वाला ही Google अकाउंट इस्तेमाल करें। वेब का डेटा ऐप से अलग रहता है।",
+ tList:"कोटेशन",tNew:"नया कोटेशन",tCli:"क्लाइंट",tProf:"मेरी फ़र्म",client:"क्लाइंट",system:"सिस्टम",indoor:"इनडोर (डोम) कैमरे",outdoor:"आउटडोर (बुलेट) कैमरे",ipCams:"इनमें से IP कैमरे",cablePer:"केबल प्रति कैमरा (मीटर)",build:"मटेरियल लिस्ट बनाओ",
+ item:"आइटम",qty:"मात्रा",unit:"यूनिट",rate:"रेट",amt:"रकम",addRow:"＋ आइटम जोड़ो",labour:"इंस्टॉलेशन / लेबर",transport:"ट्रांसपोर्ट",discount:"डिस्काउंट",gst:"GST",advance:"एडवांस",notes:"नोट",save:"सेव करो",cancel:"रद्द",
+ noQuote:"अभी कोई कोटेशन नहीं। \"नया कोटेशन\" दबाएं।",open:"खोलो",del:"हटाओ",pdf:"PDF / प्रिंट",wa:"WhatsApp",call:"कॉल",addCli:"क्लाइंट जोड़ो",name:"नाम",phone:"मोबाइल",addr:"पता",edit:"बदलो",noCli:"अभी कोई क्लाइंट नहीं।",
+ firm:"फ़र्म का नाम",gstno:"GST नंबर",sub:"सब-टोटल",gstAmt:"GST",grand:"कुल",bal:"बाकी",adv:"एडवांस",walkin:"— क्लाइंट चुनो —",newCli:"＋ नया क्लाइंट",built:"आइटम तैयार। रेट भरें।",saved:"सेव हो गया",need:"पहले कम से कम एक कैमरा और मटेरियल लिस्ट चाहिए",sure:"पक्का हटाना है? दोबारा दबाएं।",quote:"कोटेशन",to:"प्रति",date:"तारीख",tc:"यह कोटेशन 15 दिन के लिए मान्य है।",sig:"हस्ताक्षर"},
+en:{loginTitle:"CCTV ProMate Web",loginSub:"Quotations, clients and PDF from a computer or phone browser.",loginBtn:"Sign in with Google",sameAcc:"Use the same Google account as the app. Web data is kept separate from the app.",
+ tList:"Quotations",tNew:"New quotation",tCli:"Clients",tProf:"My firm",client:"Client",system:"System",indoor:"Indoor (dome) cameras",outdoor:"Outdoor (bullet) cameras",ipCams:"Of which IP cameras",cablePer:"Cable per camera (m)",build:"Build material list",
+ item:"Item",qty:"Qty",unit:"Unit",rate:"Rate",amt:"Amount",addRow:"＋ Add item",labour:"Installation / labour",transport:"Transport",discount:"Discount",gst:"GST",advance:"Advance",notes:"Notes",save:"Save",cancel:"Cancel",
+ noQuote:"No quotations yet. Tap \"New quotation\".",open:"Open",del:"Delete",pdf:"PDF / Print",wa:"WhatsApp",call:"Call",addCli:"Add client",name:"Name",phone:"Mobile",addr:"Address",edit:"Edit",noCli:"No clients yet.",
+ firm:"Firm name",gstno:"GST number",sub:"Subtotal",gstAmt:"GST",grand:"Total",bal:"Balance",adv:"Advance",walkin:"— choose client —",newCli:"＋ New client",built:"Items ready. Fill the rates.",saved:"Saved",need:"Add at least one camera and a material list first",sure:"Delete? Tap again to confirm.",quote:"Quotation",to:"To",date:"Date",tc:"This quotation is valid for 15 days.",sig:"Signature"}};
+var lang="hi";try{lang=localStorage.getItem("pm-web-lang")||"hi"}catch(e){}
+function t(k){return (L[lang]||L.hi)[k]||k}
+function applyLang(){document.documentElement.lang=lang;$("lang").textContent=lang==="hi"?"English":"हिंदी";document.querySelectorAll("[data-t]").forEach(function(n){n.textContent=t(n.getAttribute("data-t"))});renderNav();current&&show(current)}
+
+/* ---- kit (same quantities as the Android app) ---- */
+function channelsFor(n){var a=[4,8,16,32,64];n=Math.max(1,Math.min(50,n));for(var i=0;i<a.length;i++)if(a[i]>=n)return a[i];return 64}
+function recName(s,ch){return s==="IP"?"NVR "+ch+" Channel":s==="HYBRID"?"HVR "+ch+" Channel (Hybrid)":"DVR "+ch+" Channel"}
+function buildKit(p){
+ var n=Math.max(1,Math.min(50,p.cams)),ch=channelsFor(n);
+ var ip=p.sys==="IP"?n:p.sys==="HYBRID"?Math.max(0,Math.min(p.ip,n)):0,an=n-ip,units=ch<=16?1:ch/16,out=[];
+ function add(name,qty,unit,note){out.push({name:name,qty:qty,unit:unit,rate:0,note:note||""})}
+ function cams(prefix,count,dome){if(dome>0)add(prefix+"Dome Camera",dome,"piece","Indoor");if(count-dome>0)add(prefix+"Bullet Camera",count-dome,"piece","Outdoor")}
+ var dome=Math.max(0,Math.min(p.dome,n));
+ if(p.sys==="IP")cams("IP ",n,dome);
+ else if(p.sys==="HYBRID"){var ipIn=Math.max(0,Math.min(Math.round(ip*dome/n),Math.min(ip,dome)));var anIn=Math.max(0,Math.min(dome-ipIn,an));cams("",an,anIn);cams("IP ",ip,ipIn)}
+ else cams("",n,dome);
+ add("HDD 1TB",units,"piece","");add(recName(p.sys,ch),1,"piece","");
+ if(an>0){var sc=channelsFor(an);if(sc<=32)add(sc+" Channel SMPS",1,"piece");else add("8 Channel SMPS",sc/8,"piece")}
+ if(ip>0){var ports=ip<=4?4:ip<=8?8:ip<=16?16:24;add(ports+" Port PoE Switch",ip<=24?1:Math.ceil(ip/24),"piece","")}
+ if(an>0)add("CCTV 3+1 Cable",Math.ceil(an*p.cab),"meter");
+ if(ip>0)add("CAT6 LAN Cable",Math.ceil(ip*p.cab),"meter");
+ if(an>0){add("BNC Connectors",2*an,"piece");add("DC Connector Pairs",an,"piece")}
+ add("Camera Junction Boxes",n,"piece");add("DVR Rack",1,"piece");add("HDMI Cable",1,"piece");add("USB Mouse",1,"piece");add("Monitor",1,"piece");add("UPS",1,"piece");add("Internet Router",1,"piece");add("LAN Cable",2,"meter");
+ add("RJ45 Connectors",2+2*ip,"piece");add("Insulation Tape",Math.max(1,Math.ceil(n/4)),"roll");add("Screws and Wall Plugs",Math.max(1,Math.ceil(n/8)),"set");
+ return out}
+
+/* ---- state ---- */
+var sb=window.supabase&&window.supabase.createClient(B,K,{auth:{storageKey:"spywell-cctvweb-auth",detectSessionInUrl:true,persistSession:true}});
+var me=null,clients=[],quotes=[],profile={firm:"",phone:"",address:"",gst_no:""},current="list",editing=null,items=[],armed=null;
+var rates={};try{rates=JSON.parse(localStorage.getItem("pm-web-rates")||"{}")}catch(e){}
+function saveRates(){try{localStorage.setItem("pm-web-rates",JSON.stringify(rates))}catch(e){}}
+
+function renderNav(){
+ var tabs=[["list","tList"],["new","tNew"],["cli","tCli"],["prof","tProf"]];
+ $("nav").innerHTML=tabs.map(function(x){return '<button data-v="'+x[0]+'" aria-current="'+(current===x[0])+'">'+esc(t(x[1]))+'</button>'}).join("");
+ Array.prototype.forEach.call($("nav").children,function(b){b.onclick=function(){if(b.dataset.v==="new")startNew();show(b.dataset.v)}})}
+function show(v){current=v;["list","new","cli","prof"].forEach(function(x){$("v-"+x).classList.toggle("hide",x!==v)});renderNav();if(v==="list")renderList();if(v==="cli")renderClients();if(v==="prof")renderProfile();if(v==="new")renderClientSelect()}
+
+/* ---- totals ---- */
+function calc(){
+ var sub=0;items.forEach(function(i){sub+=(+i.qty||0)*(+i.rate||0)});
+ var lab=+$("c-lab").value||0,tr=+$("c-tr").value||0,dis=+$("c-dis").value||0,gp=+$("c-gst").value||0,adv=+$("c-adv").value||0;
+ var taxable=Math.max(0,sub+lab+tr-dis),g=taxable*gp/100,total=taxable+g;
+ return {sub:sub,lab:lab,tr:tr,dis:dis,gp:gp,gst:g,total:total,adv:adv,bal:total-adv}}
+function renderSum(){var c=calc();
+ $("q-sum").innerHTML='<div class="mut">'+t("sub")+': '+money(c.sub)+(c.gp?' · GST '+c.gp+'%: '+money(c.gst):'')+'</div><div class="tot">'+t("grand")+': '+money(c.total)+'</div><div class="mut">'+t("adv")+': '+money(c.adv)+' · '+t("bal")+': '+money(c.bal)+'</div>'}
+function renderRows(){
+ $("q-rows").innerHTML=items.map(function(i,k){return '<tr><td>'+(k+1)+'</td><td><input data-k="'+k+'" data-f="name" value="'+esc(i.name)+'"></td><td style="width:84px"><input data-k="'+k+'" data-f="qty" type="number" min="0" step="any" value="'+esc(i.qty)+'"></td><td style="width:90px"><input data-k="'+k+'" data-f="unit" value="'+esc(i.unit)+'"></td><td style="width:100px"><input data-k="'+k+'" data-f="rate" type="number" min="0" step="any" value="'+esc(i.rate||"")+'"></td><td class="num" id="am'+k+'">'+money((+i.qty||0)*(+i.rate||0))+'</td><td><button class="btn s d" data-x="'+k+'" aria-label="remove">✕</button></td></tr>'}).join("");
+ Array.prototype.forEach.call($("q-rows").querySelectorAll("input"),function(inp){inp.oninput=function(){var k=+inp.dataset.k,f=inp.dataset.f;items[k][f]=(f==="qty"||f==="rate")?(inp.value===""?"":+inp.value):inp.value;
+   if(f==="rate"&&items[k].name){rates[items[k].name.toLowerCase()]=+inp.value||0;saveRates()}
+   var a=$("am"+k);if(a)a.textContent=money((+items[k].qty||0)*(+items[k].rate||0));renderSum()}});
+ Array.prototype.forEach.call($("q-rows").querySelectorAll("[data-x]"),function(b){b.onclick=function(){items.splice(+b.dataset.x,1);renderRows();renderSum()}});
+ renderSum()}
+function renderClientSelect(sel){
+ var cur=sel||$("q-client").value;
+ $("q-client").innerHTML='<option value="">'+esc(t("walkin"))+'</option>'+clients.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+(c.phone?' · '+esc(c.phone):'')+'</option>'}).join("")+'<option value="__new">'+esc(t("newCli"))+'</option>';
+ $("q-client").value=cur||""}
+
+function startNew(q){
+ editing=q||null;
+ var d=q&&q.data||{};
+ items=(d.items||[]).map(function(i){return Object.assign({},i)});
+ $("q-in").value=d.indoor!=null?d.indoor:4;$("q-out").value=d.outdoor!=null?d.outdoor:4;$("q-sys").value=d.sys||"ANALOG";$("q-ip").value=d.ip||0;$("q-cab").value=d.cab||22.5;
+ $("c-lab").value=d.lab||0;$("c-tr").value=d.tr||0;$("c-dis").value=d.dis||0;$("c-gst").value=String(d.gp||0);$("c-adv").value=d.adv||0;$("c-note").value=d.note||"";
+ $("q-ipw").classList.toggle("hide",$("q-sys").value!=="HYBRID");$("q-err").textContent="";$("q-info").textContent="";
+ renderClientSelect(q&&q.client_id||"");
+ $("q-edit").classList.toggle("hide",!items.length);if(items.length)renderRows()}
+
+/* ---- data ---- */
+async function loadAll(){
+ var r=await Promise.all([sb.from("promate_web_client").select("*").order("name"),sb.from("promate_web_quote").select("*").order("created_at",{ascending:false}),sb.from("promate_web_profile").select("*").maybeSingle()]);
+ clients=r[0].data||[];quotes=r[1].data||[];if(r[2].data)profile=r[2].data}
+function clientOf(q){return clients.find(function(c){return c.id===q.client_id})||{name:q.client_name,phone:"",address:""}}
+function renderList(){
+ var h=quotes.length?"":'<div class="card mut">'+esc(t("noQuote"))+'</div>';
+ h+=quotes.map(function(q){var c=clientOf(q);return '<div class="card"><div class="row"><b>'+esc(q.client_name||c.name||"—")+'</b><span class="sp"></span><span class="tot">'+money(q.total)+'</span></div><div class="mut">'+new Date(q.created_at).toLocaleDateString(lang==="hi"?"hi-IN":"en-IN")+' · '+esc((q.data&&q.data.sys)||"")+' · '+((q.data&&q.data.items)||[]).length+' items</div><div class="row" style="margin-top:8px"><button class="btn s" data-o="'+q.id+'">'+t("open")+'</button><button class="btn s g" data-p="'+q.id+'">'+t("pdf")+'</button><button class="btn s g" data-w="'+q.id+'">'+t("wa")+'</button><button class="btn s d" data-d="'+q.id+'">'+t("del")+'</button></div></div>'}).join("");
+ $("v-list").innerHTML=h;
+ function byId(i){return quotes.find(function(q){return q.id===i})}
+ each("[data-o]",function(b){b.onclick=function(){startNew(byId(b.dataset.o));show("new")}});
+ each("[data-p]",function(b){b.onclick=function(){printQuote(byId(b.dataset.p))}});
+ each("[data-w]",function(b){b.onclick=function(){waQuote(byId(b.dataset.w))}});
+ each("[data-d]",function(b){b.onclick=async function(){if(armed!==b.dataset.d){armed=b.dataset.d;b.textContent=t("sure");return}armed=null;await sb.from("promate_web_quote").delete().eq("id",b.dataset.d);await loadAll();renderList()}})}
+function each(sel,fn){Array.prototype.forEach.call(document.querySelectorAll(sel),fn)}
+
+function totalsOf(d){var sub=0;(d.items||[]).forEach(function(i){sub+=(+i.qty||0)*(+i.rate||0)});var taxable=Math.max(0,sub+(+d.lab||0)+(+d.tr||0)-(+d.dis||0)),g=taxable*(+d.gp||0)/100;return {sub:sub,taxable:taxable,gst:g,total:taxable+g,bal:taxable+g-(+d.adv||0)}}
+function waQuote(q){
+ var d=q.data||{},c=clientOf(q),tt=totalsOf(d);
+ var txt=(profile.firm||"CCTV")+" - "+t("quote")+"\n"+(q.client_name||c.name||"")+"\n\n"+(d.items||[]).filter(function(i){return +i.qty>0}).map(function(i){return "• "+i.name+" x "+i.qty+" "+i.unit}).join("\n")+"\n\n"+t("grand")+": "+money(tt.total)+(d.adv?"\n"+t("adv")+": "+money(d.adv):"")+"\n"+(profile.phone||"");
+ var ph=String(c.phone||"").replace(/\D/g,"").slice(-10);
+ window.open("https://wa.me/"+(ph?"91"+ph:"")+"?text="+encodeURIComponent(txt),"_blank","noopener")}
+function printQuote(q){
+ var d=q.data||{},c=clientOf(q),tt=totalsOf(d),n=0;
+ var rows=(d.items||[]).filter(function(i){return +i.qty>0}).map(function(i){n++;return "<tr><td>"+n+"</td><td>"+esc(i.name)+"</td><td>"+esc(i.qty)+" "+esc(i.unit)+"</td><td style='text-align:right'>"+money(i.rate)+"</td><td style='text-align:right'>"+money((+i.qty||0)*(+i.rate||0))+"</td></tr>"}).join("");
+ var ex=[["labour",d.lab],["transport",d.tr]].filter(function(x){return +x[1]>0}).map(function(x){return "<tr><td></td><td colspan='3'>"+esc(t(x[0]))+"</td><td style='text-align:right'>"+money(x[1])+"</td></tr>"}).join("");
+ $("print").innerHTML="<h1>"+esc(profile.firm||"CCTV")+"</h1><div>"+esc(profile.address||"")+" "+esc(profile.phone||"")+(profile.gst_no?" · GST "+esc(profile.gst_no):"")+"</div><hr><h2>"+esc(t("quote"))+"</h2><div>"+esc(t("to"))+": <b>"+esc(q.client_name||c.name||"")+"</b> "+esc(c.phone||"")+" "+esc(c.address||"")+"</div><div>"+esc(t("date"))+": "+new Date(q.created_at).toLocaleDateString("en-IN")+"</div><br><table><thead><tr><th>#</th><th>"+esc(t("item"))+"</th><th>"+esc(t("qty"))+"</th><th>"+esc(t("rate"))+"</th><th>"+esc(t("amt"))+"</th></tr></thead><tbody>"+rows+ex+"</tbody></table><p style='text-align:right'>"+esc(t("sub"))+": "+money(tt.sub+(+d.lab||0)+(+d.tr||0))+(+d.dis?" · "+esc(t("discount"))+": -"+money(d.dis):"")+(+d.gp?" · GST "+d.gp+"%: "+money(tt.gst):"")+"<br><b style='font-size:18px'>"+esc(t("grand"))+": "+money(tt.total)+"</b>"+(+d.adv?"<br>"+esc(t("adv"))+": "+money(d.adv)+" · "+esc(t("bal"))+": "+money(tt.bal):"")+"</p>"+(d.note?"<p>"+esc(d.note)+"</p>":"")+"<p>"+esc(t("tc"))+"</p><br><br><div style='text-align:right'>"+esc(t("sig"))+"</div>";
+ setTimeout(function(){window.print()},60)}
+
+/* ---- clients ---- */
+function renderClients(editC){
+ var e=editC||{};
+ var h='<div class="card"><h3>'+esc(e.id?t("edit"):t("addCli"))+'</h3><div class="grid" style="margin-top:8px"><div><label>'+t("name")+'</label><input id="k-name" value="'+esc(e.name||"")+'"></div><div><label>'+t("phone")+'</label><input id="k-ph" inputmode="tel" value="'+esc(e.phone||"")+'"></div><div><label>'+t("addr")+'</label><input id="k-ad" value="'+esc(e.address||"")+'"></div></div><div class="row" style="margin-top:10px"><button class="btn p" id="k-save">'+t("save")+'</button>'+(e.id?'<button class="btn" id="k-cancel">'+t("cancel")+'</button>':'')+'</div></div>';
+ h+=clients.length?"":'<div class="card mut">'+esc(t("noCli"))+'</div>';
+ h+=clients.map(function(c){return '<div class="card"><div class="row"><b>'+esc(c.name)+'</b><span class="sp"></span><span class="mut">'+esc(c.phone)+'</span></div><div class="mut">'+esc(c.address)+'</div><div class="row" style="margin-top:8px">'+(c.phone?'<a class="btn s g" style="text-decoration:none" href="tel:'+esc(c.phone)+'">'+t("call")+'</a>':'')+'<button class="btn s" data-e="'+c.id+'">'+t("edit")+'</button><button class="btn s d" data-d="'+c.id+'">'+t("del")+'</button></div></div>'}).join("");
+ $("v-cli").innerHTML=h;
+ $("k-save").onclick=async function(){var name=$("k-name").value.trim();if(!name)return;var row={owner:me,name:name,phone:$("k-ph").value.trim(),address:$("k-ad").value.trim()};
+  if(e.id)await sb.from("promate_web_client").update(row).eq("id",e.id);else await sb.from("promate_web_client").insert(row);await loadAll();renderClients()};
+ if($("k-cancel"))$("k-cancel").onclick=function(){renderClients()};
+ each("#v-cli [data-e]",function(b){b.onclick=function(){renderClients(clients.find(function(c){return c.id===b.dataset.e}))}});
+ each("#v-cli [data-d]",function(b){b.onclick=async function(){if(armed!==b.dataset.d){armed=b.dataset.d;b.textContent=t("sure");return}armed=null;await sb.from("promate_web_client").delete().eq("id",b.dataset.d);await loadAll();renderClients()}})}
+
+function renderProfile(){
+ $("v-prof").innerHTML='<div class="card"><div class="grid"><div><label>'+t("firm")+'</label><input id="p-firm" value="'+esc(profile.firm)+'"></div><div><label>'+t("phone")+'</label><input id="p-ph" inputmode="tel" value="'+esc(profile.phone)+'"></div><div><label>'+t("addr")+'</label><input id="p-ad" value="'+esc(profile.address)+'"></div><div><label>'+t("gstno")+'</label><input id="p-gst" value="'+esc(profile.gst_no)+'"></div></div><div class="row" style="margin-top:10px"><button class="btn p" id="p-save">'+t("save")+'</button><span id="p-ok" class="mut"></span></div></div>';
+ $("p-save").onclick=async function(){var row={owner:me,firm:$("p-firm").value.trim(),phone:$("p-ph").value.trim(),address:$("p-ad").value.trim(),gst_no:$("p-gst").value.trim(),updated_at:new Date().toISOString()};
+  var r=await sb.from("promate_web_profile").upsert(row);if(!r.error){profile=row;$("p-ok").textContent=t("saved")}else $("p-ok").textContent=r.error.message}}
+
+/* ---- events ---- */
+$("q-sys").onchange=function(){$("q-ipw").classList.toggle("hide",$("q-sys").value!=="HYBRID")};
+$("q-client").onchange=async function(){if($("q-client").value==="__new"){var name=prompt(t("name"));if(!name){$("q-client").value="";return}var ph=prompt(t("phone"))||"";var r=await sb.from("promate_web_client").insert({owner:me,name:name.trim(),phone:ph.trim(),address:""}).select().single();await loadAll();renderClientSelect(r.data&&r.data.id)}};
+$("q-build").onclick=function(){
+ var inn=+$("q-in").value||0,out=+$("q-out").value||0,cams=inn+out;
+ if(cams<1){$("q-err").textContent=t("need");return}
+ if(cams>50){$("q-err").textContent="Max 50";return}
+ $("q-err").textContent="";
+ items=buildKit({cams:cams,dome:inn,sys:$("q-sys").value,ip:+$("q-ip").value||0,cab:+$("q-cab").value||22.5});
+ items.forEach(function(i){var r=rates[i.name.toLowerCase()];if(r)i.rate=r});
+ $("q-info").textContent=t("built");$("q-edit").classList.remove("hide");renderRows()};
+$("q-add").onclick=function(){items.push({name:"",qty:1,unit:"piece",rate:""});renderRows()};
+["c-lab","c-tr","c-dis","c-gst","c-adv"].forEach(function(i){$(i).oninput=renderSum;$(i).onchange=renderSum});
+$("q-cancel").onclick=function(){editing=null;items=[];$("q-edit").classList.add("hide");show("list")};
+$("q-save").onclick=async function(){
+ if(!items.length){$("q-err").textContent=t("need");return}
+ var cid=$("q-client").value;if(cid==="__new")cid="";
+ var cl=clients.find(function(c){return c.id===cid});
+ var data={items:items.filter(function(i){return i.name}),sys:$("q-sys").value,indoor:+$("q-in").value||0,outdoor:+$("q-out").value||0,ip:+$("q-ip").value||0,cab:+$("q-cab").value||22.5,lab:+$("c-lab").value||0,tr:+$("c-tr").value||0,dis:+$("c-dis").value||0,gp:+$("c-gst").value||0,adv:+$("c-adv").value||0,note:$("c-note").value};
+ var row={owner:me,client_id:cid||null,client_name:cl?cl.name:"",data:data,total:Math.round(totalsOf(data).total*100)/100,updated_at:new Date().toISOString()};
+ var r=editing?await sb.from("promate_web_quote").update(row).eq("id",editing.id):await sb.from("promate_web_quote").insert(row);
+ if(r.error){$("q-err").textContent=r.error.message;return}
+ editing=null;items=[];$("q-edit").classList.add("hide");await loadAll();show("list")};
+$("lang").onclick=function(){lang=lang==="hi"?"en":"hi";try{localStorage.setItem("pm-web-lang",lang)}catch(e){}applyLang()};
+$("out").onclick=async function(){await sb.auth.signOut();location.replace(HERE)};
+$("gbtn").onclick=function(){$("lerr").textContent="";sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:HERE}}).then(function(r){if(r.error)$("lerr").textContent=r.error.message})};
+
+async function boot(){
+ applyLang();
+ if(!sb){$("login").classList.remove("hide");$("lerr").textContent="Load failed. Check internet and reload.";return}
+ var s=await sb.auth.getSession();var u=s.data&&s.data.session&&s.data.session.user;
+ if(!u){$("login").classList.remove("hide");return}
+ me=String(u.email||"").toLowerCase();$("who").textContent=me;$("out").classList.remove("hide");
+ await loadAll();$("app").classList.remove("hide");applyLang();show("list");
+ if(location.hash||location.search)history.replaceState(null,"",HERE)}
+boot();
+})();
+</script>
+</body>
+</html>
