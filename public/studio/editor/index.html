@@ -17,6 +17,7 @@ input,textarea,select{min-height:46px}
 #pubbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -2px 10px rgba(0,0,0,.08)}#pubbar .pbrow{display:flex;gap:8px;max-width:520px;margin:0 auto}#pubbar button{flex:1;margin:0;display:block;padding:13px;border:0;border-radius:12px;background:var(--wine);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
 .state{font-size:13px;color:var(--mut);padding:4px 2px;min-height:24px}.state.bad{color:#b00020}
 .cols{display:block}
+#pvbox.cardlk{max-width:340px;margin:0 auto;border-radius:20px;border-color:#eadcc0;box-shadow:0 8px 24px rgba(122,10,16,.22);max-height:40vh}
 #pvbox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:46vh}
 .pvbar{display:flex;justify-content:flex-end;margin:6px 0}
 .aib{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:8px 0 2px;padding:13px 14px;border:0;border-radius:14px;background:linear-gradient(120deg,#7a0a10,#d4141c,#f59a1a);background-size:200% 100%;color:#fff;font:inherit;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(122,10,16,.25);animation:aibg 6s ease-in-out infinite}.aib.on{outline:3px solid #f59a1a}.aib small{font-weight:500;font-size:12px;opacity:.9}
@@ -84,7 +85,7 @@ var PREM={bypass:true,visiting:99,invitation:999,site:199},tplCat=/[?&]site=1/.t
 function premPrice(t){var c=(t&&t.config)||{};if(c.premium!==true)return 0;var n=parseInt(c.premium_price);if(n>0)return n;return PREM[c.site?'site':D.product_type]||99}
 async function loadPrem(){try{var r=await sb.from('studio_settings').select('k,v').in('k',['pay_bypass','prem_price_visiting','prem_price_invitation','prem_price_site']);(r.data||[]).forEach(function(x){if(x.k==='pay_bypass')PREM.bypass=x.v==='1';else PREM[x.k.replace('prem_price_','')]=parseInt(x.v)||PREM[x.k.replace('prem_price_','')]});if(D&&typeof panel==='function')panel()}catch(e){}}
 function cfg(id){var t=T.filter(function(x){return x.id===(id||D.template_id)})[0];return t?t.config:{}}
-function draw(){R.render($('pv'),D.product_type,cfg(),C,{demo:true});$('ttl').textContent=R.title(D.product_type,C);if(!$('full').hidden)R.render($('fullpv'),D.product_type,cfg(),C,{demo:true,play:true})}
+function draw(){try{var vb=$('pvbox'),cardish=D.product_type==='visiting'&&!(C.style&&C.style.site===true);vb.classList.toggle('cardlk',cardish)}catch(e){}R.render($('pv'),D.product_type,cfg(),C,{demo:true});$('ttl').textContent=R.title(D.product_type,C);if(!$('full').hidden)R.render($('fullpv'),D.product_type,cfg(),C,{demo:true,play:true})}
 function btns(){$('undo').disabled=hi<=0;$('redo').disabled=hi>=hist.length-1}
 function snap(){return JSON.stringify({c:C,t:D.template_id})}
 function pushHist(){clearTimeout(htimer);htimer=null;var s=snap();if(hist[hi]===s)return;hist=hist.slice(0,hi+1);hist.push(s);if(hist.length>60)hist.shift();hi=hist.length-1;btns()}
