@@ -819,7 +819,7 @@
         /* frozen enquiry: a fixed button + fixed bottom sheet, always in the same place */
         var ac2 = getComputedStyle(root).getPropertyValue('--ac') || '#12307f';
         var fab = el('button', '', T('📩 पूछताछ')); fab.type = 'button';
-        fab.style.cssText = 'position:fixed;right:14px;bottom:80px;z-index:9000;border:0;border-radius:999px;padding:13px 20px;font:600 15px/1 system-ui,sans-serif;color:#fff;background:' + (ac2.trim() || '#12307f') + ';box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:pointer';
+        fab.style.cssText = 'position:fixed;right:14px;bottom:170px;z-index:9000;border:0;border-radius:999px;padding:13px 20px;font:600 15px/1 system-ui,sans-serif;color:#fff;background:' + (ac2.trim() || '#12307f') + ';box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:pointer';
         var sh = el('div', ''); sh.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9001;display:none;max-height:85vh;overflow:auto;background:#fff;color:#14203d;border-radius:18px 18px 0 0;box-shadow:0 -8px 28px rgba(0,0,0,.35);padding:16px 16px 22px';
         var hd2 = el('div', ''); hd2.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px';
         var hb = el('b', '', T('पूछताछ भेजें')); hb.style.fontSize = '18px'; var cx = el('button', '', '✕'); cx.type = 'button'; cx.setAttribute('aria-label', 'close');
