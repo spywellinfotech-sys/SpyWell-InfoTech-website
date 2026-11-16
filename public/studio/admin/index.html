@@ -8,7 +8,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,s
 .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}.stat b{display:block;font-size:22px;color:var(--wine)}.stat span{font-size:12px;color:var(--mut)}
 .tabs{display:flex;gap:6px;margin:12px 0}.tabs button{flex:1;padding:9px;border-radius:20px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;cursor:pointer}.tabs button.on{background:var(--wine);color:#fff}
 input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);font:inherit;margin-bottom:8px}
-.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:6px}.stat b{font-size:19px!important}.card .k{font-size:13px;color:var(--mut);word-break:break-all}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:6px}.grp{background:#fff;border:1px solid var(--line);border-radius:14px;margin-top:10px;overflow:hidden}.gh{display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer;background:linear-gradient(135deg,#8b1a2b,#b3283c);color:#fff}.gh b{display:block;font-size:16px}.gh span:not(.ga){display:block;font-size:12px;opacity:.9;margin-top:2px}.gh .ga{font-size:14px;flex:none}.gb{padding:2px 8px 10px;background:#fdf6e8}.stat b{font-size:19px!important}.card .k{font-size:13px;color:var(--mut);word-break:break-all}
 .btn{padding:7px 12px;border-radius:8px;border:1px solid var(--wine);background:#fff;color:var(--wine);font:inherit;font-size:14px;margin:6px 6px 0 0;cursor:pointer;text-decoration:none;display:inline-block}.btn.d{background:#b00020;color:#fff;border-color:#b00020}
 .st{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;background:#eee}.st.published{background:#1b6e3c;color:#fff}.trow{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:6px}.swl{font-size:13px;font-weight:700;color:var(--mut);min-width:34px;text-align:right}.sw{position:relative;flex:none;width:52px;height:30px;border-radius:15px;border:0;background:#c9b9a0;padding:0;cursor:pointer;transition:background .2s}.sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:left .2s}.sw.on{background:#1b9e4b}.sw.on i{left:25px}.sw:disabled{opacity:.6}[hidden]{display:none!important}</style><script src="/studio/appback.js"></script></head><body>
 <div class="top"><b><img src="/logo.png" alt="SpyWell" width="30" height="30" style="background:#fff;border-radius:50%;padding:2px;vertical-align:middle;margin-right:8px">SpyWell Studio · एडमिन</b><button type="button" id="rfa" aria-label="रिफ़्रेश" title="रिफ़्रेश" style="width:38px;height:38px;min-height:0;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg></button><a href="/studio/#me">👤 User मोड</a></div>
@@ -34,17 +34,16 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   if(!st.error&&st.data){var g=h('div',{class:'stats'});[['customers','ग्राहक'],['invitations','इनविटेशन कार्ड'],['visiting','विज़िटिंग'],['published','प्रकाशित'],['drafts','ड्राफ़्ट'],['ai_calls_7d','AI (7 दिन)']].forEach(function(x){g.appendChild(h('div',{class:'stat'},[h('b',{text:String(st.data[x[0]]==null?0:st.data[x[0]])}),h('span',{text:x[1]})]))});app.appendChild(g)}
   var vc=await sb.rpc('studio_admin_view_counts');VC={};var tv=0,tc=0;(vc.data||[]).forEach(function(x){VC[x.design_id]=x;tv+=Number(x.views);tc+=Number(x.clicks)});
   if(!vc.error){var g2=h('div',{class:'stats'});[[tv,'कुल कार्ड व्यू'],[tc,'कुल बटन क्लिक']].forEach(function(x){g2.appendChild(h('div',{class:'stat'},[h('b',{text:String(x[0])}),h('span',{text:x[1]})]))});app.appendChild(g2)}
-  var at0=h('div');app.appendChild(at0);aiTile(at0);
-  var sv0=h('div',{class:'svcw'});app.appendChild(sv0);svcTile(sv0);
-  var ch=h('div');app.appendChild(ch);chatPanel(ch);
-  var ap2=h('div');app.appendChild(ap2);aiPanel(ap2);
-  var mq=h('div');app.appendChild(mq);manPanel(mq);
-    var dp=h('div');app.appendChild(dp);dirPanel(dp);var rp=h('div');app.appendChild(rp);refPanel(rp);
-  var cf=h('div');app.appendChild(cf);cfgPanel(cf);
-  var dm=h('div');app.appendChild(dm);domPanel(dm);
-  var ip=h('div');app.appendChild(ip);indPanel(ip);
-  var au=h('div');app.appendChild(au);auditPanel(au);
-  Array.prototype.forEach.call(app.children,function(el){if(el.tagName==='DIV'&&!el.className)compact(el)});
+  function grp(title,sub,open){var g=h('div',{class:'grp'}),hd=h('div',{class:'gh'}),ar=h('span',{text:'▼',class:'ga'}),bd=h('div',{class:'gb'});
+    hd.appendChild(h('div',{style:'flex:1;min-width:0'},[h('b',{text:title}),h('span',{text:sub})]));hd.appendChild(ar);
+    function sy(){bd.hidden=!op;ar.textContent=op?'▲':'▼'}var op=!!open;hd.onclick=function(){op=!op;sy()};sy();g.appendChild(hd);g.appendChild(bd);app.appendChild(g);return bd}
+  function put(bd,fn){var d=h('div');bd.appendChild(d);fn(d);return d}
+  var g1=grp('💰 पैसा, AI टोकन और प्लान','AI बैलेंस · सर्विस चार्जेज़ · UPI भुगतान · Refer & Earn · सीमाएँ');
+  put(g1,aiTile);var sv0=put(g1,svcTile);sv0.className='svcw';put(g1,manPanel);put(g1,refPanel);put(g1,cfgPanel);
+  var g2=grp('🤖 AI सहायक','AI से चैट · AI सेटिंग');put(g2,chatPanel);put(g2,aiPanel);
+  var g3=grp('🌐 डायरेक्टरी, डोमेन और इंडस्ट्री','बिज़नेस डायरेक्टरी · डोमेन अनुरोध · Industry-wise कार्ड');put(g3,dirPanel);put(g3,domPanel);put(g3,indPanel);
+  var g4=grp('📜 एडमिन लॉग','Admin के कामों का लॉग');put(g4,auditPanel);
+  Array.prototype.forEach.call(app.querySelectorAll('.gb>div'),function(el){if(!el.className)compact(el)});
   var tabs=h('div',{class:'tabs'});app.appendChild(tabs);body=h('div');app.appendChild(body);
   function draw(){tabs.textContent='';[['cust','ग्राहक'],['tpl','टेम्पलेट']].forEach(function(t){tabs.appendChild(h('button',{class:tab===t[0]?'on':'',text:t[1],onclick:function(){tab=t[0];sel=null;draw()}}))});body.textContent='';(tab==='cust'?(sel?cardsView:custView):tplView)()}
   window.__draw=draw;draw();
@@ -374,7 +373,7 @@ async function aiTile(box){
   var st=h('div',{style:'display:flex;gap:8px;margin-top:10px;flex-wrap:wrap'});
   [['📞 कॉल',x.total_calls],['✅ सफल',x.ok_calls],['💸 कुल खर्च','$'+x.total_spent_usd]].forEach(function(z){st.appendChild(h('span',{style:'background:rgba(255,255,255,.18);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:700',text:z[0]+' '+z[1]}))});
   c.appendChild(st);c.appendChild(h('div',{style:'font-size:11px;opacity:.85;margin-top:8px',text:'बैलेंस बदलने या कीमत ठीक करने के लिए दबाएँ (सर्विस चार्जेज़ में खुलेगा)'}));
-  c.onclick=function(){var t=document.querySelector('.svcw .svc div');var hd=document.querySelector('.svcw .svc');if(hd){var b=hd.children[2];if(b&&b.hidden&&hd.firstChild)hd.firstChild.click();hd.scrollIntoView({behavior:'smooth',block:'start'})}};
+  c.onclick=function(){var t=document.querySelector('.svcw .svc div');var hd=document.querySelector('.svcw .svc');if(hd){var b=hd.children[2];var gbx=hd.closest('.gb');if(gbx&&gbx.hidden&&gbx.previousElementSibling)gbx.previousElementSibling.click();if(b&&b.hidden&&hd.firstChild)hd.firstChild.click();hd.scrollIntoView({behavior:'smooth',block:'start'})}};
   box.appendChild(c)}
 async function svcTile(box,open){
   box.textContent='';
