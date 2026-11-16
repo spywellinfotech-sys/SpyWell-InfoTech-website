@@ -14,6 +14,7 @@ input,textarea,select{min-height:46px}
 .top button,.top a{width:auto;margin:0;padding:7px 11px;background:#fff;color:var(--wine);font-size:14px;border-radius:8px;border:0;font-weight:600;text-decoration:none;font-family:inherit;cursor:pointer}
 .top button:disabled{opacity:.4}
 .wrap{max-width:1040px;margin:auto;padding:10px 10px 86px}
+#fpv{position:fixed;right:8px;bottom:84px;z-index:20;width:112px;height:196px;border:2px solid #7a0a10;border-radius:14px;background:#fff;box-shadow:0 6px 20px rgba(0,0,0,.35);overflow:hidden;display:none}#fpv.on{display:block}#fpv .fin{width:340px;transform:scale(.33);transform-origin:0 0;pointer-events:none}#fpv .fx{position:absolute;top:0;right:0;z-index:2;border:0;background:rgba(0,0,0,.55);color:#fff;width:24px;height:24px;border-radius:0 0 0 10px;font-size:14px;line-height:1}#fpv .fl{position:absolute;left:0;right:0;bottom:0;z-index:2;background:rgba(122,10,16,.88);color:#fff;text-align:center;font:700 11px/1.6 system-ui,sans-serif}@media(min-width:860px){#fpv{display:none!important}}
 #pubbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -2px 10px rgba(0,0,0,.08)}#pubbar .pbrow{display:flex;gap:8px;max-width:520px;margin:0 auto}#pubbar button{flex:1;margin:0;display:block;padding:13px;border:0;border-radius:12px;background:var(--wine);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
 .state{font-size:13px;color:var(--mut);padding:4px 2px;min-height:24px}.state.bad{color:#b00020}
 .cols{display:block}
@@ -62,6 +63,7 @@ button:active{transform:scale(.96);filter:brightness(.9)}button{-webkit-tap-high
 <div><button type="button" id="aibtn" hidden></button><button type="button" id="wzbtn" hidden style="display:block;width:100%;margin:6px 0 2px;padding:11px;border:1.5px solid #f0c98a;border-radius:14px;background:#fff8ec;color:#7a0a10;font-weight:800;font-size:15px">🧭 Get Started — सवाल-जवाब से भरें</button><div class="tabs" id="tabs"></div><div class="panel" id="panel"></div></div>
 </div></div>
 <div id="toast" hidden></div>
+<div id="fpv"><button type="button" class="fx" id="fpvx" aria-label="बंद">✕</button><div class="fin" id="fpvin"></div><div class="fl">👁 लाइव प्रीव्यू</div></div>
 <div id="pubbar" hidden><div class="pbrow"><button type="button" id="pubbtn">🚀 प्रकाशित करें</button><button type="button" id="pinbtn" hidden>🔑 PIN</button></div></div>
 <div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -85,7 +87,10 @@ var PREM={bypass:true,visiting:99,invitation:999,site:199},tplCat='all',webMode=
 function premPrice(t){var c=(t&&t.config)||{};if(c.premium!==true)return 0;var n=parseInt(c.premium_price);if(n>0)return n;return PREM[c.site?'site':D.product_type]||99}
 async function loadPrem(){try{var r=await sb.from('studio_settings').select('k,v').in('k',['pay_bypass','prem_price_visiting','prem_price_invitation','prem_price_site']);(r.data||[]).forEach(function(x){if(x.k==='pay_bypass')PREM.bypass=x.v==='1';else PREM[x.k.replace('prem_price_','')]=parseInt(x.v)||PREM[x.k.replace('prem_price_','')]});if(D&&typeof panel==='function')panel()}catch(e){}}
 function cfg(id){var t=T.filter(function(x){return x.id===(id||D.template_id)})[0];return t?t.config:{}}
-function draw(){try{var vb=$('pvbox'),cardish=D.product_type==='visiting'&&!(C.style&&C.style.site===true)&&!(webMode&&tab==='tpl');vb.classList.toggle('cardlk',cardish)}catch(e){}if(webMode&&tab==='tpl'&&D.product_type==='visiting'){R.site($('pv'),cfg(C.style.webtpl||D.template_id),C,{demo:true})}else R.render($('pv'),D.product_type,cfg(),C,{demo:true});$('ttl').textContent=R.title(D.product_type,C);if(!$('full').hidden)R.render($('fullpv'),D.product_type,cfg(),C,{demo:true,play:true})}
+function draw(){try{var vb=$('pvbox'),cardish=D.product_type==='visiting'&&!(C.style&&C.style.site===true)&&!(webMode&&tab==='tpl');vb.classList.toggle('cardlk',cardish)}catch(e){}if(webMode&&tab==='tpl'&&D.product_type==='visiting'){R.site($('pv'),cfg(C.style.webtpl||D.template_id),C,{demo:true})}else R.render($('pv'),D.product_type,cfg(),C,{demo:true});$('ttl').textContent=R.title(D.product_type,C);if(!$('full').hidden)R.render($('fullpv'),D.product_type,cfg(),C,{demo:true,play:true});try{fpvDraw()}catch(e){}}
+var fpvOff=false,fpvVis=true;
+function fpvDraw(){var f=$('fpv');if(!f)return;var inn=$('fpvin');if(webMode&&tab==='tpl'&&D.product_type==='visiting')R.site(inn,cfg(C.style.webtpl||D.template_id),C,{demo:true});else R.render(inn,D.product_type,cfg(),C,{demo:true});f.classList.toggle('on',!fpvOff&&!fpvVis&&!$('main').hidden)}
+(function(){var f=document.getElementById('fpv');if(!f)return;f.onclick=function(e){if(e.target.id==='fpvx'){fpvOff=true;f.classList.remove('on');return}var b=document.getElementById('fullbtn');if(b)b.click()};var pb=document.getElementById('pvbox');if(pb&&window.IntersectionObserver){new IntersectionObserver(function(en){fpvVis=en[0].intersectionRatio>0.35;f.classList.toggle('on',!fpvOff&&!fpvVis&&!document.getElementById('main').hidden)},{threshold:[0,.35,.7]}).observe(pb)}})();
 function btns(){$('undo').disabled=hi<=0;$('redo').disabled=hi>=hist.length-1}
 function snap(){return JSON.stringify({c:C,t:D.template_id})}
 function pushHist(){clearTimeout(htimer);htimer=null;var s=snap();if(hist[hi]===s)return;hist=hist.slice(0,hi+1);hist.push(s);if(hist.length>60)hist.shift();hi=hist.length-1;btns()}
