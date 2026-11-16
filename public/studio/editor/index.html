@@ -659,8 +659,9 @@ function insBox(p){
     box.appendChild(h('button',{class:'btn alt',text:'🔑 PIN देखें / रीसेट',onclick:function(){tab='ins';tabs();panel()}}));
     box.appendChild(m)})()}
 function pPub(p){
-  pExtra(p);
   var live=D.status==='published';
+  var more=h('details',{class:'item'},[h('summary',{text:'⚙️ और विकल्प (मिनी वेबसाइट, इनसाइट, डोमेन, कार QR…)',style:'font-weight:700;cursor:pointer;padding:6px 0'})]);
+  if(live)pExtra(more);else pExtra(p);
   if(live){
     var url=pubUrl(D.slug);
     p.appendChild(h('div',{class:'item'},[h('b',{text:'✅ आपका कार्ड लाइव है'}),h('div',{class:'k',text:url,style:'word-break:break-all;margin-top:6px'})]));
@@ -672,11 +673,11 @@ function pPub(p){
         h('button',{class:'btn alt',text:'वेबसाइट खोलें',onclick:function(){window.open(wu,'_blank','noopener')}}),
         h('button',{class:'btn alt',text:'वेबसाइट लिंक कॉपी',onclick:async function(){try{await navigator.clipboard.writeText(wu);info.className='k';info.textContent='वेबसाइट लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ।'}}}),
         h('button',{class:'btn alt',text:'वेबसाइट WhatsApp पर भेजें',onclick:function(){window.open('https://wa.me/?text='+encodeURIComponent('हमारी वेबसाइट: '+wu),'_blank','noopener')}})]))}
-    insBox(p);
-    if(D.product_type==='visiting')dirBox(p);
-    if(D.product_type==='visiting')planBox(p);
-    if(D.product_type==='visiting'&&C.style.site===true)domainBox(p);
-    else if(D.product_type==='visiting')p.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
+    insBox(more);
+    if(D.product_type==='visiting')dirBox(more);
+    if(D.product_type==='visiting')planBox(more);
+    if(D.product_type==='visiting'&&C.style.site===true)domainBox(more);
+    else if(D.product_type==='visiting')more.appendChild(h('div',{class:'k',text:'मिनी वेबसाइट लिंक पाने के लिए ऊपर "मिनी वेबसाइट मोड" चालू करें।'}));
     if(D.product_type==='visiting'){
       var cm=String((C.fields||{}).mobile||'').replace(/\D/g,'').slice(-10),cbox=h('div',{class:'item'});
       cbox.appendChild(h('b',{text:'🚗 गाड़ी पर लगाने वाला कॉल QR'}));
@@ -707,10 +708,10 @@ function pPub(p){
             setTimeout(function(){URL.revokeObjectURL(u)},4000)},'image/png')}}));
         cbox.appendChild(h('div',{class:'k',text:'डाउनलोड न हो तो ऊपर की तस्वीर को देर तक दबाकर सेव करें, फिर प्रिंट करवाइए।'}));
       }
-      p.appendChild(cbox)}
+      more.appendChild(cbox)}
     if(D.product_type==='visiting'){
       function upq(what){window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मुझे '+what+' चाहिए। मेरा कार्ड: '+url),'_blank','noopener')}
-      p.appendChild(h('div',{class:'item'},[h('b',{text:'🚀 अपग्रेड करें'}),
+      more.appendChild(h('div',{class:'item'},[h('b',{text:'🚀 अपग्रेड करें'}),
         h('div',{class:'k',text:'1) विज़िटिंग कार्ड ✅ 2) मिनी वेबसाइट '+(C.style.site===true?'✅':'(ऊपर स्विच से चालू करें)')+' 3) अपना डोमेन (जैसे www.aapkanaam.com) 4) पूरी वेबसाइट'}),
         h('button',{class:'btn alt',text:'🌍 अपना डोमेन लगवाएँ',onclick:function(){upq('अपने मिनी वेबसाइट पर अपना कस्टम डोमेन')}}),
         h('button',{class:'btn alt',text:'🏢 पूरी वेबसाइट बनवाएँ',onclick:function(){upq('अपने बिज़नेस की पूरी वेबसाइट')}})]))}
@@ -721,12 +722,11 @@ function pPub(p){
     p.appendChild(h('button',{class:'btn alt',text:'लिंक कॉपी करें',onclick:async function(){try{await navigator.clipboard.writeText(url);info.className='k';info.textContent='लिंक कॉपी हो गया।'}catch(e){info.className='e';info.textContent='कॉपी नहीं हुआ। ऊपर का लिंक दबाकर रखें और कॉपी करें।'}}}));
     p.appendChild(h('button',{class:'btn alt',text:'कार्ड खोलकर देखें',onclick:function(){window.open(url,'_blank','noopener')}}));
     p.appendChild(h('button',{class:'btn alt',text:'QR कोड डाउनलोड करें',onclick:function(){var a=h('a',{href:cv.toDataURL('image/png'),download:'qr-'+D.slug+'.png'});document.body.appendChild(a);a.click();a.remove()}}));
-    p.appendChild(h('button',{class:'btn alt',text:'📊 इनसाइट लिंक और PIN',onclick:function(){tab='ins';tabs();panel()}}));
     var ub=h('button',{class:'btn danger',text:'प्रकाशन बंद करें'});
     ub.onclick=async function(){if(!ub.dataset.a){ub.dataset.a='1';ub.textContent='पक्का? लिंक खुलना बंद हो जाएगा। हाँ, बंद करें';return}
       if(dirty)await save();var r=await sb.from('studio_designs').update({status:'unpublished'}).eq('id',D.id).select('status').single();
       if(r.error){info.className='e';info.textContent='बंद नहीं हुआ। दोबारा कोशिश करें।';return}D.status='unpublished';panel();state('प्रकाशन बंद कर दिया गया')};
-    p.appendChild(ub);p.appendChild(info);
+    p.appendChild(more);p.appendChild(ub);p.appendChild(info);
     p.appendChild(h('div',{class:'k',text:'कार्ड में बदलाव सेव होते ही लाइव लिंक पर दिखेंगे। लिंक का नाम बदलने के लिए पहले प्रकाशन बंद करें।'}));
     return}
   p.appendChild(h('div',{class:'k',text:D.status==='unpublished'?'यह कार्ड अभी बंद है। दोबारा प्रकाशित करने के लिए लिंक चुनें।':'प्रकाशित करने पर आपका कार्ड एक लिंक और QR कोड से सबके लिए खुल जाएगा।'}));
