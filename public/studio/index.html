@@ -229,6 +229,14 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 <div style="display:flex;gap:8px;margin-top:8px"><button type="button" id="vo-say" style="flex:1">▶ अभी सुनें</button><button type="button" id="vo-stop" style="flex:1">⏹ रोकें</button></div>
 <div class="k" id="vo-msg"></div></div>
 </div></div>
+<div class="card" id="c-sup">
+<div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('sup-body');q.hidden=!q.hidden;document.getElementById('sup-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">🆘 Contact support</b><span id="sup-ar" style="font-size:16px">▾</span></div>
+<div id="sup-body" hidden>
+<div class="k" style="margin:8px 0">मदद चाहिए, कोई सवाल है, या बिज़नेस डायरेक्टरी की लिस्टिंग हटवानी है? सपोर्ट को ईमेल करें।</div>
+<a href="mailto:info@spywell.in?subject=DynaMe%20Support" style="display:block;text-align:center;background:#d4141c;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700">✉️ info@spywell.in</a>
+<a href="mailto:info@spywell.in?subject=Remove%20my%20Directory%20listing" style="display:block;text-align:center;margin-top:8px;background:#fff;color:#d4141c;border:1.5px solid #d4141c;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:700">📒 डायरेक्टरी लिस्टिंग हटवाएँ</a>
+<div class="k" style="margin-top:10px">Developer website: <a href="https://www.spywell.in" target="_blank" rel="noopener" style="font-weight:700">www.spywell.in</a></div>
+</div></div>
 <button type="button" id="out" hidden style="margin-top:4px;width:100%;background:#fff;color:#b3261e;border:1.5px solid #b3261e">🚪 लॉगआउट</button>
 </div>
 
@@ -777,7 +785,7 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
       wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(wa)}
     if(pub){var wl2=location.origin+'/web/'+x.slug,stw=shareTools(x,wl2,(x.title||'मेरी')+' की मिनी वेबसाइट:\n'+wl2);hero.appendChild(stw.shr);hero.appendChild(r3);hero.appendChild(stw.mh);hero.appendChild(stw.more)}else hero.appendChild(r3);box.appendChild(hero)})();
   var dw=mk('div','');box.appendChild(dw);
-  if(x.status==='published'&&x.slug)sb.rpc('studio_dir_mine',{p_design:x.id}).then(function(r){var m=r&&r.data;if(!m||!m.open)return;
+  if(x.status==='published'&&x.slug)sb.rpc('studio_dir_mine',{p_design:x.id}).then(function(r){var m=r&&r.data;if(!m||!m.open||m.listed)return;
     dw.style.cssText='margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff7f6';
     dw.appendChild(mk('b','','📒 बिज़नेस डायरेक्टरी'));
     var lab=mk('label','');lab.style.cssText='display:flex;gap:8px;align-items:flex-start;margin-top:6px;font-size:14px';var cb=document.createElement('input');cb.type='checkbox';cb.style.cssText='width:auto;margin:3px 0 0;flex:none';cb.checked=!!m.listed;lab.appendChild(cb);lab.appendChild(mk('span','','मैं सहमति देता/देती हूँ कि मेरा नाम, दुकान, शहर, मोबाइल नंबर और कार्ड/मिनी वेबसाइट का लिंक बिज़नेस डायरेक्टरी में लॉगिन किए हुए यूज़र को दिखे और वे इसे सेव कर सकें। मैं इसे कभी भी हटा सकता/सकती हूँ।'));dw.appendChild(lab);
@@ -787,7 +795,7 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
     var info=mk('div','k',m.listed&&m.paid_until?'वैधता: '+new Date(m.paid_until).toLocaleDateString('hi-IN'):(m.listed?'वैधता: तय नहीं':''));info.style.marginTop='4px';dw.appendChild(info);
     var sv=mk('button','alt','सेव करें');sv.type='button';sv.style.cssText='width:100%;margin-top:6px';var ms=mk('div','k','');dw.appendChild(sv);dw.appendChild(ms);
     sv.onclick=async function(){sv.disabled=true;var q=await sb.rpc('studio_dir_set',{p_design:x.id,p_listed:cb.checked,p_city:ci.value.trim()});sv.disabled=false;var d=q&&q.data;
-      ms.textContent=d&&d.ok?(cb.checked?'✓ डायरेक्टरी में लिस्ट हो गया':'✓ डायरेक्टरी से हटा दिया'):(d&&d.error==='closed'?'डायरेक्टरी अभी चालू नहीं है।':d&&d.error==='city'?'पहले अपना शहर/कस्बा लिखें।':'सेव नहीं हुआ, दोबारा कोशिश करें।')};
+      if(d&&d.ok&&cb.checked)setTimeout(function(){dw.remove()},1500);ms.textContent=d&&d.ok?(cb.checked?'✓ डायरेक्टरी में लिस्ट हो गया':'✓ डायरेक्टरी से हटा दिया'):(d&&d.error==='closed'?'डायरेक्टरी अभी चालू नहीं है।':d&&d.error==='city'?'पहले अपना शहर/कस्बा लिखें।':'सेव नहीं हुआ, दोबारा कोशिश करें।')};
     var ld=mk('a','','📒 डायरेक्टरी देखें →');ld.href='/studio/directory/';ld.style.cssText='display:block;margin-top:8px;color:#d4141c;font-weight:600;font-size:14px';dw.appendChild(ld);dw.removeChild(dw.firstChild);dw.style.cssText='';foldBox(dw,'📒 बिज़नेस डायरेक्टरी',m.listed?'✓ लिस्टेड':'लिस्ट नहीं')});
   var sw=$('c-ins')||box.appendChild(mk('div',''));sw.textContent='';
   var st=await sb.rpc('studio_my_stats',{p_design:x.id});sw.textContent='';sw.hidden=!!st.error||!st.data;
@@ -865,7 +873,7 @@ var TABMAP=null;
 var CURT=null;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-ins'),'home'],[$('c-insinv'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('out'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-ins'),'home'],[$('c-insinv'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden))t='home';
   if(t==='dir'){var cd=$('c-dir');if(!cd.firstChild){var fr=document.createElement('iframe');fr.src='/studio/directory/?embed=1';fr.style.cssText='width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);border:0;display:block';cd.appendChild(fr)}}
