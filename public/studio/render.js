@@ -689,9 +689,7 @@
     root.appendChild(nav);
     var hero = el('div', 'ws-hero'), hin = el('div', 'ws-in');
     if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hin.appendChild(lg); }
-    if (d.images.photo) hin.appendChild(picture('ph', d.images.photo, 'circle'));
-    if (f.name) hin.appendChild(el('h1', 'sr-nm', f.name));
-    if (f.designation) hin.appendChild(el('div', 'sr-des', f.designation));
+    if (f.business || f.name) hin.appendChild(el('h1', 'sr-nm', f.business || f.name));
     if (f.tagline) hin.appendChild(el('p', 'ws-tag', f.tagline));
     var act = el('div', 'sr-act ws-act');
     if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें : ') + tel.slice(0, 5) + ' ' + tel.slice(5), 'tel:+91' + tel), 'call'));
@@ -709,6 +707,7 @@
     var gk = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6'].filter(function (k) { return d.images[k]; });
     if (gk.length) { var gi = sec(T('गैलरी')), gg = el('div', 'ws-gal'); gk.forEach(function (k) { var im = picture('ws-gp', d.images[k], 'gallery'); im.style.width = '100%'; gg.appendChild(im); }); gi.appendChild(gg); }
     if (mapUrl) { var mi = sec(T('हमें यहाँ खोजें')); if (f.address) mi.appendChild(el('p', 'ws-about', f.address)); if (!opts.demo && f.address) { var fr = el('iframe', 'ws-map'); fr.setAttribute('loading', 'lazy'); fr.setAttribute('title', 'map'); fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade'); fr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent([f.business, f.address].filter(Boolean).join(', ')) + '&output=embed'; mi.appendChild(fr); } var mb = actA(link('ws-navbtn ws-mapbtn', T('🧭 रास्ता देखें'), mapUrl), 'map'); mi.appendChild(mb); }
+    if (f.business && (f.name || d.images.photo)) { var ow = sec(T('मालिक / संपर्क व्यक्ति')), ob = el('div', 'ws-owner'); ob.style.cssText = 'text-align:center'; if (d.images.photo) ob.appendChild(picture('ph', d.images.photo, 'circle')); if (f.name) ob.appendChild(el('div', 'sr-nm', f.name)); if (f.designation) ob.appendChild(el('div', 'sr-des', f.designation)); if (opts.cardUrl) { var vcb = link('sr-call', T('📇 विज़िटिंग कार्ड देखें'), opts.cardUrl); vcb.style.cssText = 'display:inline-block;margin-top:10px'; ob.appendChild(vcb); } ow.appendChild(ob); }
     var ci = sec(T('संपर्क करें')), cg = el('div', 'ws-grid');
     [['मोबाइल', tel && ('+91 ' + tel), tel && 'tel:+91' + tel, 'call'], ['ईमेल', em, em && 'mailto:' + em, 'email'], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, ''), web, 'website']].forEach(function (r) {
       if (!r[1]) return; var c = el('div', 'ws-card ws-ct'); c.appendChild(el('div', 'ws-ic ws-ic2', ({call: '📞', email: '✉️', map: '📍', website: '🌐'})[r[3]] || '•')); c.appendChild(el('small', '', T(r[0]))); if (r[2]) c.appendChild(actA(link('', r[1], r[2]), r[3])); else c.appendChild(el('div', '', r[1])); cg.appendChild(c);
