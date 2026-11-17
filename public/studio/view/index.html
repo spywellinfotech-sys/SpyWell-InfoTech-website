@@ -42,17 +42,17 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
     var gk='sv_lead_'+t+s,got='';try{got=localStorage.getItem(gk)||''}catch(e){}
     if(!got){
-      await new Promise(function(done){
-        box.textContent='';var gd=document.createElement('div');gd.style.cssText='max-width:380px;margin:40px auto;padding:22px 18px;background:#fff;border:1px solid #e8d5ad;border-radius:16px;text-align:center';
+      new Promise(function(done){
+        var gd=document.createElement('div');gd.id='sv-gate';gd.style.cssText='max-width:380px;margin:10px auto;box-sizing:border-box;padding:22px 18px;background:#fff;border:1px solid #e8d5ad;border-radius:16px;text-align:center';
         function ge(tag,txt,css){var e=document.createElement(tag);if(txt)e.textContent=txt;if(css)e.style.cssText=css;return e}
         gd.appendChild(ge('div','🔒','font-size:36px'));gd.appendChild(ge('b','कार्ड देखने के लिए अपनी जानकारी दीजिए','display:block;font-size:18px;color:#8b1a2b;margin:6px 0 12px'));
         var ni=document.createElement('input');ni.type='text';ni.maxLength=60;ni.placeholder='आपका नाम';ni.autocomplete='name';
         var mi=document.createElement('input');mi.type='tel';mi.inputMode='numeric';mi.maxLength=14;mi.placeholder='मोबाइल नंबर (10 अंक)';mi.autocomplete='tel';
-        [ni,mi].forEach(function(i){i.style.cssText='display:block;width:100%;margin:8px 0;padding:12px;border:1px solid #e8d5ad;border-radius:10px;font:inherit'});
+        [ni,mi].forEach(function(i){i.style.cssText='display:block;width:100%;box-sizing:border-box;margin:8px 0;padding:12px;border:1px solid #e8d5ad;border-radius:10px;font:inherit'});
         var ger=ge('div','','color:#b00020;font-size:14px;min-height:20px'),gb=ge('button','कार्ड देखें','width:100%;margin-top:6px;padding:13px;border:0;border-radius:10px;background:#8b1a2b;color:#fff;font:700 16px inherit;cursor:pointer');
         gd.appendChild(ni);gd.appendChild(mi);gd.appendChild(ger);gd.appendChild(gb);
         gd.appendChild(ge('div','आपका नाम और नंबर सिर्फ़ इस कार्ड को भेजने वाले को दिखेगा।','font-size:12px;color:#7a6248;margin-top:10px'));
-        box.appendChild(gd);
+        box.parentNode.insertBefore(gd,box);
         async function go(){var nm=ni.value.trim(),mb=mi.value.replace(/\D/g,'').slice(-10);
           if(!nm){ger.textContent='अपना नाम लिखें';return}if(!/^[6-9][0-9]{9}$/.test(mb)){ger.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}
           gb.disabled=true;ger.textContent='';
@@ -60,7 +60,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
           var src='';try{var rf=document.referrer?new URL(document.referrer).hostname.replace(/^www\./,''):'';src=new URLSearchParams(location.search).get('src')||rf||'direct'}catch(e){src='direct'}
           var lr=await sb.rpc('studio_lead_add',{p_slug:s,p_type:t,p_name:nm,p_mobile:mb,p_visitor:vv,p_device:/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',p_src:src});
           if(lr.error||lr.data!==true){gb.disabled=false;ger.textContent='अभी सेव नहीं हो पाया। दोबारा कोशिश करें।';return}
-          try{localStorage.setItem(gk,'1')}catch(e){}box.textContent='';done()}
+          try{localStorage.setItem(gk,'1')}catch(e){}gd.remove();done()}
         gb.onclick=go;mi.onkeydown=function(e){if(e.key==='Enter')go()}})}
   }
   if(isSite){box.style.maxWidth='none';box.style.background='transparent'}
