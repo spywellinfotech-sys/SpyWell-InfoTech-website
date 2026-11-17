@@ -661,7 +661,7 @@ async function invHome(){
     nb.onclick=function(){var n=ni.value.replace(/\D/g,'');if(n.length>10&&/^91/.test(n))n=n.slice(2);if(!/^[6-9][0-9]{9}$/.test(n)){nm2.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}nm2.textContent='';window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(shTx),'_blank','noopener');ni.value='';sb.from('studio_sent').upsert({design_id:x.id,mobile:n,kind:'invitation',status:'sent',sent_at:new Date().toISOString()},{onConflict:'design_id,mobile,kind'}).then(function(){loadSent()})};
     ni.onkeydown=function(e){if(e.key==='Enter')nb.click()};
     nrow.appendChild(ni);nrow.appendChild(nb);nr.appendChild(nrow);nr.appendChild(nm2);nrMore=nr;
-    var more=mk('div','');more.hidden=true;var mh=mk('div','','⚙️ और विकल्प (नंबर पर भेजें, शगुन, नाम-मोबाइल)  ▼');mh.style.cssText='margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.16);font-weight:800;cursor:pointer;font-size:14px';
+    var more=mk('div','');more.hidden=true;var mh=mk('div','','📲 Send to Unsaved WhatsApp no.  ▼');mh.style.cssText='margin-top:10px;padding:10px 12px;border-radius:12px;background:#ffc21a;color:#5a0509;font-weight:800;cursor:pointer;font-size:14px';
     mh.onclick=function(){more.hidden=!more.hidden;mh.textContent=mh.textContent.replace(/[▼▲]$/,more.hidden?'▼':'▲')};
     var ar=mk('div','');ar.style.cssText='display:flex;gap:8px;margin-top:12px';
     var ed=mk('a','','✏️ Edit');ed.href='/studio/editor/?v=20261116&id='+x.id;ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d2e;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:800';
@@ -808,7 +808,7 @@ function shareTools(x,url,shTx){
   var sh2=mk('button','','🔗 लिंक');sh2.type='button';sh2.style.cssText='margin:0;flex:1;padding:10px 6px;min-height:0;border:1px solid rgba(255,255,255,.7);border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:15px';
   sh2.onclick=async function(){try{await navigator.clipboard.writeText(url);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('लिंक',url)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
   shr.appendChild(sh1);shr.appendChild(sh2);
-  var more=mk('div','');more.hidden=true;var mh=mk('div','','⚙️ और विकल्प (नंबर पर भेजें, नाम-मोबाइल)  ▼');mh.style.cssText='margin-top:8px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.16);font-weight:800;cursor:pointer;font-size:14px';
+  var more=mk('div','');more.hidden=true;var mh=mk('div','','📲 Send to Unsaved WhatsApp no.  ▼');mh.style.cssText='margin-top:8px;padding:8px 12px;border-radius:12px;background:#ffc21a;color:#5a0509;font-weight:800;cursor:pointer;font-size:14px';
   mh.onclick=function(){more.hidden=!more.hidden;mh.textContent=mh.textContent.replace(/[▼▲]$/,more.hidden?'▼':'▲')};
   var nr=mk('div','');nr.style.cssText='margin-top:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
   nr.appendChild(mk('b','','📞 नंबर डालकर सीधे भेजें'));var nh=mk('div','','जिनका नंबर WhatsApp में सेव नहीं है, उन्हें भी भेज सकते हैं');nh.style.cssText='font-size:12px;opacity:.9;margin:2px 0 6px';nr.appendChild(nh);
