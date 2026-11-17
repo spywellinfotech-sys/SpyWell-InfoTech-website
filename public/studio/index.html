@@ -318,13 +318,21 @@ function drawUns(){var w=$('c-uns');if(!w)return;
   var pw=mk('div','');pw.hidden=true;pw.style.marginTop='6px';var ta=document.createElement('textarea');ta.rows=4;ta.placeholder='फ़ोन के कॉल लॉग से नंबर कॉपी करके यहाँ चिपकाएँ (कई नंबर एक साथ चल जाएँगे)';ta.style.cssText='display:block;width:100%;box-sizing:border-box;margin:0;padding:8px;border:1.5px solid #d9b3b3;border-radius:10px;font:14px system-ui,sans-serif;color:#222;background:#fff';
   var ab=mk('button','','➕ लिस्ट में जोड़ें');ab.type='button';ab.style.cssText='display:block;width:100%;margin:6px 0 0;min-height:0;height:40px;border:0;border-radius:10px;background:#7a0a10;color:#fff;font-weight:800;font-size:14px';var am=mk('div','');am.style.cssText='font-size:12px;margin-top:4px';
   pb2.onclick=function(){pw.hidden=!pw.hidden};
-  ab.onclick=async function(){var d=LIST.filter(function(z){return z.product_type==='visiting'&&z.status==='published'&&z.slug}).sort(function(p,q){return (q.id===MYSEL?1:0)-(p.id===MYSEL?1:0)})[0];if(!d){am.textContent='पहले अपना विज़िटिंग कार्ड प्रकाशित करें';return}
-    var seen={},rows=[],mm=ta.value.match(/(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}/g)||[];mm.forEach(function(t){var n=t.replace(/\D/g,'');if(n.length>10)n=n.slice(-10);if(/^[6-9][0-9]{9}$/.test(n)&&!seen[n]){seen[n]=1;rows.push(n)}});
-    var have={};CT.forEach(function(x){if(x.mob)have[x.mob]=1});rows=rows.filter(function(n){return!have[n]&&!SENT[n]});
-    if(!rows.length){am.textContent='कोई नया सही नंबर नहीं मिला';return}ab.disabled=true;
-    var r=await sb.from('studio_sent').upsert(rows.map(function(n){return{design_id:d.id,mobile:n,kind:'card',status:'pending'}}),{onConflict:'design_id,mobile,kind',ignoreDuplicates:true});ab.disabled=false;
-    if(r.error){am.textContent='जुड़ नहीं पाए, दोबारा कोशिश करें';return}rows.forEach(function(n){SENT[n]={name:null,k:{}}});UNSOPEN=true;ta.value='';drawUns()};
-  pw.appendChild(ta);pw.appendChild(ab);pw.appendChild(am);bx.appendChild(pb2);bx.appendChild(pw);w.appendChild(bx);
+  async function addFromText(txt,am,btn){var d=LIST.filter(function(z){return z.product_type==='visiting'&&z.status==='published'&&z.slug}).sort(function(p,q){return (q.id===MYSEL?1:0)-(p.id===MYSEL?1:0)})[0];if(!d){am.textContent='पहले अपना विज़िटिंग कार्ड प्रकाशित करें';return false}
+    var seen={},rows=[],mm=String(txt).match(/(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}/g)||[];mm.forEach(function(t){var n=t.replace(/\D/g,'');if(n.length>10)n=n.slice(-10);if(/^[6-9][0-9]{9}$/.test(n)&&!seen[n]){seen[n]=1;rows.push(n)}});
+    var have={};CT.forEach(function(x){if(x.mob)have[x.mob]=1});var tot=rows.length;rows=rows.filter(function(n){return!have[n]&&!SENT[n]});
+    if(!rows.length){am.textContent=tot?'सारे नंबर पहले से लिस्ट/कॉन्टैक्ट में हैं':'कोई सही नंबर नहीं मिला';return false}if(btn)btn.disabled=true;
+    var ok=0;for(var i=0;i<rows.length;i+=200){var ch=rows.slice(i,i+200);var r=await sb.from('studio_sent').upsert(ch.map(function(n){return{design_id:d.id,mobile:n,kind:'card',status:'pending'}}),{onConflict:'design_id,mobile,kind',ignoreDuplicates:true});if(r.error){am.textContent='जुड़ नहीं पाए, दोबारा कोशिश करें';if(btn)btn.disabled=false;return false}ch.forEach(function(n){SENT[n]={name:null,k:{}}});ok+=ch.length}
+    if(btn)btn.disabled=false;UNSOPEN=true;window.__unsMsg=ok+' नए नंबर जुड़ गए'+(tot>ok?' ('+(tot-ok)+' पहले से थे)':'');drawUns();return true}
+  ab.onclick=function(){addFromText(ta.value,am,ab).then(function(ok){if(ok)ta.value=''})};
+  var xb=mk('button','','📊 Excel / CSV फ़ाइल से जोड़ें');xb.type='button';xb.style.cssText='display:block;width:100%;margin:8px 0 0;min-height:0;padding:9px 10px;border:1px dashed #b97;border-radius:10px;background:#fff;color:#7a0a10;font-weight:700;font-size:13px';
+  var fi=document.createElement('input');fi.type='file';fi.accept='.xlsx,.xls,.csv,.txt,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';fi.hidden=true;var xm=mk('div','');xm.style.cssText='font-size:12px;margin-top:4px;color:#7a0a10';
+  xb.onclick=function(){fi.value='';fi.click()};
+  function loadX(){return new Promise(function(res,rej){if(window.XLSX)return res();var sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.mini.min.js';sc.onload=function(){res()};sc.onerror=function(){rej(new Error('lib'))};document.head.appendChild(sc)})}
+  fi.onchange=async function(){var f=fi.files&&fi.files[0];if(!f)return;xm.textContent='फ़ाइल पढ़ रहे हैं…';
+    try{var txt='';if(/\.(csv|txt)$/i.test(f.name)){txt=await f.text()}else{await loadX();var wb=XLSX.read(await f.arrayBuffer(),{type:'array'});wb.SheetNames.forEach(function(n){txt+='\n'+XLSX.utils.sheet_to_csv(wb.Sheets[n])})}
+      xm.textContent='';await addFromText(txt,xm,null)}catch(e){xm.textContent='फ़ाइल नहीं पढ़ पाए। .csv फ़ाइल आज़माएँ या नंबर चिपकाएँ।'}};
+  pw.appendChild(ta);pw.appendChild(ab);pw.appendChild(am);bx.appendChild(pb2);bx.appendChild(pw);bx.appendChild(xb);bx.appendChild(fi);bx.appendChild(xm);if(window.__unsMsg){xm.textContent=window.__unsMsg;window.__unsMsg=''}w.appendChild(bx);
   if(!arr.length)return;var h=mk('div','','📋 भेजे गए नंबर ('+arr.length+')  ▲');h.style.cssText='margin-top:8px;padding:8px 10px;border-radius:10px;background:#fff;color:#7a0a10;font-weight:800;cursor:pointer;font-size:13px';var bd=mk('div','');
   h.onclick=function(){bd.hidden=!bd.hidden;h.textContent=h.textContent.replace(/[▼▲]$/,bd.hidden?'▼':'▲')};
   function fdt(v){if(!v)return 'जोड़ा हुआ';try{return new Date(v).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true})}catch(e){return ''}}
