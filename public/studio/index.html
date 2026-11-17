@@ -300,7 +300,8 @@ function sendBtns(ac,mob,title){{var sk=(SENT[mob]&&SENT[mob].k)||{},pb=function
           sb.from('studio_sent').upsert({design_id:d.id,mobile:mob,name:title||null,kind:kd[0],status:'sent',sent_at:now},{onConflict:'design_id,mobile,kind'}).then(function(){})};
         ac.appendChild(bt)})}}
 
-function drawUns(){var w=$('c-uns');if(!w)return;w.textContent='';w.style.display=ADM?'':'none';if(!ADM)return;
+function drawUns(){var w=$('c-uns');if(!w)return;
+  if(!w.dataset.mv){w.dataset.mv='1';var last=null;['c-hello','c-welcome','c-qa','c-my','c-ref','c-inv','c-insall','c-sendaddr','c-addr','c-addr2','c-loc','c-enq'].forEach(function(i){var e=$(i);if(e&&e.parentNode===w.parentNode&&(!last||(last.compareDocumentPosition(e)&4)))last=e});if(last)last.parentNode.insertBefore(w,last.nextSibling)}w.textContent='';w.style.display=ADM?'':'none';if(!ADM)return;
   var have={};CT.forEach(function(x){if(x.mob)have[x.mob]=1});var arr=Object.keys(SENT).filter(function(m){return!have[m]}).map(function(m){return{m:m,n:SENT[m].name,t:Object.keys(SENT[m].k).map(function(k){return SENT[m].k[k]}).sort().pop()||''}}).sort(function(p,q){return String(q.t).localeCompare(String(p.t))});
   var tg=mk('button','','📨 Unsaved Contacts ('+arr.length+')  ▼');tg.type='button';tg.style.cssText='display:block;width:100%;margin:0;padding:9px 12px;min-height:0;border:1px solid #f1c9c9;border-radius:12px;background:#fdecec;color:#7a0a10;font-weight:800;font-size:14px;text-align:left';
   var bx=mk('div','');bx.hidden=!UNSOPEN;bx.style.cssText='margin-top:6px;padding:8px;border-radius:12px;background:#fdecec;border:1px solid #f1c9c9';
