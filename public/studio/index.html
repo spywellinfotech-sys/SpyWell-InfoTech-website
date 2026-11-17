@@ -622,7 +622,8 @@ async function invHome(){
       var r=await sb.from('studio_sent').upsert(rows,{onConflict:'design_id,mobile',ignoreDuplicates:true});if(r.error){pkm.textContent='सूची में जोड़ा नहीं जा सका';return}
       pkm.textContent=rows.length+' नंबर जोड़े गए। सूची खोलकर हर एक के आगे 💬 दबाकर भेजें।';slb.hidden=false;loadSent()}catch(e){if(e&&e.name!=='AbortError')pkm.textContent='कॉन्टैक्ट नहीं खुल सके'}};
   nr.appendChild(pk);nr.appendChild(pkm);
-  loadSent();
+  sl.hidden=true;pk.hidden=true;pkm.hidden=true;
+  sb.rpc('studio_is_admin').then(function(r){if(r&&r.data===true){sl.hidden=false;pk.hidden=false;pkm.hidden=false;loadSent()}});
   (async function(){var g=await sb.from('studio_designs').select('gt:content_json->style->>gate').eq('id',x.id).maybeSingle();if(g.error)return;var on=g.data&&g.data.gt==='true';
       var gr=mk('div','');gr.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
       var gl=mk('div','');gl.appendChild(mk('b','','📱 देखने से पहले नाम और मोबाइल पूछें'));var gs=mk('div','',on?'चालू: कार्ड देखने वाले को पहले नाम और नंबर देना होगा':'बंद: कार्ड सीधे खुलेगा');gs.style.cssText='font-size:12px;opacity:.9;margin-top:2px';gl.appendChild(gs);gl.style.flex='1';
