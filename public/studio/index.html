@@ -795,7 +795,7 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
     go.style.cssText='width:100%;margin:12px 0 0;background:#ffc21a;color:#0b3d5c;font-size:16px;font-weight:800;border:0;border-radius:12px;padding:11px 6px;min-height:0;line-height:1.25;box-shadow:0 3px 0 #c98d00';
     go.onclick=function(){if(pub)openVw(x.slug,'visiting',x.title,'w');else location.href='/studio/editor/?v=20261116&id='+x.id+'&tab=pub'};tx.appendChild(go);
     var r3=mk('div','');r3.style.cssText='display:flex;gap:8px;margin-top:10px';
-    var ed=mk('a','','✏️ एडिट करें');ed.href='/studio/editor/?v=20261116&id='+x.id+'&tab=info';
+    var ed=mk('a','','✏️ एडिट करें');ed.href='/studio/editor/?v=20261116&id='+x.id+'&tab=info&site=1';
     ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d5c;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(ed);
     if(false){var wl=location.origin+'/web/'+x.slug;var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent((x.title||'मेरी')+' की मिनी वेबसाइट: '+wl);wa.target='_blank';wa.rel='noopener';
       wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(wa)}
