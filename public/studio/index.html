@@ -589,7 +589,7 @@ async function invHome(){
     var nrow=mk('div','');nrow.style.cssText='display:flex;flex-direction:column;gap:8px';var ni=document.createElement('input');ni.type='tel';ni.setAttribute('inputmode','numeric');ni.maxLength=10;ni.placeholder='मोबाइल नंबर';ni.style.cssText='display:block!important;width:100%!important;box-sizing:border-box!important;height:54px!important;margin:0!important;padding:0 14px!important;border:0!important;border-radius:12px!important;font:700 20px system-ui,sans-serif!important;letter-spacing:1px;color:#222!important;background:#fff!important';
     var nb=mk('button','','💬 भेजें');nb.type='button';nb.style.cssText='margin:0!important;width:100%!important;height:46px!important;min-height:0!important;padding:0 16px!important;border:0!important;border-radius:12px!important;background:#25d366!important;color:#fff!important;font-weight:800;font-size:16px';
     var nm2=mk('div','');nm2.style.cssText='font-size:12px;margin-top:2px';
-    nb.onclick=function(){var n=ni.value.replace(/\D/g,'');if(n.length>10&&/^91/.test(n))n=n.slice(2);if(!/^[6-9][0-9]{9}$/.test(n)){nm2.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}nm2.textContent='';window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(shTx),'_blank','noopener');ni.value=''};
+    nb.onclick=function(){var n=ni.value.replace(/\D/g,'');if(n.length>10&&/^91/.test(n))n=n.slice(2);if(!/^[6-9][0-9]{9}$/.test(n)){nm2.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}nm2.textContent='';window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(shTx),'_blank','noopener');ni.value='';sb.from('studio_sent').upsert({design_id:x.id,mobile:n,sent_at:new Date().toISOString()},{onConflict:'design_id,mobile'}).then(function(){loadSent()})};
     ni.onkeydown=function(e){if(e.key==='Enter')nb.click()};
     nrow.appendChild(ni);nrow.appendChild(nb);nr.appendChild(nrow);nr.appendChild(nm2);nrMore=nr;
     var more=mk('div','');more.hidden=true;var mh=mk('div','','⚙️ और विकल्प (नंबर पर भेजें, शगुन, नाम-मोबाइल)  ▼');mh.style.cssText='margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.16);font-weight:800;cursor:pointer;font-size:14px';
@@ -600,7 +600,20 @@ async function invHome(){
     dl2.onclick=function(){if(!confirm('यह इनविटेशन कार्ड हमेशा के लिए मिट जाएगा। पक्का मिटाएँ?'))return;del(x.id,dl2)};
     ar.appendChild(ed);ar.appendChild(dl2);hero.appendChild(ar);
     if(nrMore)more.appendChild(nrMore);hero.appendChild(mh);hero.appendChild(more);
-    (async function(){var g=await sb.from('studio_designs').select('gt:content_json->style->>gate').eq('id',x.id).maybeSingle();if(g.error)return;var on=g.data&&g.data.gt==='true';
+    var sl=mk('div','');sl.style.cssText='margin-top:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';var slh=mk('div','','');slh.style.cssText='font-weight:800;cursor:pointer;font-size:14px';var slb=mk('div','');slb.hidden=true;sl.appendChild(slh);sl.appendChild(slb);more.appendChild(sl);
+  slh.onclick=function(){slb.hidden=!slb.hidden;loadSent.paint()};
+  function loadSent(){sb.from('studio_sent').select('id,mobile,sent_at').eq('design_id',x.id).order('sent_at',{ascending:false}).limit(200).then(function(r){var rows=(r&&r.data)||[];loadSent.rows=rows;loadSent.paint()})}
+  loadSent.rows=[];loadSent.paint=function(){var rows=loadSent.rows;slh.textContent='📋 जिन्हें भेजा ('+rows.length+') '+(slb.hidden?'▼':'▲');slb.textContent='';if(!rows.length){var em=mk('div','','अभी कोई नहीं। नंबर डालकर भेजने पर यहाँ सूची बनती जाएगी।');em.style.cssText='font-size:12px;opacity:.9;margin-top:6px';slb.appendChild(em);return}
+    rows.forEach(function(q){var row=mk('div','');row.style.cssText='display:flex;align-items:center;gap:6px;margin-top:8px;background:rgba(255,255,255,.14);border-radius:10px;padding:6px 8px';
+      var tx=mk('div','');tx.style.cssText='flex:1;font-weight:800;font-size:15px';tx.textContent=q.mobile;var dt=mk('div','');dt.style.cssText='font-size:11px;font-weight:400;opacity:.85';try{dt.textContent=new Date(q.sent_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})}catch(e){}tx.appendChild(dt);
+      function bt(t,fn){var b=mk('button','',t);b.type='button';b.style.cssText='margin:0;width:auto;min-height:0;padding:7px 10px;border:0;border-radius:9px;background:#fff;color:#0b3d5c;font-weight:800;font-size:13px';b.onclick=fn;return b}
+      row.appendChild(tx);
+      row.appendChild(bt('💬',function(){window.open('https://wa.me/91'+q.mobile+'?text='+encodeURIComponent(shTx),'_blank','noopener');sb.from('studio_sent').update({sent_at:new Date().toISOString()}).eq('id',q.id).then(function(){loadSent()})}));
+      row.appendChild(bt('📞',function(){location.href='tel:+91'+q.mobile}));
+      row.appendChild(bt('🗑',function(){sb.from('studio_sent').delete().eq('id',q.id).then(function(){loadSent()})}));
+      slb.appendChild(row)})};
+  loadSent();
+  (async function(){var g=await sb.from('studio_designs').select('gt:content_json->style->>gate').eq('id',x.id).maybeSingle();if(g.error)return;var on=g.data&&g.data.gt==='true';
       var gr=mk('div','');gr.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
       var gl=mk('div','');gl.appendChild(mk('b','','📱 देखने से पहले नाम और मोबाइल पूछें'));var gs=mk('div','',on?'चालू: कार्ड देखने वाले को पहले नाम और नंबर देना होगा':'बंद: कार्ड सीधे खुलेगा');gs.style.cssText='font-size:12px;opacity:.9;margin-top:2px';gl.appendChild(gs);gl.style.flex='1';
       var sw=mk('button','isw');sw.type='button';sw.setAttribute('aria-label','नाम-मोबाइल पूछना');sw.appendChild(document.createElement('i'));var lb2=mk('span','swl2','');var paint=function(){sw.className='isw'+(on?' on':'');lb2.textContent=on?'चालू':'बंद';gs.textContent=on?'चालू: कार्ड देखने वाले को पहले नाम और नंबर देना होगा':'बंद: कार्ड सीधे खुलेगा'};paint();
