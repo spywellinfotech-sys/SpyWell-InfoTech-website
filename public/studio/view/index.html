@@ -53,6 +53,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
         gd.appendChild(ni);gd.appendChild(mi);gd.appendChild(ger);gd.appendChild(gb);
         gd.appendChild(ge('div','आपका नाम और नंबर सिर्फ़ इस कार्ड को भेजने वाले को दिखेगा।','font-size:12px;color:#7a6248;margin-top:10px'));
         box.parentNode.insertBefore(gd,box);
+        box.style.filter='blur(7px)';box.style.pointerEvents='none';box.style.userSelect='none';box.style.transition='filter .4s';
         async function go(){var nm=ni.value.trim(),mb=mi.value.replace(/\D/g,'').slice(-10);
           if(!nm){ger.textContent='अपना नाम लिखें';return}if(!/^[6-9][0-9]{9}$/.test(mb)){ger.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}
           gb.disabled=true;ger.textContent='';
@@ -60,7 +61,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
           var src='';try{var rf=document.referrer?new URL(document.referrer).hostname.replace(/^www\./,''):'';src=new URLSearchParams(location.search).get('src')||rf||'direct'}catch(e){src='direct'}
           var lr=await sb.rpc('studio_lead_add',{p_slug:s,p_type:t,p_name:nm,p_mobile:mb,p_visitor:vv,p_device:/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',p_src:src});
           if(lr.error||lr.data!==true){gb.disabled=false;ger.textContent='अभी सेव नहीं हो पाया। दोबारा कोशिश करें।';return}
-          try{localStorage.setItem(gk,'1')}catch(e){}gd.remove();done()}
+          try{localStorage.setItem(gk,'1')}catch(e){}gd.remove();box.style.filter='';box.style.pointerEvents='';box.style.userSelect='';done()}
         gb.onclick=go;mi.onkeydown=function(e){if(e.key==='Enter')go()}})}
   }
   if(isSite){box.style.maxWidth='none';box.style.background='transparent'}
