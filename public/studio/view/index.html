@@ -38,7 +38,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   var cj=r.data.content_json||{},sty=(cj.style&&typeof cj.style==='object')?cj.style:{},isSite=asWeb&&sty.site===true;
   if(isSite&&typeof sty.webtpl==='string'&&sty.webtpl&&sty.webtpl!==r.data.template_id){try{var tw=await sb.from('studio_templates').select('config').eq('id',sty.webtpl).maybeSingle();if(tw.data&&tw.data.config)tp=tw}catch(e){}}
   if(asWeb&&!isSite){msg('यह मिनी वेबसाइट अभी चालू नहीं है','कार्ड का मालिक एडिटर में "मिनी वेबसाइट मोड" चालू करे। तब तक सीधा कार्ड देखें: /v/'+s);return}
-  if(sty.gate===true){
+  if(sty.gate===true&&q.get('pv')!=='1'){
     try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
     var gk='sv_lead_'+t+s,got='';try{got=localStorage.getItem(gk)||''}catch(e){}
     if(!got){
