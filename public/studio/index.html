@@ -332,7 +332,16 @@ function drawUns(){var w=$('c-uns');if(!w)return;
   fi.onchange=async function(){var f=fi.files&&fi.files[0];if(!f)return;xm.textContent='फ़ाइल पढ़ रहे हैं…';
     try{var txt='';if(/\.(csv|txt)$/i.test(f.name)){txt=await f.text()}else{await loadX();var wb=XLSX.read(await f.arrayBuffer(),{type:'array'});wb.SheetNames.forEach(function(n){txt+='\n'+XLSX.utils.sheet_to_csv(wb.Sheets[n])})}
       xm.textContent='';await addFromText(txt,xm,null)}catch(e){xm.textContent='फ़ाइल नहीं पढ़ पाए। .csv फ़ाइल आज़माएँ या नंबर चिपकाएँ।'}};
-  pw.appendChild(ta);pw.appendChild(ab);pw.appendChild(am);bx.appendChild(pb2);bx.appendChild(pw);bx.appendChild(xb);bx.appendChild(fi);bx.appendChild(xm);if(window.__unsMsg){xm.textContent=window.__unsMsg;window.__unsMsg=''}w.appendChild(bx);
+  pw.appendChild(ta);pw.appendChild(ab);pw.appendChild(am);bx.appendChild(pb2);bx.appendChild(pw);bx.appendChild(xb);bx.appendChild(fi);
+  var kb=mk('button','','📇 फ़ोन के कॉन्टैक्ट से चुनें');kb.type='button';kb.style.cssText='display:block;width:100%;margin:8px 0 0;min-height:0;padding:9px 10px;border:1px dashed #b97;border-radius:10px;background:#fff;color:#7a0a10;font-weight:700;font-size:13px';
+  kb.onclick=async function(){xm.textContent='';if(!(navigator.contacts&&navigator.contacts.select)){xm.textContent='यह फ़ोन/ब्राउज़र कॉन्टैक्ट चुनने नहीं देता। Android के Chrome में खोलें।';return}
+    var d=LIST.filter(function(z){return z.product_type==='visiting'&&z.status==='published'&&z.slug}).sort(function(p,q){return (q.id===MYSEL?1:0)-(p.id===MYSEL?1:0)})[0];if(!d){xm.textContent='पहले अपना विज़िटिंग कार्ड प्रकाशित करें';return}
+    try{var res=await navigator.contacts.select(['name','tel'],{multiple:true}),seen={},rows=[],have={};CT.forEach(function(x){if(x.mob)have[x.mob]=1});
+      (res||[]).forEach(function(c){var nm=(c.name&&c.name[0]||'').slice(0,80);(c.tel||[]).forEach(function(t){var n=String(t).replace(/\D/g,'');if(n.length>10)n=n.slice(-10);if(/^[6-9][0-9]{9}$/.test(n)&&!seen[n]&&!have[n]&&!SENT[n]){seen[n]=1;rows.push({design_id:d.id,mobile:n,name:nm||null,kind:'card',status:'pending'})}})});
+      if(!rows.length){xm.textContent='कोई नया सही नंबर नहीं मिला';return}
+      for(var i=0;i<rows.length;i+=200){var r=await sb.from('studio_sent').upsert(rows.slice(i,i+200),{onConflict:'design_id,mobile,kind',ignoreDuplicates:true});if(r.error){xm.textContent='जुड़ नहीं पाए, दोबारा कोशिश करें';return}}
+      rows.forEach(function(q){SENT[q.mobile]={name:q.name,k:{}}});UNSOPEN=true;window.__unsMsg=rows.length+' कॉन्टैक्ट जुड़ गए';drawUns()}catch(e){if(e&&e.name!=='AbortError')xm.textContent='कॉन्टैक्ट नहीं मिल पाए'}};
+  bx.appendChild(kb);bx.appendChild(xm);if(window.__unsMsg){xm.textContent=window.__unsMsg;window.__unsMsg=''}w.appendChild(bx);
   if(!arr.length)return;var h=mk('div','','📋 भेजे गए नंबर ('+arr.length+')  ▲');h.style.cssText='margin-top:8px;padding:8px 10px;border-radius:10px;background:#fff;color:#7a0a10;font-weight:800;cursor:pointer;font-size:13px';var bd=mk('div','');
   h.onclick=function(){bd.hidden=!bd.hidden;h.textContent=h.textContent.replace(/[▼▲]$/,bd.hidden?'▼':'▲')};
   function fdt(v){if(!v)return 'जोड़ा हुआ';try{return new Date(v).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true})}catch(e){return ''}}
