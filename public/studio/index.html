@@ -668,7 +668,7 @@ async function invHome(){
     var dl2=mk('button','','🗑 Delete');dl2.type='button';dl2.style.cssText='margin:0;flex:1;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:12px;padding:12px 6px;font-weight:800';
     dl2.onclick=function(){if(!confirm('यह इनविटेशन कार्ड हमेशा के लिए मिट जाएगा। पक्का मिटाएँ?'))return;del(x.id,dl2)};
     ar.appendChild(ed);ar.appendChild(dl2);hero.appendChild(ar);
-    if(nrMore)more.appendChild(nrMore);hero.appendChild(mh);hero.appendChild(more);
+    if(nrMore)more.appendChild(nrMore);var gw=mk('div','');hero.appendChild(gw);hero.appendChild(mh);hero.appendChild(more);
     var sl=mk('div','');sl.style.cssText='margin-top:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';var slh=mk('div','','');slh.style.cssText='font-weight:800;cursor:pointer;font-size:14px';var slb=mk('div','');slb.hidden=true;sl.appendChild(slh);
   var bk=mk('button','','');bk.type='button';bk.hidden=true;bk.style.cssText='margin:8px 0 0;width:100%;min-height:0;padding:12px;border:0;border-radius:10px;background:#25d366;color:#fff;font-weight:800;font-size:15px';sl.appendChild(bk);
   var fq=document.createElement('input');fq.type='search';fq.placeholder='नाम या नंबर खोजें';fq.style.cssText='display:block;width:100%;box-sizing:border-box;margin:8px 0 0;height:38px;padding:0 12px;border:0;border-radius:10px;font-size:14px;color:#222;background:#fff';slb.appendChild(fq);var lst=mk('div','');slb.appendChild(lst);sl.appendChild(slb);more.appendChild(sl);
@@ -709,7 +709,7 @@ async function invHome(){
         var cj=r.data.content_json||{};cj.style=(cj.style&&typeof cj.style==='object')?cj.style:{};if(!on)cj.style.gate=true;else delete cj.style.gate;
         var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(u.error||!u.data||!u.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;paint()};
       var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:10px;width:100%';hd.appendChild(gl);hd.appendChild(lb2);hd.appendChild(sw);gr.appendChild(hd);
-      more.appendChild(gr)})();
+      gw.appendChild(gr)})();
     (async function(){var g=await sb.from('studio_designs').select('so:content_json->style->>shagun_off,upi:content_json->fields->>upi,un:content_json->fields->>upi_name').eq('id',x.id).maybeSingle();if(g.error)return;var on=!(g.data&&g.data.so==='true');
       var gr=mk('div','');gr.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
       var gl=mk('div','');gl.appendChild(mk('b','','🎁 ऑनलाइन शगुन (QR और UPI ID)'));var gs=mk('div','');gs.style.cssText='font-size:12px;opacity:.9;margin-top:2px';gl.appendChild(gs);gl.style.flex='1';
@@ -808,7 +808,7 @@ function shareTools(x,url,shTx){
   var sh2=mk('button','','🔗 लिंक');sh2.type='button';sh2.style.cssText='margin:0;flex:1;padding:10px 6px;min-height:0;border:1px solid rgba(255,255,255,.7);border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:15px';
   sh2.onclick=async function(){try{await navigator.clipboard.writeText(url);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('लिंक',url)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
   shr.appendChild(sh1);shr.appendChild(sh2);
-  var more=mk('div','');more.hidden=true;var mh=mk('div','','📲 Send to Unsaved WhatsApp no.  ▼');mh.style.cssText='margin-top:8px;padding:8px 12px;border-radius:12px;background:#ffc21a;color:#5a0509;font-weight:800;cursor:pointer;font-size:14px';
+  var gw=mk('div','');var more=mk('div','');more.hidden=true;var mh=mk('div','','📲 Send to Unsaved WhatsApp no.  ▼');mh.style.cssText='margin-top:8px;padding:8px 12px;border-radius:12px;background:#ffc21a;color:#5a0509;font-weight:800;cursor:pointer;font-size:14px';
   mh.onclick=function(){more.hidden=!more.hidden;mh.textContent=mh.textContent.replace(/[▼▲]$/,more.hidden?'▼':'▲')};
   var nr=mk('div','');nr.style.cssText='margin-top:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
   nr.appendChild(mk('b','','📞 नंबर डालकर सीधे भेजें'));var nh=mk('div','','जिनका नंबर WhatsApp में सेव नहीं है, उन्हें भी भेज सकते हैं');nh.style.cssText='font-size:12px;opacity:.9;margin:2px 0 6px';nr.appendChild(nh);
@@ -858,8 +858,8 @@ function shareTools(x,url,shTx){
     sw.onclick=async function(){sw.disabled=true;var r=await sb.from('studio_designs').select('content_json').eq('id',x.id).maybeSingle();if(r.error||!r.data){sw.disabled=false;gs.textContent='बदला नहीं जा सका';return}
       var cj=r.data.content_json||{};cj.style=(cj.style&&typeof cj.style==='object')?cj.style:{};if(!on)cj.style.gate=true;else delete cj.style.gate;
       var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(u.error||!u.data||!u.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;paint()};
-    var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:10px;width:100%';hd.appendChild(gl);hd.appendChild(lb2);hd.appendChild(sw);gr.appendChild(hd);more.appendChild(gr)})();
-  return {shr:shr,mh:mh,more:more}}
+    var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:10px;width:100%';hd.appendChild(gl);hd.appendChild(lb2);hd.appendChild(sw);gr.appendChild(hd);gw.appendChild(gr)})();
+  return {shr:shr,mh:mh,more:more,gw:gw}}
 function tplBtn(t,href,col){var q=mk('a','',t);q.href=href;q.style.cssText='display:block;text-align:center;margin-top:8px;background:rgba(255,255,255,.18);border:1.5px solid #fff;color:#fff;border-radius:12px;padding:9px 6px;text-decoration:none;font-weight:700;font-size:14px';return q}
 async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
   var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
@@ -935,7 +935,7 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
     ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d5c;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(ed);
     if(false){var wl=location.origin+'/web/'+x.slug;var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent((x.title||'मेरी')+' की मिनी वेबसाइट: '+wl);wa.target='_blank';wa.rel='noopener';
       wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';r3.appendChild(wa)}
-    if(pub){var wl2=location.origin+'/web/'+x.slug,stw=shareTools(x,wl2,(x.title||'मेरी')+' की मिनी वेबसाइट:\n'+wl2);hero.appendChild(stw.shr);hero.appendChild(r3);hero.appendChild(stw.mh);hero.appendChild(stw.more)}else hero.appendChild(r3);box.appendChild(hero)})();
+    if(pub){var wl2=location.origin+'/web/'+x.slug,stw=shareTools(x,wl2,(x.title||'मेरी')+' की मिनी वेबसाइट:\n'+wl2);hero.appendChild(stw.shr);hero.appendChild(r3);hero.appendChild(stw.gw);hero.appendChild(stw.mh);hero.appendChild(stw.more)}else hero.appendChild(r3);box.appendChild(hero)})();
   var dw=mk('div','');box.appendChild(dw);
   if(x.status==='published'&&x.slug)sb.rpc('studio_dir_mine',{p_design:x.id}).then(function(r){var m=r&&r.data;if(!m||!m.open||m.listed)return;
     dw.style.cssText='margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff7f6';
