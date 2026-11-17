@@ -347,7 +347,7 @@ function drawUns(){var w=$('c-uns');if(!w)return;
   h.onclick=function(){bd.hidden=!bd.hidden;h.textContent=h.textContent.replace(/[▼▲]$/,bd.hidden?'▼':'▲')};
   function fdt(v){if(!v)return 'जोड़ा हुआ';try{return new Date(v).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true})}catch(e){return ''}}
   var UNSX=window.UNSX=window.UNSX||{};
-  arr.forEach(function(q){var row=mk('div','');row.style.cssText='border-bottom:1px solid #f0dada;padding:2px 0';
+  arr.forEach(function(q){var row=mk('div','des');row.style.cssText='border-top:0;border-bottom:1px solid #f0dada;padding:2px 0';
     var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 4px;cursor:pointer';var t=mk('b','',(q.n?q.n+' · ':'')+q.m);t.style.cssText='flex:1;font-size:16px;color:#222;display:block';var dt=mk('span','',fdt(q.t));dt.style.cssText='font-size:12px;color:#777;white-space:nowrap';var ar=mk('span','',UNSX[q.m]?'▲':'▼');ar.style.cssText='font-size:11px;color:#7a0a10';hd.appendChild(t);hd.appendChild(dt);hd.appendChild(ar);row.appendChild(hd);
     var ac=mk('div','acts');ac.hidden=!UNSX[q.m];ac.style.cssText='padding:0 4px 10px';var c1=mk('a','','📞 कॉल');c1.href='tel:+91'+q.m;ac.appendChild(c1);var w1=mk('a','','WhatsApp');w1.href='https://wa.me/91'+q.m;w1.target='_blank';w1.rel='noopener';ac.appendChild(w1);sendBtns(ac,q.m,q.n);
     var dl=mk('button','danger','🗑');dl.type='button';dl.style.cssText='order:9;background:#fff;color:#b00020;border:1px solid #b00020';dl.onclick=async function(){if(!confirm('यह नंबर लिस्ट से हटाएँ?'))return;await sb.from('studio_sent').delete().eq('mobile',q.m);delete SENT[q.m];delete UNSX[q.m];drawUns()};ac.appendChild(dl);row.appendChild(ac);
