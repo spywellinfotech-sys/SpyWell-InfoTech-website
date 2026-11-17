@@ -173,6 +173,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-enq" hidden style="padding:10px 14px"></div>
+<div class="card" id="c-uns" style="display:none;padding:10px 12px"></div>
 <div class="card" id="c-my" hidden></div>
 <div class="card" id="c-sendaddr"><div class="sa-h" id="sa-h" style="cursor:pointer" onclick="var b=document.getElementById('sa-body');b.hidden=!b.hidden;document.getElementById('sa-sum').hidden=!b.hidden;document.getElementById('sa-ar').textContent=b.hidden?'▾':'▴'"><span class="sa-i">📨</span><div style="flex:1;min-width:0"><b>Address cards</b><span>घर और ऑफ़िस का पता कार्ड की तरह किसी को भी भेजें</span></div><span class="sa-n" id="sa-n"></span><span id="sa-ar" style="font-size:16px">▾</span></div>
 <div id="sa-sum" onclick="document.getElementById('sa-h').click()"></div>
@@ -299,7 +300,7 @@ function sendBtns(ac,mob,title){{var sk=(SENT[mob]&&SENT[mob].k)||{},pb=function
           sb.from('studio_sent').upsert({design_id:d.id,mobile:mob,name:title||null,kind:kd[0],status:'sent',sent_at:now},{onConflict:'design_id,mobile,kind'}).then(function(){})};
         ac.appendChild(bt)})}}
 
-function drawUns(){var c=$('c-saved');if(!c)return;var w=$('ct-uns');if(!w){w=mk('div','');w.id='ct-uns';w.style.marginTop='10px';c.insertBefore(w,$('sv-list'))}w.textContent='';if(!ADM)return;
+function drawUns(){var w=$('c-uns');if(!w)return;w.textContent='';w.style.display=ADM?'':'none';if(!ADM)return;
   var have={};CT.forEach(function(x){if(x.mob)have[x.mob]=1});var arr=Object.keys(SENT).filter(function(m){return!have[m]}).map(function(m){return{m:m,n:SENT[m].name,t:Object.keys(SENT[m].k).map(function(k){return SENT[m].k[k]}).sort().pop()||''}}).sort(function(p,q){return String(q.t).localeCompare(String(p.t))});
   var tg=mk('button','','📨 Unsaved Contacts ('+arr.length+')  ▼');tg.type='button';tg.style.cssText='display:block;width:100%;margin:0;padding:9px 12px;min-height:0;border:1px solid #f1c9c9;border-radius:12px;background:#fdecec;color:#7a0a10;font-weight:800;font-size:14px;text-align:left';
   var bx=mk('div','');bx.hidden=!UNSOPEN;bx.style.cssText='margin-top:6px;padding:8px;border-radius:12px;background:#fdecec;border:1px solid #f1c9c9';
@@ -1000,7 +1001,7 @@ var TABMAP=null;
 var CURT=null;var H0=location.hash,ADMR=0;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me','adm'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden)||(t==='adm'&&$('tb-adm').hidden))t='home';
   if(t==='adm'){var ca=$('c-adm');if(!ca.firstChild){var fa=document.createElement('iframe');fa.src='/studio/admin/?embed=1';fa.id='adm-fr';fa.scrolling='no';fa.style.cssText='width:100%;height:900px;border:0;display:block';ca.appendChild(fa)}}
