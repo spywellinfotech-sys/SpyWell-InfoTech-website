@@ -629,11 +629,17 @@ function drawIns(box,st,dd){box.textContent='';
 function foldBox(w,title,sum){var bd=mk('div','');while(w.firstChild)bd.appendChild(w.firstChild);bd.hidden=true;var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:10px;padding:9px 12px;border:1px solid #f0d6d4;border-radius:12px;background:#fff7f6;font-weight:700;color:#9d0b12;font-size:15px';
   var a=mk('span','',title);a.style.flex='1';var b=mk('span','',sum);b.style.cssText='font-size:13px;font-weight:600;color:#5a1a1a';var c=mk('span','','▼');c.style.fontSize='13px';hd.appendChild(a);hd.appendChild(b);hd.appendChild(c);
   hd.onclick=function(){bd.hidden=!bd.hidden;c.textContent=bd.hidden?'▼':'▲'};w.appendChild(hd);w.appendChild(bd)}
-function statRow(title,u){var w=mk('div','');w.style.marginTop='12px';var t=mk('div','',title);t.style.cssText='font-weight:700;color:#9d0b12;margin-bottom:6px';w.appendChild(t);
-  var r=mk('div','');r.style.cssText='display:flex;gap:8px';var c=u.clicks||{},act=(c.call||0)+(c.whatsapp||0);
-  r.appendChild(mtile(u.total||0,'कुल व्यू','👁'));r.appendChild(mtile(u.today||0,'आज','📅'));r.appendChild(mtile(act,'कॉल / WhatsApp','📞'));w.appendChild(r);
-  var pc=(u.total||0)?Math.round(act/u.total*100):0,rw=mk('div','');rw.style.cssText='display:flex;align-items:center;gap:12px;margin-top:8px;padding:8px 10px;border-radius:14px;background:#fff;border:1px solid #f0d6d4';rw.appendChild(ring(Math.min(pc,100),58,pc+'%',''));
-  var tx=mk('div','k','हर 100 व्यू में से '+pc+' लोगों ने कॉल या WhatsApp किया।');tx.style.fontSize='13px';rw.appendChild(tx);w.appendChild(rw);return w}
+function statRow(title,u){var w=mk('div','');w.style.cssText='margin-top:12px;border-radius:16px;overflow:hidden;border:1px solid #f0d6d4;background:#fff;box-shadow:0 4px 14px rgba(212,20,28,.10)';
+  var t=mk('div','',title);t.style.cssText='font-weight:800;color:#fff;padding:10px 14px;font-size:15px;background:linear-gradient(135deg,#7a0a10,#d4141c)';w.appendChild(t);
+  var bd=mk('div','');bd.style.cssText='padding:12px';w.appendChild(bd);
+  var c=u.clicks||{},act=(c.call||0)+(c.whatsapp||0);
+  var r=mk('div','');r.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:8px';
+  [['👁',u.total||0,'कुल व्यू','linear-gradient(145deg,#d4141c,#ef3b34)'],['📅',u.today||0,'आज','linear-gradient(145deg,#f59a1a,#ffc21a)'],['📞',act,'कॉल / WhatsApp','linear-gradient(145deg,#12a150,#25d366)']].forEach(function(p){var d=mk('div','');d.style.cssText='border-radius:14px;padding:10px 4px;text-align:center;color:#fff;background:'+p[3]+';box-shadow:0 3px 8px rgba(0,0,0,.15)';var i=mk('div','',p[0]);i.style.fontSize='20px';var n=mk('b','',String(p[1]));n.style.cssText='display:block;font-size:24px;line-height:1.1';var l=mk('span','',p[2]);l.style.cssText='font-size:11px;opacity:.95';d.appendChild(i);d.appendChild(n);d.appendChild(l);r.appendChild(d)});bd.appendChild(r);
+  var pc=(u.total||0)?Math.round(act/u.total*100):0,rw=mk('div','');rw.style.cssText='display:flex;align-items:center;gap:12px;margin-top:10px;padding:10px;border-radius:14px;background:#fff7f6;border:1px solid #f0d6d4';rw.appendChild(ring(Math.min(pc,100),66,pc+'%',''));
+  var tx=mk('div','k','हर 100 व्यू में से '+pc+' लोगों ने कॉल या WhatsApp किया।');tx.style.cssText='font-size:13px;font-weight:600;color:#5a3a3a';rw.appendChild(tx);bd.appendChild(rw);
+  var ks=Object.keys(c).filter(function(k){return (c[k]||0)>0}).sort(function(p,q){return c[q]-c[p]}).slice(0,5);
+  if(ks.length){var hh=mk('div','','🔥 लोग सबसे ज़्यादा क्या दबाते हैं');hh.style.cssText='font-weight:800;font-size:13px;color:#7a0a10;margin:12px 0 2px';bd.appendChild(hh);var mx=c[ks[0]];ks.forEach(function(k){hbar(bd,(window.CLK&&CLK[k])||k,c[k],mx)})}
+  return w}
 async function dirInit(){try{var r=await sb.rpc('studio_dir_open');if(r&&r.data===true){$('tb-dir').hidden=false;if(location.hash==='#dir'&&typeof setTab==='function')setTab('dir',true)}}catch(e){}}
 async function invHome(){
   var box=$('c-inv');if(!box)return;var iv0=LIST.filter(function(x){return x.product_type==='invitation'&&x.status==='published'});
