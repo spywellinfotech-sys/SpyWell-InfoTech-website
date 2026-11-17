@@ -58,7 +58,7 @@ input,select,textarea{font:inherit;padding:13px;border-radius:12px;border:1px so
 input:focus,select:focus{outline:2px solid var(--org);outline-offset:1px}
 button{min-height:48px;border-radius:12px}
 #v-login #g-btn{order:-1}
-.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+#c-ref{display:none!important}#c-ref.pop{display:block!important;position:fixed;left:8px;right:8px;top:7%;max-height:86vh;overflow:auto;z-index:70;box-shadow:0 10px 40px rgba(0,0,0,.45)}#ref-bk{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:69}.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
 .qa button{margin:0;padding:16px 8px;background:#fff;color:var(--wine);border:1px solid var(--line);box-shadow:0 2px 8px rgba(18,48,127,.07);font-size:15px;display:flex;flex-direction:column;align-items:center;gap:4px}
 .qa button i{font-style:normal;font-size:26px}.qa button.pri{background:var(--wine);color:#fff;border-color:var(--wine)}
 .badge{background:var(--wine)}
@@ -166,11 +166,11 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 </div>
 <div class="ok" id="pf-ok2"></div>
 </form>
-<div id="c-hello"><b><span class="hw">👋</span> Welcome<span id="hl-n"></span></b><small>Your Identity, Dynamically Connected</small><i style="right:16px;top:10px">✨</i><i style="right:52px;top:34px;animation-delay:.7s;font-size:12px">✨</i><i style="right:24px;bottom:8px;animation-delay:1.3s;font-size:13px">⭐</i></div>
+<div id="c-hello"><b><span class="hw">👋</span> Welcome<span id="hl-n"></span></b><small>Your Identity, Dynamically Connected</small><button type="button" id="hl-ref" hidden style="position:relative;z-index:2;display:inline-block;width:auto;margin:10px 0 0;padding:8px 16px;min-height:0;border:0;border-radius:99px;background:#fff;color:#7a0a10;font-weight:800;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.25)" onclick="openRef()">🎁 Refer &amp; Earn</button><i style="right:16px;top:10px">✨</i><i style="right:52px;top:34px;animation-delay:.7s;font-size:12px">✨</i><i style="right:24px;bottom:8px;animation-delay:1.3s;font-size:13px">⭐</i></div>
 <div class="card" id="c-welcome" hidden style="background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff"><b style="font-size:18px">🎉 स्वागत है! अपना डिजिटल कार्ड बनाइए</b>
 <div style="margin-top:8px;font-size:15px">1️⃣ अपनी जानकारी भरें<br>2️⃣ कार्ड प्रकाशित करें<br>3️⃣ WhatsApp पर शेयर करें और QR बाँटें</div>
 <button type="button" id="wl-go" style="background:#f59a1a;color:#7a0a10;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
-<div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button></div>
+<div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>सेव किए कार्ड</button><button type="button" data-tab="ref" id="qa-ref" hidden><i>🎁</i>Refer &amp; Earn</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-enq" hidden style="padding:10px 14px"></div>
 <div class="card" id="c-uns" style="display:none;padding:10px 12px"></div>
@@ -745,9 +745,12 @@ async function invHome(){
 
 /* ---- Refer & Earn ---- */
 try{var _rq=new URLSearchParams(location.search).get('ref');if(_rq&&/^[A-Za-z0-9]{4,10}$/.test(_rq))localStorage.setItem('st_ref',_rq.toUpperCase())}catch(e){}
+function closeRef(){var b=$('c-ref'),k=$('ref-bk');if(b)b.classList.remove('pop');if(k)k.remove();window.__refOpen=false}
+function openRef(){var b=$('c-ref');if(!b||b.hidden)return;if(!$('ref-bk')){var k=document.createElement('div');k.id='ref-bk';k.onclick=closeRef;document.body.appendChild(k)}b.classList.add('pop');window.__refOpen=true;refHome().then(function(){b.classList.add('pop');var cl=document.createElement('button');cl.type='button';cl.textContent='✕ बंद करें';cl.style.cssText='display:block;width:100%;margin:10px 0 0;background:#fff;color:#7a0a10;border:1px solid #d4141c';cl.onclick=closeRef;b.appendChild(cl)})}
 async function refHome(){
   var box=$('c-ref');if(!box)return;
   var r=await sb.rpc('studio_ref_me');var m=r&&r.data;
+  var qb=$('qa-ref'),hb=$('hl-ref');if(qb)qb.hidden=!(m&&m.enabled);if(hb)hb.hidden=!(m&&m.enabled);
   if(!m||!m.enabled){box.hidden=true;return}
   try{var pc=localStorage.getItem('st_ref');if(pc&&!m.referred_by){var ap=await sb.rpc('studio_ref_apply',{p_code:pc});if(ap&&ap.data&&(ap.data.ok||ap.data.error!=='login')){localStorage.removeItem('st_ref');if(ap.data.ok)m.referred_by=true}}}catch(e){}
   box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#fff4d6,#ffe1a8);border:1px solid #f0c56a;padding:20px 16px';
@@ -1014,7 +1017,7 @@ function setTab(t,nopush){
 window.addEventListener('message',function(e){try{if(e.origin!==location.origin||!e.data||e.data.t!=='adm-h')return;var f=document.getElementById('adm-fr');if(f&&e.data.h>200)f.style.height=Math.ceil(e.data.h)+'px'}catch(x){}});
 window.addEventListener('popstate',function(){if(document.getElementById('vw'))return;var h=(location.hash||'#home').slice(1);if(TABMAP)setTab(h,true)});
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tabbar button');if(b)setTab(b.getAttribute('data-tab'))});
-document.querySelectorAll('#c-qa button').forEach(function(b){b.onclick=function(){var t=b.getAttribute('data-tab');if(t==='new'){setTab('me');var e=$('c-new');setTimeout(function(){e.scrollIntoView({behavior:'smooth'})},80);return}setTab(t)}});
+document.querySelectorAll('#c-qa button').forEach(function(b){b.onclick=function(){var t=b.getAttribute('data-tab');if(t==='ref'){openRef();return}if(t==='new'){setTab('me');var e=$('c-new');setTimeout(function(){e.scrollIntoView({behavior:'smooth'})},80);return}setTab(t)}});
 async function dash(user){
   ME=user;show('dash');OCCSEL='';$('c-pick').hidden=true;$('c-new').hidden=false;
   var pend0='';try{pend0=localStorage.getItem('sp_pending_save')||''}catch(e){}
