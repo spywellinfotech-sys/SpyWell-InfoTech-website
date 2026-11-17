@@ -166,7 +166,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 </div>
 <div class="ok" id="pf-ok2"></div>
 </form>
-<div id="c-hello"><b><span class="hw">👋</span> Welcome<span id="hl-n"></span></b><small>Your Identity, Dynamically Connected</small><button type="button" id="hl-ref" hidden style="position:relative;z-index:2;display:inline-block;width:auto;margin:10px 0 0;padding:8px 16px;min-height:0;border:0;border-radius:99px;background:#fff;color:#7a0a10;font-weight:800;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.25)" onclick="openRef()">🎁 Refer &amp; Earn</button><i style="right:16px;top:10px">✨</i><i style="right:52px;top:34px;animation-delay:.7s;font-size:12px">✨</i><i style="right:24px;bottom:8px;animation-delay:1.3s;font-size:13px">⭐</i></div>
+<div id="c-hello"><b><span class="hw">👋</span> Welcome<span id="hl-n"></span></b><small>Your Identity, Dynamically Connected</small><button type="button" id="hl-ref" hidden style="position:relative;z-index:2;display:block;width:100%;text-align:center;margin:12px 0 0;padding:12px 16px;min-height:0;border:0;border-radius:14px;background:#fff;color:#7a0a10;font-weight:800;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.25)">🎁 Refer &amp; Earn</button><i style="right:16px;top:10px">✨</i><i style="right:52px;top:34px;animation-delay:.7s;font-size:12px">✨</i><i style="right:24px;bottom:8px;animation-delay:1.3s;font-size:13px">⭐</i></div>
 <div class="card" id="c-welcome" hidden style="background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff"><b style="font-size:18px">🎉 स्वागत है! अपना डिजिटल कार्ड बनाइए</b>
 <div style="margin-top:8px;font-size:15px">1️⃣ अपनी जानकारी भरें<br>2️⃣ कार्ड प्रकाशित करें<br>3️⃣ WhatsApp पर शेयर करें और QR बाँटें</div>
 <button type="button" id="wl-go" style="background:#f59a1a;color:#7a0a10;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
@@ -789,7 +789,7 @@ function openRef(){var b=$('c-ref');if(!b||b.hidden)return;if(!$('ref-bk')){var 
 async function refHome(){
   var box=$('c-ref');if(!box)return;
   var r=await sb.rpc('studio_ref_me');var m=r&&r.data;
-  var qb=$('qa-ref'),hb=$('hl-ref');if(qb)qb.hidden=!(m&&m.enabled);if(hb)hb.hidden=!(m&&m.enabled);
+  var qb=$('qa-ref'),hb=$('hl-ref');if(qb)qb.hidden=!(m&&m.enabled);if(hb){hb.hidden=!(m&&m.enabled);hb.onclick=openRef}
   if(!m||!m.enabled){box.hidden=true;return}
   try{var pc=localStorage.getItem('st_ref');if(pc&&!m.referred_by){var ap=await sb.rpc('studio_ref_apply',{p_code:pc});if(ap&&ap.data&&(ap.data.ok||ap.data.error!=='login')){localStorage.removeItem('st_ref');if(ap.data.ok)m.referred_by=true}}}catch(e){}
   box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#fff4d6,#ffe1a8);border:1px solid #f0c56a;padding:20px 16px';
