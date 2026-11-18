@@ -87,7 +87,7 @@ var IND=[],tplInd='',D=null,T=[],C=null,UID='',tab=(/[?&]tab=tpl/.test(location.
 var LS='studio-draft-'+ID;
 
 function shape(c){c=c&&typeof c==='object'?c:{};return{fields:c.fields&&typeof c.fields==='object'?c.fields:{},events:Array.isArray(c.events)?c.events:[],services:Array.isArray(c.services)?c.services:[],highlights:Array.isArray(c.highlights)?c.highlights:[],style:c.style&&typeof c.style==='object'?c.style:{},images:c.images&&typeof c.images==='object'?c.images:{}}}
-var PREM={bypass:true,visiting:99,invitation:999,site:199},tplCat='all',webMode=/[?&]site=1/.test(location.search);
+var PREM={bypass:true,visiting:99,invitation:999,site:199},tplCat='all',webMode=false;if(/[?&]site=1/.test(location.search)){location.replace('/studio/webeditor/'+location.search.replace(/([?&])site=1&?/,'$1').replace(/[?&]$/,''))}
 function premPrice(t){var c=(t&&t.config)||{};if(c.premium!==true)return 0;var n=parseInt(c.premium_price);if(n>0)return n;return PREM[c.site?'site':D.product_type]||99}
 async function loadPrem(){try{var r=await sb.from('studio_settings').select('k,v').in('k',['pay_bypass','prem_price_visiting','prem_price_invitation','prem_price_site']);(r.data||[]).forEach(function(x){if(x.k==='pay_bypass')PREM.bypass=x.v==='1';else PREM[x.k.replace('prem_price_','')]=parseInt(x.v)||PREM[x.k.replace('prem_price_','')]});if(D&&typeof panel==='function')panel()}catch(e){}}
 function cfg(id){var t=T.filter(function(x){return x.id===(id||D.template_id)})[0];return t?t.config:{}}
@@ -124,7 +124,7 @@ async function save(){clearTimeout(timer);if(!dirty||saving||!D)return;saving=tr
 var TABS=[['info','1 · जानकारी'],['list',''],['photo','2 · फ़ोटो'],['tpl','3 · टेम्पलेट'],['design','4 · डिज़ाइन'],['ai','🤖 AI से भरें'],['pub','4 · प्रकाशित करें'],['ins','📊 इनसाइट']];
 var HINT={info:['अपनी जानकारी भरें','नाम, मोबाइल नंबर और व्यवसाय लिखें। बाकी खाने बाद में भी भर सकते हैं। ऊपर कार्ड का नमूना साथ-साथ बदलता दिखेगा।'],list:['सेवाएँ / कार्यक्रम जोड़ें','जो सेवाएँ देते हैं वे जोड़ें। नहीं हैं तो सीधे "अगला" दबाएँ।'],photo:['फ़ोटो और लोगो','अपनी फ़ोटो और लोगो लगाएँ। यह ज़रूरी नहीं है।'],design:['रंग और अक्षर','पसंद का रंग चुनें।'],design:['रंग, स्टाइल और प्रकाशन','रंग और अक्षर बदलें (वैकल्पिक), फिर नीचे से प्रकाशित करें।'],tpl:['टेम्पलेट बदलें','कार्ड का दूसरा डिज़ाइन चुनना हो तो यहाँ से चुनें।'],ai:['AI की मदद लें','AI आपके व्यवसाय के बारे में लिखकर दे सकता है।'],pub:['प्रकाशित करें और शेयर करें','कार्ड लाइव करें, लिंक और QR पाएँ, WhatsApp पर भेजें।'],ins:['इनसाइट','कितने लोगों ने कार्ड देखा।']};
 var ORDER=['info','list','photo','tpl','design'];
-function hideSvc(){return D.product_type==='visiting'&&!webMode&&!(C.style&&C.style.site===true)}
+function hideSvc(){return D.product_type==='visiting'}
 function tabs(){var w=$('tabs');w.textContent='';try{$('ttl').textContent=D.product_type==='visiting'?(webMode?'🌐 मिनी वेबसाइट एडिटर':'📇 कार्ड एडिटर'):'💌 इनविटेशन एडिटर'}catch(x){}var ab=$('aibtn');ab.hidden=false;ab.className='aib'+(tab==='ai'?' on':'');ab.textContent='';ab.appendChild(document.createTextNode(D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से AI भरें':'🤖 AI से भरें'));ab.onclick=function(){tab='ai';tabs();panel()};var wb=$('wzbtn');if(wb){wb.hidden=!window.SWWizard;wb.onclick=function(){SWWizard.open({mode:'fill',type:D.product_type,occ:(cfg().occasion||'wedding'),fields:C.fields||{},done:function(f){C.fields=C.fields||{};for(var k in f)C.fields[k]=f[k];tab='info';tabs();panel();changed()}})}};TABS.forEach(function(t){if(t[0]==='ai')return;if(t[0]==='pub'||t[0]==='ins')return;if(t[0]==='list'&&hideSvc())return;var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel();draw()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;
@@ -180,7 +180,7 @@ function pInfo(p){
   var root=p,more=h('details',{style:'margin-top:12px'}),vis=D.product_type==='visiting',ESS={name:1,designation:1,business:1,mobile:1,whatsapp:1,industry:1,industry_other:1,city:1,address:1};
   more.appendChild(h('summary',{text:'➕ और जानकारी भरें (वैकल्पिक)',style:'font-weight:700;cursor:pointer;padding:8px 0'}));
   if(window.__mOpen)more.open=true;more.ontoggle=function(){window.__mOpen=more.open};
-  var WEBONLY={about:1,tagline:1,hours:1,since:1},cardOnly=vis&&!webMode&&!(C.style&&C.style.site===true);
+  var WEBONLY={about:1,tagline:1,hours:1,since:1},cardOnly=vis;
   R.fieldsFor(D.product_type,cfg()).forEach(function(d){
     if(cardOnly&&WEBONLY[d[0]])return;
     p=(vis&&!ESS[d[0]])?more:root;
@@ -240,7 +240,7 @@ function range(label,min,max,val,on){var i=h('input',{type:'range',min:min,max:m
 function pPhoto(p){
   var msg=h('div',{class:'e',id:'uperr'});
   R.IMAGES[D.product_type].forEach(function(d){
-    if(/^g\d$/.test(d[0])&&C.style.site!==true)return;
+    if(/^g\d$/.test(d[0])&&(D.product_type==='visiting'||C.style.site!==true))return;
     if((d[0]==='bride'||d[0]==='groom')&&(cfg().occasion||'wedding')!=='wedding')return;
     var k=d[0],im=C.images[k],box=h('div',{class:'item ph'});
     var file=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp'});file.style.display='none';
@@ -311,7 +311,7 @@ function pDesign(p){
 }
 var tplOcc='';
 function pTpl(p){
-  if(D.product_type==='visiting'&&(webMode||(C.style&&C.style.site===true))){var mc=h('div',{class:'chips'});[[false,'📇 कार्ड का टेम्पलेट'],[true,'🌐 वेबसाइट का टेम्पलेट']].forEach(function(o){mc.appendChild(h('button',{class:webMode===o[0]?'on':'',text:o[1],onclick:function(){webMode=o[0];tplCat='all';panel();draw()}}))});p.appendChild(mc);p.appendChild(h('div',{class:'k',text:webMode?'यह सिर्फ़ मिनी वेबसाइट का रूप बदलेगा, कार्ड का नहीं।':'यह सिर्फ़ कार्ड का रूप बदलेगा, मिनी वेबसाइट का नहीं।'}))}
+  if(D.product_type==='visiting'&&C.style&&C.style.site===true){var wl=h('a',{class:'btn alt sm',href:'/studio/webeditor/?id='+D.id,text:'🌐 मिनी वेबसाइट एडिटर खोलें →',style:'display:block;text-align:center;margin-bottom:8px'});p.appendChild(wl)}
   if(D.product_type==='invitation'){
     var chips=h('div',{class:'chips'});
     [['','सभी']].concat(Object.keys(R.OCCASIONS).map(function(k){return [k,R.OCCASIONS[k].name]})).forEach(function(o){
