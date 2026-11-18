@@ -203,7 +203,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="k">कार्ड "सेव करें" दबाकर या नंबर जोड़कर यहीं से कॉल और WhatsApp करें।</div>
 <input id="ct-q" type="search" placeholder="🔍 नाम, नंबर या व्यवसाय (industry) से खोजें" style="margin-top:8px">
 <div class="chips" id="ct-flt"></div>
-<div style="display:flex;gap:8px;margin-top:10px"><button type="button" id="ct-scan" style="flex:1;background:#d4141c;color:#fff;border:0;padding:10px 6px;font-size:15px">📷 कार्ड स्कैन</button><button type="button" id="ct-addb" style="flex:1;background:#fff;color:#9d0b12;border:1.5px solid #d4141c;padding:10px 6px;font-size:15px">➕ नया कॉन्टैक्ट</button></div><input id="ct-scanf" type="file" accept="image/*" hidden>
+<div style="display:flex;gap:8px;margin-top:10px"><button type="button" id="ct-scan" style="flex:1;background:#d4141c;color:#fff;border:0;padding:10px 6px;font-size:15px">📷 कार्ड की फ़ोटो</button><button type="button" id="ct-addb" style="flex:1;background:#fff;color:#9d0b12;border:1.5px solid #d4141c;padding:10px 6px;font-size:15px">➕ नया कॉन्टैक्ट</button></div><input id="ct-scanf" type="file" accept="image/*" hidden>
 <div class="k" id="ct-scanm" style="margin-top:6px"></div>
 <details id="ct-det" style="margin-top:10px"><summary style="display:none">➕ नया कॉन्टैक्ट जोड़ें</summary>
 <label>नाम</label><input id="ct-n" maxlength="80">
@@ -381,11 +381,11 @@ async function loadSaved(){
   if(!IND.length){var ir=await sb.from('studio_industries').select('id,name_hi,name_en,sort').order('sort',{ascending:true});IND=ir.data||[];IND.forEach(function(o){INDN[o.id]=(window.I18N&&I18N.lang==='en'&&o.name_en)?o.name_en:o.name_hi});
     var si=$('ct-i');if(si){si.textContent='';var o0=mk('option','','— Select industry —');o0.value='';si.appendChild(o0);IND.forEach(function(o){var op=mk('option','',o.name_en||o.name_hi);op.value=o.id;si.appendChild(op)})}}
   var a=await sb.from('studio_saved_cards').select('id,product_type,slug,title,subtitle,industry,mobile,whatsapp,created_at,fav,coll').eq('user_id',ME.id).order('created_at',{ascending:false});
-  var b=await sb.from('studio_contacts').select('id,name,business,mobile,industry,note,src,created_at,fav,coll').eq('user_id',ME.id).order('created_at',{ascending:false});
+  var b=await sb.from('studio_contacts').select('id,name,business,mobile,industry,note,src,created_at,fav,coll,photo').eq('user_id',ME.id).order('created_at',{ascending:false});
   if(a.error&&b.error){$('sv-list').textContent='सूची लोड नहीं हुई।';return}
   SENT={};ADM=true;try{if(ADM){var sr=await sb.from('studio_sent').select('mobile,name,kind,sent_at,status').limit(5000);(sr.data||[]).forEach(function(q){var e=SENT[q.mobile]||(SENT[q.mobile]={name:q.name,k:{}});if(q.name&&!e.name)e.name=q.name;if(q.status!=='sent')return;if(!e.k[q.kind]||String(q.sent_at)>String(e.k[q.kind]))e.k[q.kind]=q.sent_at})}}catch(e){}
   CT=[];(a.data||[]).forEach(function(x){CT.push({src:'card',slug:x.slug,pt:x.product_type,fav:x.fav,coll:x.coll,id:x.id,title:x.title||x.slug,sub:x.subtitle,ind:x.industry,mob:x.mobile,wa:x.whatsapp,href:'/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug,ico:x.product_type==='invitation'?'💌 ':'📇 ',t:x.created_at})});
-  (b.data||[]).forEach(function(x){CT.push({src:'man',scan:x.src==='scan',note:x.note,fav:x.fav,coll:x.coll,id:x.id,title:x.name,sub:x.business,ind:x.industry,mob:x.mobile,wa:x.mobile,ico:'👤 ',t:x.created_at})});
+  (b.data||[]).forEach(function(x){CT.push({src:'man',photo:x.photo,scan:x.src==='scan',note:x.note,fav:x.fav,coll:x.coll,id:x.id,title:x.name,sub:x.business,ind:x.industry,mob:x.mobile,wa:x.mobile,ico:'👤 ',t:x.created_at})});
   drawUns();
   CT.sort(function(p,q){return String(q.t).localeCompare(String(p.t))});var tn=$('tb-n');if(tn){tn.textContent=CT.length>99?'99+':CT.length;tn.hidden=!CT.length}drawContacts()}
 var COLS=['सप्लायर','ग्राहक','डीलर','बिज़नेस पार्टनर','सर्विस प्रोवाइडर','पर्सनल'];
@@ -410,35 +410,30 @@ function drawContacts(){
     if(x.mob){var c=mk('a','','📞 कॉल');c.href='tel:+91'+x.mob;ac.appendChild(c);var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+(x.wa||x.mob);w.target='_blank';w.rel='noopener';ac.appendChild(w)}
     if(ADM&&x.mob){sendBtns(ac,x.mob,x.title);var sp1=mk('div','');sp1.style.cssText='order:4;flex-basis:100%;height:0';ac.appendChild(sp1);var sp2=mk('div','');sp2.style.cssText='order:8;flex-basis:100%;height:0';ac.appendChild(sp2)}
     if(x.href){var o=mk('button','','कार्ड खोलें');o.type='button';o.style.cssText='background:var(--wine);color:#fff;border:0';o.onclick=function(){openVw(x.slug,x.pt,x.title)};o.style.order=3;ac.appendChild(o);t.style.cursor='pointer';t.onclick=o.onclick}
+    if(x.photo){var pv=mk('button','','🖼 कार्ड फ़ोटो');pv.type='button';pv.style.order=3;pv.onclick=async function(){pv.disabled=true;var u=await sb.storage.from('studio-cardpics').createSignedUrl(x.photo,300);pv.disabled=false;if(u.data&&u.data.signedUrl)window.open(u.data.signedUrl,'_blank','noopener')};ac.appendChild(pv)}
     var ex=mk('div','acts');ex.hidden=true;var mb=mk('button','','⋯ और');mb.type='button';mb.style.order=9;mb.onclick=function(){ex.hidden=!ex.hidden;mb.textContent=ex.hidden?'⋯ और':'✕ बंद करें'};ac.appendChild(mb);
     var fb=mk('button','',x.fav?'★ पसंदीदा हटाएँ':'☆ पसंदीदा');fb.type='button';fb.onclick=async function(){fb.disabled=true;await sb.rpc('studio_lib_set',{p_src:x.src,p_id:x.id,p_fav:!x.fav});loadSaved()};ex.appendChild(fb);
     var cl=mk('select');cl.style.cssText='width:auto;margin:0;padding:6px';var c0=mk('option','','📁 कलेक्शन');c0.value='';cl.appendChild(c0);COLS.concat(x.coll&&COLS.indexOf(x.coll)<0?[x.coll]:[]).forEach(function(k){var o=mk('option','',k);o.value=k;cl.appendChild(o)});var cn=mk('option','','➕ नया कलेक्शन…');cn.value='__new';cl.appendChild(cn);cl.value=x.coll||'';
     cl.onchange=async function(){var v=cl.value;if(v==='__new'){v=(prompt('कलेक्शन का नाम')||'').trim().slice(0,30);if(!v){cl.value=x.coll||'';return}}await sb.rpc('studio_lib_set',{p_src:x.src,p_id:x.id,p_coll:v});loadSaved()};ex.appendChild(cl);
-    var dl=mk('button','danger','हटाएँ');dl.style.cssText='background:#fff;color:#b00020;border:1px solid #b00020';dl.type='button';dl.onclick=async function(){if(!confirm('यह कॉन्टैक्ट हटाएँ?'))return;dl.disabled=true;await sb.from(x.src==='card'?'studio_saved_cards':'studio_contacts').delete().eq('id',x.id);loadSaved()};ex.appendChild(dl);
+    var dl=mk('button','danger','हटाएँ');dl.style.cssText='background:#fff;color:#b00020;border:1px solid #b00020';dl.type='button';dl.onclick=async function(){if(!confirm('यह कॉन्टैक्ट हटाएँ?'))return;dl.disabled=true;if(x.photo)try{await sb.storage.from('studio-cardpics').remove([x.photo])}catch(e){}await sb.from(x.src==='card'?'studio_saved_cards':'studio_contacts').delete().eq('id',x.id);loadSaved()};ex.appendChild(dl);
     row.appendChild(ac);row.appendChild(ex);box.appendChild(row)})}
 $('ct-q').oninput=drawContacts;
 $('ct-add').onclick=async function(){var n=$('ct-n').value.trim(),m=$('ct-m').value.replace(/\D/g,'').slice(-10),er=$('ct-e');er.textContent='';
   if(!n){er.textContent='नाम लिखें';return}if(!/^[6-9][0-9]{9}$/.test(m)){er.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}
-  this.disabled=true;var r=await sb.from('studio_contacts').insert({user_id:ME.id,name:n,business:$('ct-b').value.trim(),mobile:m,note:scanNote(),src:SCANX?'scan':'manual',industry:($('ct-i').value==='other'&&$('ct-io').value.trim()?$('ct-io').value.trim().slice(0,30):$('ct-i').value)});this.disabled=false;
+  this.disabled=true;var pp=null;if(SCANPIC){try{var pth=ME.id+'/'+Date.now()+'.jpg',up=await sb.storage.from('studio-cardpics').upload(pth,SCANPIC,{contentType:'image/jpeg'});if(!up.error)pp=pth}catch(e){}}var r=await sb.from('studio_contacts').insert({user_id:ME.id,photo:pp,name:n,business:$('ct-b').value.trim(),mobile:m,note:scanNote(),src:SCANX?'scan':'manual',industry:($('ct-i').value==='other'&&$('ct-io').value.trim()?$('ct-io').value.trim().slice(0,30):$('ct-i').value)});this.disabled=false;
   if(r.error){er.textContent=r.error.code==='23505'?'यह नंबर पहले से जुड़ा है':'सेव नहीं हुआ, दोबारा कोशिश करें';return}
-  SCANX=null;['ct-n','ct-b','ct-m'].forEach(function(i){$(i).style.background=''});$('ct-scanm').textContent='';$('ct-n').value='';$('ct-b').value='';$('ct-m').value='';$('ct-i').value='';$('ct-io').value='';$('ct-io').hidden=true;loadSaved()};
+  SCANX=null;SCANPIC=null;['ct-n','ct-b','ct-m'].forEach(function(i){$(i).style.background=''});$('ct-scanm').textContent='';$('ct-n').value='';$('ct-b').value='';$('ct-m').value='';$('ct-i').value='';$('ct-io').value='';$('ct-io').hidden=true;loadSaved()};
 
-var SCANX=null;
+var SCANX=null,SCANPIC=null;
 function scanNote(){if(!SCANX)return '';var a=[];if(SCANX.designation)a.push(SCANX.designation);if(SCANX.email)a.push(SCANX.email);if(SCANX.mobile2)a.push('2: '+SCANX.mobile2);if(SCANX.website)a.push(SCANX.website);if(SCANX.address)a.push(SCANX.address);return a.join(' | ').slice(0,200)}
 function scanShrink(f){return new Promise(function(res,rej){var u=URL.createObjectURL(f),im=new Image();im.onload=function(){var m=1600,sc=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){if(!b){rej(new Error('img'));return}var r=new FileReader();r.onload=function(){res(String(r.result).split(',')[1])};r.readAsDataURL(b)},'image/jpeg',0.85)};im.onerror=function(){URL.revokeObjectURL(u);rej(new Error('img'))};im.src=u})}
 $('ct-addb').onclick=function(){var d=$('ct-det');d.open=!d.open;if(d.open){try{d.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}}};
 $('ct-scan').onclick=function(){$('ct-scanf').value='';$('ct-scanf').click()};
-$('ct-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;var msg=$('ct-scanm'),bt=$('ct-scan');msg.style.color='';msg.textContent='कार्ड पढ़ा जा रहा है… 10-20 सेकंड';bt.disabled=true;
-  try{var b64=await scanShrink(f);var ss=await sb.auth.getSession();if(!ss.data.session)throw new Error('unauthorized');
-    var r=await fetch(B+'/functions/v1/dyna-scan',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+ss.data.session.access_token},body:JSON.stringify({files:[{media_type:'image/jpeg',data:b64}]})});
-    var j=await r.json().catch(function(){return{}});if(!r.ok)throw new Error(j.code||'ai_error');
-    SCANX=j;$('ct-n').value=j.name||'';$('ct-b').value=j.business||'';$('ct-m').value=j.mobile||'';
-    var un=j.uncertain||[];[['ct-n','name'],['ct-b','business'],['ct-m','mobile']].forEach(function(p){var e=$(p[0]);e.style.background=(un.indexOf(p[1])>=0||(p[1]==='mobile'&&!j.mobile))?'#fff4c2':''});
-    var h=(j.industry_hint||'').toLowerCase(),sel=$('ct-i');if(h&&IND.length){var hit=IND.filter(function(o){var n=(o.name_hi||'').toLowerCase(),e=(o.name_en||'').toLowerCase();return n.indexOf(h)>=0||h.indexOf(n)>=0||(e&&(e.indexOf(h)>=0||h.indexOf(e)>=0))})[0];if(hit){sel.value=hit.id}}
-    $('ct-det').open=true;
-    if(!j.name&&!j.mobile){msg.style.color='#b00020';msg.textContent='कार्ड साफ़ नहीं पढ़ा गया। रोशनी में सीधी फ़ोटो लें, या नीचे खुद भरें।'}
-    else{msg.textContent='✓ पढ़ लिया। पीले खाने ध्यान से जाँचें, फिर "कॉन्टैक्ट सेव करें" दबाएँ।'+(j.mobile?'':' मोबाइल नंबर नहीं मिला, खुद डालें।')}
-  }catch(e){msg.style.color='#b00020';var c=e.message;msg.textContent=c==='limit'?'आज के 30 स्कैन पूरे हो गए। कल फिर कोशिश करें।':c==='ai_off'||c==='not_configured'?'स्कैन अभी बंद है।':c==='img'?'यह फ़ोटो खुल नहीं पाई।':c==='unauthorized'?'दोबारा लॉगिन करें।':'कार्ड नहीं पढ़ पाए, दोबारा कोशिश करें।'}
+$('ct-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;var msg=$('ct-scanm'),bt=$('ct-scan');msg.style.color='';msg.textContent='फ़ोटो तैयार हो रही है…';bt.disabled=true;
+  try{var b64=await scanShrink(f);var bin=atob(b64),ar=new Uint8Array(bin.length);for(var q=0;q<bin.length;q++)ar[q]=bin.charCodeAt(q);SCANPIC=new Blob([ar],{type:'image/jpeg'});
+    if(SCANPIC.size>1400000)throw new Error('big');
+    $('ct-det').open=true;msg.textContent='✓ कार्ड की फ़ोटो जुड़ गई। नीचे नाम और मोबाइल भरकर "कॉन्टैक्ट सेव करें" दबाएँ।'
+  }catch(e){SCANPIC=null;msg.style.color='#b00020';msg.textContent=e.message==='big'?'फ़ोटो बहुत बड़ी है, दोबारा खींचें।':'यह फ़ोटो खुल नहीं पाई।'}
   bt.disabled=false};
 $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(o.hidden)o.value=''};
 async function loadList(){
