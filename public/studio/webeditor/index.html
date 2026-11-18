@@ -329,6 +329,8 @@ function pTpl(p){
   if(hasInd){var ic=h('div',{class:'chips'});[['mine','⭐ मेरी industry के लिए'],['all','सभी']].forEach(function(o){ic.appendChild(h('button',{class:(tplInd||'mine')===o[0]?'on':'',text:o[1],onclick:function(){tplInd=o[0];panel()}}))});p.appendChild(ic)}
   var anyPrem=TL().some(function(t){return premPrice(t)>0});var cc=h('div',{class:'chips'});if(!anyPrem)tplCat='all';[['all','सभी'],['free','🆓 फ्री'],['prem','👑 प्रीमियम (एनिमेटेड)']].forEach(function(o){cc.appendChild(h('button',{class:tplCat===o[0]?'on':'',text:o[1],onclick:function(){tplCat=o[0];panel()}}))});if(anyPrem)p.appendChild(cc);
   p.appendChild(h('div',{class:'k',style:'margin:4px 0 8px;font-size:14px',text:'👇 पसंद का डिज़ाइन छूकर चुनें। ऊपर कार्ड तुरंत बदल जाएगा।'}));
+  var cmb=h('button',{type:'button',class:'btn alt sm',text:(C.style.webtpl?'🔗 कार्ड जैसी ही ब्रांडिंग रखें (कंबाइंड)':'✅ कार्ड जैसी ब्रांडिंग लगी है (कंबाइंड)'),style:'display:block;width:100%;margin:6px 0 4px'});cmb.onclick=function(){delete C.style.webtpl;panel();changed()};p.appendChild(cmb);
+  p.appendChild(h('div',{class:'k',style:'margin-bottom:8px',text:'कंबाइंड = वेबसाइट उसी टेम्पलेट में दिखेगी जो कार्ड का है, इसलिए दोनों की ब्रांडिंग एक जैसी रहती है। नीचे से अलग वेबसाइट टेम्पलेट भी चुन सकते हैं।'}));
   var g=h('div',{class:'grid'});
   TL().filter(function(t){var pm=premPrice(t)>0;if(tplCat==='free'&&pm)return false;if(tplCat==='prem'&&!pm)return false;return true}).filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
     var inner=h('div',{class:'in2'});R.render(inner,D.product_type,t.config,C,{demo:true});
