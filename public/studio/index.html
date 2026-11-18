@@ -767,7 +767,7 @@ async function invHome(){
         bd.appendChild(d)});
       ins.insertBefore(sw,ins.firstChild)})();
     sb.rpc('studio_my_stats',{p_design:x.id}).then(function(st){var d=(st&&st.data)||{},c2=d.card||{};cv.textContent='👁 '+(c2.total||0)+' · आज '+(c2.today||0);ihc.textContent='👁 '+(c2.total||0)+' · आज '+(c2.today||0);
-      ins.appendChild(statRow('📊 इनसाइट',c2));
+      
       var vb=mk('button','alt','📋 View details');vb.type='button';vb.style.cssText='width:100%;margin-top:8px';
       var det=mk('div','');det.hidden=true;det.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff7f6';var ld=false;
       vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
@@ -977,8 +977,7 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
     var ld=mk('a','','📒 डायरेक्टरी देखें →');ld.href='/studio/directory/';ld.style.cssText='display:block;margin-top:8px;color:#d4141c;font-weight:600;font-size:14px';dw.appendChild(ld);dw.removeChild(dw.firstChild);dw.style.cssText='';foldBox(dw,'📒 बिज़नेस डायरेक्टरी',m.listed?'✓ लिस्टेड':'लिस्ट नहीं')});
   var sw=$('c-ins')||box.appendChild(mk('div',''));sw.textContent='';
   var st=await sb.rpc('studio_my_stats',{p_design:x.id});sw.textContent='';sw.hidden=!!st.error||!st.data;
-  if(!st.error&&st.data){sw.appendChild(statRow('📇 कार्ड की इनसाइट',st.data.card||{}));
-    var pl=SUBI[x.id]&&SUBI[x.id].plan;if(st.data.site&&((st.data.site.total||0)>0||pl==='site'||pl==='domain'))sw.appendChild(statRow('🌐 वेबसाइट की इनसाइट',st.data.site))}
+  
   var vb=mk('button','alt','📋 View details');vb.type='button';vb.style.cssText='width:100%;margin-top:10px';
   var det=mk('div','');det.hidden=true;det.style.cssText='margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff7f6';var loaded=false;
   vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
