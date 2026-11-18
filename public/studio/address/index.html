@@ -2,7 +2,7 @@
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Address Card | DynaMe</title>
 <link rel="icon" href="/studio/vicard-icon.png">
-<style>
+<style>.wn[hidden],.shr[hidden]{display:none!important}
 :root{--wine:#12307f;--org:#f59a1a;--ink:#14203d;--bg:#eef3ff;--line:#d5def5;--mut:#5a6a8c}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif;padding-bottom:30px}
 .top{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#06133f,#12307f);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}.top a{color:#fff;font-size:14px;text-decoration:none;border:1px solid rgba(255,255,255,.5);border-radius:10px;padding:6px 12px}
@@ -42,9 +42,9 @@ body.vw .top,body.vw h1,body.vw .wrap>.k,body.vw .wrap>.card:not(#outc){display:
 <button type="button" class="wa" id="b-wa">💬 WhatsApp पर पता लिखकर भेजें</button>
 <button type="button" class="alt" id="b-copy">📋 पता कॉपी करें</button>
 <button type="button" class="alt" id="b-cl" hidden>📍 सिर्फ़ लोकेशन लिंक कॉपी करें</button>
-<div class="k" style="font-weight:600;margin-top:12px">किसी को भेजें (कार्ड में लोकेशन QR पहले से है)</div>
-<div class="wn"><input id="s-num" inputmode="numeric" maxlength="15" placeholder="मोबाइल नंबर (सेव न हो तब भी)"><button type="button" id="s-go">💬 इस नंबर पर भेजें</button></div>
-<div class="shr"><a id="s-wa" target="_blank" rel="noopener">💬 WhatsApp</a><a id="s-tg" target="_blank" rel="noopener">✈️ Telegram</a><a id="s-sms">✉️ SMS</a><a id="s-ml">📧 ईमेल</a><a id="s-wb" hidden>💼 WhatsApp Business</a><a id="s-more" hidden>📤 और विकल्प</a></div>
+<div class="k" hidden style="font-weight:600;margin-top:12px">किसी को भेजें (कार्ड में लोकेशन QR पहले से है)</div>
+<div class="wn" hidden><input id="s-num" inputmode="numeric" maxlength="15" placeholder="मोबाइल नंबर (सेव न हो तब भी)"><button type="button" id="s-go">💬 इस नंबर पर भेजें</button></div>
+<div class="shr" hidden><a id="s-wa" target="_blank" rel="noopener">💬 WhatsApp</a><a id="s-tg" target="_blank" rel="noopener">✈️ Telegram</a><a id="s-sms">✉️ SMS</a><a id="s-ml">📧 ईमेल</a><a id="s-wb" hidden>💼 WhatsApp Business</a><a id="s-more" hidden>📤 और विकल्प</a></div>
 <div class="ok" id="a-ok"></div>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
