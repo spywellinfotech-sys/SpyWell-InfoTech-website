@@ -311,7 +311,7 @@ function pDesign(p){
 }
 var tplOcc='';
 function pTpl(p){
-  if(D.product_type==='visiting'){var mc=h('div',{class:'chips'});[[false,'📇 कार्ड का टेम्पलेट'],[true,'🌐 वेबसाइट का टेम्पलेट']].forEach(function(o){mc.appendChild(h('button',{class:webMode===o[0]?'on':'',text:o[1],onclick:function(){webMode=o[0];tplCat='all';panel();draw()}}))});p.appendChild(mc);p.appendChild(h('div',{class:'k',text:webMode?'यह सिर्फ़ मिनी वेबसाइट का रूप बदलेगा, कार्ड का नहीं।':'यह सिर्फ़ कार्ड का रूप बदलेगा, मिनी वेबसाइट का नहीं।'}))}
+  if(D.product_type==='visiting'&&(webMode||(C.style&&C.style.site===true))){var mc=h('div',{class:'chips'});[[false,'📇 कार्ड का टेम्पलेट'],[true,'🌐 वेबसाइट का टेम्पलेट']].forEach(function(o){mc.appendChild(h('button',{class:webMode===o[0]?'on':'',text:o[1],onclick:function(){webMode=o[0];tplCat='all';panel();draw()}}))});p.appendChild(mc);p.appendChild(h('div',{class:'k',text:webMode?'यह सिर्फ़ मिनी वेबसाइट का रूप बदलेगा, कार्ड का नहीं।':'यह सिर्फ़ कार्ड का रूप बदलेगा, मिनी वेबसाइट का नहीं।'}))}
   if(D.product_type==='invitation'){
     var chips=h('div',{class:'chips'});
     [['','सभी']].concat(Object.keys(R.OCCASIONS).map(function(k){return [k,R.OCCASIONS[k].name]})).forEach(function(o){
