@@ -81,7 +81,10 @@ details{background:#fff;border:1px solid var(--l);border-radius:14px;margin:0 au
 footer{background:var(--k);color:#bbb;text-align:center;padding:26px 18px;font-size:14px}footer a{color:#fff}footer img{width:46px;height:46px;border-radius:50%;background:#fff}
 .lg-sel{border:1px solid var(--l);border-radius:20px;padding:6px 10px;font:600 13px inherit;font-family:inherit;background:#fff;color:var(--k);margin-left:auto;margin-right:8px;max-width:110px}[dir=rtl] .lg-sel{margin-left:8px;margin-right:auto}[dir=rtl] .ar{transform:scaleX(-1)}[dir=rtl] .fl{direction:rtl}
 a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #111;outline-offset:2px}
-.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}.pg a{display:block;border-radius:16px;overflow:hidden;border:1px solid var(--l)}.pg img{display:block;width:100%;height:auto}</style></head><body>
+.pg img{display:block;width:100%;height:auto;border-radius:16px;border:1px solid var(--l)}.pg a{display:block}section{padding:30px 0}h2{font-size:24px}.sub{margin:0 auto 16px;font-size:15px}.hero{padding:24px 0 16px}.fin{padding:34px 18px}
+.pg{display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;padding-bottom:8px;-webkit-overflow-scrolling:touch}.pg a{flex:0 0 min(250px,70vw);scroll-snap-align:start}
+.tc{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.tc div{padding:12px}.tc i{font-size:22px}.tc b{font-size:14px;margin:2px 0}.tc p{font-size:12.5px}
+.steps{gap:8px}.two{gap:16px}.ctr{margin-top:12px}</style></head><body>
 <header><div class="w"><a class="lg" href="#top"><img src="/dyname/logo.png" width="34" height="34" alt="DynaMe logo"><span>Dyna<b>Me</b></span></a>
 <select id="lg" aria-label="Language" class="lg-sel"></select>
 <button class="hb" id="hb" aria-label="Menu" aria-expanded="false">☰</button>
@@ -159,9 +162,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #11
 <section id="dir"><div class="w"><h2>Discover Businesses <em>Around You.</em></h2><p class="sub">A city-based business directory for your area.</p>
 <div class="dir"><div class="card"><b>🔎 Search</b>By name, business or category</div><div class="card"><b>📇 Explore</b>Cards and mini websites</div><div class="card"><b>🏙 Your city</b>Businesses near you</div><div class="card"><b>💾 Save</b>Useful business contacts</div></div>
 <div class="note" style="text-align:center"><b>Businesses appear in the directory only after giving consent.</b><br>You only see businesses from your own city.</div></div></section>
-
-<section class="alt"><div class="w"><h2>Simple to Use. <em>Easy to Share.</em></h2><p class="sub">From sign-up to sharing in a few minutes.</p>
-<div class="steps"><div class="sp"><i>1</i><b>Create your profile</b><small>Add your basic details</small></div><div class="sp"><i>2</i><b>Build your digital card</b><small>Services, links, photo</small></div><div class="sp"><i>3</i><b>Share your link or QR</b><small>WhatsApp, SMS and more</small></div><div class="sp"><i>4</i><b>Stay connected</b><small>Insights and enquiries</small></div></div></div></section>
 
 <section id="trust"><div class="w"><h2>Your Identity. <em>Your Control.</em></h2><p class="sub">What protects your information today.</p>
 <div class="tc"><div><i>🛡</i><b>Row Level Security</b><p>Access to user data is controlled with Supabase Row Level Security.</p></div><div><i>👤</i><b>Your own data</b><p>You manage your own profile and cards.</p></div><div><i>✅</i><b>Directory by consent</b><p>Public directory listing requires your consent.</p></div><div><i>📞</i><b>Contact permissions</b><p>Contact visibility follows the permissions you configure.</p></div></div></div></section>
