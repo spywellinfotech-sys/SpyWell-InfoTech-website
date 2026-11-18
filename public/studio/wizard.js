@@ -23,7 +23,7 @@
     var s = document.createElement('script'); s.src = '/studio/render.js'; s.onload = cb; s.onerror = cb; document.head.appendChild(s);
   }
 
-  function stepsFor(type, occ, R) {
+  function stepsFor(type, occ, R, site) {
     var O = (R && R.OCCASIONS && R.OCCASIONS[occ]) || {}, L = O.labels || {}, hide = O.hide || [];
     if (type === 'invitation') {
       var s = [];
@@ -43,8 +43,8 @@
       { k: 'address', q: 'दुकान / ऑफ़िस का पूरा पता?', h: 'गली, मोहल्ला, शहर', t: 'area', skip: 1 },
       { k: 'email', q: 'आपका ईमेल?', h: 'जैसे: naam@gmail.com', t: 'text', skip: 1 },
       { k: 'dealsin', q: 'आप किस चीज़ का काम करते हैं?', h: 'जैसे: CCTV, सॉफ़्टवेयर, कंप्यूटर', t: 'text', skip: 1 },
-      { k: 'about', q: 'अपने बारे में दो लाइन लिखें', h: 'जैसे: 10 साल का अनुभव, भरोसे की सर्विस', t: 'area', skip: 1 }
-    ];
+      { k: 'about', q: 'अपने बारे में दो लाइन लिखें', h: 'जैसे: 10 साल का अनुभव, भरोसे की सर्विस', t: 'area', skip: 1, web: 1 }
+    ].filter(function (q) { return !q.web || site; });
   }
 
   function open(o) {
@@ -82,7 +82,7 @@
       Object.keys(O).forEach(function (k) { choice(O[k].name, '', function () { A.occ = k; begin(); }); });
       var b = el('div', 'wz-nv'), bk = el('button', 'wz-bk', '← पीछे'); bk.type = 'button'; bk.onclick = pickKind; b.appendChild(bk); box.appendChild(b);
     }
-    function begin() { steps = stepsFor(A.type, A.occ, R); i = 0; started = true; ask(); }
+    function begin() { steps = stepsFor(A.type, A.occ, R, A.site); i = 0; started = true; ask(); }
 
     function ask() {
       var s = steps[i]; shell(s.q, s.h, i, steps.length);
