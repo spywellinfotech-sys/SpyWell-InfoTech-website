@@ -355,8 +355,21 @@ function drawUns(){var w=$('c-uns');if(!w)return;
   h.onclick=function(){bd.hidden=!bd.hidden;h.textContent=h.textContent.replace(/[▼▲]$/,bd.hidden?'▼':'▲')};
   function fdt(v){if(!v)return 'जोड़ा हुआ';try{return new Date(v).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true})}catch(e){return ''}}
   var UNSX=window.UNSX=window.UNSX||{};
+  var UNSEL=window.UNSEL=window.UNSEL||{};
+  var tb=mk('div','');tb.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px';
+  function tbtn(t,bg,fg){var b=mk('button','',t);b.type='button';b.style.cssText='flex:1;min-width:0;margin:0;min-height:0;padding:9px 8px;border:1px solid #b00020;border-radius:10px;font-weight:800;font-size:13px;background:'+bg+';color:'+fg;return b}
+  var sm=tbtn(window.UNSM?'✖ चुनना बंद करें':'☑ चुनकर हटाएँ','#fff','#b00020'),sa=tbtn('सब चुनें','#fff','#7a0a10'),dn=tbtn('🗑 हटाएँ (0)','#b00020','#fff');
+  function upd(){dn.textContent='🗑 हटाएँ ('+Object.keys(UNSEL).filter(function(k){return UNSEL[k]}).length+')'}
+  sm.onclick=function(){window.UNSM=!window.UNSM;window.UNSEL=UNSEL={};drawUns()};
+  sa.onclick=function(){var all=arr.every(function(q){return UNSEL[q.m]});arr.forEach(function(q){UNSEL[q.m]=!all});drawUns()};
+  dn.onclick=async function(){var ms=Object.keys(UNSEL).filter(function(k){return UNSEL[k]});if(!ms.length){return}
+    if(!confirm(ms.length+' नंबर लिस्ट से हटाएँ?'))return;dn.disabled=true;
+    for(var i=0;i<ms.length;i+=100){var r=await sb.from('studio_sent').delete().in('mobile',ms.slice(i,i+100));if(r.error){dn.disabled=false;alert('हट नहीं पाए, दोबारा कोशिश करें');return}}
+    ms.forEach(function(m){delete SENT[m]});window.UNSM=false;window.UNSEL=UNSEL={};window.__unsMsg=ms.length+' नंबर हटा दिए';drawUns()};
+  tb.appendChild(sm);if(window.UNSM){tb.appendChild(sa);tb.appendChild(dn);upd()}bd.appendChild(tb);
   arr.forEach(function(q){var row=mk('div','des');row.style.cssText='border-top:0;border-bottom:1px solid #f0dada;padding:2px 0';
-    var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 4px;cursor:pointer';var av=mk('div','',(q.n&&q.n.trim()[0]||'#').toUpperCase());av.style.cssText='flex:none;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#d4141c,#f59a1a);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px';hd.appendChild(av);
+    var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 4px;cursor:pointer';var av=mk('div','',(q.n&&q.n.trim()[0]||'#').toUpperCase());av.style.cssText='flex:none;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#d4141c,#f59a1a);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px';if(window.UNSM){var ck=document.createElement('input');ck.type='checkbox';ck.setAttribute('data-ck','1');ck.checked=!!UNSEL[q.m];ck.style.cssText='flex:none;width:22px;height:22px;margin:0;accent-color:#d4141c';ck.onclick=function(e){e.stopPropagation();UNSEL[q.m]=ck.checked;upd()};hd.appendChild(ck)}
+    hd.appendChild(av);
     var t=mk('b','',(q.n?q.n+' · ':'')+q.m);t.style.cssText='flex:1;font-size:16px;color:#222;display:block;min-width:0';
     var sd=mk('span','');sd.style.cssText='display:flex;gap:3px;font-size:13px';var sk0=(SENT[q.m]&&SENT[q.m].k)||{};[['card','💳'],['website','🌐'],['invitation','💌']].forEach(function(z){var d1=mk('span','',z[1]);d1.style.cssText='opacity:'+(sk0[z[0]]?'1':'.22')+';filter:'+(sk0[z[0]]?'none':'grayscale(1)');sd.appendChild(d1)});var dt=mk('span','',fdt(q.t));dt.style.cssText='font-size:12px;color:#777;white-space:nowrap';var ar=mk('span','',UNSX[q.m]?'▲':'▼');ar.style.cssText='font-size:11px;color:#7a0a10';dt.style.cssText='font-size:11px;color:#8a6a6a;white-space:nowrap;display:block;margin-top:1px';var tc=mk('div','');tc.style.cssText='flex:1;min-width:0';t.style.flex='none';tc.appendChild(t);tc.appendChild(dt);hd.appendChild(tc);hd.appendChild(sd);hd.appendChild(ar);row.appendChild(hd);
     var ac=mk('div','acts');ac.hidden=!UNSX[q.m];ac.style.cssText='padding:0 4px 10px';var c1=mk('a','','📞 कॉल');c1.href='tel:+91'+q.m;ac.appendChild(c1);var w1=mk('a','','WhatsApp');w1.href='https://wa.me/91'+q.m;w1.target='_blank';w1.rel='noopener';ac.appendChild(w1);sendBtns(ac,q.m,q.n);
