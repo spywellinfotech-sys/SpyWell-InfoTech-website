@@ -41,9 +41,8 @@ body.vw .top,body.vw h1,body.vw .wrap>.k,body.vw .wrap>.card:not(#outc){display:
 <button type="button" class="alt" id="b-share">🖼 कार्ड फ़ोटो शेयर करें</button>
 <button type="button" class="wa" id="b-wa">💬 WhatsApp पर पता लिखकर भेजें</button>
 <button type="button" class="alt" id="b-copy">📋 पता कॉपी करें</button>
-<button type="button" class="wa" id="b-qr" hidden>📍 लोकेशन QR फ़ोटो शेयर करें</button>
 <button type="button" class="alt" id="b-cl" hidden>📍 सिर्फ़ लोकेशन लिंक कॉपी करें</button>
-<div class="k" style="font-weight:600;margin-top:12px">शेयर करें</div>
+<div class="k" style="font-weight:600;margin-top:12px">किसी को भेजें (कार्ड में लोकेशन QR पहले से है)</div>
 <div class="wn"><input id="s-num" inputmode="numeric" maxlength="15" placeholder="मोबाइल नंबर (सेव न हो तब भी)"><button type="button" id="s-go">💬 इस नंबर पर भेजें</button></div>
 <div class="shr"><a id="s-wa" target="_blank" rel="noopener">💬 WhatsApp</a><a id="s-tg" target="_blank" rel="noopener">✈️ Telegram</a><a id="s-sms">✉️ SMS</a><a id="s-ml">📧 ईमेल</a><a id="s-wb" hidden>💼 WhatsApp Business</a><a id="s-more" hidden>📤 और विकल्प</a></div>
 <div class="ok" id="a-ok"></div>
@@ -86,7 +85,7 @@ function draw(){
   if(mu){try{var qc=document.createElement('canvas');window.StudioQR.draw(qc,unescape(encodeURIComponent(mu)),260);x.fillStyle='#fff';x.fillRect(W-340,H-400,260,260);x.drawImage(qc,W-340,H-400,260,260);x.fillStyle='#5a6a8c';x.font='400 28px '+FF;x.textAlign='center';x.fillText('स्कैन करें: लोकेशन',W-210,H-100);x.textAlign='left'}catch(e){}}
   x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('DynaMe · Address Card',90,H-60);
   try{$('pv').src=cv.toDataURL('image/png')}catch(e){}
-  cv.toBlob(function(b){blob=b},'image/png');$('outc').hidden=false;$('b-cl').hidden=$('b-qr').hidden=!mapUrl();
+  cv.toBlob(function(b){blob=b},'image/png');$('outc').hidden=false;$('b-cl').hidden=!mapUrl();
   try{localStorage.setItem(LSK,JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
   if(window.__saveHome)window.__saveHome();
   shr();return true}
@@ -119,7 +118,6 @@ function qrBlob(cb){var mu=mapUrl();if(!mu){cb(null);return}
   if(val('name')){x.font='600 44px '+FF;x.fillText(val('name').slice(0,36),W/2,y);y+=60}
   x.fillStyle='#5a6a8c';x.font='500 36px '+FF;x.fillText('स्कैन करें, सीधे रास्ता खुल जाएगा',W/2,Math.max(y,1290));
   c.toBlob(function(b){cb(b)},'image/png')}
-$('b-qr').onclick=function(){if(!draw())return;qrBlob(function(b){if(!b)return;nativeDo(b,'location-qr','share',function(ok){if(ok){$('a-ok').textContent='✓ शेयर मेन्यू खुल गया';return}deliver(b,'location-qr-'+(mob()||'vicard'))})})};
 function shareTwo(b,q){var C=window.Capacitor,P=C&&C.Plugins;if(!q){deliver(b,'address-card-'+(mob()||'vicard'));return}
   if(P&&P.Filesystem&&P.Share){var n=0,uris=[];[[b,'address-card'],[q,'location-qr']].forEach(function(it){var rd=new FileReader();rd.onload=function(){P.Filesystem.writeFile({path:it[1]+'-'+Date.now()+'.png',data:String(rd.result).split(',')[1],directory:'CACHE'}).then(function(r){uris.push(r.uri);if(++n===2)P.Share.share({title:'Address Card',text:text(),files:uris}).catch(function(){})}).catch(function(){deliver(b,'address-card')})};rd.readAsDataURL(it[0])});return}
   try{var fs=[new File([b],'address-card.png',{type:'image/png'}),new File([q],'location-qr.png',{type:'image/png'})];if(navigator.canShare&&navigator.canShare({files:fs})&&navigator.share){navigator.share({files:fs,title:'Address Card',text:text()}).catch(function(){});return}}catch(e){}
