@@ -94,11 +94,25 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="k" style="margin-bottom:10px">अपने Google खाते से एक टैप में लॉगिन करें। अलग पासवर्ड की ज़रूरत नहीं।</div>
 <button type="button" class="alt" id="g-btn" style="font-size:17px;padding:14px">🔐 Google से लॉगिन करें</button>
 <div class="err" id="li-err"></div>
+<button type="button" class="alt" data-go="mob" style="margin-top:10px;font-size:16px;padding:13px">📱 Google नहीं चल रहा? मोबाइल नंबर से लॉगिन / खाता</button>
 <div id="li-em" hidden>
 <label>ईमेल</label><input id="li-e" type="email" autocomplete="email">
 <label>पासवर्ड</label><input id="li-p" type="password" autocomplete="current-password">
 <button type="submit">लॉगिन करें</button>
 </div>
+</form>
+
+<form class="card" id="v-mob" hidden>
+<h1>📱 मोबाइल नंबर से खाता</h1>
+<div class="k" style="margin-bottom:10px">Google या ईमेल की ज़रूरत नहीं। अपना मोबाइल नंबर और एक पासवर्ड रखें।</div>
+<div style="display:flex;gap:6px;margin-bottom:8px"><button type="button" class="alt" id="mb-t1" style="flex:1;margin:0">लॉगिन</button><button type="button" class="alt" id="mb-t2" style="flex:1;margin:0">नया खाता</button></div>
+<div id="mb-nm" hidden><label>आपका नाम</label><input id="mb-n" maxlength="80"></div>
+<label>मोबाइल नंबर</label><input id="mb-m" inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}" required>
+<label>पासवर्ड (कम से कम 8 अक्षर)</label><input id="mb-p" type="password" minlength="8" autocomplete="current-password" required>
+<div class="err" id="mb-err"></div>
+<button type="submit" id="mb-go">लॉगिन करें</button>
+<div class="k" style="margin-top:8px;font-size:13px">पासवर्ड भूल गए तो ईमेल से रीसेट नहीं होगा, इसलिए उसे याद रखें या कहीं लिख लें।</div>
+<button type="button" class="link" data-go="login">वापस</button>
 </form>
 
 <form class="card" id="v-reg" hidden>
@@ -264,7 +278,7 @@ var b=document.createElement('a');b.textContent=a[4]?'⬇️ APK':'देखे�
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 var $=function(i){return document.getElementById(i)};
-var VIEWS=['load','login','reg','forgot','newpw','dash'];
+var VIEWS=['load','login','reg','mob','forgot','newpw','dash'];
 function show(v){VIEWS.forEach(function(x){$('v-'+x).hidden=x!==v});$('out').hidden=v!=='dash';var tb=$('tabbar');if(tb)tb.hidden=v!=='dash';var ibb=$('ib');if(ibb&&v!=='dash')ibb.hidden=true}
 var HEALING=0,HTRY=0;
 function heal(){try{var dv=$('v-dash');if(!dv||dv.hidden)return;var tb=$('tabbar');if(tb&&tb.hidden)tb.hidden=false;
@@ -1118,6 +1132,21 @@ $('g-btn').onclick=async function(){$('li-err').textContent='';
 $('v-login').onsubmit=async function(e){e.preventDefault();$('li-err').textContent='';busy(this,true);
   var r=await sb.auth.signInWithPassword({email:$('li-e').value.trim(),password:$('li-p').value});
   busy(this,false);if(r.error)$('li-err').textContent=msg(r.error)};
+var MBNEW=false;
+function mbMode(n){MBNEW=n;$('mb-nm').hidden=!n;$('mb-go').textContent=n?'खाता बनाएँ':'लॉगिन करें';$('mb-p').autocomplete=n?'new-password':'current-password';$('mb-t1').style.opacity=n?'.55':'1';$('mb-t2').style.opacity=n?'1':'.55';$('mb-err').textContent=''}
+$('mb-t1').onclick=function(){mbMode(false)};$('mb-t2').onclick=function(){mbMode(true)};mbMode(false);
+$('v-mob').onsubmit=async function(e){e.preventDefault();var er=$('mb-err');er.textContent='';var m=$('mb-m').value.replace(/\D/g,'').slice(-10),p=$('mb-p').value;
+  if(!/^[6-9][0-9]{9}$/.test(m)){er.textContent='सही 10 अंकों का मोबाइल नंबर लिखें';return}
+  if(p.length<8){er.textContent='पासवर्ड कम से कम 8 अक्षर का रखें';return}
+  busy(this,true);var em=m+'@mobile.spywell.in';
+  try{
+    if(MBNEW){var nm=$('mb-n').value.trim();if(nm.length<2){er.textContent='अपना नाम लिखें';busy(this,false);return}
+      var r=await fetch(B+'/functions/v1/studio-mobile-signup',{method:'POST',headers:{'content-type':'application/json',apikey:K},body:JSON.stringify({mobile:m,password:p,name:nm})});var j={};try{j=await r.json()}catch(x){}
+      if(!r.ok){er.textContent=j.code==='exists'?'इस नंबर से खाता पहले से बना है। "लॉगिन" दबाएँ।':'खाता नहीं बन पाया, दोबारा कोशिश करें';busy(this,false);return}}
+    var s2=await sb.auth.signInWithPassword({email:em,password:p});
+    if(s2.error)er.textContent=/Invalid login/i.test(s2.error.message)?'मोबाइल नंबर या पासवर्ड गलत है':msg(s2.error);
+  }catch(x){er.textContent='नेटवर्क की दिक्कत, दोबारा कोशिश करें'}
+  busy(this,false)};
 $('v-reg').onsubmit=async function(e){e.preventDefault();$('rg-err').textContent='';$('rg-ok').textContent='';busy(this,true);
   var r=await sb.auth.signUp({email:$('rg-e').value.trim(),password:$('rg-p').value,
     options:{emailRedirectTo:HERE,data:{full_name:$('rg-n').value.trim(),phone:$('rg-m').value.trim(),app:'studio'}}});
