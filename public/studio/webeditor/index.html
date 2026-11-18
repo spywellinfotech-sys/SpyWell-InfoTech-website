@@ -310,6 +310,7 @@ function pDesign(p){
   p.appendChild(rb);p.appendChild(h('div',{class:'k',text:'आपकी लिखी जानकारी और फ़ोटो नहीं हटेंगी।'}));
 }
 var tplOcc='';
+function TL(){return T.filter(function(t){var s=!!(t.config&&t.config.site===true);return D.product_type!=='visiting'||(webMode?s:!s)})}
 function pTpl(p){
   if(D.product_type==='visiting'){var cl=h('a',{class:'btn alt sm',href:'/studio/editor/?id='+D.id,text:'📇 कार्ड एडिटर खोलें →',style:'display:block;text-align:center;margin-bottom:8px'});p.appendChild(cl);
     var ib=h('button',{type:'button',class:'btn sm',text:'📇 कार्ड की जानकारी यहाँ लाएँ',style:'display:block;width:100%;margin-bottom:8px'}),im=h('div',{class:'k'});
@@ -324,17 +325,17 @@ function pTpl(p){
     p.appendChild(chips);
   }
   var myInd=D.product_type==='visiting'?(C.fields.industry||''):'';
-  var hasInd=myInd&&T.some(function(t){return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0});
+  var hasInd=myInd&&TL().some(function(t){return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0});
   if(hasInd){var ic=h('div',{class:'chips'});[['mine','⭐ मेरी industry के लिए'],['all','सभी']].forEach(function(o){ic.appendChild(h('button',{class:(tplInd||'mine')===o[0]?'on':'',text:o[1],onclick:function(){tplInd=o[0];panel()}}))});p.appendChild(ic)}
-  var anyPrem=T.some(function(t){return premPrice(t)>0});var cc=h('div',{class:'chips'});if(!anyPrem)tplCat='all';[['all','सभी'],['free','🆓 फ्री'],['prem','👑 प्रीमियम (एनिमेटेड)']].forEach(function(o){cc.appendChild(h('button',{class:tplCat===o[0]?'on':'',text:o[1],onclick:function(){tplCat=o[0];panel()}}))});if(anyPrem)p.appendChild(cc);
+  var anyPrem=TL().some(function(t){return premPrice(t)>0});var cc=h('div',{class:'chips'});if(!anyPrem)tplCat='all';[['all','सभी'],['free','🆓 फ्री'],['prem','👑 प्रीमियम (एनिमेटेड)']].forEach(function(o){cc.appendChild(h('button',{class:tplCat===o[0]?'on':'',text:o[1],onclick:function(){tplCat=o[0];panel()}}))});if(anyPrem)p.appendChild(cc);
   p.appendChild(h('div',{class:'k',style:'margin:4px 0 8px;font-size:14px',text:'👇 पसंद का डिज़ाइन छूकर चुनें। ऊपर कार्ड तुरंत बदल जाएगा।'}));
   var g=h('div',{class:'grid'});
-  T.filter(function(t){var pm=premPrice(t)>0;if(tplCat==='free'&&pm)return false;if(tplCat==='prem'&&!pm)return false;return true}).filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
+  TL().filter(function(t){var pm=premPrice(t)>0;if(tplCat==='free'&&pm)return false;if(tplCat==='prem'&&!pm)return false;return true}).filter(function(t){if(hasInd&&(tplInd||'mine')==='mine')return t.config&&t.config.industry&&t.config.industry.indexOf(myInd)>=0;return !tplOcc||((t.config&&t.config.occasion)||'wedding')===tplOcc}).forEach(function(t){
     var inner=h('div',{class:'in2'});R.render(inner,D.product_type,t.config,C,{demo:true});
     var curT=(webMode&&D.product_type==='visiting')?(C.style.webtpl||D.template_id):D.template_id;g.appendChild(h('button',{class:'mini'+(t.id===curT?' on':''),onclick:function(){if(t.id===curT)return;if(webMode&&D.product_type==='visiting'){C.style.webtpl=t.id}else D.template_id=t.id;panel();changed()}},
       [h('div',{class:'box'},[inner]),h('div',{class:'cap'},[document.createTextNode((t.id===curT?'✅ ':'')+t.name),h('span',{text:t.id===curT?'चुना हुआ':'छूकर चुनें'})])]));
   });
-  p.appendChild(g);if(!T.length)p.appendChild(h('div',{class:'k',text:'कोई टेम्पलेट उपलब्ध नहीं है।'}));
+  p.appendChild(g);if(!TL().length)p.appendChild(h('div',{class:'k',text:'कोई टेम्पलेट उपलब्ध नहीं है।'}));
 }
 
 /* ---------- AI ---------- */
