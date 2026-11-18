@@ -370,6 +370,7 @@
       var ty = cy + r + 85; x.fillStyle = '#14203d';
       if (f.name) { x.font = '700 64px ' + FF; x.fillText(String(f.name).slice(0, 40), W / 2, ty); ty += 62; }
       if (f.designation) { x.fillStyle = '#5a6a8c'; x.font = '400 38px ' + FF; x.fillText(String(f.designation).slice(0, 50), W / 2, ty); ty += 30; }
+      if (f.dealsin) { x.fillStyle = '#5a6a8c'; x.font = '400 34px ' + FF; wrapText(x, 'Deals in: ' + f.dealsin, 900, '400 34px ' + FF, 2).forEach(function (l) { ty += 44; x.font = '400 34px ' + FF; x.fillText(l, W / 2, ty); }); }
       ty += 40; x.textAlign = 'left'; x.fillStyle = '#14203d';
       var rows = []; var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.miniweb) || V.url(f.website);
       if (tel) rows.push(['📞', '+91 ' + tel.slice(0, 5) + ' ' + tel.slice(5)]); if (wa && wa !== tel) rows.push(['💬', 'WhatsApp +91 ' + wa]);
@@ -513,6 +514,7 @@
     var f = d.fields, dark = lum(ac) < 0.62, onAc = dark ? '#ffffff' : '#1a1a1a', wrap = el('div', 'bz-wrap');
     var fr = el('div', 'bz bz-f'), top = el('div', 'bz-top'); top.style.color = onAc;
     if (f.name) top.appendChild(el('b', 'bz-nm', f.name)); if (f.designation) top.appendChild(el('div', 'bz-ds', f.designation));
+    if (f.dealsin) top.appendChild(el('div', 'bz-ds', 'Deals in: ' + f.dealsin));
     fr.appendChild(top);
     var tel = V.tel(f.mobile), em = V.email(f.email), web = V.url(f.website) || V.url(f.miniweb), ad = [f.address, f.city].filter(Boolean).join(', ');
     var ls = el('div', 'bz-ls');
