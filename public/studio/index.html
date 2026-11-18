@@ -824,9 +824,10 @@ function openRef(){var b=$('c-ref');if(!b||b.hidden)return;if(!$('ref-bk')){var 
 async function refHome(){
   var box=$('c-ref');if(!box)return;
   var r=await sb.rpc('studio_ref_me');var m=r&&r.data;
-  var qb=$('qa-ref'),hb=$('hl-ref');if(qb)qb.hidden=!(m&&m.enabled);if(hb){hb.hidden=!(m&&m.enabled);hb.onclick=openRef}
+  var pubV=LIST.some(function(x){return x.product_type==='visiting'&&x.status==='published'}),en=!!(m&&m.enabled&&pubV);var qb=$('qa-ref'),hb=$('hl-ref');if(qb)qb.hidden=!en;if(hb){hb.hidden=!en;hb.onclick=openRef}if(!en){box.hidden=true;box.classList.remove('pop')}
   if(!m||!m.enabled){box.hidden=true;return}
   try{var pc=localStorage.getItem('st_ref');if(pc&&!m.referred_by){var ap=await sb.rpc('studio_ref_apply',{p_code:pc});if(ap&&ap.data&&(ap.data.ok||ap.data.error!=='login')){localStorage.removeItem('st_ref');if(ap.data.ok)m.referred_by=true}}}catch(e){}
+  if(!pubV){box.hidden=true;return}
   box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#fff4d6,#ffe1a8);border:1px solid #f0c56a;padding:20px 16px';
   var rt=mk('b','','🎁 Refer & Earn · दोस्त को बुलाओ, कमाओ');rt.style.cssText='display:block;font-size:20px';box.appendChild(rt);
   var u=location.origin+'/studio/?ref='+m.code;
