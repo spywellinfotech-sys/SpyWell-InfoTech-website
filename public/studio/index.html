@@ -1232,7 +1232,7 @@ function drawAddr(edit,k){
   if(edit){var cn=mk('button','alt','रद्द करें');cn.type='button';cn.onclick=function(){if(XT&&!(ADH.cj&&ADH.cj[k])){box.remove();addrSync()}else drawAddr(false,k)};f.appendChild(cn)}
   box.appendChild(f)}
 var PFP=null,PFD=null,PFV=null;
-var PF=[['name','नाम','text',60],['business','व्यवसाय / दुकान का नाम','text',80],['designation','पद','text',60],['mobile','मोबाइल नंबर','tel',10],['whatsapp','WhatsApp नंबर','tel',10],['email','ईमेल','email',100],['address','पता','area',200],['city','शहर','text',40],['state','राज्य','text',40],['pin','पिन कोड','tel',6],['website','वेबसाइट','url',150]];
+var PF=[['name','नाम','text',60],['business','व्यवसाय / दुकान का नाम','text',80],['designation','पद','text',60],['dealsin','Deals in (जैसे TV, फ्रिज, मोबाइल)','text',160],['mobile','मोबाइल नंबर','tel',10],['whatsapp','WhatsApp नंबर','tel',10],['email','ईमेल','email',100],['address','पता','area',200],['city','शहर','text',40],['state','राज्य','text',40],['pin','पिन कोड','tel',6],['website','वेबसाइट','url',150]];
 function pfPrimary(){var vis=LIST.filter(function(x){return x.product_type==='visiting'});return vis.filter(function(v){return v.status==='published'})[0]||vis[0]||null}
 async function pfLoad(){
   var x=pfPrimary(),f={},cj=null;PFD=null;
@@ -1242,7 +1242,7 @@ async function pfLoad(){
   PF.forEach(function(d){var l=mk('label','',d[1]);var i=d[2]==='area'?document.createElement('textarea'):document.createElement('input');if(d[2]==='area')i.rows=2;
     i.id='pf-'+d[0];i.maxLength=d[3];if(d[2]==='tel')i.setAttribute('inputmode','numeric');if(d[2]==='email')i.type='email';if(d[2]==='url')i.setAttribute('inputmode','url');i.value=f[d[0]]||'';box.appendChild(l);box.appendChild(i)});
   var nm=(f.name||'').trim();if(nm)$('d-name').textContent=nm;pfSum()}
-function pfSum(){var f=PFV||{},b=$('pf-sum');b.textContent='';[['👤',f.name],['🏢',f.business],['📞',f.mobile&&'+91 '+f.mobile],['✉️',f.email],['📍',[f.address,f.city].filter(Boolean).join(', ')]].forEach(function(r){if(!r[1])return;var d=mk('div','',r[0]+'  '+r[1]);d.style.cssText='padding:4px 0;border-bottom:1px dashed var(--line)';b.appendChild(d)});if(!b.children.length)b.appendChild(mk('div','k','अभी प्रोफ़ाइल खाली है।'))}
+function pfSum(){var f=PFV||{},b=$('pf-sum');b.textContent='';[['👤',f.name],['🏢',f.business],['🛍',f.dealsin&&'Deals in: '+f.dealsin],['📞',f.mobile&&'+91 '+f.mobile],['✉️',f.email],['📍',[f.address,f.city].filter(Boolean).join(', ')]].forEach(function(r){if(!r[1])return;var d=mk('div','',r[0]+'  '+r[1]);d.style.cssText='padding:4px 0;border-bottom:1px dashed var(--line)';b.appendChild(d)});if(!b.children.length)b.appendChild(mk('div','k','अभी प्रोफ़ाइल खाली है।'))}
 function pfEdit(on){$('pf-edit').hidden=!on;$('pf-open').hidden=on;$('pf-sum').hidden=on;if(on){$('pf-err').textContent='';$('pf-ok').textContent=''}}
 $('pf-scan').onclick=function(){$('pf-scanf').value='';$('pf-scanf').click()};
 $('pf-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;var msg=$('pf-scanm'),bt=$('pf-scan');msg.style.color='';msg.textContent='कार्ड पढ़ा जा रहा है… 10-20 सेकंड';bt.disabled=true;
