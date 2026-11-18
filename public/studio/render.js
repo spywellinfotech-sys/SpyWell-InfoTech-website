@@ -497,7 +497,7 @@
     if (!(f.bride || f.groom)) { drawVisitingImage(root, f).then(function (b) { if (!b) { done(); return; } deliverImage(b, nm, done, cap); }, done); return; }
     function go() {
       try {
-        window.html2canvas(root, { useCORS: true, scale: 2, backgroundColor: null, ignoreElements: function (n) { return n.classList && (n.classList.contains('sr-pw') || n.classList.contains('sr-save')); }, onclone: function (d) { var st = d.createElement('style'); st.textContent = '*{animation:none!important;transition:none!important}.sr-an .in>*,.sr-an .bd>*,.sr-an .hd>*,.sr-an .sr-qr,.sr-an .sr-save,.ws-rv,.ws-card,.sr-chip{opacity:1!important;transform:none!important}.sr-fxo,.sr-pw{display:none!important}'; d.head.appendChild(st); } }).then(function (cv) {
+        window.html2canvas(root, { useCORS: true, scale: 2, backgroundColor: null, ignoreElements: function (n) { return n.classList && (n.classList.contains('sr-pw') || n.classList.contains('sr-save')); }, onclone: function (d) { var st = d.createElement('style'); st.textContent = '*{animation:none!important;transition:none!important}.sr-an .in>*,.sr-an .bd>*,.sr-an .hd>*,.sr-an .sr-qr,.sr-an .sr-save,.ws-rv,.ws-card,.sr-chip{opacity:1!important;transform:none!important}.sr-fxo,.sr-pw{display:none!important}.sr-nm{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:var(--ac)!important;color:var(--ac)!important}'; d.head.appendChild(st); } }).then(function (cv) {
           cv.toBlob(function (b) { if (!b) { done(); return; } deliverImage(b, nm, done, cap); }, 'image/png');
         }, done);
       } catch (e) { done(); }
