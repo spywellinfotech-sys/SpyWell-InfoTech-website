@@ -1,1 +1,1 @@
-{"name":"DynaMe","short_name":"DynaMe","start_url":"/studio/","scope":"/studio/","display":"standalone","background_color":"#fbf5f4","theme_color":"#d4141c","icons":[{"src":"/studio/vicard-icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]}
+{"name":"DynaMe","short_name":"DynaMe","start_url":"/studio/","scope":"/studio/","display":"standalone","background_color":"#fbf5f4","theme_color":"#d4141c","icons":[{"src":"/studio/vicard-icon.png","sizes":"512x512","type":"image/png","purpose":"any"}],"related_applications":[{"platform":"play","id":"com.spywell.vicard"}]}
