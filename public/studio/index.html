@@ -749,7 +749,7 @@ async function invHome(){
     var ins=mk('div','');ins.style.cssText='margin-top:8px;background:#fff;color:#222;border:1px solid #f0d6d4;border-radius:12px;padding:10px';ins.hidden=true;
     var ih=mk('div','');ih.style.cssText='display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:10px;padding:10px 12px;border:1px solid #f0d6d4;border-radius:12px;background:#fff7f6;font-weight:700;color:#9d0b12;font-size:15px';
     var ihl=mk('span','','💌 '+(x.title||'इनविटेशन'));ihl.style.cssText='flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';var iha=mk('span','','▼');iha.style.cssText='flex:none';var ihc=mk('span','','');ihc.style.cssText='flex:none;font-size:13px;color:#555';ih.appendChild(ihl);ih.appendChild(ihc);ih.appendChild(iha);
-    ih.onclick=function(){ins.hidden=!ins.hidden;iha.textContent=ins.hidden?'▼':'▲'};
+    ins.hidden=false;iha.remove();ih.style.cursor='default';
     (IDEST||hero).appendChild(ih);(IDEST||hero).appendChild(ins);
     box.appendChild(hero);
     (async function(){var sg=await sb.from('studio_shagun').select('name,amount,message,mobile,created_at,shot').eq('design_id',x.id).order('created_at',{ascending:false}).limit(200);
@@ -983,7 +983,6 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
   vb.onclick=async function(){det.hidden=!det.hidden;vb.textContent=det.hidden?'📋 View details':'🙈 Hide details';
     if(!det.hidden&&!loaded){loaded=true;det.textContent='लोड हो रहा है…';var dd=await sb.rpc('studio_my_stats_detail',{p_design:x.id});drawIns(det,st.data||{},dd.data||{})}};
   sw.appendChild(det);vb.onclick();
-  if(!st.error&&st.data){var cc=st.data.card||{};foldBox(sw,'📊 इनसाइट','👁 '+(cc.total||0)+' · आज '+(cc.today||0));sw.firstChild.style.cssText+=';margin-top:0;border:0;background:transparent;padding:2px 0'}
   loadEnq()}
 var ENQ={rows:[],un:0};
 function hasSite(){return LIST.some(function(x){var i=SUBI[x.id];return x.product_type==='visiting'})}
