@@ -379,7 +379,7 @@ function drawUns(){var w=$('c-uns');if(!w)return;
 async function loadSaved(){
   try{var pend=localStorage.getItem('sp_pending_save');if(pend){localStorage.removeItem('sp_pending_save');var pp=pend.split('|');if((pp[0]==='invitation'||pp[0]==='visiting')&&pp[1])await sb.rpc('studio_save_card',{p_type:pp[0],p_slug:pp[1]})}}catch(e){}
   if(!IND.length){var ir=await sb.from('studio_industries').select('id,name_hi,name_en,sort').order('sort',{ascending:true});IND=ir.data||[];IND.forEach(function(o){INDN[o.id]=(window.I18N&&I18N.lang==='en'&&o.name_en)?o.name_en:o.name_hi});
-    var si=$('ct-i');if(si){si.textContent='';var o0=mk('option','','— सूची से चुनें —');o0.value='';si.appendChild(o0);IND.forEach(function(o){var op=mk('option','',o.name_hi);op.value=o.id;si.appendChild(op)})}}
+    var si=$('ct-i');if(si){si.textContent='';var o0=mk('option','','— Select industry —');o0.value='';si.appendChild(o0);IND.forEach(function(o){var op=mk('option','',o.name_en||o.name_hi);op.value=o.id;si.appendChild(op)})}}
   var a=await sb.from('studio_saved_cards').select('id,product_type,slug,title,subtitle,industry,mobile,whatsapp,created_at,fav,coll').eq('user_id',ME.id).order('created_at',{ascending:false});
   var b=await sb.from('studio_contacts').select('id,name,business,mobile,industry,note,src,created_at,fav,coll').eq('user_id',ME.id).order('created_at',{ascending:false});
   if(a.error&&b.error){$('sv-list').textContent='सूची लोड नहीं हुई।';return}
@@ -434,7 +434,7 @@ $('ct-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)re
     var j=await r.json().catch(function(){return{}});if(!r.ok)throw new Error(j.code||'ai_error');
     SCANX=j;$('ct-n').value=j.name||'';$('ct-b').value=j.business||'';$('ct-m').value=j.mobile||'';
     var un=j.uncertain||[];[['ct-n','name'],['ct-b','business'],['ct-m','mobile']].forEach(function(p){var e=$(p[0]);e.style.background=(un.indexOf(p[1])>=0||(p[1]==='mobile'&&!j.mobile))?'#fff4c2':''});
-    var h=(j.industry_hint||'').toLowerCase(),sel=$('ct-i');if(h&&IND.length){var hit=IND.filter(function(o){var n=(o.name_hi||'').toLowerCase();return n.indexOf(h)>=0||h.indexOf(n)>=0})[0];if(hit){sel.value=hit.id}}
+    var h=(j.industry_hint||'').toLowerCase(),sel=$('ct-i');if(h&&IND.length){var hit=IND.filter(function(o){var n=(o.name_hi||'').toLowerCase(),e=(o.name_en||'').toLowerCase();return n.indexOf(h)>=0||h.indexOf(n)>=0||(e&&(e.indexOf(h)>=0||h.indexOf(e)>=0))})[0];if(hit){sel.value=hit.id}}
     $('ct-det').open=true;
     if(!j.name&&!j.mobile){msg.style.color='#b00020';msg.textContent='कार्ड साफ़ नहीं पढ़ा गया। रोशनी में सीधी फ़ोटो लें, या नीचे खुद भरें।'}
     else{msg.textContent='✓ पढ़ लिया। पीले खाने ध्यान से जाँचें, फिर "कॉन्टैक्ट सेव करें" दबाएँ।'+(j.mobile?'':' मोबाइल नंबर नहीं मिला, खुद डालें।')}
