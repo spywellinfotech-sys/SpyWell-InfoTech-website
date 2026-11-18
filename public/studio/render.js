@@ -151,9 +151,7 @@
     if (NV && NV.openWa) { sb('🛍 WhatsApp Business', 'share-wab', function () { if (!NV.openWa('', msg, true)) NV.shareText(msg); }); g.lastChild.style.cssText = 'background:#075e54;border:1px solid #075e54;color:#fff;'; }
     if (NV && NV.shareText) sb(T('📤 और विकल्प'), 'share-native', function () { NV.shareText(msg); });
     else if (navigator.share) sb(T('📤 और विकल्प'), 'share-native', function () { navigator.share({ title: nm, text: nm, url: url }); });
-    sa('✈️ Telegram', 'https://t.me/share/url?url=' + e(url) + '&text=' + e(nm), 'share-tg');
     sa('✉️ SMS', 'sms:?&body=' + e(msg), 'share-sms');
-    sa('📧 ' + T('ईमेल'), 'mailto:?subject=' + e(nm) + '&body=' + e(msg), 'share-mail');
     sa('📘 Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + e(url), 'share-fb');
     sb(T('🔗 लिंक कॉपी'), 'share-copy', function (a) {
       var done = function () { var o = a.textContent; a.textContent = T('✓ कॉपी हो गया'); setTimeout(function () { a.textContent = o; }, 1800); };
