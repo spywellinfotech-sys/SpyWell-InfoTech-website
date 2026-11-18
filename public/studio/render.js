@@ -211,6 +211,22 @@
   }
   function isEmpty(type, c) { var f = (c && c.fields) || {}; return !(FIELDS[type] || []).some(function (d) { return String(f[d[0]] || '').trim(); }); }
 
+  function openLightbox(urls, i) {
+    var ov = document.createElement('div'); ov.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;touch-action:pan-y';
+    var im = document.createElement('img'); im.style.cssText = 'max-width:96vw;max-height:88vh;object-fit:contain;border-radius:8px';
+    var ct = document.createElement('div'); ct.style.cssText = 'position:absolute;top:14px;left:0;right:0;text-align:center;color:#fff;font:600 15px sans-serif';
+    function show() { im.src = urls[i]; ct.textContent = (i + 1) + ' / ' + urls.length; }
+    function step(d) { i = (i + d + urls.length) % urls.length; show(); }
+    function btn(t, css, fn) { var b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.style.cssText = 'position:absolute;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:28px;width:48px;height:48px;border-radius:50%;cursor:pointer;' + css; b.onclick = function (e) { e.stopPropagation(); fn(); }; ov.appendChild(b); }
+    ov.appendChild(im); ov.appendChild(ct);
+    if (urls.length > 1) { btn('\u2039', 'left:8px;top:50%;margin-top:-24px', function () { step(-1); }); btn('\u203A', 'right:8px;top:50%;margin-top:-24px', function () { step(1); }); }
+    btn('\u2715', 'right:10px;top:8px;font-size:22px', function () { ov.remove(); });
+    ov.onclick = function (e) { if (e.target === ov || e.target === im) ov.remove(); };
+    var x0 = null; ov.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    ov.addEventListener('touchend', function (e) { if (x0 === null) return; var dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50 && urls.length > 1) step(dx < 0 ? 1 : -1); }, { passive: true });
+    show(); document.body.appendChild(ov);
+  }
+
   function picture(cls, im, shape) {
     var i = el('img', cls); i.src = im.url; i.alt = ''; i.loading = 'lazy';
     i.style.width = im.size + 'px'; if (shape === 'circle') i.style.height = im.size + 'px';
@@ -782,7 +798,8 @@
     if (d.services.length) { var si = sec(T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { var c = el('div', 'ws-card ws-sv'), p2 = svParts(x); c.appendChild(el('div', 'ws-ic', svIcon(p2[0], g.children.length))); c.appendChild(el('em', 'ws-no', String(g.children.length + 1))); c.appendChild(el('b', '', p2[0])); if (p2[1]) { c.appendChild(el('p', 'ws-sd', p2[1])); c.style.cursor = 'pointer'; c.onclick = function () { c.classList.toggle('open'); }; } g.appendChild(c); }); si.appendChild(g); }
     if (d.highlights.length) { var hi = sec(T('हमें क्यों चुनें')), hg = el('div', 'ws-grid ws-hl'); d.highlights.forEach(function (x) { var c = el('div', 'ws-card ws-hi'); c.appendChild(el('div', 'ws-ic ws-ic2', '✔')); c.appendChild(el('span', '', x)); hg.appendChild(c); }); hi.appendChild(hg); }
     var gk = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6'].filter(function (k) { return d.images[k]; });
-    if (gk.length) { var gi = sec(T('गैलरी')), gg = el('div', 'ws-gal'); gk.forEach(function (k) { var im = picture('ws-gp', d.images[k], 'gallery'); im.style.width = '100%'; gg.appendChild(im); }); gi.appendChild(gg); }
+    if (gk.length) { var gi = sec(T('गैलरी')), gg = el('div', 'ws-gal'); var urls = gk.map(function (k) { return d.images[k].url; });
+      gk.forEach(function (k, ix) { var im = picture('ws-gp', d.images[k], 'gallery'); im.style.width = '100%'; im.style.cursor = 'zoom-in'; im.onclick = function () { openLightbox(urls, ix); }; gg.appendChild(im); }); gi.appendChild(gg); }
     if (mapUrl) { var mi = sec(T('हमें यहाँ खोजें')); if (f.address) mi.appendChild(el('p', 'ws-about', f.address)); if (!opts.demo && f.address) { var fr = el('iframe', 'ws-map'); fr.setAttribute('loading', 'lazy'); fr.setAttribute('title', 'map'); fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade'); fr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent([f.address, f.city, f.state, f.pin].filter(Boolean).join(', ').replace(/\s*\n\s*/g, ', ')) + '&output=embed'; mi.appendChild(fr); } var mb = actA(link('ws-navbtn ws-mapbtn', T('🧭 रास्ता देखें'), mapUrl), 'map'); mi.appendChild(mb); }
     if (f.business && (f.name || d.images.photo)) { var ow = sec(T('मालिक / संपर्क व्यक्ति')), ob = el('div', 'ws-owner'); ob.style.cssText = 'text-align:center'; if (d.images.photo) ob.appendChild(picture('ph', d.images.photo, 'circle')); if (f.name) ob.appendChild(el('div', 'sr-nm', f.name)); if (f.designation) ob.appendChild(el('div', 'sr-des', f.designation)); if (opts.cardUrl) { var vcb = link('sr-call', T('📇 विज़िटिंग कार्ड देखें'), opts.cardUrl); vcb.style.cssText = 'display:inline-block;margin-top:10px'; ob.appendChild(vcb); } ow.appendChild(ob); drop(ow); }
     var ci = sec(T('संपर्क करें')), cg = el('div', 'ws-grid');
