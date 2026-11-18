@@ -752,6 +752,12 @@ function pPub(p){
   p.appendChild(h('label',{text:'कार्ड का लिंक (अंग्रेज़ी छोटे अक्षर, अंक और -)'}));
   var inp=h('input',{type:'text',maxlength:60,autocapitalize:'none',autocomplete:'off',spellcheck:'false'});
   inp.value=D.slug||(D.product_type==='invitation'?invSlug():(mobSlug()||slugify(R.title(D.product_type,C))));p.appendChild(inp);
+  var hasM=!!mobSlug();
+  if(hasM&&D.product_type!=='invitation'){var nl=h('label',{style:'display:flex;gap:8px;align-items:center;margin:8px 0;font-weight:700;color:#7a0a10'}),nc=h('input',{type:'checkbox'});
+    nc.checked=!!D.slug&&D.slug.indexOf(mobSlug())<0&&false;
+    nc.onchange=function(){if(nc.checked){var b=slugify((C.fields&&(C.fields.business||C.fields.name))||'card').slice(0,30)||'card',rnd=Math.random().toString(36).slice(2,6);inp.value=(b+'-'+rnd).replace(/-+/g,'-');}else{inp.value=mobSlug()}clearTimeout(tm);check()};
+    nl.appendChild(nc);nl.appendChild(document.createTextNode('🔒 मेरा मोबाइल नंबर लिंक (URL) में न लगाएँ'));p.appendChild(nl);
+    p.appendChild(h('div',{class:'k',style:'margin:-4px 0 8px;font-size:13px',text:'चुनने पर लिंक आपके बिज़नेस/नाम और 4 अक्षर से बनेगा, नंबर नहीं दिखेगा। पुराना लिंक बदलने पर पुराना लिंक बंद हो जाएगा।'}))}
   var pre=h('div',{class:'k',style:'word-break:break-all'});p.appendChild(pre);
   var er=h('div',{class:'e'});p.appendChild(er);
   var pb=h('button',{class:'btn',text:'प्रकाशित करें',id:'pubgo'});p.appendChild(pb);
