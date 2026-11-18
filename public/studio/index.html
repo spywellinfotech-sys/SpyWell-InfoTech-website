@@ -95,6 +95,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <button type="button" class="alt" id="g-btn" style="font-size:17px;padding:14px">🔐 Google से लॉगिन करें</button>
 <div class="err" id="li-err"></div>
 <button type="button" class="alt" data-go="mob" style="margin-top:10px;font-size:16px;padding:13px">📱 Google नहीं चल रहा? मोबाइल नंबर से लॉगिन / खाता</button>
+<button type="button" class="alt" data-go="otp" style="margin-top:10px;font-size:16px;padding:13px">✉️ ईमेल पर कोड (OTP) से लॉगिन / खाता</button>
 <div id="li-em" hidden>
 <label>ईमेल</label><input id="li-e" type="email" autocomplete="email">
 <label>पासवर्ड</label><input id="li-p" type="password" autocomplete="current-password">
@@ -112,6 +113,17 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="err" id="mb-err"></div>
 <button type="submit" id="mb-go">लॉगिन करें</button>
 <div class="k" style="margin-top:8px;font-size:13px">पासवर्ड भूल गए तो ईमेल से रीसेट नहीं होगा, इसलिए उसे याद रखें या कहीं लिख लें।</div>
+<button type="button" class="link" data-go="login">वापस</button>
+</form>
+
+<form class="card" id="v-otp" hidden>
+<h1>✉️ ईमेल कोड (OTP) से लॉगिन</h1>
+<div class="k" style="margin-bottom:10px">अपना ईमेल लिखें। हम 6 अंकों का कोड भेजेंगे। पासवर्ड की ज़रूरत नहीं। नया हो तो खाता भी बन जाएगा।</div>
+<label>ईमेल</label><input id="ot-e" type="email" autocomplete="email" required>
+<div id="ot-c" hidden><label>ईमेल में आया कोड</label><input id="ot-k" inputmode="numeric" maxlength="8" autocomplete="one-time-code" placeholder="123456"></div>
+<div class="err" id="ot-err"></div><div class="ok" id="ot-ok"></div>
+<button type="submit" id="ot-go">कोड भेजें</button>
+<button type="button" class="link" id="ot-re" hidden>दोबारा कोड भेजें / ईमेल बदलें</button>
 <button type="button" class="link" data-go="login">वापस</button>
 </form>
 
@@ -278,7 +290,7 @@ var b=document.createElement('a');b.textContent=a[4]?'⬇️ APK':'देखे�
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 var $=function(i){return document.getElementById(i)};
-var VIEWS=['load','login','reg','mob','forgot','newpw','dash'];
+var VIEWS=['load','login','reg','mob','otp','forgot','newpw','dash'];
 function show(v){VIEWS.forEach(function(x){$('v-'+x).hidden=x!==v});$('out').hidden=v!=='dash';var tb=$('tabbar');if(tb)tb.hidden=v!=='dash';var ibb=$('ib');if(ibb&&v!=='dash')ibb.hidden=true}
 var HEALING=0,HTRY=0;
 function heal(){try{var dv=$('v-dash');if(!dv||dv.hidden)return;var tb=$('tabbar');if(tb&&tb.hidden)tb.hidden=false;
@@ -1132,6 +1144,18 @@ $('g-btn').onclick=async function(){$('li-err').textContent='';
 $('v-login').onsubmit=async function(e){e.preventDefault();$('li-err').textContent='';busy(this,true);
   var r=await sb.auth.signInWithPassword({email:$('li-e').value.trim(),password:$('li-p').value});
   busy(this,false);if(r.error)$('li-err').textContent=msg(r.error)};
+var OTSENT=false;
+function otReset(){OTSENT=false;$('ot-c').hidden=true;$('ot-go').textContent='कोड भेजें';$('ot-re').hidden=true;$('ot-ok').textContent='';$('ot-err').textContent='';$('ot-e').readOnly=false}
+$('ot-re').onclick=otReset;
+$('v-otp').onsubmit=async function(e){e.preventDefault();var er=$('ot-err');er.textContent='';var em=$('ot-e').value.trim().toLowerCase();busy(this,true);
+  try{
+    if(!OTSENT){var r=await sb.auth.signInWithOtp({email:em,options:{shouldCreateUser:true,emailRedirectTo:HERE,data:{app:'studio'}}});
+      if(r.error){er.textContent=/rate|too many|seconds/i.test(r.error.message)?'बहुत जल्दी-जल्दी कोशिश हुई, थोड़ी देर बाद करें':msg(r.error)}
+      else{OTSENT=true;$('ot-c').hidden=false;$('ot-go').textContent='कोड जाँचें और लॉगिन करें';$('ot-re').hidden=false;$('ot-e').readOnly=true;$('ot-ok').textContent='कोड भेज दिया। ईमेल (स्पैम भी) देखें। अगर कोड की जगह लिंक आए तो उस लिंक को खोलें।'}}
+    else{var k=$('ot-k').value.replace(/\s/g,'');if(k.length<6){er.textContent='ईमेल में आया कोड लिखें';busy(this,false);return}
+      var v=await sb.auth.verifyOtp({email:em,token:k,type:'email'});if(v.error)er.textContent=/expired|invalid/i.test(v.error.message)?'कोड गलत है या पुराना हो गया। दोबारा कोड भेजें।':msg(v.error)}
+  }catch(x){er.textContent='नेटवर्क की दिक्कत, दोबारा कोशिश करें'}
+  busy(this,false)};
 var MBNEW=false;
 function mbMode(n){MBNEW=n;$('mb-nm').hidden=!n;$('mb-go').textContent=n?'खाता बनाएँ':'लॉगिन करें';$('mb-p').autocomplete=n?'new-password':'current-password';$('mb-t1').style.opacity=n?'.55':'1';$('mb-t2').style.opacity=n?'1':'.55';$('mb-err').textContent=''}
 $('mb-t1').onclick=function(){mbMode(false)};$('mb-t2').onclick=function(){mbMode(true)};mbMode(false);
