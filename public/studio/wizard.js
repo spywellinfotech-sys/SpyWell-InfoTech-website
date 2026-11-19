@@ -1,4 +1,4 @@
-/* SpyWell Studio – "Get Started" wizard (question-by-question). Shared by Home, Editor, card page, LiveCard and promo pages.
+/* LiveCard – "Get Started" wizard (question-by-question). Shared by Home, Editor, card page, LiveCard and promo pages.
    SWWizard.open({mode:'new'})                       -> pick kind, answer questions, then Studio creates the draft
    SWWizard.open({mode:'fill',type,occ,fields,done}) -> asks the key questions for an existing card, calls done(fields) */
 (function () {

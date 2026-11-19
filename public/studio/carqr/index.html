@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>गाड़ी पर लगाने वाला कॉल QR | SpyWell Live Studio</title>
-<link rel="icon" href="/favicon.png">
+<title>गाड़ी पर लगाने वाला कॉल QR | LiveCard</title>
+<link rel="icon" href="/dyname/logo.png">
 <style>
 :root{--wine:#8b1a2b;--ink:#2b1a14;--bg:#fdf6e8;--line:#e8d5ad;--mut:#7a6248}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
@@ -13,7 +13,7 @@ button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;backg
 .k{font-size:13px;color:var(--mut);margin-top:6px}.e{color:#b00020;font-size:14px;margin-top:6px}
 #pv{width:100%;max-width:300px;display:block;margin:12px auto;border:1px solid var(--line);border-radius:8px}
 [hidden]{display:none!important}</style><script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script></head><body>
-<div class="top"><b><img src="/logo.png" alt="SpyWell" width="30" height="30" style="background:#fff;border-radius:50%;padding:2px;vertical-align:middle;margin-right:8px">🚗 कार कॉल QR</b><a href="/studio/">← Studio</a></div>
+<div class="top"><b><img src="/dyname/logo.png" alt="LiveCard" width="30" height="30" style="background:#fff;border-radius:50%;padding:2px;vertical-align:middle;margin-right:8px">🚗 कार कॉल QR</b><a href="/studio/">← Studio</a></div>
 <div class="wrap"><h1>गाड़ी पर लगाने वाला कॉल QR</h1>
 <div class="k">इसे स्कैन करने पर "कॉल करें" का बड़ा बटन खुलता है। बिल्कुल मुफ़्त। QR आपके प्रोफ़ाइल वाले मोबाइल नंबर से ही बनता है। ध्यान रहे, स्कैन करने वाले को आपका नंबर दिखेगा।</div>
 <div class="card" id="gate" hidden></div>
@@ -50,7 +50,7 @@ function draw(){var cm=num();$('err').textContent='';
   var nm=$('n').value.trim(),vn=$('v').value.trim().toUpperCase();
   x.font='38px sans-serif';if(nm)x.fillText(nm,W/2,two?750:820,W-80);
   x.font='bold 70px sans-serif';if(vn)x.fillText(vn,W/2,two?860:920,W-80);
-  x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('SpyWell Live Studio',W/2,962);
+  x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('LiveCard',W/2,962);
   try{$('pv').src=sc.toDataURL('image/png');$('pv').hidden=false}catch(e){$('pv').hidden=true}}
 var svT=null,CARS=[],CI=0;
 function curToCar(){CARS[CI]={t:$('t').value.trim().slice(0,40),n:$('n').value.trim().slice(0,30),v:$('v').value.trim().toUpperCase().slice(0,14),w:$('w').value}}

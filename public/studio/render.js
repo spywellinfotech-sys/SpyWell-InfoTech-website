@@ -1,4 +1,4 @@
-/* SpyWell Live Studio – template renderer.
+/* LiveCard – template renderer.
    One engine for editor preview, template chooser and public pages.
    Input: product type + template config (studio_templates.config) + customer content (studio_designs.content_json).
    content_json shape: { fields:{}, events:[], services:[], style:{}, images:{} }
@@ -776,7 +776,7 @@
     st.setProperty('--soft', rgba(fg, 0.1)); st.fontSize = (16 * s.size) + 'px'; if (s.weight) st.fontWeight = s.weight;
     var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website);
     var mapUrl = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.address, f.city, f.state, f.pin].filter(Boolean).join(', ').replace(/\s*\n\s*/g, ', '))) : '';
-    var nav = el('div', 'ws-nav'); nav.appendChild(el('b', '', f.business || f.name || 'SpyWell'));
+    var nav = el('div', 'ws-nav'); nav.appendChild(el('b', '', f.business || f.name || 'LiveCard'));
     if (tel) nav.appendChild(actA(link('ws-navbtn', T('📞 कॉल'), 'tel:+91' + tel), 'call'));
     root.appendChild(nav);
     var hero = el('div', 'ws-hero'), hin = el('div', 'ws-in');

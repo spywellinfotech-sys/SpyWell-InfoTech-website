@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>मिनी वेबसाइट एडिटर | LiveCard</title>
-<meta name="robots" content="noindex"><link rel="icon" href="/favicon.png">
+<meta name="robots" content="noindex"><link rel="icon" href="/dyname/logo.png">
 <style>
 :root{--wine:#12307f;--ink:#14203d;--bg:#f2f6fd;--line:#d5def2;--mut:#5a6a8c}
 .top{background:linear-gradient(135deg,#06133f,#12307f)!important}.panel{box-shadow:0 2px 10px rgba(18,48,127,.07);border-radius:16px}
@@ -342,7 +342,7 @@ function pTpl(p){
 
 /* ---------- AI ---------- */
 var AIR=null,AIDOCS={},aiMode='content',aiBusy=false,CR={bal:null,admin:false,info:null,loaded:false};
-var AIERR={ai_off:'AI अभी बंद है। थोड़ी देर बाद कोशिश करें।',no_credit:'AI से पढ़ने के लिए पहले भुगतान करें।',unauthorized:'लॉगिन पूरा नहीं है। पेज दोबारा खोलकर लॉगिन करें।',limit:'आज की AI सीमा पूरी हो गई। कल फिर कोशिश करें।',not_configured:'AI सेवा अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।',ai_key:'AI सेवा अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।',ai_credit:'AI सेवा अभी उपलब्ध नहीं है। कृपया बाद में कोशिश करें।',ai_busy:'AI अभी व्यस्त है। एक मिनट बाद दोबारा कोशिश करें।',ai_timeout:'AI ने जवाब देने में बहुत समय लिया। दोबारा कोशिश करें।',ai_bad_output:'AI कार्ड समझ नहीं पाया। साफ़ और सीधी फ़ोटो से दोबारा कोशिश करें।',bad_file:'फ़ाइल सही नहीं है। JPG, PNG, WEBP फ़ोटो या PDF दें।',too_big:'फ़ाइल बहुत बड़ी है।'};
+var AIERR={ai_off:'AI अभी बंद है। थोड़ी देर बाद कोशिश करें।',no_credit:'AI से पढ़ने के लिए पहले भुगतान करें।',unauthorized:'लॉगिन पूरा नहीं है। पेज दोबारा खोलकर लॉगिन करें।',limit:'आज की AI सीमा पूरी हो गई। कल फिर कोशिश करें।',not_configured:'AI सेवा अभी चालू नहीं है। कृपया LiveCard टीम से संपर्क करें।',ai_key:'AI सेवा अभी चालू नहीं है। कृपया LiveCard टीम से संपर्क करें।',ai_credit:'AI सेवा अभी उपलब्ध नहीं है। कृपया बाद में कोशिश करें।',ai_busy:'AI अभी व्यस्त है। एक मिनट बाद दोबारा कोशिश करें।',ai_timeout:'AI ने जवाब देने में बहुत समय लिया। दोबारा कोशिश करें।',ai_bad_output:'AI कार्ड समझ नहीं पाया। साफ़ और सीधी फ़ोटो से दोबारा कोशिश करें।',bad_file:'फ़ाइल सही नहीं है। JPG, PNG, WEBP फ़ोटो या PDF दें।',too_big:'फ़ाइल बहुत बड़ी है।'};
 function toB64(blob){return new Promise(function(res,rej){var f=new FileReader();f.onload=function(){res(String(f.result).split(',')[1])};f.onerror=rej;f.readAsDataURL(blob)})}
 function loadPdfJs(){return new Promise(function(res,rej){if(window.pdfjsLib)return res(window.pdfjsLib);var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
   sc.onload=function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';res(window.pdfjsLib)};sc.onerror=rej;document.head.appendChild(sc)})}
@@ -382,12 +382,12 @@ async function buy(msg){
   try{
     var o=await fnCall('studio-pay',{action:'create'});await loadRzp();
     await new Promise(function(res,rej){
-      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:'AI से कार्ड पढ़ना ('+o.credits+' बार)',
+      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'AI से कार्ड पढ़ना ('+o.credits+' बार)',
         handler:async function(r){try{var v=await fnCall('studio-pay',{action:'verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});CR.bal=v.balance;res()}catch(e){rej(e)}},
         modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
     panel();var m2=$('aimsg');if(m2){m2.className='k';m2.textContent='भुगतान हो गया। अब कार्ड की फ़ोटो या PDF दें।'}
-  }catch(e){msg.className='e';msg.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।':'भुगतान पूरा नहीं हो पाया। अगर पैसे कट गए हों तो पेज दोबारा खोलें, क्रेडिट अपने-आप जुड़ जाएगा।'}}
+  }catch(e){msg.className='e';msg.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया LiveCard टीम से संपर्क करें।':'भुगतान पूरा नहीं हो पाया। अगर पैसे कट गए हों तो पेज दोबारा खोलें, क्रेडिट अपने-आप जुड़ जाएगा।'}}
 function aiReview(p){
   var j=AIR.j,c=j.content||{},fl=c.fields||{},unc=j.uncertain||[],defs=R.fieldsFor(D.product_type,cfg()),ed={};
   p.appendChild(h('div',{class:'item'},[h('b',{text:'AI ने ये जानकारी पढ़ी है। भरने से पहले जाँच लीजिए'}),h('div',{class:'k',text:(j.cached?'यह फ़ोटो पहले पढ़ी जा चुकी है, इसलिए इस बार क्रेडिट नहीं कटा। ':'')+'पीले निशान वाले हिस्से AI को साफ़ नहीं दिखे, उन्हें ज़रूर देखें। गलत हो तो यहीं सुधारिए।'})]));
@@ -431,7 +431,7 @@ function pAI(p){
     if(inf&&inf.configured){
       p.appendChild(h('div',{class:'item'},[h('b',{text:'AI से कार्ड पढ़ने के लिए भुगतान करें'}),h('div',{class:'k',text:'₹'+inf.price+' में '+inf.credits+' बार (गलती हो तो दोबारा पढ़वा सकते हैं)।'}),
         h('button',{class:'btn',text:'₹'+inf.price+' का भुगतान करें',onclick:function(){buy(msg)}})]));
-    }else p.appendChild(h('div',{class:'e',text:'भुगतान अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।'}));
+    }else p.appendChild(h('div',{class:'e',text:'भुगतान अभी चालू नहीं है। कृपया LiveCard टीम से संपर्क करें।'}));
     p.appendChild(msg);return}
   var seg=h('div',{class:'seg'});[['content','सिर्फ़ जानकारी भरें'],['creative','AI Creative (डिज़ाइन भी)'],['original','🎯 Original Style (मेरे कार्ड जैसा लुक)']].forEach(function(a){
     seg.appendChild(h('button',{class:aiMode===a[0]?'on':'',text:a[1],onclick:function(){aiMode=a[0];panel()}}))});
@@ -575,7 +575,7 @@ async function manualPay(plan,amount){
   if(S.manual_pay!=='1'||!S.upi_id)return null;
   var wuse=0;try{var wq=await sb.rpc('studio_wallet_quote',{p_amount:amount});wuse=(wq&&wq.data&&wq.data.use)||0}catch(e){}
   var fullAmt=amount;if(wuse>0)amount=amount-wuse;
-  var uri='upi://pay?pa='+encodeURIComponent(S.upi_id)+'&pn='+encodeURIComponent(S.upi_name||'SpyWell InfoTech')+'&am='+amount+'&cu=INR&tn='+encodeURIComponent('SpyWell Studio '+(PLN[plan]||'कार्ड'));
+  var uri='upi://pay?pa='+encodeURIComponent(S.upi_id)+'&pn='+encodeURIComponent(S.upi_name||'LiveCard InfoTech')+'&am='+amount+'&cu=INR&tn='+encodeURIComponent('LiveCard '+(PLN[plan]||'कार्ड'));
   return new Promise(function(res){
     var ov=h('div',{style:'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:flex-end;justify-content:center'});
     var bx=h('div',{style:'background:#fff;width:100%;max-width:460px;border-radius:16px 16px 0 0;padding:16px;max-height:92vh;overflow:auto'});ov.appendChild(bx);
@@ -596,7 +596,7 @@ async function manualPay(plan,amount){
       sb2.disabled=false;
       if(q.error){var m=q.error.message||'';var k=Object.keys(MANERR).filter(function(x){return m.indexOf(x)>=0})[0];er.textContent=k?MANERR[k]:'जमा नहीं हुआ। दोबारा कोशिश करें।';return}
       toast('⏳ भुगतान जमा हुआ। जाँच के बाद प्लान चालू होगा।','ok');
-      try{window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मैंने SpyWell Studio के लिए ₹'+amount+' UPI से भेजे हैं। UTR: '+ut.value.trim()),'_blank','noopener')}catch(e){}
+      try{window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मैंने LiveCard के लिए ₹'+amount+' UPI से भेजे हैं। UTR: '+ut.value.trim()),'_blank','noopener')}catch(e){}
       close(true)};
     document.body.appendChild(ov)})}
 async function payPlan(plan,amount){
@@ -604,12 +604,12 @@ async function payPlan(plan,amount){
     var mp=await manualPay(plan,amount);if(mp!==null){if(mp)panel();return false}
     var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await loadRzp();
     await new Promise(function(res,rej){
-      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:PLN[plan]+' (1 साल)',
+      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:PLN[plan]+' (1 साल)',
         handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
         modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
     return true
-  }catch(e){toast(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। SpyWell टीम से संपर्क करें।':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, प्लान अपने आप चालू हो जाएगा।','bad');return false}}
+  }catch(e){toast(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। LiveCard टीम से संपर्क करें।':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, प्लान अपने आप चालू हो जाएगा।','bad');return false}}
 function planBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
   sb.rpc('studio_sub_info',{p_id:D.id}).then(function(r){var s=r&&r.data;if(!s||!s.enabled||!s.required)return;
@@ -651,7 +651,7 @@ function domainForm(box){box.appendChild(h('b',{text:'🌍 अपना डो�
     var r=await sb.rpc('studio_request_domain',{p_design:D.id,p_domain:v});
     if(r.error){msg.className='e';var m=(r.error.message||'');msg.textContent=m.indexOf('bad_domain')>=0?DOMERR.bad_domain:m.indexOf('domain_taken')>=0?DOMERR.domain_taken:m.indexOf('forbidden')>=0?DOMERR.forbidden:m.indexOf('upgrade_required')>=0?'पहले फ़ुल वेबसाइट प्लान लें।':'अनुरोध नहीं गया। दोबारा कोशिश करें।'}
     else{msg.className='k';msg.textContent='अनुरोध भेज दिया गया।';st.textContent='⏳ अनुरोध भेजा गया: '+r.data.domain+'। टीम जल्द संपर्क करेगी।';inp.value=r.data.domain;
-      window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मुझे अपनी मिनी वेबसाइट पर अपना डोमेन '+r.data.domain+' जोड़ना है (SpyWell Studio)।'),'_blank','noopener')}
+      window.open('https://wa.me/919837900303?text='+encodeURIComponent('नमस्ते, मुझे अपनी मिनी वेबसाइट पर अपना डोमेन '+r.data.domain+' जोड़ना है (LiveCard)।'),'_blank','noopener')}
     b.disabled=false};
   box.appendChild(inp);b.style.marginTop='8px';box.appendChild(b);box.appendChild(msg)}
 function dirBox(p){
@@ -721,7 +721,7 @@ function pPub(p){
           var nm=(onm.value||'').trim(),vn=(vno.value||'').trim().toUpperCase();
           x.font='38px sans-serif';if(nm)x.fillText(nm,W/2,two?750:820,W-80);
           x.font='bold 70px sans-serif';if(vn)x.fillText(vn,W/2,two?860:920,W-80);
-          x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('SpyWell Live Studio',W/2,962);try{pv.src=sc.toDataURL('image/png')}catch(e){}}
+          x.fillStyle='#8b1a2b';x.font='28px sans-serif';x.fillText('LiveCard',W/2,962);try{pv.src=sc.toDataURL('image/png')}catch(e){}}
         drawSticker();[ttl,onm,vno].forEach(function(i){i.oninput=drawSticker});wsel.onchange=drawSticker;
         cbox.appendChild(h('button',{class:'btn',text:'⬇️ QR स्टिकर डाउनलोड करें',onclick:function(){
           sc.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a2=document.createElement('a');a2.href=u;a2.download='car-call-qr-'+cm+'.png';document.body.appendChild(a2);a2.click();a2.remove();
@@ -782,24 +782,24 @@ function pPub(p){
     try{
       var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:'premium'});await loadRzp();
       await new Promise(function(res,rej){
-        var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:'प्रीमियम थीम',
+        var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'प्रीमियम थीम',
           handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
           modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
         rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
       return true
-    }catch(e){er.className='e';er.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।':e.code==='free'?'':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, अपने-आप जुड़ जाएगा।';return e.code==='free'}}
+    }catch(e){er.className='e';er.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया LiveCard टीम से संपर्क करें।':e.code==='free'?'':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, अपने-आप जुड़ जाएगा।';return e.code==='free'}}
   async function payPub(){
     er.className='k';er.textContent='भुगतान तैयार हो रहा है…';
     var mp=await manualPay((PI&&PI.sub&&PI.sub.next_plan)||null,PI&&PI.price);if(mp!==null){er.className='k';er.textContent=mp?'भुगतान जाँच में है। मंज़ूरी के बाद आप प्रकाशित कर पाएँगे।':'भुगतान रद्द हुआ।';return false}
     try{
       var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:(PI&&PI.sub&&PI.sub.next_plan)||undefined});await loadRzp();
       await new Promise(function(res,rej){
-        var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'SpyWell Live Studio',description:'कार्ड प्रकाशित करना',
+        var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'कार्ड प्रकाशित करना',
           handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
           modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
         rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
       return true
-    }catch(e){er.className='e';er.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया SpyWell टीम से संपर्क करें।':e.code==='free'||e.code==='already_paid'?'':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, अपने-आप जुड़ जाएगा।';
+    }catch(e){er.className='e';er.textContent=e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। कृपया LiveCard टीम से संपर्क करें।':e.code==='free'||e.code==='already_paid'?'':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, अपने-आप जुड़ जाएगा।';
       return e.code==='free'||e.code==='already_paid'}}
   pb.onclick=async function(){
     if(R.isEmpty(D.product_type,C)){er.className='e';er.textContent='पहले कार्ड में कुछ जानकारी भरें।';toast('पहले कार्ड में कुछ जानकारी भरें।','bad');return}
