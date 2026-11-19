@@ -1213,7 +1213,7 @@ async function dash(user){
   var a=await sb.rpc('studio_is_admin');
   $('d-admin').hidden=true;
   try{var _ob=document.getElementById('adm-sw');if(_ob)_ob.remove()}catch(e){}
-  try{var MD='user';try{MD=localStorage.getItem('st_mode')||'user'}catch(e){}var isA=!!(a&&a.data===true);if(!isA)MD='user';
+  try{var MD='user';try{MD=localStorage.getItem('st_mode')||'user'}catch(e){}var isA=!!(a&&a.data===true);if(!isA)MD='user';try{['c-plans','c-sub'].forEach(function(i){var e=$(i);if(e)e.style.setProperty('display',isA?'':'none',isA?'':'important')})}catch(e){}
     var tba=$('tb-adm');if(tba)tba.hidden=!(isA&&MD==='both');if(isA&&MD==='both'&&H0==='#adm'&&!ADMR){ADMR=1;setTab('adm',true)}
     var _gc=$('pf-th'),_o2=document.getElementById('adm-top');if(_o2)_o2.remove();
     if(isA&&_gc){var tp=document.createElement('div');tp.id='adm-top';tp.style.cssText='display:flex;gap:4px;margin-top:6px;background:#fff1f0;border-radius:10px;padding:3px;border:1px solid #f0b4b0';
