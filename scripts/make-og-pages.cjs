@@ -3,7 +3,7 @@
 // People are sent on to the real viewer by a script; link-preview bots read only the meta tags.
 const fs = require('fs'), path = require('path');
 const B = 'https://rxhanrtoaplwphmwpgqg.supabase.co', K = 'sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
-const ORIGIN = 'https://spywell.in';
+const ORIGIN = process.env.SITE_ORIGIN || 'https://spywell.in';
 let FALLBACK = ORIGIN + '/studio/vicard-icon.png', BRAND = 'DynaMe'; // both can be changed from studio_settings (brand_name, brand_icon)
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const clip = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };

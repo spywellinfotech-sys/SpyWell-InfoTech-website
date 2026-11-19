@@ -1,0 +1,70 @@
+# Copy this file into a NEW repo (e.g. spywellinfotech-sys/livecard) as .github/workflows/deploy.yml
+# Pages setting in that repo: Source = GitHub Actions, Custom domain = livecard.in
+name: Deploy livecard.in
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/20 * * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: spywellinfotech-sys/SpyWell-InfoTech-website
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - name: Build
+        env:
+          VITE_SITE_URL: https://livecard.in
+        run: npm run build -- --base=/ && node scripts/make404.cjs
+      - name: Per-card link previews
+        continue-on-error: true
+        env:
+          SITE_ORIGIN: https://livecard.in
+        run: node scripts/make-og-pages.cjs
+      - name: Card screenshots for link previews
+        continue-on-error: true
+        timeout-minutes: 14
+        env:
+          SITE_ORIGIN: https://livecard.in
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          node scripts/make-og-shots.cjs
+      - name: livecard.in home = DynaMe page
+        run: |
+          cp dist/dyname/index.html dist/index.html
+          sed -i 's#https://spywell.in/dyname/#https://livecard.in/#g; s#https://spywell.in/dyname/og.jpg#https://livecard.in/dyname/og.jpg#g' dist/index.html
+          echo "livecard.in" > dist/CNAME
+          printf 'User-agent: *\nAllow: /\n' > dist/robots.txt
+          rm -f dist/sitemap.xml
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

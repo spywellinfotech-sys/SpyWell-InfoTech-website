@@ -2,7 +2,7 @@
 // from the built site, puts the picture on a 1200x630 canvas, and points og:image of the preview pages at it.
 // Needs playwright + chromium (installed by the workflow). Any failure just leaves the old small photo preview in place.
 const fs = require('fs'), path = require('path'), http = require('http');
-const ORIGIN = 'https://spywell.in', DIST = 'dist', LIMIT = 400;
+const ORIGIN = process.env.SITE_ORIGIN || 'https://spywell.in', DIST = 'dist', LIMIT = 400;
 let chromium, sharp;
 try { chromium = require('playwright').chromium; } catch (e) { console.warn('playwright missing, shots skipped'); process.exit(0); }
 try { sharp = require('sharp'); } catch (e) { console.warn('sharp missing, shots skipped'); process.exit(0); }
