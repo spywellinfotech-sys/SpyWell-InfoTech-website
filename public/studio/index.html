@@ -1254,7 +1254,7 @@ $('mb-t1').onclick=function(){mbMode(false)};$('mb-t2').onclick=function(){mbMod
 $('v-mob').onsubmit=async function(e){e.preventDefault();var er=$('mb-err');er.textContent='';var m=$('mb-m').value.replace(/\D/g,'').slice(-10),p=$('mb-p').value;
   if(!/^[6-9][0-9]{9}$/.test(m)){er.textContent='सही 10 अंकों का मोबाइल नंबर लिखें';return}
   if(p.length<8){er.textContent='पासवर्ड कम से कम 8 अक्षर का रखें';return}
-  busy(this,true);var em=m+'@mobile.spywell.in';
+  busy(this,true);var em=m+'@mobile.livecard.in';
   try{
     if(MBNEW){var nm=$('mb-n').value.trim();if(nm.length<2){er.textContent='अपना नाम लिखें';busy(this,false);return}
       var r=await fetch(B+'/functions/v1/studio-mobile-signup',{method:'POST',headers:{'content-type':'application/json',apikey:K},body:JSON.stringify({mobile:m,password:p,name:nm})});var j={};try{j=await r.json()}catch(x){}
