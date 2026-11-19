@@ -35,7 +35,7 @@ button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;backg
 (function(){
 var $=function(i){return document.getElementById(i)},sc=document.createElement('canvas');
 var q=new URLSearchParams(location.search);
-function pageUrl(cm){var u='https://spywell.in/studio/call/?m='+cm,nn=$('n').value.trim().slice(0,30),vv=$('v').value.trim().toUpperCase().slice(0,14);if(nn)u+='&n='+encodeURIComponent(nn);if(vv)u+='&v='+encodeURIComponent(vv);return u}
+function pageUrl(cm){var u='https://livecard.in/studio/call/?m='+cm,nn=$('n').value.trim().slice(0,30),vv=$('v').value.trim().toUpperCase().slice(0,14);if(nn)u+='&n='+encodeURIComponent(nn);if(vv)u+='&v='+encodeURIComponent(vv);return u}
 function num(){return $('m').value.replace(/\D/g,'').slice(-10)}
 function qr(text,px){var c=document.createElement('canvas');try{window.StudioQR.draw(c,text,px)}catch(e){}return c}
 function draw(){var cm=num();$('err').textContent='';

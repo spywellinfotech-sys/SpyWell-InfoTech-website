@@ -44,7 +44,7 @@ details>summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;di
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
-var $=function(i){return document.getElementById(i)},P=[],sb=null,u=null,pcj={},PROMO='https://spywell.in/studio/',EDIT=null,LAB='दुकान';
+var $=function(i){return document.getElementById(i)},P=[],sb=null,u=null,pcj={},PROMO='https://livecard.in/studio/',EDIT=null,LAB='दुकान';
 var LABS=[['🏠','घर'],['🏪','दुकान'],['🏢','ऑफ़िस'],['🏭','फ़ैक्टरी'],['🚧','साइट'],['📦','गोदाम'],['✏️','अन्य']];
 function ic(l){for(var i=0;i<LABS.length-1;i++)if(LABS[i][1]===l)return LABS[i][0];return '📍'}
 function mk(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
@@ -100,7 +100,7 @@ $('f-save').onclick=function(){var e=$('f-err'),ok=$('f-ok');e.textContent='';ok
       var srv=Array.isArray(pcj.places)?pcj.places:[],ids={};srv.forEach(function(q){ids[q.id]=1});
       var extra=P.filter(function(q){return q&&q.id&&!ids[q.id]});P=srv.concat(extra);if(extra.length)store();else try{localStorage.setItem('vc_places',JSON.stringify(P))}catch(e){}
       draw();
-      try{var r=await sb.rpc('studio_ref_me');if(r&&r.data&&r.data.enabled&&r.data.code)PROMO='https://spywell.in/studio/?ref='+r.data.code}catch(e){}}}}catch(e){}
+      try{var r=await sb.rpc('studio_ref_me');if(r&&r.data&&r.data.enabled&&r.data.code)PROMO='https://livecard.in/studio/?ref='+r.data.code}catch(e){}}}}catch(e){}
 })();
 })();
 </script></body></html>

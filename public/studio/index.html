@@ -287,7 +287,7 @@ var b=document.createElement('a');b.textContent=a[4]?'⬇️ APK':'देखे�
 <div class="k" style="margin:10px 0 0;font-size:11px;line-height:1.8"><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/terms/">Terms</a> · <a href="/dyname/disclaimer/">Disclaimer</a> · <a href="/dyname/refund/">Refund</a></div></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/render.js?v=20261119a"></script>
+<script src="/studio/render.js?v=20261119b"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -302,7 +302,7 @@ window.addEventListener('pageshow',heal);document.addEventListener('visibilitych
 setInterval(heal,1200);
 if(!window.supabase){$('v-load').textContent='लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।';return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
-var HERE='https://spywell.in/studio/';
+var HERE=location.origin+'/studio/';
 var recovering=false;
 function msg(e){
   var m=(e&&e.message)||'कुछ गड़बड़ हुई';
@@ -1075,7 +1075,7 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
     var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';
     var t1=mk('b','',nm);t1.style.cssText='display:block;font-size:17px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';tx.appendChild(t1);
     var t2=mk('div','',pub?'आपकी वेबसाइट लाइव है ✅':'कार्ड प्रकाशित होते ही वेबसाइट अपने-आप बन जाएगी');t2.style.cssText='font-size:13px;opacity:.92;margin-top:3px';tx.appendChild(t2);
-    if(pub){var u2=mk('div','','spywell.in/web/'+x.slug);u2.style.cssText='font-size:12px;opacity:.9;margin-top:6px;word-break:break-all';tx.appendChild(u2);var t3=mk('div','','👆 वेबसाइट दबाकर बड़ा देखें');t3.style.cssText='font-size:12px;margin-top:6px;background:rgba(255,255,255,.18);border-radius:8px;padding:4px 8px;display:inline-block';tx.appendChild(t3)}
+    if(pub){var u2=mk('div','','livecard.in/web/'+x.slug);u2.style.cssText='font-size:12px;opacity:.9;margin-top:6px;word-break:break-all';tx.appendChild(u2);var t3=mk('div','','👆 वेबसाइट दबाकर बड़ा देखें');t3.style.cssText='font-size:12px;margin-top:6px;background:rgba(255,255,255,.18);border-radius:8px;padding:4px 8px;display:inline-block';tx.appendChild(t3)}
     var pv=mk('div','');pv.style.cssText='flex:none;width:150px;height:240px;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.35);position:relative;border:2px solid #fff';
     if(pub){var pf=document.createElement('iframe');pf.src='/studio/view/?t=w&pv=1&s='+encodeURIComponent(x.slug);pf.loading='lazy';pf.tabIndex=-1;pf.setAttribute('aria-hidden','true');pf.style.cssText='border:0;width:390px;height:624px;transform:scale(.385);transform-origin:0 0;pointer-events:none;background:#fff';pv.appendChild(pf);
       var ov=mk('div','');ov.style.cssText='position:absolute;inset:0;cursor:pointer';ov.onclick=function(){openVw(x.slug,'visiting',x.title,'w')};pv.appendChild(ov)}
@@ -1296,7 +1296,7 @@ function locTile(){
   var P=(ADH&&ADH.cj&&Array.isArray(ADH.cj.places))?ADH.cj.places:[];
   var IC={'घर':'🏠','दुकान':'🏪','ऑफ़िस':'🏢','फ़ैक्टरी':'🏭','साइट':'🚧','गोदाम':'📦'};
   function txt(p,promo){var t=(IC[p.label]||'📍')+' '+p.label+(p.name?' · '+p.name:'')+'\n';if(p.addr)t+='पता: '+p.addr+'\n';if(p.mob)t+='मोबाइल: +91 '+p.mob+'\n';if(p.map)t+='📍 लोकेशन (दबाते ही रास्ता खुलेगा): '+p.map+'\n';return t+'\n📲 अपना डिजिटल कार्ड और लोकेशन कार्ड मुफ़्त बनाएँ: '+promo}
-  var PROMO='https://spywell.in/studio/';sb.rpc('studio_ref_me').then(function(r){if(r&&r.data&&r.data.enabled&&r.data.code)PROMO='https://spywell.in/studio/?ref='+r.data.code},function(){});
+  var PROMO='https://livecard.in/studio/';sb.rpc('studio_ref_me').then(function(r){if(r&&r.data&&r.data.enabled&&r.data.code)PROMO='https://livecard.in/studio/?ref='+r.data.code},function(){});
   if(!P.length){var e=mk('div','','अभी कोई जगह सेव नहीं है। दुकान, ऑफ़िस, फ़ैक्टरी, साइट की लोकेशन सेव करें और कहीं से भी भेजें।');e.style.cssText='color:#fff;font-size:14px;margin-top:10px;opacity:.95';box.appendChild(e)}
   P.forEach(function(p){var r=mk('div','');r.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 12px;margin-top:8px;background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.18);color:#14203d';
     var n=mk('div','');n.style.cssText='flex:1;min-width:0';var b=mk('b','',(IC[p.label]||'📍')+' '+p.label+(p.name?' · '+p.name:''));b.style.cssText='display:block;font-size:15px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';n.appendChild(b);

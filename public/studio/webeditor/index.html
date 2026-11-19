@@ -71,7 +71,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div id="pubbar" hidden><div class="pbrow"><button type="button" id="pubbtn">🚀 प्रकाशित करें</button><button type="button" id="pinbtn" hidden>🔑 PIN</button></div></div>
 <div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/render.js?v=20261119a"></script>
+<script src="/studio/render.js?v=20261119b"></script>
 <script src="/studio/qr.js"></script>
 <script>
 (function(){
@@ -542,7 +542,7 @@ function pExtra(p){
     var on=C.style.site===true;
     var cb=h('input',{type:'checkbox'});cb.checked=on;cb.style.cssText='width:auto;margin-right:8px';
     cb.onchange=function(){C.style.site=cb.checked?true:undefined;if(!cb.checked)delete C.style.site;changed()};
-    p.appendChild(h('div',{class:'item'},[h('label',{style:'display:flex;align-items:center'},[cb,h('b',{text:'🌐 मिनी वेबसाइट मोड'})]),h('div',{class:'k',text:'चालू करने पर आपको अलग वेबसाइट लिंक (spywell.in/web/आपका-नाम) मिलेगा: हमारे बारे में, सेवाएँ, संपर्क, QR और कॉन्टैक्ट सेव। विज़िटिंग कार्ड का /v/ लिंक वैसा ही रहेगा।'})]));
+    p.appendChild(h('div',{class:'item'},[h('label',{style:'display:flex;align-items:center'},[cb,h('b',{text:'🌐 मिनी वेबसाइट मोड'})]),h('div',{class:'k',text:'चालू करने पर आपको अलग वेबसाइट लिंक (livecard.in/web/आपका-नाम) मिलेगा: हमारे बारे में, सेवाएँ, संपर्क, QR और कॉन्टैक्ट सेव। विज़िटिंग कार्ड का /v/ लिंक वैसा ही रहेगा।'})]));
     return}
   var box=h('div',{class:'item'});p.appendChild(box);
   box.appendChild(h('b',{text:'🗂 इसी इवेंट के कई कार्ड'}));
@@ -641,7 +641,7 @@ function domainForm(box){box.appendChild(h('b',{text:'🌍 अपना डो�
   var st=h('div',{class:'k',style:'margin-top:6px'}),msg=h('div',{class:'k'});
   var inp=h('input',{type:'text',maxlength:120,placeholder:'आपका डोमेन, जैसे aapkanaam.com'});inp.style.marginTop='8px';
   var b=h('button',{class:'btn alt',text:'डोमेन के लिए अनुरोध भेजें'});
-  box.appendChild(h('div',{class:'k',text:'अपग्रेड करने पर आपकी मिनी वेबसाइट spywell.in/web/... के साथ आपके अपने डोमेन (जैसे www.aapkanaam.com) पर भी खुलेगी। डोमेन आपके नाम से होना चाहिए। अनुरोध के बाद हमारी टीम आपसे संपर्क करके सेटअप करवाएगी।'}));
+  box.appendChild(h('div',{class:'k',text:'अपग्रेड करने पर आपकी मिनी वेबसाइट livecard.in/web/... के साथ आपके अपने डोमेन (जैसे www.aapkanaam.com) पर भी खुलेगी। डोमेन आपके नाम से होना चाहिए। अनुरोध के बाद हमारी टीम आपसे संपर्क करके सेटअप करवाएगी।'}));
   box.appendChild(st);
   sb.from('studio_settings').select('v').eq('k','domain_price_inr').maybeSingle().then(function(r){var v=r&&r.data&&String(r.data.v||'').trim();if(v&&v!=='0')box.insertBefore(h('div',{class:'k',style:'font-weight:600',text:'अपग्रेड शुल्क: ₹'+v+''}),st)});
   sb.from('studio_domain_requests').select('domain,status,note').eq('design_id',D.id).maybeSingle().then(function(r){var q=r&&r.data;if(!q)return;
@@ -715,7 +715,7 @@ function pPub(p){
           function qr(text,px){var q=document.createElement('canvas');try{window.StudioQR.draw(q,text,px)}catch(e){}return q}
           if(two){x.drawImage(qr('tel:+91'+cm,330),40,215,330,330);x.drawImage(qr('https://wa.me/91'+cm,330),430,215,330,330);
             x.fillStyle='#2b1a14';x.font='bold 36px sans-serif';x.fillText('📞 CALL',205,590);x.fillText('💬 WHATSAPP',595,590)}
-          else{var pu='https://spywell.in/studio/call/?m='+cm,nn=(onm.value||'').trim().slice(0,30),vv=(vno.value||'').trim().toUpperCase().slice(0,14);if(nn)pu+='&n='+encodeURIComponent(nn);if(vv)pu+='&v='+encodeURIComponent(vv);x.drawImage(qr(wsel.value==='p'?pu:'tel:+91'+cm,500),150,190,500,500)}
+          else{var pu='https://livecard.in/studio/call/?m='+cm,nn=(onm.value||'').trim().slice(0,30),vv=(vno.value||'').trim().toUpperCase().slice(0,14);if(nn)pu+='&n='+encodeURIComponent(nn);if(vv)pu+='&v='+encodeURIComponent(vv);x.drawImage(qr(wsel.value==='p'?pu:'tel:+91'+cm,500),150,190,500,500)}
           x.fillStyle='#2b1a14';x.font='bold 46px sans-serif';
           var t=(ttl.value||'').trim().slice(0,40);x.fillText(t,W/2,two?680:740,W-80);
           var nm=(onm.value||'').trim(),vn=(vno.value||'').trim().toUpperCase();
