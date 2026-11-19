@@ -593,7 +593,7 @@ function drawList(){
     var sl=subLine(x);if(sl){var sd=mk('div','k',sl);sd.style.cssText='margin-top:4px;font-weight:600';r.appendChild(sd)}
     var a=mk('div','acts'),e=mk('a','','✏️ एडिट करें');e.href='/studio/editor/?v=20261116&id='+x.id;a.appendChild(e);
     if(x.status==='published'&&x.slug){var u=location.origin+'/'+(x.product_type==='invitation'?'inv':'v')+'/'+x.slug,cp=mk('button','','🔗 लिंक कॉपी');cp.type='button';
-      cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent=u}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2500)};a.appendChild(cp)}
+      cp.onclick=async function(){shTick(x.id);try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent=u}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2500)};a.appendChild(cp)}
     var c=mk('button','','कॉपी बनाएँ');c.type='button';c.onclick=function(){dup(x.id,c)};a.appendChild(c);
     var d=mk('button',armed===x.id?'danger':'',armed===x.id?'पक्का मिटाएँ?':'मिटाएँ');d.type='button';
     d.onclick=function(){if(armed!==x.id){armed=x.id;drawList();return}del(x.id,d)};a.appendChild(d);
@@ -797,9 +797,9 @@ async function invHome(){
     var shUrl=location.origin+'/inv/'+x.slug,shTx=(x.title||'इनविटेशन')+'\nआप सादर आमंत्रित हैं। कार्ड देखें:\n'+shUrl;
     var shr=mk('div','');shr.style.cssText='display:flex;gap:8px;margin-top:12px';
     var sh1=mk('button','','📤 शेयर करें');sh1.type='button';sh1.style.cssText='margin:0;flex:2;padding:13px 6px;border:0;border-radius:12px;background:#25d366;color:#fff;font-weight:800;font-size:15px';
-    sh1.onclick=async function(){try{if(navigator.share){await navigator.share({title:x.title||'इनविटेशन',text:shTx});return}}catch(e){if(e&&e.name==='AbortError')return}window.open('https://wa.me/?text='+encodeURIComponent(shTx),'_blank','noopener')};
+    sh1.onclick=async function(){shTick(x.id);try{if(navigator.share){await navigator.share({title:x.title||'इनविटेशन',text:shTx});return}}catch(e){if(e&&e.name==='AbortError')return}window.open('https://wa.me/?text='+encodeURIComponent(shTx),'_blank','noopener')};
     var sh2=mk('button','','🔗 लिंक');sh2.type='button';sh2.style.cssText='margin:0;flex:1;padding:13px 6px;border:1px solid rgba(255,255,255,.7);border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:15px';
-    sh2.onclick=async function(){try{await navigator.clipboard.writeText(shUrl);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('कार्ड का लिंक',shUrl)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
+    sh2.onclick=async function(){shTick(x.id);try{await navigator.clipboard.writeText(shUrl);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('कार्ड का लिंक',shUrl)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
     shr.appendChild(sh1);shr.appendChild(sh2);hero.appendChild(shr);
     var nrMore=null;var nr=mk('div','');nr.style.cssText='margin-top:10px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
     nr.appendChild(mk('b','','📞 नंबर डालकर सीधे भेजें'));var nh=mk('div','','जिनका नंबर WhatsApp में सेव नहीं है, उन्हें भी भेज सकते हैं');nh.style.cssText='font-size:12px;opacity:.9;margin:2px 0 6px';nr.appendChild(nh);
@@ -951,9 +951,9 @@ async function refHome(){
 function shareTools(x,url,shTx){
   var shr=mk('div','');shr.style.cssText='display:flex;gap:6px;margin-top:8px';
   var sh1=mk('button','','📤 Share');sh1.type='button';sh1.style.cssText='margin:0;flex:1.4;padding:10px 6px;min-height:0;border:0;border-radius:12px;background:#25d366;color:#fff;font-weight:800;font-size:15px';
-  sh1.onclick=async function(){try{if(navigator.share){await navigator.share({title:x.title||'',text:shTx});return}}catch(e){if(e&&e.name==='AbortError')return}window.open('https://wa.me/?text='+encodeURIComponent(shTx),'_blank','noopener')};
+  sh1.onclick=async function(){shTick(x.id);try{if(navigator.share){await navigator.share({title:x.title||'',text:shTx});return}}catch(e){if(e&&e.name==='AbortError')return}window.open('https://wa.me/?text='+encodeURIComponent(shTx),'_blank','noopener')};
   var sh2=mk('button','','🔗 लिंक');sh2.type='button';sh2.style.cssText='margin:0;flex:1;padding:10px 6px;min-height:0;border:1px solid rgba(255,255,255,.7);border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:15px';
-  sh2.onclick=async function(){try{await navigator.clipboard.writeText(url);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('लिंक',url)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
+  sh2.onclick=async function(){shTick(x.id);try{await navigator.clipboard.writeText(url);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('लिंक',url)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
   shr.appendChild(sh1);shr.appendChild(sh2);
   var gw=mk('div','');var more=mk('div','');more.hidden=true;var mh=mk('div','','📲 Send to Unsaved WhatsApp no.  ▼');mh.style.cssText='margin-top:8px;padding:0 14px;height:46px;box-sizing:border-box;display:flex;align-items:center;border-radius:12px;background:#ffc21a;color:#5a0509;font-weight:800;cursor:pointer;font-size:15px';
   mh.onclick=function(){more.hidden=!more.hidden;mh.textContent=mh.textContent.replace(/[▼▲]$/,more.hidden?'▼':'▲')};
@@ -1066,7 +1066,7 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
     var dl=mk('button','','🗑 हटाएँ');dl.type='button';dl.style.cssText='flex:1;margin:0;padding:9px 6px;min-height:0;border-radius:12px;background:#fff;color:#b00020;border:1px solid #b00020;font-weight:700;font-size:13px';var dArm=false;dl.onclick=async function(){if(!dArm){dArm=true;dl.textContent='⚠️ पक्का? फिर दबाएँ';dl.style.background='#b00020';dl.style.color='#fff';setTimeout(function(){if(dl.isConnected){dArm=false;dl.textContent='🗑 हटाएँ';dl.style.background='#fff';dl.style.color='#b00020'}},5000);return}dl.disabled=true;var r=await sb.from('studio_designs').delete().eq('id',x.id);if(r.error){dl.disabled=false;dl.textContent='नहीं हट पाया';return}MYSEL=null;loadList()};ndr.appendChild(dl)})();
 
   if(x.status==='published'&&x.slug){var r2=mk('div','');r2.style.cssText='display:flex;gap:8px;margin-top:8px';var u=location.origin+'/v/'+x.slug;
-    var cp=mk('button','alt','🔗 लिंक');cp.type='button';cp.style.cssText='margin:0;flex:1';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक'},2000)};
+    var cp=mk('button','alt','🔗 लिंक');cp.type='button';cp.style.cssText='margin:0;flex:1';cp.onclick=async function(){shTick(x.id);try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक'},2000)};
     var wa=mk('a','','💬 WhatsApp');wa.href='https://wa.me/?text='+encodeURIComponent('मेरा डिजिटल कार्ड: '+u);wa.target='_blank';wa.rel='noopener';
     var qr=mk('a','','QR');qr.href='/studio/editor/?v=20261116&id='+x.id+'&tab=pub';
     var NVb=window.ViNative;if(NVb&&NVb.openWa){var wb=mk('a','','🛍 WA Business');wb.href='#';wb.onclick=function(ev){ev.preventDefault();var m='मेरा डिजिटल कार्ड: '+u;if(!NVb.openWa('',m,true)&&NVb.shareText)NVb.shareText(m)};[wb].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#075e54;border:1px solid #075e54;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px'})}
@@ -1178,6 +1178,7 @@ function openInbox(){closeVw(true);var o=document.createElement('div');o.id='vw'
 setInterval(function(){if(!document.hidden&&ME&&$('c-enq'))loadEnq()},25000);$('ib').onclick=function(){openInbox()};document.addEventListener('visibilitychange',function(){if(!document.hidden&&ME&&$('c-enq'))loadEnq()});
 (function(){var w=document.getElementById('c-insall');if(!w)return;var a=document.getElementById('c-ins'),b=document.getElementById('c-insinv');
   function f(){w.hidden=a.hidden&&b.hidden}f();var o=new MutationObserver(f);[a,b].forEach(function(x){o.observe(x,{attributes:true,attributeFilter:['hidden']})})})();
+function shTick(id){try{if(id)sb.rpc('studio_inv_share',{p_id:id}).then(function(){},function(){})}catch(e){}}
 var TABMAP=null;
 var CURT=null;var H0=location.hash,ADMR=0;
 function setTab(t,nopush){
