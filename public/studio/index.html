@@ -685,7 +685,7 @@ function subDraw(){var L=$('sub-list');if(!L)return;L.textContent='';
       if(pu)ln.push(['समाप्ति / रिन्यू की तारीख',life?'लाइफटाइम':f(pu)]);
       if(i.next_amount&&i.state!=='active'&&i.state!=='free')ln.push(['अभी देय','₹'+i.next_amount]);
       ln.forEach(function(a){var d=mk('div','k');d.appendChild(document.createTextNode(a[0]+': '));d.appendChild(mk('b','',a[1]));row.appendChild(d)});
-      var a2=mk('a','','रिन्यू / अपग्रेड करें');a2.href='/studio/editor/?v=20261116&id='+x.id+'&tab=pub';row.appendChild(a2)}
+      var a2=mk('a','','रिन्यू / अपग्रेड करें');a2.href='/studio/editor/?v=20261120&id='+x.id+'&upg=1';row.appendChild(a2)}
     L.appendChild(row)});
   $('sub-cr').textContent=CRB==null?'':'🤖 बचे हुए AI क्रेडिट: '+CRB;
   noteDraw()}

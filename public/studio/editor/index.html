@@ -604,6 +604,16 @@ async function payPlan(plan,amount){
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
     return true
   }catch(e){toast(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। LiveCard टीम से संपर्क करें।':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, प्लान अपने आप चालू हो जाएगा।','bad');return false}}
+function upgPage(){
+  $('main').hidden=true;['undo','redo','save'].forEach(function(i){var e=$(i);if(e)e.hidden=true});
+  try{$('ttl').textContent='⬆️ प्लान / अपग्रेड'}catch(e){}
+  var pb=$('pubbar');if(pb)pb.hidden=true;
+  var w=document.querySelector('.wrap'),box=h('div',{id:'upgpg',style:'max-width:560px;margin:0 auto;padding:6px 0 30px'});
+  box.appendChild(h('div',{class:'k',style:'margin:4px 0 10px',text:'अपना प्लान चुनें या रिन्यू करें। कार्ड एडिट करने के लिए ऊपर ← से वापस जाएँ।'}));
+  w.appendChild(box);
+  if(D.product_type==='visiting'){planBox(box);if(C&&C.style&&C.style.site===true)domainBox(box)}
+  else box.appendChild(h('div',{class:'k',text:'इस कार्ड के लिए प्लान की ज़रूरत नहीं है।'}));
+  var eb=h('a',{href:'/studio/editor/?id='+encodeURIComponent(ID),style:'display:block;text-align:center;margin-top:14px;color:#d4141c;font-weight:700',text:'✏️ कार्ड एडिट करें'});box.appendChild(eb)}
 function planBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
   sb.rpc('studio_sub_info',{p_id:D.id}).then(function(r){var s=r&&r.data;if(!s||!s.enabled||!s.required)return;
@@ -836,6 +846,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
   try{var b=JSON.parse(localStorage.getItem(LS)||'null');if(b&&b.at>new Date(D.updated_at).getTime()){C=shape(b.c);if(b.t)D.template_id=b.t;restored=true}}catch(e){}
   if(R.isEmpty(D.product_type,C)&&!restored)tab='info';
   $('main').hidden=false;tabs();panel();draw();pushHist();
+  if(/[?&]upg=1/.test(location.search)){try{upgPage()}catch(e){}}
   try{if(window.SWWizard&&D.product_type==='visiting'&&!String((C.fields&&C.fields.name)||'').trim()&&!sessionStorage.getItem('wz_auto_'+D.id)){sessionStorage.setItem('wz_auto_'+D.id,'1');setTimeout(function(){var b=$('wzbtn');if(b&&!b.hidden)b.click()},400)}}catch(e){}
   sb.rpc('studio_insights_setup',{p_design:D.id}).then(function(r){if(r.error||!r.data)return;INS={id:D.id,key:r.data.key};if(r.data.pin){try{localStorage.setItem(pinKey(),r.data.pin)}catch(x){}state('📊 इनसाइट लिंक और PIN तैयार हैं। "📊 इनसाइट" टैब से कॉपी करें।')}},function(){});
   if(restored){dirty=true;state('पिछली बार के बिना सेव बदलाव वापस लाए गए हैं, सेव हो रहे हैं…');timer=setTimeout(save,800)}
