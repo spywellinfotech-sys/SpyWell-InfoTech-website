@@ -218,9 +218,6 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="card" id="c-ins" hidden></div>
 <div class="card" id="c-insinv" hidden></div>
 </div></div>
-<div class="card" id="c-plans"><b>💎 प्लान और कीमत</b><div class="k" style="margin:2px 0 8px">🎁 हर प्लान पर 7 दिन फ़्री · सालाना प्लान</div>
-<div style="display:grid;gap:6px;font-size:15px"><div style="display:flex;justify-content:space-between"><span>📇 विज़िटिंग कार्ड</span><b>₹600/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>🌐 मिनी वेबसाइट (+ एड्रेस कार्ड)</span><b>₹1,200/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>🔗 फ़ुल वेबसाइट + अपना डोमेन</span><b>₹6,000/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>📒 डायरेक्टरी लिस्टिंग</span><b>₹1,800/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>💌 इनविटेशन कार्ड (5 लिंक शेयर फ़्री)</span><b>₹999 एक बार</b></div></div>
-<a href="/dyname/plans/" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;font-weight:800;text-decoration:none;padding:11px;border-radius:12px">सभी प्लान देखें</a></div>
 <div class="card" id="c-ref" hidden></div>
 <div class="card" id="c-disc">
 <b>🔍 बिज़नेस खोजें (Discover)</b>
@@ -257,6 +254,9 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <b>हाल की गतिविधि</b>
 <div class="k" id="d-act" style="margin-top:8px"></div>
 </div>
+<div class="card" id="c-plans"><b>💎 प्लान और कीमत</b><div class="k" style="margin:2px 0 8px">🎁 हर प्लान पर 7 दिन फ़्री · सालाना प्लान</div>
+<div style="display:grid;gap:6px;font-size:15px"><div style="display:flex;justify-content:space-between"><span>📇 विज़िटिंग कार्ड</span><b>₹600/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>🌐 मिनी वेबसाइट (+ एड्रेस कार्ड)</span><b>₹1,200/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>🔗 फ़ुल वेबसाइट + अपना डोमेन</span><b>₹6,000/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>📒 डायरेक्टरी लिस्टिंग</span><b>₹1,800/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>💌 इनविटेशन कार्ड (5 लिंक शेयर फ़्री)</span><b>₹999 एक बार</b></div></div>
+<a href="/dyname/plans/" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;font-weight:800;text-decoration:none;padding:11px;border-radius:12px">सभी प्लान देखें</a></div>
 <div class="card" id="c-sub">
 <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('sub-body');q.hidden=!q.hidden;document.getElementById('sub-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">💳 मेरा सब्सक्रिप्शन</b><span id="sub-ar" style="font-size:16px">▾</span></div>
 <div id="sub-body" hidden>
@@ -1183,7 +1183,7 @@ var TABMAP=null;
 var CURT=null;var H0=location.hash,ADMR=0;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'home'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'adm'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'adm'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me','adm'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden)||(t==='adm'&&$('tb-adm').hidden))t='home';
   if(t==='adm'){var ca=$('c-adm');if(!ca.firstChild){var fa=document.createElement('iframe');fa.src='/studio/admin/?embed=1';fa.id='adm-fr';fa.scrolling='no';fa.style.cssText='width:100%;height:900px;border:0;display:block';ca.appendChild(fa)}}
