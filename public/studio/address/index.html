@@ -58,7 +58,7 @@ function val(k){return $('a-'+k).value.trim()}
 function mob(){return val('mob').replace(/\D/g,'').slice(-10)}
 function mapUrl(){var m=val('map');if(!m)return '';if(!/^https?:/i.test(m))m='https://'+m;try{var u=new URL(m);return u.hostname.indexOf('.')>0?u.href:''}catch(e){return ''}}
 function lineAddr(){return [val('addr'),val('land')?'('+val('land')+')':'',[val('city'),val('state')].filter(Boolean).join(', '),val('pin')].filter(Boolean).join(', ')}
-function text(){var t=IC+' '+NM+'\n';if(OF&&val('co'))t+='कंपनी: '+val('co')+'\n';if(val('name'))t+='नाम: '+val('name')+'\n';if(mob().length===10)t+='मोबाइल: +91 '+mob()+'\n';t+='पता: '+lineAddr();if(mapUrl())t+='\nलोकेशन: '+mapUrl();return t}
+function text(){var t=IC+' '+NM+'\n';if(OF&&val('co'))t+='कंपनी: '+val('co')+'\n';if(val('name'))t+='नाम: '+val('name')+'\n';if(mob().length===10)t+='मोबाइल: +91 '+mob()+'\n';t+='पता: '+lineAddr();if(mapUrl())t+='\nलोकेशन: '+mapUrl();t+='\n\nLiveCard · livecard.in';return t}
 function wrap(x,t,mx,font,max){x.font=font;var w=String(t).split(/\s+/),L=[],c='';w.forEach(function(q){var tt=c?c+' '+q:q;if(x.measureText(tt).width>mx&&c){L.push(c);c=q}else c=tt});if(c)L.push(c);if(L.length>max){L=L.slice(0,max);L[max-1]=L[max-1].replace(/.{0,2}$/,'…')}return L}
 function draw(){
   var err=$('a-err');err.textContent='';
@@ -83,7 +83,7 @@ function draw(){
   x.font='400 42px '+FF;var ay=y;addrL.forEach(function(l,i){x.fillText(l,90,y);y+=60});
   var mu=mapUrl();
   if(mu){try{var qc=document.createElement('canvas');window.StudioQR.draw(qc,unescape(encodeURIComponent(mu)),260);x.fillStyle='#fff';x.fillRect(W-340,H-400,260,260);x.drawImage(qc,W-340,H-400,260,260);x.fillStyle='#5a6a8c';x.font='400 28px '+FF;x.textAlign='center';x.fillText('स्कैन करें: लोकेशन',W-210,H-100);x.textAlign='left'}catch(e){}}
-  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('LiveCard · Address Card',90,H-60);
+  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('LiveCard · livecard.in',90,H-60);
   try{$('pv').src=cv.toDataURL('image/png')}catch(e){}
   cv.toBlob(function(b){blob=b},'image/png');$('outc').hidden=false;$('b-cl').hidden=!mapUrl();
   try{localStorage.setItem(LSK,JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
