@@ -255,7 +255,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="k" id="d-act" style="margin-top:8px"></div>
 </div>
 <div class="card" id="c-plans"><b>💎 प्लान और कीमत</b><div class="k" style="margin:2px 0 8px">🎁 हर प्लान पर 7 दिन फ़्री · सालाना प्लान</div>
-<div style="display:grid;gap:6px;font-size:15px"><div style="display:flex;justify-content:space-between"><span>📇 विज़िटिंग कार्ड</span><b>₹600/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>🌐 मिनी वेबसाइट (+ एड्रेस कार्ड)</span><b>₹1,200/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>🔗 फ़ुल वेबसाइट + अपना डोमेन</span><b>₹6,000/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>📒 डायरेक्टरी लिस्टिंग</span><b>₹1,800/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>💌 इनविटेशन कार्ड (5 लिंक शेयर फ़्री)</span><b>₹999 एक बार</b></div></div>
+<div style="display:grid;gap:6px;font-size:15px"><div style="display:flex;justify-content:space-between"><span>📇 विज़िटिंग कार्ड</span><b>₹600/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>🌐 मिनी वेबसाइट (+ एड्रेस कार्ड)</span><b>₹1,200/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>🔗 फ़ुल वेबसाइट + अपना डोमेन</span><b>₹6,000/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>📒 डायरेक्टरी लिस्टिंग (+ WhatsApp ब्रॉडकास्ट फ़्री)</span><b>₹1,800/वर्ष</b></div><div style="display:flex;justify-content:space-between"><span>💌 इनविटेशन कार्ड (5 लिंक शेयर फ़्री)</span><b>₹999 एक बार</b></div></div>
 <a href="/dyname/plans/" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;background:#d4141c;color:#fff;font-weight:800;text-decoration:none;padding:11px;border-radius:12px">सभी प्लान देखें</a></div>
 <div class="card" id="c-sub">
 <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('sub-body');q.hidden=!q.hidden;document.getElementById('sub-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">💳 मेरा सब्सक्रिप्शन</b><span id="sub-ar" style="font-size:16px">▾</span></div>
@@ -410,7 +410,7 @@ function drawUns(){var w=$('c-uns');if(!w)return;
     hd.onclick=function(){UNSX[q.m]=!UNSX[q.m];ac.hidden=!UNSX[q.m];ar.textContent=UNSX[q.m]?'▲':'▼'};bd.appendChild(row)});
   bx.appendChild(h);bx.appendChild(bd)}
 var BCADM=null,BCOPEN=false,BCSRC='uns',BCSEL={},BCQ=null;
-async function bcAdmin(){if(BCADM!==null)return BCADM;try{var r=await sb.rpc('studio_is_admin');BCADM=!!(r&&r.data===true)}catch(e){BCADM=false}return BCADM}
+var BCKIND=null;async function bcAdmin(){if(BCADM!==null)return BCADM;try{var r=await sb.rpc('studio_bc_allowed');BCKIND=r&&r.data||'no';BCADM=(BCKIND==='admin'||BCKIND==='listed')}catch(e){BCADM=false}if(BCADM&&BCKIND==='listed'&&typeof TABMAP!=='undefined'&&TABMAP){TABMAP.forEach(function(x){if(x[0]&&x[0].id==='c-bc')x[1]='home'});try{setTab(CURT||'home',true)}catch(e){}}return BCADM}
 async function drawBc(){var w=$('c-bc');if(!w)return;if(!(await bcAdmin())){w.style.display='none';return}
   w.textContent='';w.style.display='';
   var tg=mk('button','','📢 WhatsApp Broadcast  '+(BCOPEN?'▲':'▼'));tg.type='button';tg.style.cssText='display:block;width:100%;margin:0;padding:18px 16px;min-height:0;border:0;border-radius:16px;background:linear-gradient(135deg,#0b7a3b,#25d366);color:#fff;font-weight:800;font-size:20px;text-align:left;box-shadow:0 4px 14px rgba(11,122,59,.30)';
