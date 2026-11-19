@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Buy Leads | DynaMe</title><meta name="robots" content="noindex">
+<title>Buy Leads | LiveCard</title><meta name="robots" content="noindex">
 <link rel="icon" href="/studio/vicard-icon.png">
 <style>
 :root{--wine:#d4141c;--ink:#1a1212;--bg:#fbf5f4;--line:#f0d6d4;--mut:#6e5b5b;--grn:#1ea952}
@@ -24,7 +24,7 @@ button.p{width:100%;margin-top:12px;padding:13px;border:0;border-radius:12px;bac
 <script>window.I18N_PICKER=false</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script></head><body>
 <div class="top"><b>🎯 Buy Leads</b><a href="/studio/">← होम</a></div>
 <div class="wrap">
-<div id="gate" class="card" hidden><b>पहले लॉगिन करें</b><div class="k" style="margin:6px 0 0">Buy Leads देखने और ज़रूरत डालने के लिए DynaMe में लॉगिन ज़रूरी है।</div><a href="/studio/" class="p" style="display:block;text-align:center;text-decoration:none;margin-top:12px;padding:13px;border-radius:12px;background:var(--wine);color:#fff;font-weight:700">लॉगिन / होम खोलें</a></div>
+<div id="gate" class="card" hidden><b>पहले लॉगिन करें</b><div class="k" style="margin:6px 0 0">Buy Leads देखने और ज़रूरत डालने के लिए LiveCard में लॉगिन ज़रूरी है।</div><a href="/studio/" class="p" style="display:block;text-align:center;text-decoration:none;margin-top:12px;padding:13px;border-radius:12px;background:var(--wine);color:#fff;font-weight:700">लॉगिन / होम खोलें</a></div>
 <div id="app" hidden>
 <div class="tabs" id="tabs"><button data-t="browse" class="on">🎯 लीड देखें</button><button data-t="post">➕ ज़रूरत डालें</button><button data-t="mine">📝 मेरी ज़रूरतें</button><button data-t="opened">🔓 खोली हुई</button></div>
 <div id="fr" class="k" style="margin:2px 2px 0"></div>
@@ -59,7 +59,7 @@ function ago(s){var d=(Date.now()-new Date(s).getTime())/60000;if(d<60)return Ma
 function left(s){var d=Math.ceil((new Date(s).getTime()-Date.now())/86400000);return d>0?d+' दिन बाकी':'खत्म होने वाली'}
 function wa(m,t){return 'https://wa.me/91'+m+'?text='+encodeURIComponent(t)}
 function contact(box,l,nm,mob){box.textContent='';var n=mk('div','',(nm||'ग्राहक')+' · +91 '+mob);n.style.cssText='font-weight:700;margin-top:10px;font-size:17px';box.appendChild(n);
-  var g=mk('div','go'),c=mk('a','o','📞 कॉल');c.href='tel:+91'+mob;var w=mk('a','w','💬 WhatsApp');w.href=wa(mob,'नमस्ते, DynaMe पर आपकी ज़रूरत "'+l.title+'" देखी। मैं मदद कर सकता हूँ।');w.target='_blank';w.rel='noopener';g.appendChild(c);g.appendChild(w);box.appendChild(g)}
+  var g=mk('div','go'),c=mk('a','o','📞 कॉल');c.href='tel:+91'+mob;var w=mk('a','w','💬 WhatsApp');w.href=wa(mob,'नमस्ते, LiveCard पर आपकी ज़रूरत "'+l.title+'" देखी। मैं मदद कर सकता हूँ।');w.target='_blank';w.rel='noopener';g.appendChild(c);g.appendChild(w);box.appendChild(g)}
 function leadCard(l,mode){var c=mk('div','card ld');c.appendChild(mk('b','t',l.title));
   c.appendChild(mk('div','m',[l.qty,l.city,l.cat].filter(Boolean).join(' · ')||'—'));if(l.details)c.appendChild(mk('div','d',l.details));
   var tg=mk('div','');tg.appendChild(mk('span','tag',ago(l.at)));if(l.until)tg.appendChild(mk('span','tag',left(l.until)));

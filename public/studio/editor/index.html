@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>कार्ड एडिटर | DynaMe</title>
+<title>कार्ड एडिटर | LiveCard</title>
 <meta name="robots" content="noindex"><link rel="icon" href="/favicon.png">
 <style>
 :root{--wine:#12307f;--ink:#14203d;--bg:#f2f6fd;--line:#d5def2;--mut:#5a6a8c}
@@ -57,7 +57,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 .row2>*,.row3>*{min-width:0}#panel label{font-size:11.5px;margin-top:7px}#panel select,#panel input,#panel textarea{min-height:34px!important;padding:5px 8px!important;font-size:13px!important;border-radius:8px!important}#panel input[type=color]{height:34px!important;padding:1px!important}#panel .row2,#panel .row3{gap:6px}#panel .btn{min-height:0;padding:8px 10px;font-size:13px}#panel .k{font-size:11.5px}#panel .seg button{padding:6px 4px;font-size:13px;min-height:0}#panel input[type=range]{min-height:0!important;height:22px}#panel textarea{min-height:60px!important}#panel input[type=file]{padding:4px 6px!important;font-size:12px!important;min-height:0!important}#panel input[type=file]::file-selector-button{font-size:12px;padding:5px 8px}#panel .item{padding:10px!important;margin-top:8px}#panel .step{padding:9px 11px;font-size:13px}#panel .step b{font-size:14px}#panel .thumb{max-width:110px;max-height:110px}#panel .btn.sm,#panel .btn.alt{font-size:13px}#panel h3,#panel .item b{font-size:14px}#panel .k{margin-top:4px}
 #panel .ph .phr{display:flex;gap:10px;align-items:center}#panel .ph .thumb{width:64px;height:64px;object-fit:cover;flex:none;border-radius:10px;margin:0}#panel .ph .phs{flex:1;min-width:0}#panel .ph .phb{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}#panel .ph .phb .btn{margin:0;padding:6px 10px;width:auto;min-height:0}#panel .ph .phd{margin-top:6px}#panel .ph .phd summary{font-size:12.5px;color:var(--mut);cursor:pointer;padding:4px 0}
 #panel .rg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}#panel .rg2 label{margin-top:0}#panel .rg2 input[type=range]{margin:2px 0 0;height:20px}#panel .ph .phd{margin-top:2px}#panel .ph .phd summary{padding:2px 0}
-</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script><script src="/studio/wizard.js?v=20261118a"></script></head><body>
+</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script><script src="/studio/wizard.js?v=20261119a"></script></head><body>
 <div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
 <button id="undo" disabled title="Undo">↶</button><button id="redo" disabled title="Redo">↷</button><button id="save">सेव</button></div>
 <div class="wrap">
@@ -71,7 +71,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div id="pubbar" hidden><div class="pbrow"><button type="button" id="pubbtn">🚀 प्रकाशित करें</button><button type="button" id="pinbtn" hidden>🔑 PIN</button></div></div>
 <div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/render.js?v=20261118e"></script>
+<script src="/studio/render.js?v=20261119a"></script>
 <script src="/studio/qr.js"></script>
 <script>
 (function(){
@@ -650,12 +650,12 @@ function domainForm(box){box.appendChild(h('b',{text:'🌍 अपना डो�
   box.appendChild(inp);b.style.marginTop='8px';box.appendChild(b);box.appendChild(msg)}
 function dirBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
-  box.appendChild(h('b',{text:'🔍 DynaMe डायरेक्टरी (Discover)'}));
+  box.appendChild(h('b',{text:'🔍 LiveCard डायरेक्टरी (Discover)'}));
   var st=h('div',{class:'k',style:'margin-top:6px',text:'लोड हो रहा है…'}),m=h('div',{class:'k'});box.appendChild(st);
   (async function(){
     var r=await sb.rpc('studio_dir_get',{p_design:D.id});if(r.error||!r.data){st.textContent='अभी उपलब्ध नहीं।';return}
     var pub=r.data.is_public;
-    function draw(){st.textContent=(pub?'🌐 सार्वजनिक: बाकी DynaMe यूज़र आपका कार्ड "खोजें" में ढूँढ सकते हैं।':'🔒 निजी: आपका कार्ड डायरेक्टरी में नहीं दिखता। सिर्फ़ लिंक वाले ही देख सकते हैं।')+(r.data.verified?' ✅ Verified':'')+(r.data.suspended?' ⛔ एडमिन ने डायरेक्टरी से हटाया है':'')}
+    function draw(){st.textContent=(pub?'🌐 सार्वजनिक: बाकी LiveCard यूज़र आपका कार्ड "खोजें" में ढूँढ सकते हैं।':'🔒 निजी: आपका कार्ड डायरेक्टरी में नहीं दिखता। सिर्फ़ लिंक वाले ही देख सकते हैं।')+(r.data.verified?' ✅ Verified':'')+(r.data.suspended?' ⛔ एडमिन ने डायरेक्टरी से हटाया है':'')}
     draw();
     var b=h('button',{class:'btn alt',text:'',onclick:async function(){b.disabled=true;var x=await sb.rpc('studio_dir_set_public',{p_design:D.id,p_public:!pub});b.disabled=false;
       if(x.error||x.data!=='ok'){m.className='e';m.textContent='बदला नहीं जा सका।';return}pub=!pub;m.className='k';m.textContent='सेव हो गया ✓';draw();b.textContent=pub?'डायरेक्टरी से हटाएँ':'डायरेक्टरी में दिखाएँ'}});

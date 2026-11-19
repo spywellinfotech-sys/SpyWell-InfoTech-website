@@ -4,7 +4,7 @@
 const fs = require('fs'), path = require('path');
 const B = 'https://rxhanrtoaplwphmwpgqg.supabase.co', K = 'sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 const ORIGIN = process.env.SITE_ORIGIN || 'https://spywell.in';
-let FALLBACK = ORIGIN + '/studio/vicard-icon.png', BRAND = 'DynaMe'; // both can be changed from studio_settings (brand_name, brand_icon)
+let FALLBACK = ORIGIN + '/studio/vicard-icon.png', BRAND = 'LiveCard'; // both can be changed from studio_settings (brand_name, brand_icon)
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const clip = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
 const okImg = (u) => typeof u === 'string' && u.indexOf(B + '/storage/v1/object/public/') === 0 && u.indexOf('..') < 0 ? u : '';

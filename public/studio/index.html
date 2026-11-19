@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DynaMe</title>
+<title>LiveCard</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="/favicon.png"><link rel="manifest" href="/studio/manifest.webmanifest"><link rel="apple-touch-icon" href="/studio/vicard-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="DynaMe"><meta name="theme-color" content="#d4141c">
+<link rel="icon" href="/favicon.png"><link rel="manifest" href="/studio/manifest.webmanifest"><link rel="apple-touch-icon" href="/studio/vicard-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="LiveCard"><meta name="theme-color" content="#d4141c">
 <style>
 :root{--wine:#d4141c;--ink:#1a1212;--bg:#fbf5f4;--line:#f0d6d4;--mut:#6e5b5b;--org:#f59a1a}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%;overscroll-behavior:none}body{padding-bottom:96px;overscroll-behavior:none;margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,Poppins,system-ui,sans-serif}
@@ -81,10 +81,10 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 #ia-opts button{width:100%;margin:0;min-height:0;padding:14px 14px;border:2px solid #1d4ed8;border-radius:12px;background:#fff;color:#1d4ed8;font-weight:800;font-size:17px;text-align:left}#ia-opts button.on{background:#1d4ed8;color:#fff}#ia-body[data-f=none] #c-ins,#ia-body[data-f=none] #c-insinv{display:none!important}#ia-body[data-f=card] #c-insinv,#ia-body[data-f=site] #c-insinv,#ia-body[data-f=inv] #c-ins,#ia-body[data-f=site] [data-k=card],#ia-body[data-f=card] [data-k=site]{display:none!important}
 </style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script>(function(){try{if(!window.Capacitor&&!window.ViNative&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){
   document.addEventListener('DOMContentLoaded',function(){var go=function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#7a0a10;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
-  var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 DynaMe ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#7a0a10;padding:8px 14px;border-radius:8px;text-decoration:none';
+  var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 LiveCard ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#7a0a10;padding:8px 14px;border-radius:8px;text-decoration:none';
   d.appendChild(document.createTextNode('लॉगिन हो गया।'));d.appendChild(a);document.body.appendChild(d)};try{if(navigator.getInstalledRelatedApps){navigator.getInstalledRelatedApps().then(function(r){if(!(r&&r.length))go()},go)}else go()}catch(e){go()}})}}catch(e){}})();</script>
-<script src="/studio/wizard.js?v=20261118a"></script></head><body>
-<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:50%;vertical-align:middle;margin-right:9px">DynaMe<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px;font-size:10px">Your Identity, Dynamically Connected</small></b><span style="display:flex;gap:8px;align-items:center"><button type="button" id="hchat" hidden aria-label="मैसेज" title="मैसेज" style="position:relative;width:38px;height:38px;min-height:0;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;font-size:19px;line-height:1">💬<span id="hchat-n" hidden style="position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;border-radius:9px;background:#ffc72c;color:#12143f;font:800 11px/18px system-ui,sans-serif;text-align:center"></span></button><button type="button" id="rf" aria-label="रिफ़्रेश" title="रिफ़्रेश" style="width:38px;height:38px;min-height:0;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg></button><button type="button" id="a2hs" hidden style="width:38px;height:38px;min-height:0;margin:0;padding:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55);font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.25)" aria-label="होम स्क्रीन पर जोड़ें" title="होम स्क्रीन पर जोड़ें">📲</button><button type="button" id="ib" hidden style="position:relative">📥 Inbox<b id="ib-n" hidden style="position:absolute;top:-6px;right:-6px;background:#d93025;color:#fff;border-radius:99px;font-size:11px;padding:0 6px;min-width:18px;line-height:18px;text-align:center"></b></button></span></div>
+<script src="/studio/wizard.js?v=20261119a"></script></head><body>
+<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="34" height="34" style="border-radius:9px;vertical-align:middle;margin-right:9px">LiveCard<small style="display:block;font-weight:400;font-size:11px;opacity:.8;margin:-2px 0 0 43px;font-size:10px">Your Identity, Dynamically Connected</small></b><span style="display:flex;gap:8px;align-items:center"><button type="button" id="hchat" hidden aria-label="मैसेज" title="मैसेज" style="position:relative;width:38px;height:38px;min-height:0;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;font-size:19px;line-height:1">💬<span id="hchat-n" hidden style="position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;border-radius:9px;background:#ffc72c;color:#12143f;font:800 11px/18px system-ui,sans-serif;text-align:center"></span></button><button type="button" id="rf" aria-label="रिफ़्रेश" title="रिफ़्रेश" style="width:38px;height:38px;min-height:0;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg></button><button type="button" id="a2hs" hidden style="width:38px;height:38px;min-height:0;margin:0;padding:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55);font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.25)" aria-label="होम स्क्रीन पर जोड़ें" title="होम स्क्रीन पर जोड़ें">📲</button><button type="button" id="ib" hidden style="position:relative">📥 Inbox<b id="ib-n" hidden style="position:absolute;top:-6px;right:-6px;background:#d93025;color:#fff;border-radius:99px;font-size:11px;padding:0 6px;min-width:18px;line-height:18px;text-align:center"></b></button></span></div>
 <div class="wrap">
 
 <div id="v-load" class="k" style="padding:30px;text-align:center">लोड हो रहा है…</div>
@@ -221,7 +221,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="card" id="c-ref" hidden></div>
 <div class="card" id="c-disc">
 <b>🔍 बिज़नेस खोजें (Discover)</b>
-<div class="k">DynaMe पर सार्वजनिक किए गए बिज़नेस कार्ड, नाम, कंपनी, व्यवसाय या शहर से खोजें।</div>
+<div class="k">LiveCard पर सार्वजनिक किए गए बिज़नेस कार्ड, नाम, कंपनी, व्यवसाय या शहर से खोजें।</div>
 <input id="dq" type="search" placeholder="जैसे: CCTV, कोयला, Saharanpur, नाम…" style="margin-top:8px" autocomplete="off">
 <div style="display:flex;gap:8px;margin-top:8px"><select id="dind" style="flex:2"></select><select id="dsort" style="flex:1"><option value="relevance">सबसे सही</option><option value="new">नए पहले</option></select></div>
 <div id="dres" style="margin-top:10px"></div><button type="button" id="dmore" hidden style="margin-top:8px">और दिखाएँ</button>
@@ -259,7 +259,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div id="sub-body" hidden>
 <div id="sub-list" style="margin-top:8px"><div class="k">लोड हो रहा है…</div></div>
 <div class="k" id="sub-cr" hidden style="margin-top:8px"></div>
-<div hidden style="margin-top:12px;border-top:1px dashed var(--line);padding-top:10px"><b>🔊 DynaMe Voice</b>
+<div hidden style="margin-top:12px;border-top:1px dashed var(--line);padding-top:10px"><b>🔊 LiveCard Voice</b>
 <div class="k">प्लान खत्म होने, रिन्यू और AI क्रेडिट की सूचना बोलकर सुनाता है। आवाज़ न चले तो सूचना लिखी हुई दिखती है।</div>
 <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="vo-on" style="width:auto;margin:0"> आवाज़ वाली सूचना चालू</label>
 <div style="display:flex;gap:8px;margin-top:8px"><select id="vo-lang" style="flex:1"><option value="hi">हिंदी</option><option value="en">English</option></select>
@@ -275,19 +275,19 @@ var b=document.createElement('a');b.textContent=a[4]?'⬇️ APK':'देखे�
 <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('sup-body');q.hidden=!q.hidden;document.getElementById('sup-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">🆘 Contact support</b><span id="sup-ar" style="font-size:16px">▾</span></div>
 <div id="sup-body" hidden>
 <div class="k" style="margin:8px 0">मदद चाहिए, कोई सवाल है, या बिज़नेस डायरेक्टरी की लिस्टिंग हटवानी है? सपोर्ट को ईमेल करें।</div>
-<a href="mailto:info@spywell.in?subject=DynaMe%20Support" style="display:block;text-align:center;background:#d4141c;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700">✉️ info@spywell.in</a>
+<a href="mailto:info@spywell.in?subject=LiveCard%20Support" style="display:block;text-align:center;background:#d4141c;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700">✉️ info@spywell.in</a>
 <a href="mailto:info@spywell.in?subject=Remove%20my%20Directory%20listing" style="display:block;text-align:center;margin-top:8px;background:#fff;color:#d4141c;border:1.5px solid #d4141c;border-radius:12px;padding:11px 6px;text-decoration:none;font-weight:700">📒 डायरेक्टरी लिस्टिंग हटवाएँ</a>
 <div class="k" style="margin-top:10px">Developer website: <a href="https://www.spywell.in" target="_blank" rel="noopener" style="font-weight:700">www.spywell.in</a></div>
 </div></div>
 <button type="button" id="out" hidden style="margin-top:4px;width:100%;background:#fff;color:#b3261e;border:1.5px solid #b3261e">🚪 लॉगआउट</button>
 </div>
 
-<div class="wrap" style="padding:0 0 10px;text-align:center"><a href="/dyname/" style="display:inline-block;font-size:13px;color:var(--wine);font-weight:700;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 14px">✨ DynaMe क्या है? →</a>
+<div class="wrap" style="padding:0 0 10px;text-align:center"><a href="/dyname/" style="display:inline-block;font-size:13px;color:var(--wine);font-weight:700;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 14px">✨ LiveCard क्या है? →</a>
 
 <div class="k" style="margin:10px 0 0;font-size:11px;line-height:1.8"><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/terms/">Terms</a> · <a href="/dyname/disclaimer/">Disclaimer</a> · <a href="/dyname/refund/">Refund</a></div></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/render.js?v=20261118e"></script>
+<script src="/studio/render.js?v=20261119a"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -467,7 +467,7 @@ function openChat(target){
   function msg(t,c){var d=document.createElement('div');d.textContent=t;d.style.cssText='padding:18px;text-align:center;color:'+(c||'#666')+';font-size:14px';return d}
   async function list(){mode='list';PEER=null;tt.textContent='मैसेज';mo.hidden=true;ft.style.display='none';bd.textContent='';
     var r=await sb.rpc('studio_chat_inbox');if(mode!=='list')return;bd.textContent='';var a=(r&&r.data)||[];
-    if(!a.length){bd.appendChild(msg('अभी कोई कॉन्टैक्ट नहीं। किसी का DynaMe कार्ड सेव कीजिए, फिर उसके आगे "💬 चैट" दबाइए।'));return}
+    if(!a.length){bd.appendChild(msg('अभी कोई कॉन्टैक्ट नहीं। किसी का LiveCard कार्ड सेव कीजिए, फिर उसके आगे "💬 चैट" दबाइए।'));return}
     a.forEach(function(p){var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;padding:12px;margin-bottom:8px;background:#fff;border-radius:14px;cursor:pointer';
       var av=document.createElement('div');av.textContent=(p.name||'#').trim()[0]||'#';av.style.cssText='flex:none;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#5b3df0);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px';
       var mid=document.createElement('div');mid.style.cssText='flex:1;min-width:0';var n=document.createElement('div');n.textContent=p.name;n.style.cssText='font-weight:800;font-size:16px;color:#222';var l=document.createElement('div');l.textContent=p.last_body||'चैट शुरू कीजिए';l.style.cssText='font-size:13px;color:#667;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';mid.appendChild(n);mid.appendChild(l);
@@ -483,7 +483,7 @@ function openChat(target){
   async function start(){
     if(target&&target.slug){tt.textContent=target.name||'चैट';bd.appendChild(msg('खुल रहा है…'));
       var r=await sb.rpc('studio_chat_peer_of',{p_slug:target.slug});var p=r&&r.data&&r.data[0];
-      if(!p){bd.textContent='';bd.appendChild(msg('यह कार्ड DynaMe यूज़र का नहीं है, चैट नहीं हो सकती।','#b00020'));mode='x';return}
+      if(!p){bd.textContent='';bd.appendChild(msg('यह कार्ड LiveCard यूज़र का नहीं है, चैट नहीं हो सकती।','#b00020'));mode='x';return}
       var ib=await sb.rpc('studio_chat_inbox');var f=((ib&&ib.data)||[]).filter(function(q){return q.peer===p.peer})[0];
       await thread(p.peer,p.name||target.name,f&&f.blocked)}
     else await list()}
@@ -519,11 +519,11 @@ function drawContacts(){
   if(CT.length&&cc.length>1)cc.forEach(function(c){var bt=mk('button',CTC===c[0]?'on':'',c[1]);bt.type='button';bt.onclick=function(){CTC=c[0];drawContacts()};fl2.appendChild(bt)});
   if(!CT.length){box.appendChild(mk('div','k','अभी कोई कॉन्टैक्ट नहीं है।'));return}
   (function(){var nd=CT.filter(function(x){return x.src==='card'}).length,ns=CT.filter(function(x){return x.scan}).length,nm=CT.length-nd-ns,T=function(x){return window.I18N&&I18N.tr?I18N.tr(x):x};
-    var sm=mk('div','',T('कुल')+' '+CT.length+' '+T('कॉन्टैक्ट')+(nd?' · ✅ '+nd+' DynaMe':'')+(ns?' · 📷 '+ns+' Scanned':'')+(nm?' · ✍️ '+nm+' '+T('हाथ से'):''));sm.style.cssText='font-weight:700;color:#9d0b12;font-size:14px;margin:10px 2px 0';box.appendChild(sm)})();
+    var sm=mk('div','',T('कुल')+' '+CT.length+' '+T('कॉन्टैक्ट')+(nd?' · ✅ '+nd+' LiveCard':'')+(ns?' · 📷 '+ns+' Scanned':'')+(nm?' · ✍️ '+nm+' '+T('हाथ से'):''));sm.style.cssText='font-weight:700;color:#9d0b12;font-size:14px;margin:10px 2px 0';box.appendChild(sm)})();
   var rows=CT.filter(function(x){return (CTF==='all'||x.ind===CTF)&&(CTC==='all'||(CTC==='fav'?x.fav:x.coll===CTC))&&(!q||(x.title+' '+(x.sub||'')+' '+(x.mob||'')+' '+(x.ind?(INDN[x.ind]||x.ind):'')).toLowerCase().indexOf(q)>=0)});
   if(!rows.length){box.appendChild(mk('div','k','कोई कॉन्टैक्ट नहीं मिला।'));return}
   rows.sort(function(a,b){return (b.fav?1:0)-(a.fav?1:0)});
-  rows.forEach(function(x){var row=mk('div','des');row.style.cssText='border-left:4px solid '+(x.src==='card'?'#d4141c':x.scan?'#f0b400':'#c9b8b8')+';border-radius:12px;background:#fff;padding:10px;margin-top:8px;border-top:1px solid #f0d6d4;border-right:1px solid #f0d6d4;border-bottom:1px solid #f0d6d4';var t=mk('b','',(x.fav?'⭐ ':'')+x.ico+x.title);row.appendChild(t);var bdg=x.src==='card'?['✅ DynaMe','#fff1f0','#d4141c']:(x.scan?['📷 Scanned','#fff4c2','#7a5b00']:null);if(bdg){var bs=mk('span','',bdg[0]);bs.style.cssText='display:inline-block;margin-left:8px;font-size:11px;font-weight:600;padding:1px 8px;border-radius:99px;background:'+bdg[1]+';color:'+bdg[2];t.appendChild(bs)}
+  rows.forEach(function(x){var row=mk('div','des');row.style.cssText='border-left:4px solid '+(x.src==='card'?'#d4141c':x.scan?'#f0b400':'#c9b8b8')+';border-radius:12px;background:#fff;padding:10px;margin-top:8px;border-top:1px solid #f0d6d4;border-right:1px solid #f0d6d4;border-bottom:1px solid #f0d6d4';var t=mk('b','',(x.fav?'⭐ ':'')+x.ico+x.title);row.appendChild(t);var bdg=x.src==='card'?['✅ LiveCard','#fff1f0','#d4141c']:(x.scan?['📷 Scanned','#fff4c2','#7a5b00']:null);if(bdg){var bs=mk('span','',bdg[0]);bs.style.cssText='display:inline-block;margin-left:8px;font-size:11px;font-weight:600;padding:1px 8px;border-radius:99px;background:'+bdg[1]+';color:'+bdg[2];t.appendChild(bs)}
     var meta=[x.sub,x.ind?(INDN[x.ind]||x.ind):''].filter(Boolean).join(' · ');if(meta)row.appendChild(mk('div','k',meta));if(x.mob){var pl=mk('div','','📞 +91 '+x.mob);pl.style.cssText='font-weight:700;font-size:15px;margin-top:2px';row.appendChild(pl)}if(x.note){var nt=mk('div','k',x.note);nt.style.cssText='font-size:12px;word-break:break-word';row.appendChild(nt)}
     var ac=mk('div','acts');
     if(x.mob){var c=mk('a','','📞 कॉल');c.href='tel:+91'+x.mob;ac.appendChild(c);var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+(x.wa||x.mob);w.target='_blank';w.rel='noopener';ac.appendChild(w)}
@@ -927,7 +927,7 @@ async function refHome(){
   [['👥','जुड़े',m.joined],['✅','पेमेंट किया',m.paid],['💰','वॉलेट','₹'+m.balance]].forEach(function(p){var c=mk('div','');c.style.cssText='flex:1;background:#fff;border-radius:14px;padding:14px 4px;text-align:center';var n=mk('b','',String(p[2]));n.style.cssText='display:block;font-size:24px;color:#b3141c';c.appendChild(n);c.appendChild(mk('span','k',p[0]+' '+p[1]));st.appendChild(c)});box.appendChild(st);
   var cd=mk('div','','आपका कोड: '+m.code);cd.style.cssText='text-align:center;font-weight:800;font-size:26px;letter-spacing:3px;background:#fff;border:2px dashed #d4141c;border-radius:14px;padding:16px;color:#7a0a10';box.appendChild(cd);
   var row=mk('div','');row.style.cssText='display:flex;gap:8px;margin-top:8px';
-  var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent('मैं SpyWell DynaMe पर अपना लाइव विज़िटिंग कार्ड, वेबसाइट, invitation कार्ड बनाता हूँ।\n\nआप भी बनाइए: '+u+'  (कोड: '+m.code+')');wa.target='_blank';wa.rel='noopener';
+  var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent('मैं SpyWell LiveCard पर अपना लाइव विज़िटिंग कार्ड, वेबसाइट, invitation कार्ड बनाता हूँ।\n\nआप भी बनाइए: '+u+'  (कोड: '+m.code+')');wa.target='_blank';wa.rel='noopener';
   wa.style.cssText='flex:1;text-align:center;background:#1ea952;color:#fff;border-radius:14px;padding:16px 6px;text-decoration:none;font-weight:800;font-size:16px';
   var cp=mk('button','alt','🔗 लिंक कॉपी');cp.type='button';cp.style.cssText='margin:0;flex:1;padding:16px 6px;font-size:16px;border-radius:14px';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2000)};
   row.appendChild(wa);row.appendChild(cp);box.appendChild(row);
@@ -1433,7 +1433,7 @@ function help(){var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigato
 var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center';
 var c=document.createElement('div');c.style.cssText='background:#fff;border-radius:18px 18px 0 0;padding:18px 18px 26px;width:100%;max-width:560px;color:#1a1212;font-size:16px;line-height:1.6';
 var st=ios?['नीचे (या ऊपर) <b>Share</b> बटन ⬆️ दबाइए','<b>"Add to Home Screen"</b> चुनिए','<b>Add</b> दबाइए']:['ऊपर दाईं तरफ़ <b>⋮</b> मेनू खोलिए','<b>"Add to Home screen"</b> या <b>"Install app"</b> चुनिए','<b>Add / Install</b> दबाइए'];
-c.innerHTML='<b style="font-size:18px;color:#d4141c">📲 होम स्क्रीन पर जोड़ें</b><div style="margin:6px 0 10px;color:#6e5b5b;font-size:14px">एक बार जोड़ने पर आइकन दबाते ही DynaMe खुल जाएगा, URL टाइप नहीं करना पड़ेगा।'+(ios?' (iPhone में यह <b>Safari</b> में ही होता है।)':'')+'</div><ol style="margin:0;padding-left:22px">'+st.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ol>';
+c.innerHTML='<b style="font-size:18px;color:#d4141c">📲 होम स्क्रीन पर जोड़ें</b><div style="margin:6px 0 10px;color:#6e5b5b;font-size:14px">एक बार जोड़ने पर आइकन दबाते ही LiveCard खुल जाएगा, URL टाइप नहीं करना पड़ेगा।'+(ios?' (iPhone में यह <b>Safari</b> में ही होता है।)':'')+'</div><ol style="margin:0;padding-left:22px">'+st.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ol>';
 var x=document.createElement('button');x.type='button';x.textContent='ठीक है';x.style.cssText='width:100%;margin:14px 0 0;min-height:44px;background:#d4141c;color:#fff;border:0;border-radius:12px;font-size:16px;font-weight:700';x.onclick=function(){o.remove()};
 c.appendChild(x);o.appendChild(c);o.onclick=function(e){if(e.target===o)o.remove()};document.body.appendChild(o)}
 b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).catch(function(){})}else help()}})();</script></body></html>

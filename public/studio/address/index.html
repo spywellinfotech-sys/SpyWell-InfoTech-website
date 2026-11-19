@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Address Card | DynaMe</title>
+<title>Address Card | LiveCard</title>
 <link rel="icon" href="/studio/vicard-icon.png">
 <style>.wn[hidden],.shr[hidden]{display:none!important}
 :root{--wine:#12307f;--org:#f59a1a;--ink:#14203d;--bg:#eef3ff;--line:#d5def5;--mut:#5a6a8c}
@@ -83,7 +83,7 @@ function draw(){
   x.font='400 42px '+FF;var ay=y;addrL.forEach(function(l,i){x.fillText(l,90,y);y+=60});
   var mu=mapUrl();
   if(mu){try{var qc=document.createElement('canvas');window.StudioQR.draw(qc,unescape(encodeURIComponent(mu)),260);x.fillStyle='#fff';x.fillRect(W-340,H-400,260,260);x.drawImage(qc,W-340,H-400,260,260);x.fillStyle='#5a6a8c';x.font='400 28px '+FF;x.textAlign='center';x.fillText('स्कैन करें: लोकेशन',W-210,H-100);x.textAlign='left'}catch(e){}}
-  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('DynaMe · Address Card',90,H-60);
+  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('LiveCard · Address Card',90,H-60);
   try{$('pv').src=cv.toDataURL('image/png')}catch(e){}
   cv.toBlob(function(b){blob=b},'image/png');$('outc').hidden=false;$('b-cl').hidden=!mapUrl();
   try{localStorage.setItem(LSK,JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
@@ -123,7 +123,7 @@ function shareTwo(b,q){var C=window.Capacitor,P=C&&C.Plugins;if(!q){deliver(b,'a
   try{var fs=[new File([b],'address-card.png',{type:'image/png'}),new File([q],'location-qr.png',{type:'image/png'})];if(navigator.canShare&&navigator.canShare({files:fs})&&navigator.share){navigator.share({files:fs,title:'Address Card',text:text()}).catch(function(){});return}}catch(e){}
   deliver(b,'address-card-'+(mob()||'vicard'))}
 $('b-share').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;if(!window.ViNative&&mapUrl()){qrBlob(function(q){shareTwo(b,q)});return}nativeDo(b,'address-card','share',function(ok){if(ok){$('a-ok').textContent='✓ शेयर मेन्यू खुल गया';return}deliver(b,'address-card-'+(mob()||'vicard'))})},'image/png')};
-$('b-save').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','save',function(ok){if(ok){$('a-ok').textContent='✓ फ़ोटो गैलरी में सेव हो गई (Pictures/DynaMe)';return}
+$('b-save').onclick=function(){if(!draw())return;cv.toBlob(function(b){if(!b)return;nativeDo(b,'address-card','save',function(ok){if(ok){$('a-ok').textContent='✓ फ़ोटो गैलरी में सेव हो गई (Pictures/LiveCard)';return}
   /* not inside the app: try download, then fallback to long-press overlay */
   try{var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='address-card.png';document.body.appendChild(a);a.click();a.remove();$('a-ok').textContent='फ़ोटो डाउनलोड हो रही है। न हो तो "शेयर करें" दबाएँ।'}catch(e){deliver(b,'address-card')}})},'image/png')};
 $('b-wa').onclick=function(){if(!draw())return;openExt('https://wa.me/?text='+encodeURIComponent(text()))};
@@ -141,7 +141,7 @@ $('s-go').onclick=function(){var n=$('s-num').value.replace(/\D/g,'').slice(-10)
 var NV=null;try{NV=window.ViNative||(window.parent&&window.parent!==window&&window.parent.ViNative)||null}catch(e){}
 $('s-wa').style.cssText='background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32';if(NV&&NV.openWa){$('s-wb').hidden=false;$('s-wb').style.cssText='background:#075e54;border:1px solid #075e54;color:#fff';$('s-wb').textContent='🛍 WhatsApp Business';$('s-wb').onclick=function(e){e.preventDefault();if(!NV.openWa('',text(),true))NV.shareText(text())}}
 if(NV&&NV.shareText){$('s-more').hidden=false;$('s-more').onclick=function(e){e.preventDefault();NV.shareText(text())}}
-if(OF){$('a-cowrap').hidden=false;$('a-nml').textContent='संपर्क व्यक्ति का नाम';document.title='Office Address Card | DynaMe';document.querySelector('.top b').lastChild.textContent='🏢 Office Address Card';document.querySelector('h1').textContent='अपने ऑफ़िस का पता कार्ड की तरह भेजें';document.querySelector('.wrap>.k').textContent='कंपनी का पता विज़िटिंग कार्ड की तरह फ़ोटो में भेजिए। एक बार भरिए, अगली बार अपने आप भरा मिलेगा।';document.querySelector('label[for],#a-addr')&&0;var l=$('a-addr').previousElementSibling;l.textContent='ऑफ़िस का पूरा पता';$('a-addr').placeholder='बिल्डिंग / प्लॉट नंबर, गली, एरिया, शहर';$('b-store').textContent='💾 ऑफ़िस का पता सेव करें'}
+if(OF){$('a-cowrap').hidden=false;$('a-nml').textContent='संपर्क व्यक्ति का नाम';document.title='Office Address Card | LiveCard';document.querySelector('.top b').lastChild.textContent='🏢 Office Address Card';document.querySelector('h1').textContent='अपने ऑफ़िस का पता कार्ड की तरह भेजें';document.querySelector('.wrap>.k').textContent='कंपनी का पता विज़िटिंग कार्ड की तरह फ़ोटो में भेजिए। एक बार भरिए, अगली बार अपने आप भरा मिलेगा।';document.querySelector('label[for],#a-addr')&&0;var l=$('a-addr').previousElementSibling;l.textContent='ऑफ़िस का पूरा पता';$('a-addr').placeholder='बिल्डिंग / प्लॉट नंबर, गली, एरिया, शहर';$('b-store').textContent='💾 ऑफ़िस का पता सेव करें'}
 if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 F.forEach(function(k){$('a-'+k).oninput=function(){draw()}});
 (async function(){
