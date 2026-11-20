@@ -1040,6 +1040,7 @@ function closeRef(){var b=$('c-ref'),k=$('ref-bk');if(b)b.classList.remove('pop'
 function openRef(){var b=$('c-ref');if(!b||b.hidden)return;if(!$('ref-bk')){var k=document.createElement('div');k.id='ref-bk';k.onclick=closeRef;document.body.appendChild(k)}b.classList.add('pop');window.__refOpen=true;refHome().then(function(){b.classList.add('pop');var cl=document.createElement('button');cl.type='button';cl.textContent='✕ बंद करें';cl.style.cssText='display:block;width:100%;margin:10px 0 0;background:#fff;color:#7a0a10;border:1px solid #d4141c';cl.onclick=closeRef;b.appendChild(cl)})}
 async function lbHome(){
   var box=$('c-lb');if(!box)return;
+  try{var vv=localStorage.getItem('sv_vid');if(!vv){vv=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now()).replace(/-/g,'').slice(0,32);localStorage.setItem('sv_vid',vv)}await sb.rpc('studio_mark_my_vid',{p_visitor:vv})}catch(e){}
   try{var r=await sb.rpc('studio_lb_board');var d=r&&r.data;if(!d||r.error){box.hidden=true;return}
   box.textContent='';var pr=d.prizes||[0,0,0],med=['🥇','🥈','🥉'];
   var h=mk('div','','🏆 इस महीने के टॉप लिंक व्यू');h.style.cssText='font-weight:800;font-size:15px';box.appendChild(h);
