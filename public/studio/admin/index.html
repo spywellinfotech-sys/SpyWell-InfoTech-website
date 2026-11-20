@@ -221,17 +221,25 @@ async function domPanel(box){
     c.appendChild(it)});box.appendChild(c)}
 async function lbPanel(box){
   box.textContent='';
-  var info=h('div',{text:'हर महीने के टॉप 3 (यूनिक विज़िटर) को वॉलेट इनाम। इनाम की राशि settings में lb_prize_1/2/3 से बदलें।'});info.style.cssText='font-size:12px;color:#666;margin-bottom:8px';box.appendChild(info);
+  var info=h('div',{text:'हर महीने के टॉप 3 (यूनिक विज़िटर) को वॉलेट इनाम। महीना बदलकर पुराने महीने की सूची देखें। इनाम बाँटने के लिए बीता हुआ महीना चुनें (मौजूदा महीना खत्म होने पर ही बँटेगा)।'});info.style.cssText='font-size:12px;color:#666;margin-bottom:8px';box.appendChild(info);
   var inp=h('input',{type:'month'});inp.style.cssText='padding:8px;border:1px solid #ccc;border-radius:8px;margin-right:6px';
-  var pm=new Date(Date.now()+19800000);pm.setUTCMonth(pm.getUTCMonth()-1);inp.value=pm.toISOString().slice(0,7);
+  inp.value=new Date(Date.now()+19800000).toISOString().slice(0,7);
   var bt=h('button',{text:'🏆 इनाम बाँटो',type:'button'});bt.style.cssText='padding:9px 14px;border:0;border-radius:8px;background:#0b7a75;color:#fff;font-weight:700';
+  var tp=h('div',{});tp.style.cssText='margin-bottom:12px';
+  async function top(){tp.textContent='';var r=await sb.rpc('studio_admin_lb_top',{p_month:inp.value});var hd=h('b',{text:'🏆 '+inp.value+' के सबसे ज़्यादा यूनिक व्यू वाले यूज़र'});hd.style.cssText='display:block;margin-bottom:6px';tp.appendChild(hd);
+    if(r.error){tp.appendChild(h('div',{text:'सूची नहीं आई'}));return}
+    var med=['🥇','🥈','🥉'];(r.data||[]).forEach(function(x){var row=h('div',{});row.style.cssText='font-size:13px;padding:6px 0;border-top:1px solid #eee';
+      var l1=h('div',{text:(med[x.rank-1]||('#'+x.rank))+' '+(x.name||'(नाम नहीं)')+' · 👁 '+x.score});l1.style.fontWeight='700';row.appendChild(l1);
+      row.appendChild(h('div',{text:[x.phone,x.email].filter(Boolean).join(' · ')+(x.slug?' · /'+x.slug:'')}));row.lastChild.style.cssText='font-size:12px;color:#666;word-break:break-all';tp.appendChild(row)});
+    if(!(r.data||[]).length)tp.appendChild(h('div',{text:'इस महीने अभी कोई व्यू नहीं'}))}
+  inp.onchange=top;
   var msg=h('div',{});msg.style.cssText='font-size:13px;margin:8px 0';
   var lst=h('div',{});
-  box.appendChild(inp);box.appendChild(bt);box.appendChild(msg);box.appendChild(lst);
+  box.appendChild(tp);box.appendChild(inp);box.appendChild(bt);box.appendChild(msg);box.appendChild(lst);
   async function load(){lst.textContent='';var r=await sb.rpc('studio_admin_lb_awards');(r.data||[]).forEach(function(x){var d=h('div',{text:x.month+' · #'+x.rank+' · '+(x.email||'-')+' · 👁 '+x.score+' · ₹'+x.amount});d.style.cssText='font-size:12px;padding:5px 0;border-top:1px solid #eee';lst.appendChild(d)});if(!(r.data||[]).length)lst.textContent='अभी कोई विजेता नहीं'}
   bt.onclick=async function(){if(!confirm(inp.value+' के टॉप 3 को इनाम दें?'))return;bt.disabled=true;var r=await sb.rpc('studio_admin_lb_award',{p_month:inp.value});bt.disabled=false;var d=r.data||{};
     msg.textContent=r.error?('गड़बड़: '+r.error.message):d.error==='month_not_over'?'यह महीना अभी खत्म नहीं हुआ':('हो गया — '+d.awarded+' विजेता को इनाम मिला (पहले दिया हुआ दोबारा नहीं जुड़ता)');load()};
-  load()
+  load();top()
 }
 async function linkPanel(box){
   var r=await sb.rpc('studio_admin_link_report');box.textContent='';var c=h('div',{class:'card'});c.appendChild(h('b',{text:'📈 लिंक व्यू रिपोर्ट'}));
