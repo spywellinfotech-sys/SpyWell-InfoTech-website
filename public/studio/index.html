@@ -79,6 +79,7 @@ button{min-height:48px;border-radius:12px}
 @keyframes hl-wave{0%,60%,100%{transform:rotate(0)}10%,30%{transform:rotate(16deg)}20%,40%{transform:rotate(-10deg)}}
 @keyframes hl-sh{0%{left:-60%}60%,100%{left:130%}}@keyframes hl-tw{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:.95;transform:scale(1.15)}}
 @media (prefers-reduced-motion:reduce){#c-hello,#c-hello *,#c-hello:after{animation:none!important}}
+#c-bill{background:linear-gradient(135deg,#0b5f5a,#17a89e);border:0;color:#fff;box-shadow:0 8px 20px rgba(11,95,90,.35);padding:14px 12px;position:relative;overflow:hidden}#c-bill::after{content:'🏦';position:absolute;right:-8px;top:-14px;font-size:90px;opacity:.1;pointer-events:none}#c-bill .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-bill .sa-i{font-size:30px}#c-bill .sa-h b{display:block;font-size:19px;color:#fff}#c-bill .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}#bl-sum div{background:rgba(255,255,255,.16);border-radius:10px;padding:6px 10px;margin-top:5px;font-size:13px;word-break:break-all}#bl-body .card button{white-space:nowrap}
 html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-transform:translateZ(0)}#c-sendaddr{background:linear-gradient(135deg,#3a1d8f,#7b5cf0);border:0;color:#fff;box-shadow:0 8px 20px rgba(91,60,220,.35);padding:14px 12px;position:relative;overflow:hidden}
 #c-sendaddr::after{content:'📨';position:absolute;right:-8px;top:-14px;font-size:90px;opacity:.1;pointer-events:none}
 #c-sendaddr .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-sendaddr .sa-i{font-size:30px}#c-sendaddr .sa-h b{display:block;font-size:19px;color:#fff}#c-sendaddr .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}
@@ -215,7 +216,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div id="sa-sum" onclick="document.getElementById('sa-h').click()"></div>
 <div id="sa-body" hidden><div class="card" id="c-addr"></div>
 <div class="card" id="c-addr2"></div></div></div>
-<div class="card" id="c-bill" style="padding:12px 14px"></div>
+<div class="card" id="c-bill"></div>
 <div class="card" id="c-loc" style="padding:10px 14px"></div>
 <div class="card" id="c-inv" hidden></div>
 
@@ -1442,9 +1443,15 @@ async function billTile(edit){
   var box=$('c-bill');if(!box)return;
   if(BILL===null){try{var r=await sb.from('studio_billing').select('d').eq('user_id',ME.id).maybeSingle();BILL=(r&&r.data&&r.data.d)||{}}catch(e){BILL={}}}
   var d=BILL||{};box.textContent='';
-  var top=mk('div','');top.style.cssText='display:flex;align-items:center;gap:10px';top.appendChild(mk('span','','🏦')).style.fontSize='30px';
-  var tt=mk('div','');tt.appendChild(mk('b','','Billing & Bank details'));tt.firstChild.style.display='block';tt.appendChild(mk('span','k','बैंक और बिलिंग की जानकारी सेव करें और एक टच में भेजें'));top.appendChild(tt);box.appendChild(top);
-  var body=mk('div','');body.hidden=!(edit||BILLOPEN);var tg=mk('button','alt',(body.hidden?'▾ Details':'▴ Details'));tg.type='button';tg.style.cssText='margin:10px 0 0;width:100%';tg.onclick=function(){body.hidden=!body.hidden;BILLOPEN=!body.hidden;tg.textContent=body.hidden?'▾ Details':'▴ Details'};box.appendChild(tg);box.appendChild(body);
+  var hd=mk('div','sa-h');hd.style.cursor='pointer';hd.appendChild(mk('span','sa-i','🏦'));
+  var tt=mk('div','');tt.style.cssText='flex:1;min-width:0';tt.appendChild(mk('b','','Billing & Bank details'));tt.appendChild(mk('span','','बैंक और बिलिंग की जानकारी एक टच में भेजें'));hd.appendChild(tt);
+  var ar=mk('span','',(edit||BILLOPEN)?'▴':'▾');ar.style.fontSize='16px';hd.appendChild(ar);box.appendChild(hd);
+  var sm=mk('div','');sm.id='bl-sum';sm.style.cssText='margin:8px 4px 0';sm.hidden=!!(edit||BILLOPEN);box.appendChild(sm);
+  var wrap=mk('div','');wrap.id='bl-body';wrap.hidden=!(edit||BILLOPEN);box.appendChild(wrap);
+  var body=mk('div','card');body.style.cssText='margin:10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.2);border:0;color:var(--ink)';wrap.appendChild(body);
+  hd.onclick=function(){wrap.hidden=!wrap.hidden;sm.hidden=!wrap.hidden;BILLOPEN=!wrap.hidden;ar.textContent=wrap.hidden?'▾':'▴'};
+  var sl=[];if(d.bank||d.acc)sl.push('🏦 '+(d.bank||'बैंक')+(d.acc?' · ••••'+String(d.acc).slice(-4):''));if(d.upi)sl.push('📲 UPI: '+d.upi);if(d.gst)sl.push('🧾 GSTIN: '+d.gst);
+  sl.forEach(function(t){sm.appendChild(mk('div','',t))});if(!sl.length)sm.appendChild(mk('div','','अभी कोई जानकारी सेव नहीं है — दबाकर जोड़ें'));
   var has=!!(d.acc||d.upi||d.gst||d.baddr);
   function mask(a){a=String(a||'');return a.length>4?'•'.repeat(a.length-4)+a.slice(-4):a}
   function txt(){var t='🏦 बैंक / बिलिंग की जानकारी\n';if(d.name)t+='नाम: '+d.name+'\n';if(d.bank)t+='बैंक: '+d.bank+(d.branch?' ('+d.branch+')':'')+'\n';if(d.acc)t+='खाता नंबर: '+d.acc+'\n';if(d.ifsc)t+='IFSC: '+d.ifsc+'\n';if(d.upi)t+='UPI: '+d.upi+'\n';if(d.gst)t+='GSTIN: '+d.gst+'\n';if(d.baddr)t+='बिलिंग पता: '+d.baddr+'\n';return t+'\n📲 अपना डिजिटल कार्ड मुफ़्त बनाएँ: https://livecard.in/studio/'}
