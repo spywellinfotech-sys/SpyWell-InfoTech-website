@@ -515,20 +515,20 @@ async function loadSaved(){
 var COLS=['सप्लायर','ग्राहक','डीलर','बिज़नेस पार्टनर','सर्विस प्रोवाइडर','पर्सनल'];
 
 /* ===== FollowUp (admin only) ===== */
-var FUADM=null,FU=[],FUL={};
+var FUADM=null,FU=[],FUL={},FUC=[];
 function fuDt(s){try{return new Date(s).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',hour12:true})}catch(e){return ''}}
 async function fuLoad(){
   if(FUADM===null){try{var r0=await sb.rpc('studio_is_admin');FUADM=!!(r0&&r0.data===true)}catch(e){FUADM=false}}
-  FU=[];FUL={};if(!FUADM)return;
+  FU=[];FUL={};FUC=[];if(!FUADM)return;
   var r=await sb.from('studio_followups').select('*').eq('status','open').eq('kind','task').order('due_at',{ascending:true}).limit(2000);FU=r.data||[];
-  var l=await sb.from('studio_followups').select('ref_src,ref_id,outcome,note,done_at').eq('kind','call').order('done_at',{ascending:false}).limit(1000);(l.data||[]).forEach(function(c){var k=c.ref_src+':'+c.ref_id;if(!FUL[k])FUL[k]=c})}
+  var l=await sb.from('studio_followups').select('ref_src,ref_id,outcome,note,done_at').eq('kind','call').order('done_at',{ascending:false}).limit(1000);(l.data||[]).forEach(function(c){var k=c.ref_src+':'+c.ref_id;if(!FUL[k])FUL[k]=c});var d7=new Date();d7.setDate(d7.getDate()-6);d7.setHours(0,0,0,0);var cc=await sb.from('studio_followups').select('outcome,done_at').eq('kind','call').gte('done_at',d7.toISOString()).limit(3000);FUC=cc.data||[]}
 function fuNote(x){window._fuPend={s:x.src||x.ref_src,i:x.id||x.ref_id,n:x.title||x.name,m:x.mob||x.mobile,t:Date.now()};try{localStorage.setItem('fu_call',JSON.stringify(window._fuPend))}catch(e){}}
 function fuAsk(o){
   var ov=mk('div');ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center';
   var sh=mk('div');sh.style.cssText='background:#fff;width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:16px;max-height:88vh;overflow:auto';ov.appendChild(sh);
   var h=mk('b','',o.title);h.style.cssText='font-size:17px;display:block';sh.appendChild(h);if(o.name){var nm=mk('div','k',o.name);sh.appendChild(nm)}
   var res=o.results?'':null,due=null,dtv='';
-  function chipRow(list,get,set,single){var w=mk('div');w.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin:8px 0';list.forEach(function(it){var b=mk('button','',it[1]);b.type='button';b.style.cssText='margin:0;padding:7px 12px;border-radius:99px;border:1px solid #d4141c;background:#fff;color:#d4141c;font-size:14px;width:auto;min-height:0';b.onclick=function(){set(it[0]);[].forEach.call(w.children,function(c){c.style.background='#fff';c.style.color='#d4141c'});b.style.background='#d4141c';b.style.color='#fff'};w.appendChild(b)});return w}
+  function chipRow(list,get,set,single){var w=mk('div');w.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin:8px 0';list.forEach(function(it){var b=mk('button','',it[1]);b.type='button';b.style.cssText='margin:0;padding:7px 12px;border-radius:99px;border:1px solid #0f766e;background:#fff;color:#0f766e;font-size:14px;width:auto;min-height:0';b.onclick=function(){set(it[0]);[].forEach.call(w.children,function(c){c.style.background='#fff';c.style.color='#0f766e'});b.style.background='#0f766e';b.style.color='#fff'};w.appendChild(b)});return w}
   if(o.results){sh.appendChild(mk('div','k','कॉल का नतीजा'));sh.appendChild(chipRow(o.results.map(function(r){return [r,r]}),null,function(v){res=v}))}
   var ni=mk('input');ni.placeholder='नोट (खाली छोड़ सकते हैं)';ni.maxLength=200;ni.style.marginTop='6px';sh.appendChild(ni);
   sh.appendChild(mk('div','k','⏰ अगला फ़ॉलो-अप कब?'));
@@ -551,17 +551,17 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
 function fuToday(box){
   if(!FUADM||!FU.length)return;var end=new Date();end.setHours(23,59,59,999);
   var due=FU.filter(function(f){return f.due_at&&new Date(f.due_at)<=end}),later=FU.length-due.length;
-  var c=mk('div');c.style.cssText='border:2px solid #d4141c;border-radius:14px;background:#fff7f6;padding:10px;margin-top:10px';
-  var h=mk('b','','⏰ आज के फ़ॉलो-अप ('+due.length+')'+(later?' · आगे '+later:''));h.style.cssText='color:#9d0b12;font-size:15px';c.appendChild(h);
+  var c=mk('div');c.style.cssText='border:2px solid #0f766e;border-radius:14px;background:#f0fdfa;padding:10px;margin-top:10px';
+  var h=mk('b','','⏰ आज के फ़ॉलो-अप ('+due.length+')'+(later?' · आगे '+later:''));h.style.cssText='color:#0b4f4a;font-size:15px';c.appendChild(h);
   if(!due.length)c.appendChild(mk('div','k','आज कोई फ़ॉलो-अप बाकी नहीं है 🎉'));
-  due.forEach(function(f){var late=new Date(f.due_at)<new Date(new Date().setHours(0,0,0,0));var r=mk('div');r.style.cssText='border-top:1px solid #f0d6d4;margin-top:8px;padding-top:8px';var t=mk('div','',f.name||f.mobile||'');t.style.fontWeight='700';r.appendChild(t);var m=mk('div','k',(late?'⚠️ देर: ':'')+fuDt(f.due_at)+(f.note?' · '+f.note:''));if(late)m.style.color='#b00020';r.appendChild(m);
+  due.forEach(function(f){var late=new Date(f.due_at)<new Date(new Date().setHours(0,0,0,0));var r=mk('div');r.style.cssText='border-top:1px solid #cdeae6;margin-top:8px;padding-top:8px';var t=mk('div','',f.name||f.mobile||'');t.style.fontWeight='700';r.appendChild(t);var m=mk('div','k',(late?'⚠️ देर: ':'')+fuDt(f.due_at)+(f.note?' · '+f.note:''));if(late)m.style.color='#b00020';r.appendChild(m);
     var ac=mk('div','acts');if(f.mobile){var a=mk('a','','📞 कॉल');a.href='tel:+91'+f.mobile;a.onclick=function(){fuNote({ref_src:f.ref_src,ref_id:f.ref_id,name:f.name,mobile:f.mobile})};ac.appendChild(a);var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+f.mobile;w.target='_blank';w.rel='noopener';ac.appendChild(w)}
     var d=mk('button','','✓ हो गया');d.type='button';d.onclick=async function(){d.disabled=true;await sb.from('studio_followups').update({status:'done',done_at:new Date().toISOString()}).eq('id',f.id);loadSaved()};ac.appendChild(d);
     var s=mk('button','','+1 दिन');s.type='button';s.style.cssText='background:#fff;color:#555;border:1px solid #ccc';s.onclick=async function(){s.disabled=true;var n=new Date(f.due_at);n.setDate(n.getDate()+1);if(n<new Date()){n=new Date();n.setDate(n.getDate()+1);n.setHours(10,0,0,0)}await sb.from('studio_followups').update({due_at:n.toISOString()}).eq('id',f.id);loadSaved()};ac.appendChild(s);r.appendChild(ac);c.appendChild(r)});
   box.appendChild(c)}
 function fuRow(x,ac,row){
   if(!FUADM)return;var key=x.src+':'+x.id,mine=FU.filter(function(f){return f.ref_src===x.src&&f.ref_id===x.id}),last=FUL[key];
-  if(mine.length){var f=mine[0];var b=mk('div','',(new Date(f.due_at)<new Date()?'⚠️ ':'⏰ ')+'फ़ॉलो-अप: '+fuDt(f.due_at)+(f.note?' · '+f.note:''));b.style.cssText='font-size:12px;font-weight:700;color:#9d0b12;margin-top:4px';row.appendChild(b)}
+  if(mine.length){var f=mine[0];var b=mk('div','',(new Date(f.due_at)<new Date()?'⚠️ ':'⏰ ')+'फ़ॉलो-अप: '+fuDt(f.due_at)+(f.note?' · '+f.note:''));b.style.cssText='font-size:12px;font-weight:700;color:#0b4f4a;margin-top:4px';row.appendChild(b)}
   if(last){var l=mk('div','','📞 पिछली कॉल: '+(last.outcome||'—')+' · '+fuDt(last.done_at).split(',')[0]+(last.note?' · '+last.note:''));l.style.cssText='font-size:12px;color:#555;margin-top:2px;word-break:break-word';row.appendChild(l)}
   var tel=ac.querySelector('a[href^="tel:"]');if(tel)tel.addEventListener('click',function(){fuNote(x)});
   if(x.mob||x.title){var fb=mk('button','','⏰ फ़ॉलो-अप');fb.type='button';fb.style.order=2;fb.onclick=function(){fuAsk({title:'⏰ फ़ॉलो-अप जोड़ें',name:x.title+(x.mob?' · +91 '+x.mob:''),save:async function(v){var r=await fuSaveTask(x.src,x.id,x.title,x.mob,v);if(r.error)throw r.error}})};ac.appendChild(fb)}}
@@ -591,18 +591,33 @@ async function fuTele(){
   async function pick(){wrap.textContent='';var h=mk('b','','📞 टेलीकॉलिंग मोड');h.style.fontSize='18px';wrap.appendChild(h);var st=await stats();var s=mk('div','k','आज: '+st.n+' कॉल · '+st.i+' रुचि वाले');s.style.margin='4px 0 10px';wrap.appendChild(s);
     var opts=[['fu','⏰ आज के फ़ॉलो-अप',function(){var e=new Date();e.setHours(23,59,59,999);var ids={};return FU.filter(function(f){return f.due_at&&new Date(f.due_at)<=e&&f.mobile}).map(function(f){return {title:f.name||f.mobile,mob:f.mobile,src:f.ref_src,id:f.ref_id,note:f.note}})}],['all','सभी कॉन्टैक्ट ('+CT.filter(function(x){return x.mob}).length+')',function(){return CT.filter(function(x){return x.mob}).map(function(x){return {title:x.title,mob:x.mob,src:x.src,id:x.id,note:x.sub||''}})}]];
     var cs=[];CT.forEach(function(x){if(x.coll&&cs.indexOf(x.coll)<0)cs.push(x.coll)});cs.forEach(function(k){opts.push(['c','📁 '+k+' ('+CT.filter(function(x){return x.coll===k&&x.mob}).length+')',function(){return CT.filter(function(x){return x.coll===k&&x.mob}).map(function(x){return {title:x.title,mob:x.mob,src:x.src,id:x.id,note:x.sub||''}})}])});
-    opts.forEach(function(o){var b=mk('button','',o[1]);b.type='button';b.style.cssText='display:block;width:100%;text-align:left;margin-top:8px;background:#fff;color:#9d0b12;border:1px solid #d4141c';b.onclick=function(){q=o[2]();qi=0;if(!q.length){alert('इस सूची में कोई नंबर नहीं है');return}show()};wrap.appendChild(b)});
+    opts.forEach(function(o){var b=mk('button','',o[1]);b.type='button';b.style.cssText='display:block;width:100%;text-align:left;margin-top:8px;background:#fff;color:#0b4f4a;border:1px solid #0f766e';b.onclick=function(){q=o[2]();qi=0;if(!q.length){alert('इस सूची में कोई नंबर नहीं है');return}show()};wrap.appendChild(b)});
     var cb=mk('button','','बंद करें');cb.type='button';cb.style.cssText='margin-top:14px;background:#fff;color:#555;border:1px solid #ccc';cb.onclick=close;wrap.appendChild(cb)}
   function show(){wrap.textContent='';if(qi>=q.length){var d=mk('b','','🎉 लिस्ट पूरी हुई');d.style.fontSize='18px';wrap.appendChild(d);var b=mk('button','','वापस');b.type='button';b.style.marginTop='12px';b.onclick=pick;wrap.appendChild(b);return}
     var x=q[qi];var top=mk('div','k',(qi+1)+' / '+q.length);wrap.appendChild(top);var nm=mk('b','',x.title);nm.style.cssText='display:block;font-size:24px;margin-top:10px;word-break:break-word';wrap.appendChild(nm);if(x.note)wrap.appendChild(mk('div','k',x.note));var ph=mk('div','','+91 '+x.mob);ph.style.cssText='font-size:22px;font-weight:700;margin:6px 0 14px';wrap.appendChild(ph);
-    var c=mk('a','','📞 कॉल करें');c.href='tel:+91'+x.mob;c.style.cssText='display:block;text-align:center;background:#d4141c;color:#fff;font-weight:700;font-size:20px;padding:16px;border-radius:14px;text-decoration:none';c.onclick=function(){fuNote({src:x.src,id:x.id,title:x.title,mob:x.mob});window._tcAdv=function(){qi++;show()}};wrap.appendChild(c);
+    var c=mk('a','','📞 कॉल करें');c.href='tel:+91'+x.mob;c.style.cssText='display:block;text-align:center;background:#0f766e;color:#fff;font-weight:700;font-size:20px;padding:16px;border-radius:14px;text-decoration:none';c.onclick=function(){fuNote({src:x.src,id:x.id,title:x.title,mob:x.mob});window._tcAdv=function(){qi++;show()}};wrap.appendChild(c);
     var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+x.mob;w.target='_blank';w.rel='noopener';w.style.cssText='display:block;text-align:center;background:#fff;color:#128c4a;border:2px solid #128c4a;font-weight:700;font-size:17px;padding:12px;border-radius:14px;text-decoration:none;margin-top:10px';wrap.appendChild(w);
-    var row=mk('div');row.style.cssText='display:flex;gap:8px;margin-top:12px';var sk=mk('button','','⏭ छोड़ें'),fb=mk('button','','⏰ फ़ॉलो-अप'),ex=mk('button','','बंद');[sk,fb,ex].forEach(function(b){b.type='button';b.style.cssText='flex:1;margin:0;background:#fff;color:#9d0b12;border:1px solid #d4141c'});sk.onclick=function(){qi++;show()};fb.onclick=function(){fuAsk({title:'⏰ फ़ॉलो-अप जोड़ें',name:x.title,save:async function(v){var r=await fuSaveTask(x.src,x.id,x.title,x.mob,v);if(r.error)throw r.error}})};ex.onclick=close;row.appendChild(sk);row.appendChild(fb);row.appendChild(ex);wrap.appendChild(row);
+    var row=mk('div');row.style.cssText='display:flex;gap:8px;margin-top:12px';var sk=mk('button','','⏭ छोड़ें'),fb=mk('button','','⏰ फ़ॉलो-अप'),ex=mk('button','','बंद');[sk,fb,ex].forEach(function(b){b.type='button';b.style.cssText='flex:1;margin:0;background:#fff;color:#0b4f4a;border:1px solid #0f766e'});sk.onclick=function(){qi++;show()};fb.onclick=function(){fuAsk({title:'⏰ फ़ॉलो-अप जोड़ें',name:x.title,save:async function(v){var r=await fuSaveTask(x.src,x.id,x.title,x.mob,v);if(r.error)throw r.error}})};ex.onclick=close;row.appendChild(sk);row.appendChild(fb);row.appendChild(ex);wrap.appendChild(row);
     var hint=mk('div','k','कॉल के बाद ऐप में लौटने पर नतीजा पूछा जाएगा, फिर अगला नंबर अपने आप आएगा।');hint.style.marginTop='10px';wrap.appendChild(hint)}
   window._tcAdv=null;pick()}
+function fuInfo(box){
+  if(!FUADM)return;var sod=new Date();sod.setHours(0,0,0,0);var eod=new Date(sod);eod.setHours(23,59,59,999);
+  var ov=0,td=0,up=0;FU.forEach(function(f){if(!f.due_at)return;var d=new Date(f.due_at);if(d<sod)ov++;else if(d<=eod)td++;else up++});
+  var days=[],i;for(i=6;i>=0;i--){var a=new Date(sod);a.setDate(a.getDate()-i);var b=new Date(a);b.setHours(23,59,59,999);days.push({a:a,b:b,n:0})}
+  var mix={};FUC.forEach(function(c){var t=new Date(c.done_at);days.forEach(function(d){if(t>=d.a&&t<=d.b)d.n++});var o=c.outcome||'—';mix[o]=(mix[o]||0)+1});
+  var tc=days[6].n,ti=FUC.filter(function(c){return c.outcome==='रुचि है'&&new Date(c.done_at)>=sod}).length,mx=Math.max(1,Math.max.apply(null,days.map(function(d){return d.n})));
+  var c=mk('div');c.style.cssText='border-radius:16px;padding:14px;margin-top:10px;color:#fff;background:linear-gradient(135deg,#0b3b66,#0f766e);box-shadow:0 4px 14px rgba(11,59,102,.25)';
+  var h=mk('b','','📞 FollowUp डैशबोर्ड');h.style.cssText='font-size:17px;display:block';c.appendChild(h);var sb2=mk('div','','पिछले 7 दिन की कॉल और आगे के फ़ॉलो-अप');sb2.style.cssText='font-size:12px;opacity:.85;margin-bottom:10px';c.appendChild(sb2);
+  var g=mk('div');g.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:8px';
+  [['⚠️',ov,'देर वाले','#fecaca'],['⏰',td,'आज','#fde68a'],['📅',up,'आगे','#bfdbfe'],['📞',tc,'आज की कॉल','#e2e8f0'],['🔥',ti,'रुचि वाले','#bbf7d0']].forEach(function(t){var x=mk('div');x.style.cssText='background:rgba(255,255,255,.14);border-radius:12px;padding:8px 4px;text-align:center';var n=mk('div','',String(t[1]));n.style.cssText='font-size:24px;font-weight:800;line-height:1.1;color:'+t[3];var l=mk('div','',t[0]+' '+t[2]);l.style.cssText='font-size:11px;opacity:.92';x.appendChild(n);x.appendChild(l);g.appendChild(x)});c.appendChild(g);
+  var ch=mk('div');ch.style.cssText='display:flex;align-items:flex-end;gap:6px;height:84px;margin-top:14px';var wk=['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
+  days.forEach(function(d,ix){var col=mk('div');col.style.cssText='flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%';var nn=mk('div','',String(d.n));nn.style.cssText='font-size:11px;font-weight:700';var bar=mk('div');bar.style.cssText='width:100%;max-width:30px;border-radius:6px 6px 2px 2px;min-height:3px;height:'+Math.round(d.n/mx*52+3)+'px;background:'+(ix===6?'#fde047':'rgba(255,255,255,.55)');var lb=mk('div','',wk[d.a.getDay()]);lb.style.cssText='font-size:10px;opacity:.85;margin-top:2px';col.appendChild(nn);col.appendChild(bar);col.appendChild(lb);ch.appendChild(col)});c.appendChild(ch);
+  var tot=FUC.length;if(tot){var oc=[['रुचि है','#4ade80'],['बाद में कॉल','#facc15'],['व्यस्त था','#fb923c'],['रुचि नहीं','#f87171'],['फ़ोन नहीं उठा','#cbd5e1']];var st=mk('div');st.style.cssText='display:flex;height:10px;border-radius:99px;overflow:hidden;margin-top:12px;background:rgba(255,255,255,.2)';var lg=mk('div');lg.style.cssText='display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:11px';
+    oc.forEach(function(o){var n=mix[o[0]]||0;if(!n)return;var s=mk('div');s.style.cssText='height:100%;width:'+(n/tot*100)+'%;background:'+o[1];st.appendChild(s);var l=mk('span','','● '+o[0]+' '+n);l.style.color=o[1];lg.appendChild(l)});c.appendChild(st);c.appendChild(lg)}
+  box.appendChild(c)}
 function fuTools(box){
   if(!FUADM)return;var w=mk('div');w.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:10px';
-  function bt(t,fn,pri){var b=mk('button','',t);b.type='button';b.style.cssText='margin:0;width:auto;min-height:0;padding:8px 12px;font-size:14px;'+(pri?'background:#d4141c;color:#fff;border:0':'background:#fff;color:#9d0b12;border:1px solid #d4141c');b.onclick=fn;w.appendChild(b)}
+  function bt(t,fn,pri){var b=mk('button','',t);b.type='button';b.style.cssText='margin:0;width:auto;min-height:0;padding:8px 12px;font-size:14px;'+(pri?'background:#0f766e;color:#fff;border:0':'background:#fff;color:#0b4f4a;border:1px solid #0f766e');b.onclick=fn;w.appendChild(b)}
   bt('📞 टेलीकॉलिंग',fuTele,1);bt('⬇ CSV निकालें',fuExport);
   var fi=mk('input');fi.type='file';fi.accept='.csv,text/csv';fi.hidden=true;var msg=mk('div','k');msg.style.cssText='flex-basis:100%;margin:2px 0 0';msg.textContent=window.FUMSG||'';fi.onchange=function(){if(fi.files&&fi.files[0]){msg.textContent='इम्पोर्ट हो रहा है…';fuImport(fi.files[0],msg)}fi.value=''};
   bt('⬆ CSV जोड़ें',function(){fi.click()});w.appendChild(fi);w.appendChild(msg);box.appendChild(w)}
@@ -619,7 +634,7 @@ function drawContacts(){
   if(!CT.length){box.appendChild(mk('div','k','अभी कोई कॉन्टैक्ट नहीं है।'));return}
   (function(){var nd=CT.filter(function(x){return x.src==='card'}).length,ns=CT.filter(function(x){return x.scan}).length,nm=CT.length-nd-ns,T=function(x){return window.I18N&&I18N.tr?I18N.tr(x):x};
     var sm=mk('div','',T('कुल')+' '+CT.length+' '+T('कॉन्टैक्ट')+(nd?' · ✅ '+nd+' LiveCard':'')+(ns?' · 📷 '+ns+' Scanned':'')+(nm?' · ✍️ '+nm+' '+T('हाथ से'):''));sm.style.cssText='font-weight:700;color:#9d0b12;font-size:14px;margin:10px 2px 0';box.appendChild(sm)})();
-  try{var ft=$('fu-top');if(ft){ft.textContent='';fuTools(ft);fuToday(ft)}}catch(e){}
+  try{var ft=$('fu-top');if(ft){ft.textContent='';fuInfo(ft);fuTools(ft);fuToday(ft)}}catch(e){}
   var rows=CT.filter(function(x){return (CTF==='all'||x.ind===CTF)&&(CTC==='all'||(CTC==='fav'?x.fav:x.coll===CTC))&&(!q||(x.title+' '+(x.sub||'')+' '+(x.mob||'')+' '+(x.ind?(INDN[x.ind]||x.ind):'')).toLowerCase().indexOf(q)>=0)});
   if(!rows.length){box.appendChild(mk('div','k','कोई कॉन्टैक्ट नहीं मिला।'));return}
   rows.sort(function(a,b){return (b.fav?1:0)-(a.fav?1:0)});
