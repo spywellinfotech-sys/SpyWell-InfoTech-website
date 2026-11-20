@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /studio/admin/
+Sitemap: https://livecard.in/sitemap.xml
