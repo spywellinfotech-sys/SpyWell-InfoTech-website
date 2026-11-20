@@ -686,7 +686,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at,published_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
+  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();billTile();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -1444,7 +1444,8 @@ async function billSave(list){var q=await sb.from('studio_billing').upsert({user
 async function billTile(){
   var box=$('c-bill');if(!box)return;
   if(BILL===null&&!box.firstChild){box.appendChild(mk('b','','🏦 Billing & Bank details'));box.lastChild.style.cssText='display:block;font-size:19px;padding:4px'}
-  if(BILL===null){try{var r=await sb.from('studio_billing').select('d').eq('user_id',ME.id).maybeSingle();BILL=billNorm(r&&r.data&&r.data.d)}catch(e){BILL=[]}}
+  if(BILL===null){var okl=false;try{var r=await sb.from('studio_billing').select('d').eq('user_id',ME.id).maybeSingle();if(r&&!r.error){BILL=billNorm(r.data&&r.data.d);okl=true}}catch(e){}
+    if(!okl){box.textContent='';var rt=mk('div','');rt.style.cssText='display:flex;align-items:center;gap:10px';rt.appendChild(mk('span','','🏦')).style.fontSize='26px';var rb=mk('b','','Billing & Bank details');rb.style.cssText='flex:1;font-size:17px';rt.appendChild(rb);var rbt=mk('button','','🔄 दोबारा लोड');rbt.type='button';rbt.style.cssText='flex:none;width:auto;margin:0;height:36px;min-height:0;padding:0 12px;background:#fff;color:#0b5f5a;border:0;font-weight:800';rbt.onclick=function(){billTile()};rt.appendChild(rbt);box.appendChild(rt);return}}
   var L=BILL;box.textContent='';var open=BILLOPEN||BILLED>=0;
   function ttl(e,i){return e.name||e.bank||('कार्ड '+(i+1))}
   function mask(a){a=String(a||'');return a.length>4?'•'.repeat(a.length-4)+a.slice(-4):a}
