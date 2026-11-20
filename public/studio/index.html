@@ -1464,12 +1464,17 @@ async function billTile(){
     function ln(l,v,sec){if(!v)return;var x=mk('div','');x.appendChild(mk('span','k',l+': '));x.appendChild(mk('b','',sec?mask(v):v));lst.appendChild(x)}
     ln('नाम',e.name);ln('बैंक',e.bank?e.bank+(e.branch?' ('+e.branch+')':''):e.branch);ln('खाता नंबर',e.acc,true);ln('खाते का प्रकार',e.atype);ln('IFSC',e.ifsc);ln('UPI',e.upi);ln('GSTIN',e.gst);ln('बिलिंग पता',e.baddr);c.appendChild(lst);
     var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:12px;flex-wrap:wrap';
-    var w=mk('a','','💬 WhatsApp पर भेजें');w.href='https://wa.me/?text='+encodeURIComponent(txt(e));w.target='_blank';w.rel='noopener';w.style.cssText='flex:1.4;text-align:center;background:#25a244;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600';
+    var w=mk('a','','💬 WhatsApp (कॉन्टैक्ट से)');w.href='https://wa.me/?text='+encodeURIComponent(txt(e));w.target='_blank';w.rel='noopener';w.style.cssText='flex:1.4;text-align:center;background:#25a244;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600';
     var cp=mk('button','alt','📋 कॉपी');cp.type='button';cp.style.cssText='flex:1;margin:0';cp.onclick=async function(){try{await navigator.clipboard.writeText(txt(e));cp.textContent='✓ कॉपी हुआ'}catch(x){prompt('कॉपी करें',txt(e))}setTimeout(function(){cp.textContent='📋 कॉपी'},1500)};
     var ed=mk('button','alt','✏️ बदलें');ed.type='button';ed.style.cssText='flex:1;margin:0';ed.onclick=function(){BILLED=i;BILLOPEN=true;billTile()};
     var dl=mk('button','alt','🗑');dl.type='button';dl.setAttribute('aria-label','डिलीट करें');dl.style.cssText='flex:none;width:auto;margin:0;padding:12px 14px;color:#b00020';
     dl.onclick=async function(){if(!confirm('यह बैंक / बिलिंग कार्ड हटाना है?'))return;var nl=L.filter(function(_,k){return k!==i});if(!(await billSave(nl))){alert('डिलीट नहीं हो पाया।');return}BILL=nl;BILLED=-1;billTile()};
     rw.appendChild(w);rw.appendChild(cp);rw.appendChild(ed);rw.appendChild(dl);c.appendChild(rw);
+    var nr=mk('div','');nr.style.cssText='display:flex;gap:8px;margin-top:10px;align-items:center';
+    var ni=document.createElement('input');ni.type='tel';ni.maxLength=14;ni.placeholder='किसी भी नंबर पर भेजें (10 अंक)';ni.setAttribute('inputmode','numeric');ni.style.cssText='flex:1;margin:0;min-width:0';
+    var nb=mk('button','','📤 भेजें');nb.type='button';nb.style.cssText='flex:none;width:auto;margin:0;background:#25a244;color:#fff;border:0;padding:12px 14px';
+    nb.onclick=function(){var n=ni.value.replace(/\D/g,'');if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);if(n.length!==10){ni.style.borderColor='#b00020';ni.focus();return}window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(txt(e)),'_blank','noopener')};
+    nr.appendChild(ni);nr.appendChild(nb);c.appendChild(nr);
     var nt=mk('div','','🔒 यह जानकारी सिर्फ़ आपको दिखती है। आप खुद भेजेंगे तभी किसी को मिलेगी।');nt.style.cssText='font-size:11px;color:#888;margin-top:8px';c.appendChild(nt)}
   function form(c,e,i){
     var f=mk('div','');
