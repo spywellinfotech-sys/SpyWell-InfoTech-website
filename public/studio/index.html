@@ -1437,28 +1437,30 @@ async function addrTile(){
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};ADH={cj:cj,name:cj.name||pd.full_name||'',mob:cj.mobile||pd.phone||''};
   drawAddr(false);drawAddr(false,'office');addrSync();locTile()}
 var BILL=null;
+var BILL=null,BILLOPEN=false;
 async function billTile(edit){
   var box=$('c-bill');if(!box)return;
   if(BILL===null){try{var r=await sb.from('studio_billing').select('d').eq('user_id',ME.id).maybeSingle();BILL=(r&&r.data&&r.data.d)||{}}catch(e){BILL={}}}
   var d=BILL||{};box.textContent='';
   var top=mk('div','');top.style.cssText='display:flex;align-items:center;gap:10px';top.appendChild(mk('span','','🏦')).style.fontSize='30px';
   var tt=mk('div','');tt.appendChild(mk('b','','Billing & Bank details'));tt.firstChild.style.display='block';tt.appendChild(mk('span','k','बैंक और बिलिंग की जानकारी सेव करें और एक टच में भेजें'));top.appendChild(tt);box.appendChild(top);
+  var body=mk('div','');body.hidden=!(edit||BILLOPEN);var tg=mk('button','alt',(body.hidden?'▾ Details':'▴ Details'));tg.type='button';tg.style.cssText='margin:10px 0 0;width:100%';tg.onclick=function(){body.hidden=!body.hidden;BILLOPEN=!body.hidden;tg.textContent=body.hidden?'▾ Details':'▴ Details'};box.appendChild(tg);box.appendChild(body);
   var has=!!(d.acc||d.upi||d.gst||d.baddr);
   function mask(a){a=String(a||'');return a.length>4?'•'.repeat(a.length-4)+a.slice(-4):a}
   function txt(){var t='🏦 बैंक / बिलिंग की जानकारी\n';if(d.name)t+='नाम: '+d.name+'\n';if(d.bank)t+='बैंक: '+d.bank+(d.branch?' ('+d.branch+')':'')+'\n';if(d.acc)t+='खाता नंबर: '+d.acc+'\n';if(d.ifsc)t+='IFSC: '+d.ifsc+'\n';if(d.upi)t+='UPI: '+d.upi+'\n';if(d.gst)t+='GSTIN: '+d.gst+'\n';if(d.baddr)t+='बिलिंग पता: '+d.baddr+'\n';return t+'\n📲 अपना डिजिटल कार्ड मुफ़्त बनाएँ: https://livecard.in/studio/'}
   if(has&&!edit){
-    var big=mk('div','','🏦 BANK & BILLING');big.style.cssText='background:#0b7a75;color:#fff;font-weight:800;font-size:18px;text-align:center;border-radius:12px;padding:10px;margin-top:12px';box.appendChild(big);
+    var big=mk('div','','🏦 BANK & BILLING');big.style.cssText='background:#0b7a75;color:#fff;font-weight:800;font-size:18px;text-align:center;border-radius:12px;padding:10px;margin-top:12px';body.appendChild(big);
     var lst=mk('div','');lst.style.cssText='margin-top:10px;font-size:15px;line-height:1.6';
     function ln(l,v,secret){if(!v)return;var e=mk('div','');e.appendChild(mk('span','k',l+': '));var b=mk('b','',secret?mask(v):v);e.appendChild(b);lst.appendChild(e)}
-    ln('नाम',d.name);ln('बैंक',d.bank+(d.branch?' ('+d.branch+')':''));if(!d.bank)ln('ब्रांच',d.branch);ln('खाता नंबर',d.acc,true);ln('IFSC',d.ifsc);ln('UPI',d.upi);ln('GSTIN',d.gst);ln('बिलिंग पता',d.baddr);box.appendChild(lst);
+    ln('नाम',d.name);ln('बैंक',d.bank+(d.branch?' ('+d.branch+')':''));if(!d.bank)ln('ब्रांच',d.branch);ln('खाता नंबर',d.acc,true);ln('IFSC',d.ifsc);ln('UPI',d.upi);ln('GSTIN',d.gst);ln('बिलिंग पता',d.baddr);body.appendChild(lst);
     var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:12px;flex-wrap:wrap';
     var w=mk('a','','💬 WhatsApp पर भेजें');w.href='https://wa.me/?text='+encodeURIComponent(txt());w.target='_blank';w.rel='noopener';w.style.cssText='flex:1.4;text-align:center;background:#25a244;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:600';
     var cp=mk('button','alt','📋 कॉपी');cp.type='button';cp.style.cssText='flex:1;margin:0';cp.onclick=async function(){try{await navigator.clipboard.writeText(txt());cp.textContent='✓ कॉपी हुआ'}catch(e){prompt('कॉपी करें',txt())}setTimeout(function(){cp.textContent='📋 कॉपी'},1500)};
-    var ed=mk('button','alt','✏️ बदलें');ed.type='button';ed.style.cssText='flex:1;margin:0';ed.onclick=function(){billTile(true)};
+    var ed=mk('button','alt','✏️ बदलें');ed.type='button';ed.style.cssText='flex:1;margin:0';ed.onclick=function(){BILLOPEN=true;billTile(true)};
     var dl=mk('button','alt','🗑');dl.type='button';dl.setAttribute('aria-label','डिलीट करें');dl.style.cssText='flex:none;width:auto;margin:0;padding:12px 14px;color:#b00020';
     dl.onclick=async function(){if(!confirm('बैंक और बिलिंग की जानकारी हटानी है?'))return;var q=await sb.from('studio_billing').delete().eq('user_id',ME.id);if(q.error){alert('डिलीट नहीं हो पाया।');return}BILL={};billTile()};
-    rw.appendChild(w);rw.appendChild(cp);rw.appendChild(ed);rw.appendChild(dl);box.appendChild(rw);
-    var nt=mk('div','','🔒 यह जानकारी सिर्फ़ आपको दिखती है। आप खुद भेजेंगे तभी किसी को मिलेगी।');nt.style.cssText='font-size:11px;color:#888;margin-top:8px';box.appendChild(nt);return}
+    rw.appendChild(w);rw.appendChild(cp);rw.appendChild(ed);rw.appendChild(dl);body.appendChild(rw);
+    var nt=mk('div','','🔒 यह जानकारी सिर्फ़ आपको दिखती है। आप खुद भेजेंगे तभी किसी को मिलेगी।');nt.style.cssText='font-size:11px;color:#888;margin-top:8px';body.appendChild(nt);return}
   var f=mk('div','');f.style.marginTop='10px';
   function fld(lbl,key,ph,mx,area,mode){f.appendChild(mk('label','',lbl));var i=document.createElement(area?'textarea':'input');if(area)i.rows=2;i.maxLength=mx;i.placeholder=ph||'';i.value=d[key]||'';if(mode)i.setAttribute('inputmode',mode);f.appendChild(i);return i}
   var I={};I.name=fld('खाताधारक / फर्म का नाम','name','जैसे: Ramesh Kumar / ABC Traders',80);I.bank=fld('बैंक का नाम','bank','जैसे: State Bank of India',60);I.branch=fld('ब्रांच (खाली छोड़ सकते हैं)','branch','',60);
@@ -1473,7 +1475,7 @@ async function billTile(edit){
     if(!(o.acc||o.upi||o.gst||o.baddr)){er.textContent='कम से कम खाता नंबर, UPI, GSTIN या पता भरें';return}
     sv.disabled=true;var q=await sb.from('studio_billing').upsert({user_id:ME.id,d:o,updated_at:new Date().toISOString()});sv.disabled=false;
     if(q.error){er.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।';return}BILL=o;billTile()};
-  f.appendChild(er);f.appendChild(sv);if(has){var cn=mk('button','alt','रद्द करें');cn.type='button';cn.onclick=function(){billTile()};f.appendChild(cn)}box.appendChild(f)
+  f.appendChild(er);f.appendChild(sv);if(has){var cn=mk('button','alt','रद्द करें');cn.type='button';cn.onclick=function(){billTile()};f.appendChild(cn)}body.appendChild(f)
 }
 function locTile(){
   var box=$('c-loc');if(!box)return;box.textContent='';
