@@ -545,7 +545,7 @@ $('ct-add').onclick=async function(){var n=$('ct-n').value.trim(),m=$('ct-m').va
   if(!n){er.textContent='नाम लिखें';return}if(!/^[6-9][0-9]{9}$/.test(m)){er.textContent='सही 10 अंक का मोबाइल नंबर डालें';return}
   this.disabled=true;var pp=null;if(SCANPIC){try{var pth=ME.id+'/'+Date.now()+'.jpg',up=await sb.storage.from('studio-cardpics').upload(pth,SCANPIC,{contentType:'image/jpeg'});if(!up.error)pp=pth}catch(e){}}var r=await sb.from('studio_contacts').insert({user_id:ME.id,photo:pp,name:n,business:$('ct-b').value.trim(),mobile:m,note:scanNote(),src:SCANX?'scan':'manual',industry:($('ct-i').value==='other'&&$('ct-io').value.trim()?$('ct-io').value.trim().slice(0,30):$('ct-i').value)});this.disabled=false;
   if(r.error){er.textContent=r.error.code==='23505'?'यह नंबर पहले से जुड़ा है':'सेव नहीं हुआ, दोबारा कोशिश करें';return}
-  SCANX=null;SCANPIC=null;['ct-n','ct-b','ct-m'].forEach(function(i){$(i).style.background=''});$('ct-scanm').textContent='';$('ct-n').value='';$('ct-b').value='';$('ct-m').value='';$('ct-i').value='';$('ct-io').value='';$('ct-io').hidden=true;loadSaved()};
+  SCANX=null;SCANPIC=null;['ct-n','ct-b','ct-m'].forEach(function(i){$(i).style.background=''});$('ct-scanm').textContent='';$('ct-n').value='';$('ct-b').value='';$('ct-m').value='';$('ct-i').value='';$('ct-io').value='';$('ct-io').hidden=true;try{$('ct-det').open=false;window.scrollTo({top:0,behavior:'smooth'})}catch(e){}loadSaved()};
 
 var SCANX=null,SCANPIC=null;
 function scanNote(){if(!SCANX)return '';var a=[];if(SCANX.designation)a.push(SCANX.designation);if(SCANX.email)a.push(SCANX.email);if(SCANX.mobile2)a.push('2: '+SCANX.mobile2);if(SCANX.website)a.push(SCANX.website);if(SCANX.address)a.push(SCANX.address);return a.join(' | ').slice(0,200)}
