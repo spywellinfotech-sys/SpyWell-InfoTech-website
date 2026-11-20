@@ -1469,10 +1469,9 @@ async function billTile(){
     var ac=mk('div','');ac.appendChild(mk('span','k','A/c: '));ac.appendChild(mk('b','',mask(e.acc)+(e.atype?' ('+e.atype+')':'')));if(e.acc)lst.appendChild(ac);
     ln('IFSC',e.ifsc);ln('UPI',e.upi);ln('GSTIN',e.gst);ln('पता',e.baddr);
     var dr=mk('div','');dr.style.cssText='display:flex;align-items:stretch;gap:8px';lst.style.flex='1';lst.style.minWidth='0';dr.appendChild(lst);
-    var br=mk('div','');br.style.cssText='flex:none;width:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border-left:1px dashed #cfe9e6;padding-left:8px';
-    var lg=document.createElement('img');lg.src='/studio/livecard-logo.png';lg.alt='LiveCard';lg.width=52;lg.height=52;lg.style.cssText='width:52px;height:52px;object-fit:contain;border-radius:12px';lg.onerror=function(){lg.remove()};br.appendChild(lg);
-    var bn=mk('b','','LiveCard.in');bn.style.cssText='font-size:11px;color:#d4141c;line-height:1.1';br.appendChild(bn);
-    var bt=mk('span','','Your Live World');bt.style.cssText='font-size:9px;color:#777;line-height:1.1';br.appendChild(bt);dr.appendChild(br);c.appendChild(dr);
+    var br=mk('div','');br.style.cssText='flex:none;width:96px;display:flex;align-items:center;justify-content:center';
+    var lg=document.createElement('img');lg.src='/studio/livecard-stamp.png';lg.alt='LiveCard.in';lg.width=96;lg.height=96;lg.loading='lazy';lg.style.cssText='width:96px;height:96px;object-fit:contain;opacity:.95';lg.onerror=function(){lg.remove()};br.appendChild(lg);
+    dr.appendChild(br);c.appendChild(dr);
     var rw=mk('div','');rw.style.cssText='display:flex;gap:6px;margin-top:8px';
     var bs='height:38px;min-height:0;margin:0;padding:0 10px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:14px;font-weight:700;box-sizing:border-box;white-space:nowrap;';
     var w=mk('a','','💬 WhatsApp');w.href='https://wa.me/?text='+encodeURIComponent(txt(e));w.target='_blank';w.rel='noopener';w.style.cssText=bs+'flex:1;background:#25a244;color:#fff;text-decoration:none';
