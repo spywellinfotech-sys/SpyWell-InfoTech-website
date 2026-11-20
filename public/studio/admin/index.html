@@ -29,6 +29,7 @@ var tab='cust',body,sel=null,tabs;
 var SKEY='st_adm_state',ST={},GOPEN=[];try{ST=JSON.parse(localStorage.getItem(SKEY)||'{}');if(!ST.ts||Date.now()-ST.ts>1800000)ST={}}catch(e){ST={}}GOPEN=ST.g||[];
 function saveSt(){try{localStorage.setItem(SKEY,JSON.stringify({ts:Date.now(),tab:tab,f:SVF,s:sel?{id:sel.id,full_name:sel.full_name,phone:sel.phone,email:sel.email}:null,g:GOPEN,y:window.scrollY}))}catch(e){}}
 window.addEventListener('pagehide',saveSt);window.addEventListener('beforeunload',saveSt);document.addEventListener('visibilitychange',function(){if(document.hidden)saveSt()});
+function dtt(x){return x?new Date(x).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true,timeZone:'Asia/Kolkata'}):''}
 function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi-IN'),{day:'numeric',month:'short',year:'numeric'}):''}
 (async function(){
   var s=await sb.auth.getSession();if(!s.data.session){location.replace('/studio/');return}
@@ -401,8 +402,8 @@ function custView(){
         del.disabled=true;var e=await sb.rpc('studio_admin_delete_user',{p_user:c.id});
         if(e.error||!e.data||!e.data.ok){msg.textContent=e.data&&e.data.error==='admin'?'Admin खाते को हटा नहीं सकते।':'नहीं हटा';del.disabled=false;return}load()});
       var card=h('div',{class:'card',style:x.blocked?'border:2px solid #b00020':''},[h('b',{text:(x.blocked?'🚫 ':'')+(c.full_name||'(नाम नहीं)')}),ph.length===10?h('span',{style:'float:right;margin-right:14px'},[h('a',{href:'https://wa.me/91'+ph,target:'_blank',rel:'noopener',text:'💬',style:'text-decoration:none;font-size:20px'})]):null,h('div',{class:'k',text:[c.phone,c.email].filter(Boolean).join(' · ')}),
-      h('div',{class:'k',text:'कार्ड: '+c.designs+' · प्रकाशित: '+c.published+' · जुड़े: '+dt(c.created_at)}),
-      h('div',{class:'k',text:'लॉगिन: '+(x.prov||'—').replace('google','Google').replace('email','ईमेल')+' · आख़िरी बार: '+(x.last?dt(x.last):'—')+(x.blocked?' · ब्लॉक है':'')}),
+      h('div',{class:'k',text:'कार्ड: '+c.designs+' · प्रकाशित: '+c.published+' · जुड़े: '+dtt(c.created_at)}),
+      h('div',{class:'k',text:'लॉगिन: '+(x.prov||'—').replace('google','Google').replace('email','ईमेल')+' · आख़िरी बार: '+(x.last?dtt(x.last):'—')+(x.blocked?' · ब्लॉक है':'')}),
       h('div',{class:'k',text:'वॉलेट: ₹'+(x.wallet||0)}),
       h('div',{class:'k',id:'cr-'+c.id,text:'AI क्रेडिट: '+(CRM[c.id]||0)}),
       h('div',{},[
