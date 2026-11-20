@@ -538,7 +538,7 @@ function fuAsk(o){
   var er=mk('div','err');sh.appendChild(er);
   var bar=mk('div');bar.style.cssText='display:flex;gap:8px;margin-top:10px';var sv=mk('button','','सेव करें'),cn=mk('button','','रद्द करें');sv.type=cn.type='button';cn.style.cssText='background:#fff;color:#555;border:1px solid #ccc';bar.appendChild(sv);bar.appendChild(cn);sh.appendChild(bar);
   cn.onclick=function(){ov.remove();if(o.onCancel)o.onCancel()};
-  sv.onclick=async function(){var d=due;if(d==='x'){if(!dt.value){er.textContent='तारीख़ और समय चुनें';return}d=new Date(dt.value)}if(o.results&&!res&&!d&&!ni.value.trim()){er.textContent='नतीजा या फ़ॉलो-अप चुनें';return}if(!o.results&&!d){er.textContent='फ़ॉलो-अप की तारीख़ चुनें';return}sv.disabled=true;try{await o.save({outcome:res,note:ni.value.trim(),due:d})}catch(e){er.textContent='सेव नहीं हुआ, दोबारा कोशिश करें';sv.disabled=false;return}ov.remove();loadSaved()};
+  sv.onclick=async function(){var d=due;if(d==='x'){if(!dt.value){er.textContent='तारीख़ और समय चुनें';return}d=new Date(dt.value)}if(o.results&&!res&&!d&&!ni.value.trim()){er.textContent='नतीजा या फ़ॉलो-अप चुनें';return}if(!o.results&&!d){er.textContent='फ़ॉलो-अप की तारीख़ चुनें';return}sv.disabled=true;try{await o.save({outcome:res,note:ni.value.trim(),due:d})}catch(e){er.textContent='सेव नहीं हुआ, दोबारा कोशिश करें';sv.disabled=false;return}ov.remove();if(window._tcAdv){var f=window._tcAdv;window._tcAdv=null;f()}loadSaved()};
   ov.addEventListener('click',function(e){if(e.target===ov)cn.onclick()});document.body.appendChild(ov)}
 function fuSaveTask(src,id,name,mob,v){return sb.from('studio_followups').insert({ref_src:src,ref_id:id,name:name,mobile:mob,kind:'task',due_at:v.due.toISOString(),note:v.note||null})}
 function fuAfterCall(){
@@ -565,6 +565,47 @@ function fuRow(x,ac,row){
   var tel=ac.querySelector('a[href^="tel:"]');if(tel)tel.addEventListener('click',function(){fuNote(x)});
   if(x.mob||x.title){var fb=mk('button','','⏰ फ़ॉलो-अप');fb.type='button';fb.style.order=2;fb.onclick=function(){fuAsk({title:'⏰ फ़ॉलो-अप जोड़ें',name:x.title+(x.mob?' · +91 '+x.mob:''),save:async function(v){var r=await fuSaveTask(x.src,x.id,x.title,x.mob,v);if(r.error)throw r.error}})};ac.appendChild(fb)}}
 /* ===== /FollowUp ===== */
+/* ===== Telecalling + CSV (admin only) ===== */
+function csvEsc(v){v=String(v==null?'':v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function csvParse(t){var rows=[],r=[],f='',q=false,i=0;t=t.replace(/^﻿/,'');for(;i<t.length;i++){var c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"')q=true;else if(c===','){r.push(f);f=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;r.push(f);f='';if(r.some(function(x){return x.trim()}))rows.push(r);r=[]}else f+=c}r.push(f);if(r.some(function(x){return x.trim()}))rows.push(r);return rows}
+function fuExport(){
+  var L=[['Name','Business','Mobile','Industry','Group','Note','Type']];CT.forEach(function(x){L.push([x.title,x.sub||'',x.mob||'',x.ind?(INDN[x.ind]||x.ind):'',x.coll||'',x.note||'',x.src==='card'?'LiveCard':'Manual'])});
+  var b=new Blob(['﻿'+L.map(function(r){return r.map(csvEsc).join(',')}).join('\r\n')],{type:'text/csv;charset=utf-8'}),a=mk('a');a.href=URL.createObjectURL(b);a.download='my-network-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000)}
+function fuImport(file,msg){
+  var fr=new FileReader();fr.onload=async function(){
+    try{var R=csvParse(String(fr.result||''));if(R.length<2){msg.textContent='फ़ाइल खाली है';return}
+      var H=R[0].map(function(h){return h.trim().toLowerCase()});function ix(names){for(var i=0;i<H.length;i++)if(names.some(function(n){return H[i]===n||H[i].indexOf(n)>=0}))return i;return -1}
+      var iN=ix(['name','नाम','first name']),iM=ix(['mobile','phone','number','मोबाइल','contact']),iB=ix(['business','company','shop','organization']),iG=ix(['group','collection','label']),iT=ix(['note','notes']);
+      if(iM<0){msg.textContent='फ़ाइल में Mobile / Phone कॉलम नहीं मिला';return}
+      var have={};CT.forEach(function(x){if(x.mob)have[String(x.mob).slice(-10)]=1});var out=[],skip=0,bad=0;
+      R.slice(1).forEach(function(r){var m=String(r[iM]||'').replace(/\D/g,'').slice(-10);if(!/^[6-9][0-9]{9}$/.test(m)){bad++;return}if(have[m]){skip++;return}have[m]=1;var n=((iN>=0?r[iN]:'')||'').trim()||('+91 '+m);out.push({user_id:ME.id,name:n.slice(0,80),mobile:m,business:iB>=0?(r[iB]||'').trim().slice(0,80)||null:null,coll:iG>=0?(r[iG]||'').trim().slice(0,30)||null:null,note:iT>=0?(r[iT]||'').trim().slice(0,300)||null:null,src:'manual'})});
+      var ok=0;for(var i=0;i<out.length;i+=200){var e=await sb.from('studio_contacts').insert(out.slice(i,i+200));if(e.error){msg.textContent='कुछ कॉन्टैक्ट सेव नहीं हुए ('+ok+' जुड़े)';loadSaved();return}ok+=Math.min(200,out.length-i)}
+      msg.textContent='✓ '+ok+' नए जुड़े · '+skip+' पहले से थे · '+bad+' गलत नंबर छोड़े';loadSaved()}catch(e){msg.textContent='इम्पोर्ट नहीं हुआ, फ़ाइल जाँचें'}};
+  fr.readAsText(file,'utf-8')}
+async function fuTele(){
+  var ov=mk('div');ov.style.cssText='position:fixed;inset:0;background:#fff;z-index:9998;overflow:auto;padding:14px';var wrap=mk('div');wrap.style.cssText='max-width:520px;margin:0 auto';ov.appendChild(wrap);document.body.appendChild(ov);
+  var q=[],qi=0;
+  function close(){ov.remove();window._tcAdv=null;loadSaved()}
+  async function stats(){var d=new Date();d.setHours(0,0,0,0);var r=await sb.from('studio_followups').select('outcome').eq('kind','call').gte('done_at',d.toISOString()).limit(1000);var a=r.data||[];return {n:a.length,i:a.filter(function(x){return x.outcome==='रुचि है'}).length}}
+  async function pick(){wrap.textContent='';var h=mk('b','','📞 टेलीकॉलिंग मोड');h.style.fontSize='18px';wrap.appendChild(h);var st=await stats();var s=mk('div','k','आज: '+st.n+' कॉल · '+st.i+' रुचि वाले');s.style.margin='4px 0 10px';wrap.appendChild(s);
+    var opts=[['fu','⏰ आज के फ़ॉलो-अप',function(){var e=new Date();e.setHours(23,59,59,999);var ids={};return FU.filter(function(f){return f.due_at&&new Date(f.due_at)<=e&&f.mobile}).map(function(f){return {title:f.name||f.mobile,mob:f.mobile,src:f.ref_src,id:f.ref_id,note:f.note}})}],['all','सभी कॉन्टैक्ट ('+CT.filter(function(x){return x.mob}).length+')',function(){return CT.filter(function(x){return x.mob}).map(function(x){return {title:x.title,mob:x.mob,src:x.src,id:x.id,note:x.sub||''}})}]];
+    var cs=[];CT.forEach(function(x){if(x.coll&&cs.indexOf(x.coll)<0)cs.push(x.coll)});cs.forEach(function(k){opts.push(['c','📁 '+k+' ('+CT.filter(function(x){return x.coll===k&&x.mob}).length+')',function(){return CT.filter(function(x){return x.coll===k&&x.mob}).map(function(x){return {title:x.title,mob:x.mob,src:x.src,id:x.id,note:x.sub||''}})}])});
+    opts.forEach(function(o){var b=mk('button','',o[1]);b.type='button';b.style.cssText='display:block;width:100%;text-align:left;margin-top:8px;background:#fff;color:#9d0b12;border:1px solid #d4141c';b.onclick=function(){q=o[2]();qi=0;if(!q.length){alert('इस सूची में कोई नंबर नहीं है');return}show()};wrap.appendChild(b)});
+    var cb=mk('button','','बंद करें');cb.type='button';cb.style.cssText='margin-top:14px;background:#fff;color:#555;border:1px solid #ccc';cb.onclick=close;wrap.appendChild(cb)}
+  function show(){wrap.textContent='';if(qi>=q.length){var d=mk('b','','🎉 लिस्ट पूरी हुई');d.style.fontSize='18px';wrap.appendChild(d);var b=mk('button','','वापस');b.type='button';b.style.marginTop='12px';b.onclick=pick;wrap.appendChild(b);return}
+    var x=q[qi];var top=mk('div','k',(qi+1)+' / '+q.length);wrap.appendChild(top);var nm=mk('b','',x.title);nm.style.cssText='display:block;font-size:24px;margin-top:10px;word-break:break-word';wrap.appendChild(nm);if(x.note)wrap.appendChild(mk('div','k',x.note));var ph=mk('div','','+91 '+x.mob);ph.style.cssText='font-size:22px;font-weight:700;margin:6px 0 14px';wrap.appendChild(ph);
+    var c=mk('a','','📞 कॉल करें');c.href='tel:+91'+x.mob;c.style.cssText='display:block;text-align:center;background:#d4141c;color:#fff;font-weight:700;font-size:20px;padding:16px;border-radius:14px;text-decoration:none';c.onclick=function(){fuNote({src:x.src,id:x.id,title:x.title,mob:x.mob});window._tcAdv=function(){qi++;show()}};wrap.appendChild(c);
+    var w=mk('a','','WhatsApp');w.href='https://wa.me/91'+x.mob;w.target='_blank';w.rel='noopener';w.style.cssText='display:block;text-align:center;background:#fff;color:#128c4a;border:2px solid #128c4a;font-weight:700;font-size:17px;padding:12px;border-radius:14px;text-decoration:none;margin-top:10px';wrap.appendChild(w);
+    var row=mk('div');row.style.cssText='display:flex;gap:8px;margin-top:12px';var sk=mk('button','','⏭ छोड़ें'),fb=mk('button','','⏰ फ़ॉलो-अप'),ex=mk('button','','बंद');[sk,fb,ex].forEach(function(b){b.type='button';b.style.cssText='flex:1;margin:0;background:#fff;color:#9d0b12;border:1px solid #d4141c'});sk.onclick=function(){qi++;show()};fb.onclick=function(){fuAsk({title:'⏰ फ़ॉलो-अप जोड़ें',name:x.title,save:async function(v){var r=await fuSaveTask(x.src,x.id,x.title,x.mob,v);if(r.error)throw r.error}})};ex.onclick=close;row.appendChild(sk);row.appendChild(fb);row.appendChild(ex);wrap.appendChild(row);
+    var hint=mk('div','k','कॉल के बाद ऐप में लौटने पर नतीजा पूछा जाएगा, फिर अगला नंबर अपने आप आएगा।');hint.style.marginTop='10px';wrap.appendChild(hint)}
+  window._tcAdv=null;pick()}
+function fuTools(box){
+  if(!FUADM)return;var w=mk('div');w.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:10px';
+  function bt(t,fn,pri){var b=mk('button','',t);b.type='button';b.style.cssText='margin:0;width:auto;min-height:0;padding:8px 12px;font-size:14px;'+(pri?'background:#d4141c;color:#fff;border:0':'background:#fff;color:#9d0b12;border:1px solid #d4141c');b.onclick=fn;w.appendChild(b)}
+  bt('📞 टेलीकॉलिंग',fuTele,1);bt('⬇ CSV निकालें',fuExport);
+  var fi=mk('input');fi.type='file';fi.accept='.csv,text/csv';fi.hidden=true;var msg=mk('div','k');msg.style.cssText='flex-basis:100%;margin:2px 0 0';fi.onchange=function(){if(fi.files&&fi.files[0]){msg.textContent='इम्पोर्ट हो रहा है…';fuImport(fi.files[0],msg)}fi.value=''};
+  bt('⬆ CSV जोड़ें',function(){fi.click()});w.appendChild(fi);w.appendChild(msg);box.appendChild(w)}
+/* ===== /Telecalling + CSV ===== */
 function drawContacts(){
   var box=$('sv-list'),fl=$('ct-flt'),q=($('ct-q').value||'').trim().toLowerCase();box.textContent='';fl.textContent='';
   var used={};CT.forEach(function(x){if(x.ind)used[x.ind]=(used[x.ind]||0)+1});
@@ -577,7 +618,7 @@ function drawContacts(){
   if(!CT.length){box.appendChild(mk('div','k','अभी कोई कॉन्टैक्ट नहीं है।'));return}
   (function(){var nd=CT.filter(function(x){return x.src==='card'}).length,ns=CT.filter(function(x){return x.scan}).length,nm=CT.length-nd-ns,T=function(x){return window.I18N&&I18N.tr?I18N.tr(x):x};
     var sm=mk('div','',T('कुल')+' '+CT.length+' '+T('कॉन्टैक्ट')+(nd?' · ✅ '+nd+' LiveCard':'')+(ns?' · 📷 '+ns+' Scanned':'')+(nm?' · ✍️ '+nm+' '+T('हाथ से'):''));sm.style.cssText='font-weight:700;color:#9d0b12;font-size:14px;margin:10px 2px 0';box.appendChild(sm)})();
-  try{fuToday(box)}catch(e){}
+  try{fuTools(box);fuToday(box)}catch(e){}
   var rows=CT.filter(function(x){return (CTF==='all'||x.ind===CTF)&&(CTC==='all'||(CTC==='fav'?x.fav:x.coll===CTC))&&(!q||(x.title+' '+(x.sub||'')+' '+(x.mob||'')+' '+(x.ind?(INDN[x.ind]||x.ind):'')).toLowerCase().indexOf(q)>=0)});
   if(!rows.length){box.appendChild(mk('div','k','कोई कॉन्टैक्ट नहीं मिला।'));return}
   rows.sort(function(a,b){return (b.fav?1:0)-(a.fav?1:0)});
