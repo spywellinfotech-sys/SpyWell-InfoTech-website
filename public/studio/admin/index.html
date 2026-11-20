@@ -44,6 +44,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   function put(bd,fn){var d=h('div');bd.appendChild(d);fn(d);return d}
   var g1=grp('💰 पैसा, AI टोकन और प्लान','AI बैलेंस · सर्विस चार्जेज़ · UPI भुगतान · Refer & Earn · सीमाएँ');
   put(g1,aiTile);var sv0=put(g1,svcTile);sv0.className='svcw';put(g1,manPanel);put(g1,refPanel);put(g1,cfgPanel);
+  var gL=grp('📈 लिंक व्यू रिपोर्ट','कौन सा लिंक कितना देखा गया · आज · 7 दिन · शेयर');put(gL,linkPanel);
   var g2=grp('🤖 AI सहायक','AI से चैट · AI सेटिंग');put(g2,chatPanel);put(g2,aiPanel);
   var g3=grp('🌐 डायरेक्टरी, डोमेन और इंडस्ट्री','बिज़नेस डायरेक्टरी · डोमेन अनुरोध · Industry-wise कार्ड');put(g3,dirPanel);put(g3,domPanel);put(g3,indPanel);
   var g4=grp('📜 एडमिन लॉग','Admin के कामों का लॉग');put(g4,auditPanel);
@@ -216,6 +217,34 @@ async function domPanel(box){
     var nt=h('input',{type:'text',maxlength:300,placeholder:'नोट (वैकल्पिक)',value:x.note||''});it.appendChild(nt);
     [['active','चालू करें'],['rejected','अस्वीकार'],['pending','लंबित']].forEach(function(a){it.appendChild(h('button',{class:'btn alt',style:'margin:6px 6px 0 0',text:a[1],onclick:async function(){var e=await sb.rpc('studio_admin_set_domain',{p_id:x.id,p_status:a[0],p_note:nt.value});if(!e.error)domPanel(box)}}))});
     c.appendChild(it)});box.appendChild(c)}
+async function linkPanel(box){
+  var r=await sb.rpc('studio_admin_link_report');box.textContent='';var c=h('div',{class:'card'});c.appendChild(h('b',{text:'📈 लिंक व्यू रिपोर्ट'}));
+  if(r.error){c.appendChild(h('div',{class:'k',text:'रिपोर्ट नहीं आई। (डेटाबेस अपडेट चाहिए)'}));box.appendChild(c);return}
+  var D=r.data||[],T='all',S='views';
+  var tl=h('div',{style:'display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:6px'}),cf=h('div',{style:'display:flex;gap:5px;flex-wrap:wrap;margin-top:8px'}),sf=h('div',{style:'display:flex;gap:5px;flex-wrap:wrap;margin-top:6px'}),ls=h('div');
+  c.appendChild(tl);c.appendChild(cf);c.appendChild(sf);c.appendChild(ls);
+  var base=location.origin;
+  function url(x){return base+(x.product_type==='invitation'?'/inv/':'/v/')+x.slug}
+  function chip(box2,txt,on,fn){var b=h('button',{type:'button',text:txt,style:'margin:0;width:auto;min-height:0;padding:3px 10px;font-size:12px;border-radius:99px;border:1px solid #d4141c;background:'+(on?'#d4141c':'#fff')+';color:'+(on?'#fff':'#d4141c'),onclick:fn});box2.appendChild(b)}
+  function csv(rows){var L=[['Title','Type','Link','Owner','Views','Today','Last7d','Unique','Clicks','Shares','LastView']];rows.forEach(function(x){L.push([x.title,x.product_type,url(x),x.email||'',x.views,x.views_today,x.views_7d,x.uniq,x.clicks,x.shares,x.last_view||''])});
+    var t='﻿'+L.map(function(a){return a.map(function(v){v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')}).join('\r\n'),b=new Blob([t],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='link-views-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000)}
+  function draw(){
+    var rows=D.filter(function(x){return T==='all'||x.product_type===T});
+    rows=rows.slice().sort(function(a,b){return S==='zero'?(Number(a.views)-Number(b.views)):S==='today'?(Number(b.views_today)-Number(a.views_today)):S==='7d'?(Number(b.views_7d)-Number(a.views_7d)):(Number(b.views)-Number(a.views))});
+    if(S==='zero')rows=rows.filter(function(x){return Number(x.views)===0});
+    var sum=function(k){return rows.reduce(function(t,x){return t+Number(x[k]||0)},0)};
+    tl.textContent='';[[rows.length,'लिंक'],[sum('views'),'कुल व्यू'],[sum('views_today'),'आज'],[sum('views_7d'),'7 दिन']].forEach(function(t){tl.appendChild(h('div',{class:'stat'},[h('b',{text:String(t[0])}),h('span',{text:t[1]})]))});
+    cf.textContent='';[['all','सभी'],['visiting','विज़िटिंग'],['invitation','इनविटेशन']].forEach(function(t){chip(cf,t[1],T===t[0],function(){T=t[0];draw()})});
+    var cb=h('button',{type:'button',text:'⬇ CSV',style:'margin:0 0 0 auto;width:auto;min-height:0;padding:3px 10px;font-size:12px',onclick:function(){csv(rows)}});cf.appendChild(cb);
+    sf.textContent='';[['views','🔝 सबसे ज़्यादा'],['today','आज'],['7d','7 दिन'],['zero','0 व्यू वाले']].forEach(function(t){chip(sf,t[1],S===t[0],function(){S=t[0];draw()})});
+    ls.textContent='';if(!rows.length)ls.appendChild(h('div',{class:'k',text:'कोई लिंक नहीं।'}));
+    rows.slice(0,100).forEach(function(x){var lk=url(x).replace(/^https?:\/\//,'');var row=h('div',{style:'border-top:1px solid #e8d5ad;padding:6px 0'});
+      row.appendChild(h('div',{style:'display:flex;justify-content:space-between;gap:8px'},[h('b',{style:'font-size:14px;word-break:break-word',text:(x.product_type==='invitation'?'💌 ':'📇 ')+(x.title||x.slug)}),h('b',{style:'color:#d4141c;white-space:nowrap',text:'👁 '+x.views})]));
+      var a=h('div',{class:'k',style:'word-break:break-all;color:#0b5cad;cursor:pointer',text:lk+'  (टैप = कॉपी)',onclick:function(){try{navigator.clipboard.writeText(url(x));a.textContent='✓ कॉपी हुआ'}catch(e){}}});row.appendChild(a);
+      row.appendChild(h('div',{class:'k',text:'आज '+x.views_today+' · 7 दिन '+x.views_7d+' · 👤 '+x.uniq+' · 👆 '+x.clicks+' · 🔗 शेयर '+x.shares+(x.last_view?' · आख़िरी '+new Date(x.last_view).toLocaleDateString('en-IN',{day:'numeric',month:'short'}):'')}));
+      if(x.email)row.appendChild(h('div',{class:'k',style:'font-size:11px',text:x.email}));ls.appendChild(row)});
+    if(rows.length>100)ls.appendChild(h('div',{class:'k',text:'पहले 100 दिखाए; सारे के लिए CSV निकालें।'}))}
+  draw();box.appendChild(c)}
 async function auditPanel(box){
   var r=await sb.rpc('studio_admin_audit',{p_limit:40});box.textContent='';if(r.error)return;var c=h('div',{class:'card'});c.appendChild(h('b',{text:'📜 Admin के कामों का लॉग (ताज़ा 40)'}));
   if(!(r.data||[]).length)c.appendChild(h('div',{class:'k',text:'अभी कोई एंट्री नहीं।'}));
