@@ -1045,15 +1045,15 @@ async function lbHome(){
   var h=mk('div','','🏆 इस महीने के टॉप लिंक व्यू');h.style.cssText='font-weight:800;font-size:15px';box.appendChild(h);
   var sb2=mk('div','','इनाम: 🥇 ₹'+pr[0]+' · 🥈 ₹'+pr[1]+' · 🥉 ₹'+pr[2]+' वॉलेट क्रेडिट · '+d.days_left+' दिन बाकी');sb2.style.cssText='font-size:12px;color:#666;margin:2px 0 8px';box.appendChild(sb2);
   var t=d.top||[];
-  if(!t.length){var e=mk('div','','अभी किसी का व्यू नहीं — अपना कार्ड शेयर करें और पहले नंबर पर आएँ!');e.style.cssText='font-size:13px;color:#666';box.appendChild(e)}
+  if(!t.length){var e=mk('div','','अभी लिस्ट खाली है — अपना कार्ड शेयर करें और पहले नंबर पर आएँ!');e.style.cssText='font-size:13px;color:#666';box.appendChild(e)}
   var more=t.length>3,wrap=mk('div','');box.appendChild(wrap);
   t.forEach(function(x,i){var row=mk('div','');if(i>=3)row.hidden=true,row.className='lb-x';row.style.cssText='display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #eee'+(x.me?';background:#e8f7f5;border-radius:8px;padding-left:6px':'');
     row.appendChild(mk('span','',med[x.rank-1]||x.rank));row.firstChild.style.fontSize='20px';
     var nm=mk('div','',(x.title||'कार्ड')+(x.me?' (आप)':''));nm.style.cssText='flex:1;min-width:0;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';row.appendChild(nm);
-    row.appendChild(mk('b','','👁 '+x.score));row.lastChild.style.fontSize='13px';wrap.appendChild(row)});
-  if(more){var eb=mk('button','','▼ पूरी लिस्ट देखें (टॉप '+t.length+')');eb.type='button';eb.style.cssText='margin-top:6px;padding:7px 12px;border:1px solid #0b7a75;background:#fff;color:#0b7a75;border-radius:8px;font-weight:700;font-size:13px;width:100%';var op=false;eb.onclick=function(){op=!op;wrap.querySelectorAll('.lb-x').forEach(function(r){r.hidden=!op});eb.textContent=op?'▲ कम दिखाएँ':'▼ पूरी लिस्ट देखें (टॉप '+t.length+')'};box.appendChild(eb)}
-  var me=d.me,mm=mk('div','',me?('आपकी रैंक: #'+me.rank+' · '+me.score+' यूनिक व्यू'):'आपके कार्ड पर इस महीने अभी कोई व्यू नहीं');mm.style.cssText='font-size:12px;color:#0b7a75;margin-top:8px;font-weight:600';box.appendChild(mm);
-  var nt=mk('div','','गिनती: यूनिक विज़िटर, इस महीने (IST). इनाम अगले महीने की शुरुआत में वॉलेट में जुड़ेगा।');nt.style.cssText='font-size:11px;color:#999;margin-top:4px';box.appendChild(nt);
+    wrap.appendChild(row)});
+  if(more){var eb=mk('button','','▼ पूरी लिस्ट देखें');eb.type='button';eb.style.cssText='margin-top:6px;padding:7px 12px;border:1px solid #0b7a75;background:#fff;color:#0b7a75;border-radius:8px;font-weight:700;font-size:13px;width:100%';var op=false;eb.onclick=function(){op=!op;wrap.querySelectorAll('.lb-x').forEach(function(r){r.hidden=!op});eb.textContent=op?'▲ कम दिखाएँ':'▼ पूरी लिस्ट देखें'};box.appendChild(eb)}
+  var me=d.me,mm=mk('div','',me?('आपकी रैंक: #'+me.rank):'इस महीने आप अभी लिस्ट में नहीं हैं — कार्ड शेयर करें!');mm.style.cssText='font-size:12px;color:#0b7a75;margin-top:8px;font-weight:600';box.appendChild(mm);
+  var nt=mk('div','','इस महीने के लिंक व्यू के आधार पर रैंक। इनाम अगले महीने की शुरुआत में वॉलेट में जुड़ेगा।');nt.style.cssText='font-size:11px;color:#999;margin-top:4px';box.appendChild(nt);
   box.hidden=false;if(typeof CURT!=='undefined'&&CURT&&CURT!=='home')box.classList.add('tab-h')}catch(e){box.hidden=true}
 }
 async function refHome(){
