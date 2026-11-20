@@ -1052,7 +1052,7 @@ async function lbHome(){
     var nm=mk('div','','रैंक #'+x.rank+(x.me?' — आप':''));nm.style.cssText='flex:1;min-width:0;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';row.appendChild(nm);
     wrap.appendChild(row)});
   if(more){var eb=mk('button','','▼ पूरी लिस्ट देखें');eb.type='button';eb.style.cssText='margin-top:6px;padding:7px 12px;border:1px solid #0b7a75;background:#fff;color:#0b7a75;border-radius:8px;font-weight:700;font-size:13px;width:100%';var op=false;eb.onclick=function(){op=!op;wrap.querySelectorAll('.lb-x').forEach(function(r){r.hidden=!op});eb.textContent=op?'▲ कम दिखाएँ':'▼ पूरी लिस्ट देखें'};box.appendChild(eb)}
-  var me=d.me,mm=mk('div','',me?('आपकी रैंक: #'+me.rank):'इस महीने आप अभी लिस्ट में नहीं हैं — कार्ड शेयर करें!');mm.style.cssText='font-size:12px;color:#0b7a75;margin-top:8px;font-weight:600';box.appendChild(mm);
+  var me=d.me,mm=mk('div','',me?('🎯 आपकी रैंक: #'+me.rank):'इस महीने आप अभी लिस्ट में नहीं हैं — कार्ड शेयर करें!');mm.style.cssText='margin-top:10px;padding:10px;border-radius:10px;text-align:center;font-weight:800;background:#e8f7f5;color:#0b7a75;font-size:'+(me?'17px':'13px');box.appendChild(mm);
   var nt=mk('div','','इस महीने के लिंक व्यू के आधार पर रैंक। इनाम अगले महीने की शुरुआत में वॉलेट में जुड़ेगा।');nt.style.cssText='font-size:11px;color:#999;margin-top:4px';box.appendChild(nt);
   box.hidden=false;if(typeof CURT!=='undefined'&&CURT&&CURT!=='home')box.classList.add('tab-h')}catch(e){box.hidden=true}
 }
