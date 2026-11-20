@@ -231,6 +231,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="card" id="c-saved">
 <b>📇 My Network</b>
 <div class="k">कार्ड "सेव करें" दबाकर या नंबर जोड़कर यहीं से कॉल और WhatsApp करें।</div>
+<div id="fu-top"></div>
 <input id="ct-q" type="search" placeholder="🔍 नाम, नंबर या व्यवसाय (industry) से खोजें" style="margin-top:8px">
 <div class="chips" id="ct-flt"></div>
 <div style="display:flex;gap:8px;margin-top:10px"><button type="button" id="ct-scan" style="flex:1;background:#d4141c;color:#fff;border:0;padding:10px 6px;font-size:15px">📷 कार्ड की फ़ोटो</button><button type="button" id="ct-addb" style="flex:1;background:#fff;color:#9d0b12;border:1.5px solid #d4141c;padding:10px 6px;font-size:15px">➕ नया कॉन्टैक्ट</button></div><input id="ct-scanf" type="file" accept="image/*" hidden>
@@ -580,7 +581,7 @@ function fuImport(file,msg){
       var have={};CT.forEach(function(x){if(x.mob)have[String(x.mob).slice(-10)]=1});var out=[],skip=0,bad=0;
       R.slice(1).forEach(function(r){var m=String(r[iM]||'').replace(/\D/g,'').slice(-10);if(!/^[6-9][0-9]{9}$/.test(m)){bad++;return}if(have[m]){skip++;return}have[m]=1;var n=((iN>=0?r[iN]:'')||'').trim()||('+91 '+m);out.push({user_id:ME.id,name:n.slice(0,80),mobile:m,business:iB>=0?(r[iB]||'').trim().slice(0,80)||null:null,coll:iG>=0?(r[iG]||'').trim().slice(0,30)||null:null,note:iT>=0?(r[iT]||'').trim().slice(0,300)||null:null,src:'manual'})});
       var ok=0;for(var i=0;i<out.length;i+=200){var e=await sb.from('studio_contacts').insert(out.slice(i,i+200));if(e.error){msg.textContent='कुछ कॉन्टैक्ट सेव नहीं हुए ('+ok+' जुड़े)';loadSaved();return}ok+=Math.min(200,out.length-i)}
-      msg.textContent='✓ '+ok+' नए जुड़े · '+skip+' पहले से थे · '+bad+' गलत नंबर छोड़े';loadSaved()}catch(e){msg.textContent='इम्पोर्ट नहीं हुआ, फ़ाइल जाँचें'}};
+      msg.textContent='✓ '+ok+' नए जुड़े · '+skip+' पहले से थे · '+bad+' गलत नंबर छोड़े';window.FUMSG=msg.textContent;loadSaved()}catch(e){msg.textContent='इम्पोर्ट नहीं हुआ, फ़ाइल जाँचें'}};
   fr.readAsText(file,'utf-8')}
 async function fuTele(){
   var ov=mk('div');ov.style.cssText='position:fixed;inset:0;background:#fff;z-index:9998;overflow:auto;padding:14px';var wrap=mk('div');wrap.style.cssText='max-width:520px;margin:0 auto';ov.appendChild(wrap);document.body.appendChild(ov);
@@ -603,7 +604,7 @@ function fuTools(box){
   if(!FUADM)return;var w=mk('div');w.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:10px';
   function bt(t,fn,pri){var b=mk('button','',t);b.type='button';b.style.cssText='margin:0;width:auto;min-height:0;padding:8px 12px;font-size:14px;'+(pri?'background:#d4141c;color:#fff;border:0':'background:#fff;color:#9d0b12;border:1px solid #d4141c');b.onclick=fn;w.appendChild(b)}
   bt('📞 टेलीकॉलिंग',fuTele,1);bt('⬇ CSV निकालें',fuExport);
-  var fi=mk('input');fi.type='file';fi.accept='.csv,text/csv';fi.hidden=true;var msg=mk('div','k');msg.style.cssText='flex-basis:100%;margin:2px 0 0';fi.onchange=function(){if(fi.files&&fi.files[0]){msg.textContent='इम्पोर्ट हो रहा है…';fuImport(fi.files[0],msg)}fi.value=''};
+  var fi=mk('input');fi.type='file';fi.accept='.csv,text/csv';fi.hidden=true;var msg=mk('div','k');msg.style.cssText='flex-basis:100%;margin:2px 0 0';msg.textContent=window.FUMSG||'';fi.onchange=function(){if(fi.files&&fi.files[0]){msg.textContent='इम्पोर्ट हो रहा है…';fuImport(fi.files[0],msg)}fi.value=''};
   bt('⬆ CSV जोड़ें',function(){fi.click()});w.appendChild(fi);w.appendChild(msg);box.appendChild(w)}
 /* ===== /Telecalling + CSV ===== */
 function drawContacts(){
@@ -618,7 +619,7 @@ function drawContacts(){
   if(!CT.length){box.appendChild(mk('div','k','अभी कोई कॉन्टैक्ट नहीं है।'));return}
   (function(){var nd=CT.filter(function(x){return x.src==='card'}).length,ns=CT.filter(function(x){return x.scan}).length,nm=CT.length-nd-ns,T=function(x){return window.I18N&&I18N.tr?I18N.tr(x):x};
     var sm=mk('div','',T('कुल')+' '+CT.length+' '+T('कॉन्टैक्ट')+(nd?' · ✅ '+nd+' LiveCard':'')+(ns?' · 📷 '+ns+' Scanned':'')+(nm?' · ✍️ '+nm+' '+T('हाथ से'):''));sm.style.cssText='font-weight:700;color:#9d0b12;font-size:14px;margin:10px 2px 0';box.appendChild(sm)})();
-  try{fuTools(box);fuToday(box)}catch(e){}
+  try{var ft=$('fu-top');if(ft){ft.textContent='';fuTools(ft);fuToday(ft)}}catch(e){}
   var rows=CT.filter(function(x){return (CTF==='all'||x.ind===CTF)&&(CTC==='all'||(CTC==='fav'?x.fav:x.coll===CTC))&&(!q||(x.title+' '+(x.sub||'')+' '+(x.mob||'')+' '+(x.ind?(INDN[x.ind]||x.ind):'')).toLowerCase().indexOf(q)>=0)});
   if(!rows.length){box.appendChild(mk('div','k','कोई कॉन्टैक्ट नहीं मिला।'));return}
   rows.sort(function(a,b){return (b.fav?1:0)-(a.fav?1:0)});
