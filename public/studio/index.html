@@ -1443,6 +1443,7 @@ function billNorm(d){d=d||{};if(Array.isArray(d.items))return d.items;if(d.acc||
 async function billSave(list){var q=await sb.from('studio_billing').upsert({user_id:ME.id,d:{items:list},updated_at:new Date().toISOString()});return !q.error}
 async function billTile(){
   var box=$('c-bill');if(!box)return;
+  if(BILL===null&&!box.firstChild){box.appendChild(mk('b','','🏦 Billing & Bank details'));box.lastChild.style.cssText='display:block;font-size:19px;padding:4px'}
   if(BILL===null){try{var r=await sb.from('studio_billing').select('d').eq('user_id',ME.id).maybeSingle();BILL=billNorm(r&&r.data&&r.data.d)}catch(e){BILL=[]}}
   var L=BILL;box.textContent='';var open=BILLOPEN||BILLED>=0;
   function ttl(e,i){return e.name||e.bank||('कार्ड '+(i+1))}
@@ -1470,11 +1471,15 @@ async function billTile(){
     var dl=mk('button','alt','🗑');dl.type='button';dl.setAttribute('aria-label','डिलीट करें');dl.style.cssText='flex:none;width:auto;margin:0;padding:12px 14px;color:#b00020';
     dl.onclick=async function(){if(!confirm('यह बैंक / बिलिंग कार्ड हटाना है?'))return;var nl=L.filter(function(_,k){return k!==i});if(!(await billSave(nl))){alert('डिलीट नहीं हो पाया।');return}BILL=nl;BILLED=-1;billTile()};
     rw.appendChild(w);rw.appendChild(cp);rw.appendChild(ed);rw.appendChild(dl);c.appendChild(rw);
-    var nr=mk('div','');nr.style.cssText='display:flex;gap:8px;margin-top:10px;align-items:center';
-    var ni=document.createElement('input');ni.type='tel';ni.maxLength=14;ni.placeholder='किसी भी नंबर पर भेजें (10 अंक)';ni.setAttribute('inputmode','numeric');ni.style.cssText='flex:1;margin:0;min-width:0';
-    var nb=mk('button','','📤 भेजें');nb.type='button';nb.style.cssText='flex:none;width:auto;margin:0;background:#25a244;color:#fff;border:0;padding:12px 14px';
+    var more=mk('div','');more.hidden=true;var mh=mk('div','','📲 Send to Unsaved WhatsApp no.  ▼');mh.style.cssText='margin-top:10px;padding:0 14px;height:46px;box-sizing:border-box;display:flex;align-items:center;border-radius:12px;background:#ffc21a;color:#5a0509;font-weight:800;cursor:pointer;font-size:15px';
+    mh.onclick=function(){more.hidden=!more.hidden;mh.textContent=mh.textContent.replace(/[▼▲]$/,more.hidden?'▼':'▲')};
+    var nr=mk('div','');nr.style.cssText='margin-top:8px;background:#e8f7f5;border-radius:12px;padding:10px 12px';
+    nr.appendChild(mk('b','','📞 नंबर डालकर सीधे भेजें'));var nh=mk('div','','जिनका नंबर WhatsApp में सेव नहीं है, उन्हें भी भेज सकते हैं');nh.style.cssText='font-size:12px;color:#555;margin:2px 0 6px';nr.appendChild(nh);
+    var nrow=mk('div','');nrow.style.cssText='display:flex;flex-direction:column;gap:8px';var ni=document.createElement('input');ni.type='tel';ni.setAttribute('inputmode','numeric');ni.maxLength=10;ni.placeholder='मोबाइल नंबर';
+    ni.style.cssText='display:block!important;width:100%!important;box-sizing:border-box!important;height:54px!important;margin:0!important;padding:0 14px!important;border:1.5px solid #17a89e!important;border-radius:12px!important;font:700 20px system-ui,sans-serif!important;letter-spacing:1px;color:#222!important;background:#fff!important';
+    var nb=mk('button','','💬 भेजें');nb.type='button';nb.style.cssText='margin:0!important;width:100%!important;height:46px!important;min-height:0!important;padding:0 16px!important;border:0!important;border-radius:12px!important;background:#25d366!important;color:#fff!important;font-weight:800;font-size:16px';
     nb.onclick=function(){var n=ni.value.replace(/\D/g,'');if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);if(n.length!==10){ni.style.borderColor='#b00020';ni.focus();return}window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(txt(e)),'_blank','noopener')};
-    nr.appendChild(ni);nr.appendChild(nb);c.appendChild(nr);
+    nrow.appendChild(ni);nrow.appendChild(nb);nr.appendChild(nrow);more.appendChild(nr);c.appendChild(mh);c.appendChild(more);
     var nt=mk('div','','🔒 यह जानकारी सिर्फ़ आपको दिखती है। आप खुद भेजेंगे तभी किसी को मिलेगी।');nt.style.cssText='font-size:11px;color:#888;margin-top:8px';c.appendChild(nt)}
   function form(c,e,i){
     var f=mk('div','');
