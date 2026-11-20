@@ -44,6 +44,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   function put(bd,fn){var d=h('div');bd.appendChild(d);fn(d);return d}
   var g1=grp('💰 पैसा, AI टोकन और प्लान','AI बैलेंस · सर्विस चार्जेज़ · UPI भुगतान · Refer & Earn · सीमाएँ');
   put(g1,aiTile);var sv0=put(g1,svcTile);sv0.className='svcw';put(g1,manPanel);put(g1,refPanel);put(g1,cfgPanel);
+  var gW=grp('🏆 लिंक व्यू इनाम','मासिक टॉप 3 · वॉलेट क्रेडिट');put(gW,lbPanel);
   var gL=grp('📈 लिंक व्यू रिपोर्ट','कौन सा लिंक कितना देखा गया · आज · 7 दिन · शेयर');put(gL,linkPanel);
   var g2=grp('🤖 AI सहायक','AI से चैट · AI सेटिंग');put(g2,chatPanel);put(g2,aiPanel);
   var g3=grp('🌐 डायरेक्टरी, डोमेन और इंडस्ट्री','बिज़नेस डायरेक्टरी · डोमेन अनुरोध · Industry-wise कार्ड');put(g3,dirPanel);put(g3,domPanel);put(g3,indPanel);
@@ -217,6 +218,20 @@ async function domPanel(box){
     var nt=h('input',{type:'text',maxlength:300,placeholder:'नोट (वैकल्पिक)',value:x.note||''});it.appendChild(nt);
     [['active','चालू करें'],['rejected','अस्वीकार'],['pending','लंबित']].forEach(function(a){it.appendChild(h('button',{class:'btn alt',style:'margin:6px 6px 0 0',text:a[1],onclick:async function(){var e=await sb.rpc('studio_admin_set_domain',{p_id:x.id,p_status:a[0],p_note:nt.value});if(!e.error)domPanel(box)}}))});
     c.appendChild(it)});box.appendChild(c)}
+async function lbPanel(box){
+  box.textContent='';
+  var info=h('div',{text:'हर महीने के टॉप 3 (यूनिक विज़िटर) को वॉलेट इनाम। इनाम की राशि settings में lb_prize_1/2/3 से बदलें।'});info.style.cssText='font-size:12px;color:#666;margin-bottom:8px';box.appendChild(info);
+  var inp=h('input',{type:'month'});inp.style.cssText='padding:8px;border:1px solid #ccc;border-radius:8px;margin-right:6px';
+  var pm=new Date(Date.now()+19800000);pm.setUTCMonth(pm.getUTCMonth()-1);inp.value=pm.toISOString().slice(0,7);
+  var bt=h('button',{text:'🏆 इनाम बाँटो',type:'button'});bt.style.cssText='padding:9px 14px;border:0;border-radius:8px;background:#0b7a75;color:#fff;font-weight:700';
+  var msg=h('div',{});msg.style.cssText='font-size:13px;margin:8px 0';
+  var lst=h('div',{});
+  box.appendChild(inp);box.appendChild(bt);box.appendChild(msg);box.appendChild(lst);
+  async function load(){lst.textContent='';var r=await sb.rpc('studio_admin_lb_awards');(r.data||[]).forEach(function(x){var d=h('div',{text:x.month+' · #'+x.rank+' · '+(x.email||'-')+' · 👁 '+x.score+' · ₹'+x.amount});d.style.cssText='font-size:12px;padding:5px 0;border-top:1px solid #eee';lst.appendChild(d)});if(!(r.data||[]).length)lst.textContent='अभी कोई विजेता नहीं'}
+  bt.onclick=async function(){if(!confirm(inp.value+' के टॉप 3 को इनाम दें?'))return;bt.disabled=true;var r=await sb.rpc('studio_admin_lb_award',{p_month:inp.value});bt.disabled=false;var d=r.data||{};
+    msg.textContent=r.error?('गड़बड़: '+r.error.message):d.error==='month_not_over'?'यह महीना अभी खत्म नहीं हुआ':('हो गया — '+d.awarded+' विजेता को इनाम मिला (पहले दिया हुआ दोबारा नहीं जुड़ता)');load()};
+  load()
+}
 async function linkPanel(box){
   var r=await sb.rpc('studio_admin_link_report');box.textContent='';var c=h('div',{class:'card'});c.appendChild(h('b',{text:'📈 लिंक व्यू रिपोर्ट'}));
   if(r.error){c.appendChild(h('div',{class:'k',text:'रिपोर्ट नहीं आई। (डेटाबेस अपडेट चाहिए)'}));box.appendChild(c);return}

@@ -226,6 +226,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="card" id="c-insinv" hidden></div>
 </div></div>
 <div class="card" id="c-ref" hidden></div>
+<div class="card" id="c-lb" hidden style="padding:12px 14px"></div>
 <div class="card" id="c-disc">
 <b>🔍 बिज़नेस खोजें (Discover)</b>
 <div class="k">LiveCard पर सार्वजनिक किए गए बिज़नेस कार्ड, नाम, कंपनी, व्यवसाय या शहर से खोजें।</div>
@@ -683,7 +684,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at,published_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
+  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -1037,6 +1038,22 @@ async function invHome(){
 try{var _rq=new URLSearchParams(location.search).get('ref');if(_rq&&/^[A-Za-z0-9]{4,10}$/.test(_rq))localStorage.setItem('st_ref',_rq.toUpperCase())}catch(e){}
 function closeRef(){var b=$('c-ref'),k=$('ref-bk');if(b)b.classList.remove('pop');if(k)k.remove();window.__refOpen=false}
 function openRef(){var b=$('c-ref');if(!b||b.hidden)return;if(!$('ref-bk')){var k=document.createElement('div');k.id='ref-bk';k.onclick=closeRef;document.body.appendChild(k)}b.classList.add('pop');window.__refOpen=true;refHome().then(function(){b.classList.add('pop');var cl=document.createElement('button');cl.type='button';cl.textContent='✕ बंद करें';cl.style.cssText='display:block;width:100%;margin:10px 0 0;background:#fff;color:#7a0a10;border:1px solid #d4141c';cl.onclick=closeRef;b.appendChild(cl)})}
+async function lbHome(){
+  var box=$('c-lb');if(!box)return;
+  try{var r=await sb.rpc('studio_lb_board');var d=r&&r.data;if(!d||r.error){box.hidden=true;return}
+  box.textContent='';var pr=d.prizes||[0,0,0],med=['🥇','🥈','🥉'];
+  var h=mk('div','','🏆 इस महीने के टॉप लिंक व्यू');h.style.cssText='font-weight:800;font-size:15px';box.appendChild(h);
+  var sb2=mk('div','','इनाम: 🥇 ₹'+pr[0]+' · 🥈 ₹'+pr[1]+' · 🥉 ₹'+pr[2]+' वॉलेट क्रेडिट · '+d.days_left+' दिन बाकी');sb2.style.cssText='font-size:12px;color:#666;margin:2px 0 8px';box.appendChild(sb2);
+  var t=d.top||[];
+  if(!t.length){var e=mk('div','','अभी किसी का व्यू नहीं — अपना कार्ड शेयर करें और पहले नंबर पर आएँ!');e.style.cssText='font-size:13px;color:#666';box.appendChild(e)}
+  t.slice(0,3).forEach(function(x){var row=mk('div','');row.style.cssText='display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #eee'+(x.me?';background:#e8f7f5;border-radius:8px;padding-left:6px':'');
+    row.appendChild(mk('span','',med[x.rank-1]||x.rank));row.firstChild.style.fontSize='20px';
+    var nm=mk('div','',(x.title||'कार्ड')+(x.me?' (आप)':''));nm.style.cssText='flex:1;min-width:0;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';row.appendChild(nm);
+    row.appendChild(mk('b','','👁 '+x.score));row.lastChild.style.fontSize='13px';box.appendChild(row)});
+  var me=d.me,mm=mk('div','',me?('आपकी रैंक: #'+me.rank+' · '+me.score+' यूनिक व्यू'):'आपके कार्ड पर इस महीने अभी कोई व्यू नहीं');mm.style.cssText='font-size:12px;color:#0b7a75;margin-top:8px;font-weight:600';box.appendChild(mm);
+  var nt=mk('div','','गिनती: यूनिक विज़िटर, इस महीने (IST). इनाम अगले महीने की शुरुआत में वॉलेट में जुड़ेगा।');nt.style.cssText='font-size:11px;color:#999;margin-top:4px';box.appendChild(nt);
+  box.hidden=false;if(typeof CURT!=='undefined'&&CURT&&CURT!=='home')box.classList.add('tab-h')}catch(e){box.hidden=true}
+}
 async function refHome(){
   var box=$('c-ref');if(!box)return;
   var r=await sb.rpc('studio_ref_me');var m=r&&r.data;
@@ -1304,7 +1321,7 @@ var TABMAP=null;
 var CURT=null;var H0=location.hash,ADMR=0;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'saved'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-lb'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'saved'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me','adm'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden)||(t==='adm'&&$('tb-adm').hidden))t='home';
   if(t==='adm'){var ca=$('c-adm');if(!ca.firstChild){var fa=document.createElement('iframe');fa.src='/studio/admin/?embed=1';fa.id='adm-fr';fa.scrolling='no';fa.style.cssText='width:100%;height:900px;border:0;display:block';ca.appendChild(fa)}}
