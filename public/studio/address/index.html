@@ -53,6 +53,7 @@ body.vw .top,body.vw h1,body.vw .wrap>.k,body.vw .wrap>.card:not(#outc){display:
 (function(){
 var TM=location.search.match(/[?&]t=(office[0-9]*)/),OF=!!TM,KEY=TM?TM[1]:'home',LSK=OF?'vc_addr_'+KEY:'vc_addr',IC=OF?'🏢':'🏠',NM=OF?'ऑफ़िस का पता':'घर का पता',BIG=OF?'OFFICE ADDRESS':'HOME ADDRESS',TIT=OF?'🏢 मेरे ऑफ़िस का पता':'🏠 मेरे घर का पता';
 function wk(pc,h){var o=Object.assign({},pc);o[KEY]=h;return o}
+var STAMP=new Image();STAMP.src='/studio/livecard-stamp-t.png';
 var $=function(i){return document.getElementById(i)},F=['co','name','mob','addr','land','city','state','pin','map'],cv=document.createElement('canvas'),blob=null;
 function val(k){return $('a-'+k).value.trim()}
 function mob(){return val('mob').replace(/\D/g,'').slice(-10)}
@@ -68,7 +69,7 @@ function draw(){
   var FF='"Hind","Noto Sans Devanagari",system-ui,sans-serif',W=1080,x=cv.getContext('2d'),rows=[];
   x.font='400 42px '+FF;
   var addrL=wrap(x,lineAddr(),W-190-(mapUrl()?300:0),'400 42px '+FF,5);
-  var H=Math.max(1000,590+(OF&&val('co')?190:0)+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+170);
+  var H=Math.max(1000,590+(OF&&val('co')?190:0)+(val('name')?90:0)+(mob().length===10?80:0)+addrL.length*60+(val('land')?0:0)+240);
   cv.width=W;cv.height=H;x.fillStyle='#fff';x.fillRect(0,0,W,H);
   x.fillStyle='#12307f';x.fillRect(0,0,W,250);x.fillStyle='#f59a1a';x.fillRect(0,250,W,10);
   x.fillStyle='#fff';x.textAlign='center';x.textBaseline='alphabetic';x.font='700 38px '+FF;x.fillText('ADDRESS CARD',W/2,95);
@@ -83,7 +84,8 @@ function draw(){
   x.font='400 42px '+FF;var ay=y;addrL.forEach(function(l,i){x.fillText(l,90,y);y+=60});
   var mu=mapUrl();
   if(mu){try{var qc=document.createElement('canvas');window.StudioQR.draw(qc,unescape(encodeURIComponent(mu)),260);x.fillStyle='#fff';x.fillRect(W-340,H-400,260,260);x.drawImage(qc,W-340,H-400,260,260);x.fillStyle='#5a6a8c';x.font='400 28px '+FF;x.textAlign='center';x.fillText('स्कैन करें: लोकेशन',W-210,H-100);x.textAlign='left'}catch(e){}}
-  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('LiveCard · livecard.in',90,H-60);
+  try{if(STAMP.complete&&STAMP.naturalWidth)x.drawImage(STAMP,86,H-230,140,140)}catch(e){}
+  x.fillStyle='#5a6a8c';x.font='400 30px '+FF;x.fillText('LiveCard · livecard.in',250,H-142);x.fillText('Your Live World',250,H-102);
   try{$('pv').src=cv.toDataURL('image/png')}catch(e){}
   cv.toBlob(function(b){blob=b},'image/png');$('outc').hidden=false;$('b-cl').hidden=!mapUrl();
   try{localStorage.setItem(LSK,JSON.stringify(F.reduce(function(o,k){o[k]=val(k);return o},{})))}catch(e){}
