@@ -1442,24 +1442,35 @@ async function addrTile(){
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};ADH={cj:cj,name:cj.name||pd.full_name||'',mob:cj.mobile||pd.phone||''};
   drawAddr(false);drawAddr(false,'office');addrSync();locTile()}
 var BILL=null;
+var PLOPEN=false;
 async function planTile(){
   var box=$('c-plan');if(!box)return;
   try{
     var now=new Date(),td=fnYmd(now),W=['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'],M=['जन','फ़र','मार्च','अप्रै','मई','जून','जुला','अग','सित','अक्टू','नव','दिस'];
-    var fnT=(FN||[]).filter(function(e){return e.fdate===td}),fnN=(FN||[]).filter(function(e){return fnDiff(e.fdate)===1});
-    var eod=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59);var fu=[];
-    try{var r=await sb.from('studio_followups').select('id,name,mobile,due_at').eq('status','open').eq('kind','task').lte('due_at',eod.toISOString()).order('due_at',{ascending:true}).limit(50);if(r&&!r.error)fu=r.data||[]}catch(e){}
+    var fnT=(FN||[]).filter(function(e){return e.fdate===td}),fnN=(FN||[]).filter(function(e){return fnDiff(e.fdate)===1}),fnF=(FN||[]).filter(function(e){return fnDiff(e.fdate)>1});
+    var sod=new Date(now.getFullYear(),now.getMonth(),now.getDate()),eod=new Date(sod.getTime()+864e5-1000);var fa=[];
+    try{var r=await sb.from('studio_followups').select('id,name,mobile,due_at,note').eq('status','open').eq('kind','task').order('due_at',{ascending:true}).limit(150);if(r&&!r.error)fa=r.data||[]}catch(e){}
+    var fu=fa.filter(function(x){return new Date(x.due_at)<=eod}),ff=fa.filter(function(x){return new Date(x.due_at)>eod});
     box.textContent='';
-    var h=mk('div','pl-h');h.appendChild(mk('b','','📋 आज का प्लान'));h.appendChild(mk('span','',W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]));box.appendChild(h);
+    var h=mk('div','pl-h');h.style.cursor='pointer';h.appendChild(mk('b','','📋 आज का प्लान'));var hr=mk('span','',W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]+'  '+(PLOPEN?'▴':'▾'));h.appendChild(hr);box.appendChild(h);
     var n=0;
-    fnT.forEach(function(e){n++;var r1=mk('div','pl-r'),d=mk('div','');d.appendChild(mk('b','','🎊 आज function: '+e.title));d.appendChild(mk('div','',(e.ftime?'⏰ '+fnTm(e.ftime)+' ':'')+(e.place?'📍 '+e.place:'')));r1.appendChild(d);
-      if(e.place){var a=mk('a','','📍 Map');a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.place);a.target='_blank';a.rel='noopener';r1.appendChild(a)}box.appendChild(r1)});
-    fnN.forEach(function(e){n++;var r1=mk('div','pl-r'),d=mk('div','');d.appendChild(mk('b','','🔔 कल function: '+e.title));d.appendChild(mk('div','',(e.ftime?'⏰ '+fnTm(e.ftime)+' ':'')+(e.place?'📍 '+e.place:'')));r1.appendChild(d);
-      var b=mk('button','','खोलें');b.type='button';b.onclick=function(){FNOPEN=true;fnTile();var c=$('c-fn');if(c)c.scrollIntoView({behavior:'smooth'})};r1.appendChild(b);box.appendChild(r1)});
-    if(fu.length){n++;var od=fu.filter(function(x){return new Date(x.due_at)<new Date(now.getFullYear(),now.getMonth(),now.getDate())}).length;
+    function frow(e,pre){var r1=mk('div','pl-r'),d=mk('div','');d.appendChild(mk('b','',pre+e.title));d.appendChild(mk('div','',(e.ftime?'⏰ '+fnTm(e.ftime)+' ':'')+(e.place?'📍 '+e.place:'')));r1.appendChild(d);
+      if(e.place){var a=mk('a','','📍 Map');a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.place);a.target='_blank';a.rel='noopener';r1.appendChild(a)}box.appendChild(r1)}
+    fnT.forEach(function(e){n++;frow(e,'🎊 आज function: ')});
+    fnN.forEach(function(e){n++;frow(e,'🔔 कल function: ')});
+    if(fu.length){n++;var od=fu.filter(function(x){return new Date(x.due_at)<sod}).length;
       var r2=mk('div','pl-r'),d2=mk('div','');d2.appendChild(mk('b','','📞 Follow-up: '+fu.length+' बाकी'+(od?' ('+od+' पुराने)':'')));d2.appendChild(mk('div','',fu.slice(0,3).map(function(x){return x.name||x.mobile||'—'}).join(', ')+(fu.length>3?' …':'')));r2.appendChild(d2);
       var b2=mk('button','','देखें');b2.type='button';b2.onclick=function(){setTab('saved')};r2.appendChild(b2);box.appendChild(r2)}
-    if(!n){var e0=mk('div','pl-r');e0.appendChild(mk('div','','🎉 आज कोई function या follow-up नहीं है। अपना कार्ड शेयर करें!'));box.appendChild(e0)}
+    if(!n){var e0=mk('div','pl-r');e0.appendChild(mk('div','','🎉 आज कोई function या follow-up नहीं है।'));box.appendChild(e0)}
+    var fut=mk('div','');fut.hidden=!PLOPEN;
+    if(fnF.length||ff.length){var t2=mk('div','','⏭ आगे के function और tasks');t2.style.cssText='font-weight:800;font-size:13px;margin:12px 0 2px;opacity:.95';fut.appendChild(t2);
+      fnF.slice(0,12).forEach(function(e){var b=fnBadge(e.fdate),r1=mk('div','pl-r'),d=mk('div','');var tt=mk('b','','🎊 '+e.title);var sp=mk('span','fnb',b[0]);sp.style.background=b[1];tt.appendChild(sp);d.appendChild(tt);d.appendChild(mk('div','','📆 '+fnDate(e.fdate)+(e.ftime?' · ⏰ '+fnTm(e.ftime):'')+(e.place?' · 📍 '+e.place:'')));r1.appendChild(d);fut.appendChild(r1)});
+      ff.slice(0,12).forEach(function(x){var dd=new Date(x.due_at),ds=fnYmd(dd),b=fnBadge(ds),r1=mk('div','pl-r'),d=mk('div','');var tt=mk('b','','📞 '+(x.name||x.mobile||'Follow-up'));var sp=mk('span','fnb',b[0]);sp.style.background=b[1];tt.appendChild(sp);d.appendChild(tt);d.appendChild(mk('div','','📆 '+fnDate(ds)+(x.note?' · '+x.note:'')));r1.appendChild(d);
+        if(x.mobile){var a=mk('a','','📞');a.href='tel:+91'+String(x.mobile).replace(/\D/g,'').slice(-10);a.setAttribute('aria-label','कॉल');r1.appendChild(a)}fut.appendChild(r1)});
+      if(fnF.length>12||ff.length>12){var mr=mk('div','','और भी हैं — पूरी सूची Saved Invitations और My Network में देखें');mr.style.cssText='font-size:12px;opacity:.85;margin-top:6px';fut.appendChild(mr)}}
+    else{var e1=mk('div','pl-r');e1.appendChild(mk('div','','आगे कोई function या task नहीं है।'));fut.appendChild(e1)}
+    box.appendChild(fut);
+    h.onclick=function(){PLOPEN=!PLOPEN;fut.hidden=!PLOPEN;hr.textContent=W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]+'  '+(PLOPEN?'▴':'▾')};
     box.hidden=false}catch(e){box.hidden=true}
 }
 var FN=null,FNOPEN=false,FNED=null,FNPHOTO=null,FNURL={};
