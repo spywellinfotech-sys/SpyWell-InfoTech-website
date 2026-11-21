@@ -18,7 +18,7 @@ button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;backg
 [hidden]{display:none!important}
 body.vw .top{display:none}
 </style>
-<script>window.I18N_PICKER=false</script><script src="/studio/appback.js"></script></head><body>
+<script>window.I18N_PICKER=false</script><script src="/studio/appback.js"></script><script src="/studio/greeting/oc.js?v=1"></script></head><body>
 <div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="30" height="30" style="border-radius:8px;vertical-align:middle;margin-right:8px">🎉 Greeting Cards</b><a href="/studio/">← होम</a></div>
 <div class="wrap">
 <h1>शुभकामना कार्ड बनाइए</h1>
@@ -39,7 +39,8 @@ body.vw .top{display:none}
 <input type="file" id="g-file" accept="image/*" hidden>
 </div>
 <div class="card"><img id="pv" alt="Greeting card">
-<button type="button" id="b-share">🖼 कार्ड भेजें / शेयर करें</button>
+<button type="button" id="b-link" style="background:linear-gradient(135deg,#ff9a3c,#d4141c)">✨ Animated कार्ड का लिंक भेजें</button>
+<button type="button" class="alt" id="b-share">🖼 फ़ोटो कार्ड भेजें / शेयर करें</button>
 <button type="button" class="alt" id="b-save">⬇ फ़ोटो सेव करें</button>
 <div class="ok" id="g-ok"></div><div class="e" id="g-err"></div></div>
 </div></div>
@@ -48,31 +49,7 @@ body.vw .top{display:none}
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 var $=function(i){return document.getElementById(i)},FF='"Hind","Noto Sans Devanagari",system-ui,sans-serif',W=1080,H=1350;
-var OC=[
-{id:'diwali',n:'🪔 दीपावली',e:'🪔',h:'दीपावली की हार्दिक शुभकामनाएँ',d:['🪔','✨','🎆'],t:[['#3b0a6b','#c2185b','#ffd54f'],['#7a0a10','#f57c00','#ffe082'],['#0d1b4c','#512da8','#ffca28']],
- m:['दीयों की रोशनी से आपका घर जगमगाए और जीवन में सुख, समृद्धि और खुशियाँ आएँ।','माँ लक्ष्मी की कृपा आप पर और आपके परिवार पर सदा बनी रहे। शुभ दीपावली!','इस दीपावली आपके हर सपने को नई रोशनी मिले।']},
-{id:'holi',n:'🎨 होली',e:'🎨',h:'होली की हार्दिक शुभकामनाएँ',d:['🎨','💦','🌈'],t:[['#e91e63','#ff9800','#fff176'],['#7b1fa2','#00acc1','#fff59d'],['#43a047','#fbc02d','#ffffff']],
- m:['रंगों का यह त्योहार आपके जीवन में खुशियों के सारे रंग भर दे।','प्यार, अपनापन और उमंग के रंगों वाली होली मुबारक!','बुरा न मानो, होली है! रंगों भरी ढेर सारी शुभकामनाएँ।']},
-{id:'eid',n:'🌙 ईद',e:'🌙',h:'ईद मुबारक',d:['🌙','⭐','🕌'],t:[['#064e3b','#0f766e','#fde68a'],['#0c2461','#1e90a8','#ffffff'],['#1b4332','#40916c','#ffe66d']],
- m:['अल्लाह आपकी हर दुआ कबूल करे और आपके घर में खुशियाँ बरसाए।','ईद का यह चाँद आपकी ज़िंदगी में अमन और मोहब्बत लाए।','आपको और आपके परिवार को ईद की दिली मुबारकबाद।']},
-{id:'rakhi',n:'🪢 राखी',e:'🪢',h:'रक्षाबंधन की शुभकामनाएँ',d:['🪢','🌸','💖'],t:[['#b71c1c','#ff7043','#ffe0b2'],['#ad1457','#ec407a','#fff3e0'],['#4a148c','#e040fb','#fff8e1']],
- m:['भाई-बहन का यह प्यारा रिश्ता सदा मज़बूत और मीठा बना रहे।','राखी के इस पावन धागे में बँधा प्यार हमेशा बना रहे।','आपको और आपके भाई-बहनों को रक्षाबंधन की ढेर सारी शुभकामनाएँ।']},
-{id:'navratri',n:'🙏 नवरात्रि',e:'🙏',h:'नवरात्रि की हार्दिक शुभकामनाएँ',d:['🔱','🌺','🪔'],t:[['#b71c1c','#e65100','#ffe082'],['#880e4f','#d81b60','#ffd180'],['#311b92','#c62828','#ffecb3']],
- m:['माँ दुर्गा आपके जीवन से सारे कष्ट दूर करें और शक्ति, सुख व समृद्धि दें।','नौ दिन की भक्ति आपके घर में सुख-शांति लेकर आए। जय माता दी!','माता रानी की कृपा आप पर सदा बनी रहे।']},
-{id:'dussehra',n:'🏹 दशहरा',e:'🏹',h:'विजयादशमी की शुभकामनाएँ',d:['🏹','🔥','🚩'],t:[['#bf360c','#ff8f00','#fff8e1'],['#7a0a10','#ef6c00','#ffe082'],['#1a237e','#e65100','#ffe0b2']],
- m:['बुराई पर अच्छाई की जीत का यह पर्व आपके जीवन में विजय और खुशियाँ लाए।','सच्चाई और हिम्मत की जीत हो। विजयादशमी की ढेर सारी शुभकामनाएँ।','इस दशहरे आपकी हर चुनौती पर आपकी जीत हो।']},
-{id:'ganesh',n:'🐘 गणेश चतुर्थी',e:'🐘',h:'गणेश चतुर्थी की शुभकामनाएँ',d:['🐘','🌺','🪷'],t:[['#e65100','#ff8f00','#ffffff'],['#880e4f','#f4511e','#ffe082'],['#1b5e20','#f9a825','#ffffff']],
- m:['गणपति बाप्पा आपके सारे विघ्न हरें और घर में सुख-शांति दें।','बुद्धि, सफलता और समृद्धि का आशीर्वाद आपको मिले। गणपति बाप्पा मोरया!','बाप्पा का आशीर्वाद आपके पूरे परिवार पर बना रहे।']},
-{id:'newyear',n:'🎉 नववर्ष',e:'🎉',h:'नववर्ष की हार्दिक शुभकामनाएँ',d:['🎉','✨','🎊'],t:[['#0d1b4c','#1565c0','#ffd54f'],['#1a1a2e','#7b1fa2','#ffffff'],['#004d40','#0097a7','#ffe082']],
- m:['नया साल आपके लिए नई उम्मीदें, नई सफलता और ढेर सारी खुशियाँ लाए।','आने वाला साल आपके हर सपने को पूरा करे। नववर्ष मंगलमय हो!','आपके और आपके परिवार के लिए नया साल सुख-समृद्धि वाला हो।']},
-{id:'birthday',n:'🎂 जन्मदिन',e:'🎂',h:'जन्मदिन मुबारक',d:['🎂','🎈','🎁'],t:[['#c2185b','#ff7043','#fff59d'],['#0277bd','#26c6da','#ffffff'],['#6a1b9a','#ec407a','#ffe082']],
- m:['आपका हर दिन खुशियों से भरा हो। जन्मदिन की ढेर सारी शुभकामनाएँ!','भगवान आपको लंबी उम्र, अच्छी सेहत और सफलता दे। जन्मदिन मुबारक!','आज का दिन आपके लिए बहुत खास हो।']},
-{id:'anniv',n:'💞 सालगिरह',e:'💞',h:'शादी की सालगिरह मुबारक',d:['💞','🌹','✨'],t:[['#880e4f','#e91e63','#ffe0e6'],['#4a148c','#c2185b','#fff3e0'],['#7a0a10','#d4141c','#ffe082']],
- m:['आपका साथ यूँ ही प्यार और भरोसे से भरा रहे। सालगिरह की बहुत बधाई!','आप दोनों की जोड़ी सदा सलामत रहे। शादी की सालगिरह मुबारक!','हर साल आपका रिश्ता और गहरा और मज़बूत हो।']},
-{id:'morning',n:'🌅 सुप्रभात',e:'🌅',h:'सुप्रभात',d:['🌅','🌼','☀️'],t:[['#ef6c00','#fbc02d','#ffffff'],['#00897b','#7cb342','#ffffff'],['#1565c0','#ff8a65','#fff8e1']],
- m:['आपका आज का दिन शुभ और मंगलमय हो।','नई सुबह, नई उम्मीद। आपका दिन खुशियों भरा हो।','हर सुबह आपके लिए अच्छी ख़बर और अच्छी सेहत लाए।']},
-{id:'thanks',n:'🙏 धन्यवाद',e:'🙏',h:'आपका बहुत-बहुत धन्यवाद',d:['🙏','💐','⭐'],t:[['#7a0a10','#d4141c','#ffe082'],['#0b3d2e','#2e7d32','#fff59d'],['#1a237e','#3949ab','#ffffff']],
- m:['आपके भरोसे और साथ के लिए दिल से शुक्रिया।','आपका सहयोग हमारे लिए बहुत कीमती है। धन्यवाद!','आप जैसे ग्राहकों और साथियों की वजह से ही हम आगे बढ़ रहे हैं।']}];
+var OC=window.OC;
 var S={o:0,t:0,m:0,photo:null,card:null,link:'livecard.in'},cv=document.createElement('canvas');cv.width=W;cv.height=H;
 var STAMP=new Image();STAMP.onload=function(){draw()};STAMP.src='/studio/livecard-stamp-t.png';
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
@@ -115,6 +92,12 @@ $('b-save').onclick=function(){blobOf(function(b){if(!b)return;var a=document.cr
 $('b-share').onclick=function(){blobOf(function(b){if(!b)return;var f=null;try{f=new File([b],'greeting-'+OC[S.o].id+'.jpg',{type:'image/jpeg'})}catch(e){}
   if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],text:OC[S.o].h+' — LiveCard.in'}).catch(function(){});return}
   $('b-save').click()})};
+
+function glink(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};
+  var j=unescape(encodeURIComponent(JSON.stringify(d))),e=btoa(j).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');return location.origin+'/studio/greeting/v/?d='+e}
+$('b-link').onclick=function(){var u=glink(),t=OC[S.o].h+' 🎉';
+  if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return}
+  window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+u),'_blank')};
 $('g-mk').onclick=function(){if(window.parent&&window.parent!==window)window.parent.history.back();else location.href='/studio/'};
 if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 (async function(){
