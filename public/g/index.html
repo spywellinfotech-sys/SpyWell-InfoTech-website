@@ -1,0 +1,60 @@
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>शुभकामना कार्ड | LiveCard</title><meta property="og:title" content="आपके लिए एक शुभकामना कार्ड 🎉"><meta property="og:description" content="खोलकर देखिए — LiveCard.in"><meta property="og:image" content="https://livecard.in/studio/livecard-stamp.png"><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:"Hind","Noto Sans Devanagari",system-ui,sans-serif;color:#fff}
+#bg{position:fixed;inset:0;background-size:300% 300%;animation:gs 9s ease-in-out infinite}
+@keyframes gs{0%,100%{background-position:0 0}50%{background-position:100% 100%}}
+#fl{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+#fl i{position:absolute;bottom:-12vh;font-style:normal;opacity:0;animation:up linear infinite}
+@keyframes up{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.55}90%{opacity:.45}100%{transform:translateY(-120vh) rotate(40deg);opacity:0}}
+#cv{position:fixed;inset:0;pointer-events:none}
+#st{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px 20px 150px}
+#em{font-size:clamp(90px,28vw,150px);line-height:1;animation:pop 1s cubic-bezier(.2,1.6,.4,1) both,bob 2.4s ease-in-out 1s infinite;filter:drop-shadow(0 8px 14px rgba(0,0,0,.3))}
+@keyframes pop{0%{transform:scale(0) rotate(-40deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.06)}}
+#hl{font-size:clamp(28px,8.5vw,44px);font-weight:700;margin:10px 0 6px;line-height:1.25;opacity:0;animation:zin .9s .5s both;text-shadow:0 3px 10px rgba(0,0,0,.3)}
+@keyframes zin{0%{opacity:0;transform:scale(.6) translateY(20px)}100%{opacity:1;transform:none}}
+#bx{max-width:460px;width:100%;background:rgba(255,255,255,.17);backdrop-filter:blur(4px);border-radius:22px;padding:14px 16px;margin-top:8px;opacity:0;animation:fu .9s 1.2s both}
+#to{font-weight:700;font-size:20px;margin-bottom:4px}#ms{font-size:18px;line-height:1.55}
+@keyframes fu{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:none}}
+#ft{position:fixed;left:0;right:0;bottom:0;z-index:3;background:#fff;color:#241414;border-radius:26px 26px 0 0;padding:14px 18px calc(14px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;animation:sl .9s 1.8s cubic-bezier(.2,.9,.3,1) both;box-shadow:0 -6px 24px rgba(0,0,0,.25)}
+@keyframes sl{0%{transform:translateY(120%)}100%{transform:none}}
+#ft .t{flex:1;min-width:0}#nm{font-weight:700;font-size:19px}#bz{font-size:14px;color:#6b1a1a}
+#ft a.c{display:inline-block;margin-top:6px;background:#25d366;color:#fff;text-decoration:none;font-weight:700;padding:9px 16px;border-radius:99px;font-size:15px}
+#ft a.p{background:#d4141c;margin-left:6px}
+#ft img{width:74px;height:74px;object-fit:contain;flex:none}#ft img.pp{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #d4141c}
+#tp{position:fixed;top:10px;left:0;right:0;text-align:center;z-index:3;font-size:12px;opacity:.75}
+</style></head><body>
+<div id="bg"></div><div id="fl"></div><canvas id="cv"></canvas>
+<div id="tp">✨ टैप करके पटाखे/कॉन्फ़ेटी देखें</div>
+<div id="st"><div id="em"></div><div id="hl"></div><div id="bx"><div id="to"></div><div id="ms"></div></div></div>
+<div id="ft"><div class="t"><div id="nm"></div><div id="bz"></div><div id="ac"></div></div><img src="/studio/livecard-stamp-t.png" alt="LiveCard"></div>
+<script src="/studio/greeting/oc.js?v=1"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},d={};
+try{var q=(location.search.match(/[?&]d=([^&]+)/)||[])[1]||'';q=q.replace(/-/g,'+').replace(/_/g,'/');while(q.length%4)q+='=';d=JSON.parse(decodeURIComponent(escape(atob(q))))}catch(e){}
+var KK=(location.search.match(/[?&]k=([A-Za-z0-9]+)/)||[])[1];
+if(KK){fetch('https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/rpc/studio_greet_get',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d'},body:JSON.stringify({p_id:KK})}).then(function(r){return r.json()}).then(function(j){go(j&&typeof j==='object'?j:{})}).catch(function(){go({})})}else go(d);
+function go(d){
+var o=OC.filter(function(x){return x.id===d.o})[0]||OC[0],th=o.t[d.t]||o.t[0];
+document.body.style.background=th[0];$('bg').style.backgroundImage='linear-gradient(120deg,'+th[0]+','+th[1]+','+th[0]+')';
+var HH=o.id==='other'?(String(d.h||'').slice(0,40)||'हार्दिक शुभकामनाएँ'):o.h,EE=o.id==='other'?(String(d.e||'').slice(0,8)||o.e):o.e;$('em').textContent=EE;$('hl').textContent=HH;$('hl').style.color=th[2];
+var msg=(d.m||'').slice(0,140),to=(d.to||'').slice(0,30);
+if(!msg&&!to)$('bx').hidden=true;else{$('to').textContent=to?'प्रिय '+to+',':'';$('ms').textContent=msg}
+var nm=(d.n||'').slice(0,40),bz=(d.b||'').slice(0,50),mb=String(d.mb||'').replace(/\D/g,'').slice(-10);
+if(/^https:\/\//.test(d.p||'')){var ph=document.createElement('img');ph.src=d.p;ph.alt='';ph.className='pp';ph.onerror=function(){ph.remove()};$('ft').insertBefore(ph,$('ft').firstChild)}
+$('nm').textContent=nm;$('bz').textContent=bz;
+if(mb.length===10){var a=document.createElement('a');a.className='c';a.href='https://wa.me/91'+mb;a.textContent='💬 WhatsApp';$('ac').appendChild(a);var p=document.createElement('a');p.className='c p';p.href='tel:+91'+mb;p.textContent='📞 कॉल';$('ac').appendChild(p)}
+var fl=$('fl');for(var i=0;i<18;i++){var s=document.createElement('i');s.textContent=o.d[i%o.d.length];s.style.left=(Math.random()*95)+'%';s.style.fontSize=(24+Math.random()*34)+'px';s.style.animationDuration=(7+Math.random()*7)+'s';s.style.animationDelay=(-Math.random()*12)+'s';fl.appendChild(s)}
+var cv=$('cv'),x=cv.getContext('2d'),P=[];function rs(){cv.width=innerWidth;cv.height=innerHeight}rs();addEventListener('resize',rs);
+var cols=[th[2],'#fff','#ffd54f','#ff5252','#69f0ae','#40c4ff'];
+function burst(px,py,n){for(var i=0;i<n;i++){var a=Math.random()*6.283,v=3+Math.random()*7;P.push({x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v-3,g:.18,l:1,c:cols[i%cols.length],s:4+Math.random()*5,r:Math.random()*6})}}
+function tick(){x.clearRect(0,0,cv.width,cv.height);P=P.filter(function(p){return p.l>0});P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.vx*=.99;p.l-=.011;p.r+=.2;x.globalAlpha=Math.max(p.l,0);x.fillStyle=p.c;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillRect(-p.s/2,-p.s/3,p.s,p.s*.6);x.restore()});x.globalAlpha=1;requestAnimationFrame(tick)}tick();
+setTimeout(function(){burst(innerWidth/2,innerHeight*.35,110)},700);setTimeout(function(){burst(innerWidth*.2,innerHeight*.3,70);burst(innerWidth*.8,innerHeight*.3,70)},1500);
+setInterval(function(){burst(Math.random()*innerWidth,Math.random()*innerHeight*.5,40)},4200);
+document.addEventListener('pointerdown',function(e){if(e.target.closest('a'))return;burst(e.clientX,e.clientY,70)});
+}
+})();
+</script></body></html>

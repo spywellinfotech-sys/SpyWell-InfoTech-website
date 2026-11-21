@@ -98,15 +98,18 @@ $('b-share').onclick=function(){blobOf(function(b){if(!b)return;var f=null;try{f
   if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],text:hh()+' — LiveCard.in'}).catch(function(){});return}
   $('b-save').click()})};
 
-function glink(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};if(isO()){d.h=hh();d.e=ee()}if(S.pu&&S.pu.length<300)d.p=S.pu;
+function glinkData(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};if(isO()){d.h=hh();d.e=ee()}if(S.pu&&S.pu.length<300)d.p=S.pu;return d}
+function glink(){var d=glinkData();
   var j=unescape(encodeURIComponent(JSON.stringify(d))),e=btoa(j).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');return location.origin+'/studio/greeting/v/?d='+e}
-$('b-link').onclick=function(){var u=glink(),t=hh()+' '+ee();
+$('b-link').onclick=async function(){var btn=this,t=hh()+' '+ee(),u='';btn.disabled=true;$('g-err').textContent='';
+  try{var d=glinkData(),r=await window.GSB.rpc('studio_greet_save',{p:d});if(!r.error&&r.data)u=location.origin+'/g/?k='+r.data}catch(e){}
+  if(!u)u=glink();btn.disabled=false;
   if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return}
   window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+u),'_blank')};
 $('g-mk').onclick=function(){if(window.parent&&window.parent!==window)window.parent.history.back();else location.href='/studio/'};
 if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 (async function(){
-  var sb=supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}}),ss=await sb.auth.getSession(),u=ss.data&&ss.data.session&&ss.data.session.user;
+  var sb=window.GSB=supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}}),ss=await sb.auth.getSession(),u=ss.data&&ss.data.session&&ss.data.session.user;
   if(!u){location.href='/studio/';return}
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',u.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};
   var d=await sb.from('studio_designs').select('slug,content_json').eq('user_id',u.id).eq('product_type','visiting').order('created_at',{ascending:true}).limit(1);
