@@ -227,6 +227,12 @@
     show(); document.body.appendChild(ov);
   }
 
+  var SOCSVG = {
+    ig: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg>',
+    yt: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="#fff"/><path d="M10 9l5 3-5 3z" fill="#e00"/></svg>',
+    fb: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#fff" d="M14 8V6.5c0-.7.3-1 1-1h2V2h-3c-3 0-4.5 1.8-4.5 4.3V8H7v3.5h2.5V22H14V11.5h2.8L17.3 8z"/></svg>'
+  };
+
   function picture(cls, im, shape) {
     var i = el('img', cls); i.src = im.url; i.alt = ''; i.loading = 'lazy';
     i.style.width = im.size + 'px'; if (shape === 'circle') i.style.height = im.size + 'px';
@@ -616,7 +622,7 @@
     [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(el('span', '', q[1])); ib.appendChild(rw); });
     if (ib.children.length) bd.appendChild(ib);
     var soc = el('div', 'pf-soc');
-    [['in', f.linkedin, '#0a66c2'], ['📸', f.instagram, '#c13584'], ['▶', f.youtube, '#e00'], ['f', f.facebook, '#1877f2']].forEach(function (x) { var u = V.url(x[1]); if (!u) return; var a = link('pf-sc', x[0], u); a.style.background = x[2]; soc.appendChild(a); });
+    [['in', f.linkedin, '#0a66c2'], ['ig', f.instagram, 'linear-gradient(45deg,#f9a03a,#e1306c,#7a3fd1)'], ['yt', f.youtube, '#e00'], ['fb', f.facebook, '#1877f2']].forEach(function (x) { var u = V.url(x[1]); if (!u) return; var a = link('pf-sc', x[0], u); a.style.background = x[2]; if (SOCSVG[x[0]]) { a.innerHTML = SOCSVG[x[0]]; a.setAttribute('aria-label', ({ ig: 'Instagram', yt: 'YouTube', fb: 'Facebook' })[x[0]] || ''); a.style.display = 'inline-flex'; a.style.alignItems = 'center'; a.style.justifyContent = 'center'; } soc.appendChild(a); });
     if (soc.children.length) { bd.appendChild(el('div', 'pf-fu', P('फ़ॉलो करें', 'Follow Us'))); bd.appendChild(soc); }
     var q2 = el('div', 'pf-2');
     var mpu = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address, f.city].filter(Boolean).join(', '))) : '';
@@ -840,7 +846,7 @@
     });
     ci.appendChild(cg);
     var soc = el('div', 'sr-soc');
-    [['Facebook', f.facebook, '📘'], ['Instagram', f.instagram, '📸'], ['YouTube', f.youtube, '▶️'], ['LinkedIn', f.linkedin, '💼']].forEach(function (x) { var u = V.url(x[1]); if (u) soc.appendChild(link('', x[2] + ' ' + x[0], u)); });
+    [['Facebook', f.facebook, '📘'], ['Instagram', f.instagram, '📸'], ['YouTube', f.youtube, '▶️'], ['LinkedIn', f.linkedin, '💼']].forEach(function (x) { var u = V.url(x[1]); if (u) { var sl = link('', x[2] + ' ' + x[0], u), k = ({ 'Facebook': 'fb', 'Instagram': 'ig', 'YouTube': 'yt' })[x[0]]; if (k) { sl.innerHTML = '<span style="display:inline-block;width:1.15em;height:1.15em;vertical-align:-.2em;margin-right:.35em">' + SOCSVG[k] + '</span>' + x[0]; } soc.appendChild(sl); } });
     if (soc.children.length) ci.appendChild(soc);
     var tools = el('div', 'sr-act');
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('📇 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; tools.appendChild(sv0); }
