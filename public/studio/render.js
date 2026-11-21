@@ -1002,6 +1002,33 @@
     document.head.appendChild(l);
   }
 
+  /* LiveCard stamp badge on profile photos and logos of visiting cards / mini websites. */
+  (function () {
+    var SEL = 'img.ph,img.pf-ph,img.bz-ph,img.sr-lg,img.pf-lg,img.bz-lg';
+    function stamp(img) {
+      if (img.__lcs || !img.closest || !img.closest('.sr-vc,.sr-site')) return;
+      img.__lcs = 1;
+      var run = function () {
+        var w = img.offsetWidth || parseFloat(img.style.width) || 0, h = img.offsetHeight || w;
+        if (w < 40 || !img.parentNode) return;
+        var cs = getComputedStyle(img), wr = document.createElement('span');
+        wr.className = 'lc-stw';
+        wr.style.cssText = 'position:relative;display:' + (cs.display === 'block' ? 'block;width:' + w + 'px;margin-left:auto;margin-right:auto' : 'inline-block') + ';line-height:0;vertical-align:' + (cs.verticalAlign || 'top') + ';margin-top:' + cs.marginTop + ';margin-bottom:' + cs.marginBottom + ';max-width:100%';
+        if (cs.display !== 'block') wr.style.marginLeft = cs.marginLeft, wr.style.marginRight = cs.marginRight;
+        img.style.margin = '0';
+        img.parentNode.insertBefore(wr, img); wr.appendChild(img);
+        var sz = Math.max(26, Math.min(56, Math.round(Math.min(w, h || w) * 0.36))), st = document.createElement('img');
+        st.src = '/studio/livecard-stamp-t.png'; st.alt = ''; st.setAttribute('aria-hidden', 'true');
+        st.style.cssText = 'position:absolute;right:-' + Math.round(sz * 0.12) + 'px;bottom:-' + Math.round(sz * 0.12) + 'px;width:' + sz + 'px;height:' + sz + 'px;pointer-events:none;border:0;margin:0;border-radius:0;background:none;box-shadow:none';
+        wr.appendChild(st);
+      };
+      if (img.complete && img.offsetWidth) run(); else img.addEventListener('load', run, { once: true });
+    }
+    function scan(n) { if (n.nodeType !== 1) return; if (n.matches && n.matches(SEL)) stamp(n); var l = n.querySelectorAll ? n.querySelectorAll(SEL) : []; for (var i = 0; i < l.length; i++) stamp(l[i]); }
+    function start() { scan(document.body); new MutationObserver(function (m) { m.forEach(function (r) { for (var i = 0; i < r.addedNodes.length; i++) scan(r.addedNodes[i]); }); }).observe(document.body, { childList: true, subtree: true }); }
+    if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+  })();
+
   window.StudioRender = { uiKeys: uiKeys, shareInvite: shareInvite, fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
     FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, MAX_HIGH: MAX_HIGH, svParts: svParts, BUCKET: BUCKET };
 })();
