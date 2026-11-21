@@ -118,7 +118,7 @@ $('b-share').onclick=function(){blobOf(function(b){if(!b)return;var f=null;try{f
 $('g-mk').onclick=function(){if(window.parent&&window.parent!==window)window.parent.history.back();else location.href='/studio/'};
 if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 (async function(){
-  var sb=supabase.createClient(B,K),ss=await sb.auth.getSession(),u=ss.data&&ss.data.session&&ss.data.session.user;
+  var sb=supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}}),ss=await sb.auth.getSession(),u=ss.data&&ss.data.session&&ss.data.session.user;
   if(!u){location.href='/studio/';return}
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',u.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};
   var d=await sb.from('studio_designs').select('slug,content_json').eq('user_id',u.id).eq('product_type','visiting').order('created_at',{ascending:true}).limit(1);
