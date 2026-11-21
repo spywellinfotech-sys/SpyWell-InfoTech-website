@@ -27,6 +27,7 @@ body.vw .top{display:none}
 <div id="main" hidden>
 <div class="card">
 <label style="margin-top:0">मौक़ा चुनें</label><div class="chips" id="occ"></div>
+<div id="oth" hidden><label>मौक़े का नाम / शीर्षक</label><input id="g-h" maxlength="40" placeholder="जैसे: नई दुकान की बधाई / गृह प्रवेश / रिटायरमेंट"><label>चिह्न (emoji)</label><div class="chips" id="g-em"></div></div>
 <label>रंग</label><div class="th" id="th"></div>
 <label>संदेश</label><div class="chips" id="msgs"></div>
 <textarea id="g-msg" rows="3" maxlength="140" placeholder="अपना संदेश भी लिख सकते हैं"></textarea>
@@ -52,17 +53,21 @@ var $=function(i){return document.getElementById(i)},FF='"Hind","Noto Sans Devan
 var OC=window.OC;
 var S={o:0,t:0,m:0,photo:null,card:null,link:'livecard.in'},cv=document.createElement('canvas');cv.width=W;cv.height=H;
 var STAMP=new Image();STAMP.onload=function(){draw()};STAMP.src='/studio/livecard-stamp-t.png';
+var EMS=['🎉','🏠','🎓','🏆','💐','🎁','🥳','🙏','❤️','🌟','👶','🚗','🏪','💼'];
+function isO(){return OC[S.o].id==='other'}
+function hh(){return isO()?($('g-h').value.trim()||'हार्दिक शुभकामनाएँ'):OC[S.o].h}
+function ee(){return isO()?(S.e||'🎉'):OC[S.o].e}
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
 function wrap(x,t,mx,font,max){x.font=font;var w=String(t).split(/\s+/),L=[],c='';w.forEach(function(q){var tt=c?c+' '+q:q;if(x.measureText(tt).width>mx&&c){L.push(c);c=q}else c=tt});if(c)L.push(c);return L.slice(0,max||6)}
 function draw(){
-  var o=OC[S.o],th=o.t[S.t],x=cv.getContext('2d');x.clearRect(0,0,W,H);
+  var o=OC[S.o],th=o.t[S.t],x=cv.getContext('2d'),HH=hh(),EE=ee();x.clearRect(0,0,W,H);
   var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,th[0]);g.addColorStop(1,th[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
   x.textBaseline='alphabetic';
   var P=[[90,140,110],[900,120,130],[980,420,90],[60,520,100],[940,700,120],[70,800,90],[500,90,80],[860,980,100]];
   x.globalAlpha=.2;x.textAlign='center';P.forEach(function(p,i){x.font='400 '+p[2]+'px '+FF;x.fillText(o.d[i%o.d.length],p[0],p[1])});x.globalAlpha=1;
   x.fillStyle='#fff';x.textAlign='center';
-  x.font='400 250px '+FF;x.fillText(o.e,W/2,330);
-  var hl=wrap(x,o.h,W-160,'800 88px '+FF,2),y=470;x.fillStyle=th[2];x.font='800 88px '+FF;hl.forEach(function(l){x.fillText(l,W/2,y);y+=108});
+  x.font='400 250px '+FF;x.fillText(EE,W/2,330);
+  var hl=wrap(x,HH,W-160,'800 88px '+FF,2),y=470;x.fillStyle=th[2];x.font='800 88px '+FF;hl.forEach(function(l){x.fillText(l,W/2,y);y+=108});
   var to=$('g-to').value.trim(),msg=$('g-msg').value.trim(),ml=msg?wrap(x,msg,W-260,'500 46px '+FF,5):[];
   var bh=(to?70:0)+ml.length*66+50;
   if(to||ml.length){x.fillStyle='rgba(255,255,255,.16)';var by=y-30;rr(x,70,by,W-140,Math.max(bh,120),36);x.fill();y=by+62;x.fillStyle='#fff';
@@ -79,23 +84,23 @@ function draw(){
   x.font='500 30px '+FF;x.fillStyle='#6b5a58';x.fillText(S.link.replace(/^https?:\/\//,'').slice(0,40),lx,ty+4);
   if(STAMP.complete&&STAMP.naturalWidth){x.drawImage(STAMP,W-230,fy+70,170,170)}
   $('pv').src=cv.toDataURL('image/jpeg',.9)}
-function build(){
+function build(){$('oth').hidden=!isO();var em=$('g-em');em.textContent='';EMS.forEach(function(e){var c=document.createElement('span');c.className='chip'+((S.e||'🎉')===e?' on':'');c.textContent=e;c.onclick=function(){S.e=e;build();draw()};em.appendChild(c)});
   var oc=$('occ');oc.textContent='';OC.forEach(function(o,i){var c=document.createElement('span');c.className='chip'+(i===S.o?' on':'');c.textContent=o.n;c.onclick=function(){S.o=i;S.t=0;S.m=0;$('g-msg').value=o.m[0];build();draw()};oc.appendChild(c)});
   var th=$('th');th.textContent='';OC[S.o].t.forEach(function(t,i){var s=document.createElement('span');s.className=i===S.t?'on':'';s.style.background='linear-gradient(135deg,'+t[0]+','+t[1]+')';s.onclick=function(){S.t=i;build();draw()};th.appendChild(s)});
   var ms=$('msgs');ms.textContent='';OC[S.o].m.forEach(function(m,i){var c=document.createElement('span');c.className='chip'+(i===S.m?' on':'');c.textContent='संदेश '+(i+1);c.onclick=function(){S.m=i;$('g-msg').value=m;build();draw()};ms.appendChild(c)})}
-['g-to','g-msg','g-name','g-biz','g-mob'].forEach(function(i){$(i).oninput=draw});
+['g-h','g-to','g-msg','g-name','g-biz','g-mob'].forEach(function(i){$(i).oninput=draw});
 $('g-ph').onclick=function(){$('g-file').value='';$('g-file').click()};
 $('g-file').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){S.photo=im;$('g-phx').hidden=false;$('g-ph').textContent='🖼 फ़ोटो बदलें';draw()};im.onerror=function(){$('g-err').textContent='यह फ़ोटो खुल नहीं पाई।'};im.src=u};
 $('g-phx').onclick=function(){S.photo=null;this.hidden=true;$('g-ph').textContent='🖼 अपनी फ़ोटो जोड़ें';draw()};
 function blobOf(cb){cv.toBlob(function(b){cb(b)},'image/jpeg',.92)}
 $('b-save').onclick=function(){blobOf(function(b){if(!b)return;var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='greeting-'+OC[S.o].id+'.jpg';document.body.appendChild(a);a.click();a.remove();$('g-ok').textContent='✓ फ़ोटो डाउनलोड हो गई। गैलरी या Downloads में देखिए।'})};
 $('b-share').onclick=function(){blobOf(function(b){if(!b)return;var f=null;try{f=new File([b],'greeting-'+OC[S.o].id+'.jpg',{type:'image/jpeg'})}catch(e){}
-  if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],text:OC[S.o].h+' — LiveCard.in'}).catch(function(){});return}
+  if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],text:hh()+' — LiveCard.in'}).catch(function(){});return}
   $('b-save').click()})};
 
-function glink(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};
+function glink(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};if(isO()){d.h=hh();d.e=ee()}
   var j=unescape(encodeURIComponent(JSON.stringify(d))),e=btoa(j).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');return location.origin+'/studio/greeting/v/?d='+e}
-$('b-link').onclick=function(){var u=glink(),t=OC[S.o].h+' 🎉';
+$('b-link').onclick=function(){var u=glink(),t=hh()+' '+ee();
   if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return}
   window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+u),'_blank')};
 $('g-mk').onclick=function(){if(window.parent&&window.parent!==window)window.parent.history.back();else location.href='/studio/'};

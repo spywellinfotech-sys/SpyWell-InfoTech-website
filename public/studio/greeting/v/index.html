@@ -37,7 +37,7 @@ var $=function(i){return document.getElementById(i)},d={};
 try{var q=(location.search.match(/[?&]d=([^&]+)/)||[])[1]||'';q=q.replace(/-/g,'+').replace(/_/g,'/');while(q.length%4)q+='=';d=JSON.parse(decodeURIComponent(escape(atob(q))))}catch(e){}
 var o=OC.filter(function(x){return x.id===d.o})[0]||OC[0],th=o.t[d.t]||o.t[0];
 document.body.style.background=th[0];$('bg').style.backgroundImage='linear-gradient(120deg,'+th[0]+','+th[1]+','+th[0]+')';
-$('em').textContent=o.e;$('hl').textContent=o.h;$('hl').style.color=th[2];
+var HH=o.id==='other'?(String(d.h||'').slice(0,40)||'हार्दिक शुभकामनाएँ'):o.h,EE=o.id==='other'?(String(d.e||'').slice(0,8)||o.e):o.e;$('em').textContent=EE;$('hl').textContent=HH;$('hl').style.color=th[2];
 var msg=(d.m||'').slice(0,140),to=(d.to||'').slice(0,30);
 if(!msg&&!to)$('bx').hidden=true;else{$('to').textContent=to?'प्रिय '+to+',':'';$('ms').textContent=msg}
 var nm=(d.n||'').slice(0,40),bz=(d.b||'').slice(0,50),mb=String(d.mb||'').replace(/\D/g,'').slice(-10);
