@@ -297,6 +297,7 @@
       var plc = [f.venue, f.address].filter(Boolean).join(', ');
       if (V.date(f.date)) rem.push({ t: nmz, d: f.date, m: V.time(f.time) || '', p: plc });
       (d.events || []).slice(0, 6).forEach(function (e) { if (e && V.date(e.date)) rem.push({ t: nmz + ' – ' + (e.title || 'Function'), d: e.date, m: V.time(e.time) || '', p: e.place || plc }); });
+      try { window.__INV_BASE = { t: nmz, p: plc }; } catch (e5) {}
       try { window.__INV_REM = rem.map(function (e) { return { t: e.t, d: e.d, m: e.m, p: e.p, l: location.href.split('#')[0] }; }); } catch (e4) {}
       if (rem.length && !(opts && opts.noShagun)) {
         var rw = el('div', 'sr-cs'); rw.appendChild(el('div', 'sr-sub', '\uD83D\uDD14 ' + T('function याद रखें')));
@@ -320,10 +321,6 @@
           b1.textContent = '\u2713 ' + T('Calendar में जुड़ गया');
         };
         rw.appendChild(b1);
-        try {
-          var pl = btoa(unescape(encodeURIComponent(JSON.stringify(rem.map(function (e) { return { t: e.t, d: e.d, m: e.m, p: e.p, l: location.href.split('#')[0] }; })))));
-          var b2 = el('a', 'sr-save', '\uD83D\uDCBE ' + T('LiveCard में सेव करें')); b2.href = 'https://livecard.in/studio/?saveinv=' + encodeURIComponent(pl); b2.style.cssText = 'display:block;text-align:center;text-decoration:none'; rw.appendChild(b2);
-        } catch (e2) {}
         box.appendChild(rw);
       }
     } catch (e3) {}

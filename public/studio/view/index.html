@@ -14,7 +14,7 @@
 <div class="foot" id="foot" hidden><img src="/dyname/logo.png" alt="LiveCard" width="18" height="18" style="vertical-align:middle;margin-right:4px">LiveCard.in से बनाया गया<a class="mk" href="/studio/" id="mkb">अपना कार्ड बनाएँ</a><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/disclaimer/">Disclaimer</a></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/studio/qr.js"></script>
-<script src="/studio/qr.js"></script><script src="/studio/render.js?v=20261121b"></script>
+<script src="/studio/qr.js"></script><script src="/studio/render.js?v=20261121c"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -109,15 +109,34 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     bt.style.cssText='display:block;margin:0 auto 10px;padding:10px 18px;border:0;border-radius:22px;background:#8b1a2b;color:#fff;font:600 14px system-ui,sans-serif;cursor:pointer';
     var note=document.createElement('div');note.style.cssText='margin-bottom:8px;font-size:13px';
     f.insertBefore(note,f.firstChild);if(!isSite)f.insertBefore(bt,f.firstChild);
-    var IR=(t==='invitation'&&window.__INV_REM&&window.__INV_REM.length)?window.__INV_REM:null;
+    var IR=(t==='invitation')?(window.__INV_REM||[]):null;
     if(IR){bt.textContent='💾 Saved Invitations में सेव करें (reminder के लिए)';
-      bt.onclick=async function(){bt.disabled=true;var pl=btoa(unescape(encodeURIComponent(JSON.stringify(IR)))),ss=await ab.auth.getSession();
-        if(!ss.data||!ss.data.session){try{localStorage.setItem('lc_pending_inv',pl)}catch(e){}location.href='/studio/';return}
-        try{var uid=ss.data.session.user.id,ex=await ab.from('studio_functions').select('fdate,title').eq('user_id',uid).eq('link',IR[0].l),have={};(ex.data||[]).forEach(function(z){have[z.fdate+'|'+z.title]=1});
-          var rows=IR.filter(function(x){return !have[x.d+'|'+String(x.t).slice(0,120)]}).slice(0,8).map(function(x){return{user_id:uid,title:String(x.t).slice(0,120),fdate:x.d,ftime:x.m||null,place:String(x.p||'').slice(0,300)||null,link:x.l}});
-          if(rows.length){var ins=await ab.from('studio_functions').insert(rows);if(ins.error)throw ins.error}
-          note.textContent='सेव हो गया ✓ — Studio के Home में "Saved Invitations" में देखें, वहाँ 📅 दबाकर reminder लगाएँ';bt.textContent='✓ सेव हो गया'}catch(e){note.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।'}
-        bt.disabled=false}}
+      bt.onclick=function(){
+        var base=window.__INV_BASE||{t:'Invitation',p:''},rows=IR.length?IR.slice(0,6):[{t:base.t,d:'',m:'',p:base.p,l:location.href.split('#')[0]}];
+        var ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:flex;align-items:flex-end;justify-content:center';
+        var bx=document.createElement('div');bx.style.cssText='background:#fff;width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px;box-sizing:border-box;font:15px system-ui,sans-serif;color:#222;text-align:left';ov.appendChild(bx);
+        var h=document.createElement('div');h.textContent='🎊 function की तारीख़ और समय भरें';h.style.cssText='font-weight:800;font-size:17px;margin-bottom:4px';bx.appendChild(h);
+        var sub=document.createElement('div');sub.textContent='जाँचकर सही कर लें, फिर सेव करें। इसके बाद reminder लगा सकते हैं।';sub.style.cssText='font-size:12px;color:#666;margin-bottom:10px';bx.appendChild(sub);
+        var inp=function(type,val,ph){var x=document.createElement('input');x.type=type;x.value=val||'';x.placeholder=ph||'';x.style.cssText='width:100%;box-sizing:border-box;height:44px;border:1.5px solid #cfd4dc;border-radius:10px;padding:0 10px;font:600 15px system-ui,sans-serif;margin:3px 0 8px;background:#fff;color:#222';return x};
+        var lb=function(tx){var d=document.createElement('div');d.textContent=tx;d.style.cssText='font-size:12px;color:#555;font-weight:700';return d};
+        var cells=rows.map(function(r,i){var c=document.createElement('div');c.style.cssText='border:1px solid #e5e7eb;border-radius:12px;padding:10px;margin-bottom:10px';
+          var ck=null;if(rows.length>1){var w=document.createElement('label');w.style.cssText='display:flex;gap:8px;align-items:center;font-weight:700;margin-bottom:6px';ck=document.createElement('input');ck.type='checkbox';ck.checked=true;w.appendChild(ck);w.appendChild(document.createTextNode(' जोड़ें'));c.appendChild(w)}
+          var ti=inp('text',r.t,'function का नाम'),dd=inp('date',r.d),tm=inp('time',r.m),pl=inp('text',r.p,'जगह');
+          c.appendChild(lb('नाम'));c.appendChild(ti);c.appendChild(lb('तारीख़ *'));c.appendChild(dd);c.appendChild(lb('समय'));c.appendChild(tm);c.appendChild(lb('जगह'));c.appendChild(pl);bx.appendChild(c);return{ck:ck,ti:ti,dd:dd,tm:tm,pl:pl}});
+        var er=document.createElement('div');er.style.cssText='color:#b00020;font-size:13px;margin-bottom:6px';bx.appendChild(er);
+        var rw=document.createElement('div');rw.style.cssText='display:flex;gap:8px';bx.appendChild(rw);
+        var cn=document.createElement('button');cn.type='button';cn.textContent='रद्द';cn.style.cssText='flex:1;height:46px;border:1.5px solid #cfd4dc;background:#fff;border-radius:12px;font:700 15px system-ui,sans-serif';cn.onclick=function(){ov.remove()};
+        var ok=document.createElement('button');ok.type='button';ok.textContent='💾 सेव करें';ok.style.cssText='flex:2;height:46px;border:0;background:#8b1a2b;color:#fff;border-radius:12px;font:800 15px system-ui,sans-serif';rw.appendChild(cn);rw.appendChild(ok);document.body.appendChild(ov);
+        ok.onclick=async function(){er.textContent='';var out=[];
+          for(var k=0;k<cells.length;k++){var c=cells[k];if(c.ck&&!c.ck.checked)continue;var nm=c.ti.value.trim();if(!nm){er.textContent='function का नाम लिखें';return}if(!c.dd.value){er.textContent='तारीख़ भरना ज़रूरी है';return}
+            out.push({t:nm.slice(0,120),d:c.dd.value,m:c.tm.value||'',p:c.pl.value.trim().slice(0,300),l:rows[0].l})}
+          if(!out.length){er.textContent='कम से कम एक function चुनें';return}
+          ok.disabled=true;var pl=btoa(unescape(encodeURIComponent(JSON.stringify(out)))),ss=await ab.auth.getSession();
+          if(!ss.data||!ss.data.session){try{localStorage.setItem('lc_pending_inv',pl)}catch(e){}location.href='/studio/';return}
+          try{var uid=ss.data.session.user.id,ex=await ab.from('studio_functions').select('fdate,title').eq('user_id',uid).eq('link',out[0].l),have={};(ex.data||[]).forEach(function(z){have[z.fdate+'|'+z.title]=1});
+            var ins=out.filter(function(x){return !have[x.d+'|'+x.t]}).map(function(x){return{user_id:uid,title:x.t,fdate:x.d,ftime:x.m||null,place:x.p||null,link:x.l}});
+            if(ins.length){var q=await ab.from('studio_functions').insert(ins);if(q.error)throw q.error}
+            ov.remove();note.textContent='सेव हो गया ✓ — Studio के Home में "Saved Invitations" खोलकर 📅 दबाएँ और reminder लगाएँ';bt.textContent='✓ सेव हो गया'}catch(e){ok.disabled=false;er.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।'}}}}
     else bt.onclick=async function(){bt.disabled=true;var ss=await ab.auth.getSession();
       if(!ss.data||!ss.data.session){try{localStorage.setItem('sp_pending_save',t+'|'+s)}catch(e){}location.href='/studio/';return}
       var r2=await ab.rpc('studio_save_card',{p_type:t,p_slug:s});bt.disabled=false;
