@@ -17,6 +17,7 @@ button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;backg
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two button{margin-top:10px}
 [hidden]{display:none!important}
 body.vw .top{display:none}
+select{width:100%;padding:10px;font:600 15px inherit;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
 /* compact */
 .wrap{padding:8px 10px}h1{font-size:17px;margin:0}.wrap>.k{font-size:12px;margin:0 0 4px}
 .card{padding:9px 10px;margin:8px 0;border-radius:14px}
@@ -97,7 +98,7 @@ function draw(){
   if(STAMP.complete&&STAMP.naturalWidth){x.drawImage(STAMP,W-230,fy+70,170,170)}
   $('pv').src=cv.toDataURL('image/jpeg',.9)}
 function build(){$('oth').hidden=!isO();var em=$('g-em');em.textContent='';EMS.forEach(function(e){var c=document.createElement('span');c.className='chip'+((S.e||'🎉')===e?' on':'');c.textContent=e;c.onclick=function(){S.e=e;build();draw()};em.appendChild(c)});
-  var oc=$('occ');oc.textContent='';OC.forEach(function(o,i){var c=document.createElement('span');c.className='chip'+(i===S.o?' on':'');c.textContent=o.n;c.onclick=function(){S.o=i;S.t=0;S.m=0;$('g-msg').value=o.m[0];build();draw()};oc.appendChild(c)});
+  var oc=$('occ');oc.textContent='';var sl=document.createElement('select');sl.id='g-oc';OC.forEach(function(o,i){var op=document.createElement('option');op.value=i;op.textContent=o.n;if(i===S.o)op.selected=true;sl.appendChild(op)});sl.onchange=function(){S.o=+this.value;S.t=0;S.m=0;$('g-msg').value=OC[S.o].m[0];build();draw()};oc.appendChild(sl);
   var th=$('th');th.textContent='';OC[S.o].t.forEach(function(t,i){var s=document.createElement('span');s.className=i===S.t?'on':'';s.style.background='linear-gradient(135deg,'+t[0]+','+t[1]+')';s.onclick=function(){S.t=i;build();draw()};th.appendChild(s)});
   var ms=$('msgs');ms.textContent='';OC[S.o].m.forEach(function(m,i){var c=document.createElement('span');c.className='chip'+(i===S.m?' on':'');c.textContent='संदेश '+(i+1);c.onclick=function(){S.m=i;$('g-msg').value=m;build();draw()};ms.appendChild(c)})}
 ['g-h','g-to','g-msg','g-name','g-biz','g-mob'].forEach(function(i){$(i).oninput=draw});
