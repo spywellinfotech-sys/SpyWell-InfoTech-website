@@ -297,6 +297,7 @@
       var plc = [f.venue, f.address].filter(Boolean).join(', ');
       if (V.date(f.date)) rem.push({ t: nmz, d: f.date, m: V.time(f.time) || '', p: plc });
       (d.events || []).slice(0, 6).forEach(function (e) { if (e && V.date(e.date)) rem.push({ t: nmz + ' – ' + (e.title || 'Function'), d: e.date, m: V.time(e.time) || '', p: e.place || plc }); });
+      try { window.__INV_REM = rem.map(function (e) { return { t: e.t, d: e.d, m: e.m, p: e.p, l: location.href.split('#')[0] }; }); } catch (e4) {}
       if (rem.length && !(opts && opts.noShagun)) {
         var rw = el('div', 'sr-cs'); rw.appendChild(el('div', 'sr-sub', '\uD83D\uDD14 ' + T('function याद रखें')));
         var pad = function (n) { return (n < 10 ? '0' : '') + n; };
