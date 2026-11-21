@@ -1443,6 +1443,13 @@ async function addrTile(){
   drawAddr(false);drawAddr(false,'office');addrSync();locTile()}
 var BILL=null;
 var PLOPEN=false;
+function fnGroup(list){var G=[],ix={};list.forEach(function(e){var sp=String(e.title||'').split(/\s[–—-]\s/),b=sp[0].trim(),sub=sp.length>1?sp.slice(1).join(' – ').trim():'';var g=ix[b];if(!g){g=ix[b]={base:b,items:[]};G.push(g)}g.items.push({e:e,sub:sub})});
+  G.forEach(function(g){if(g.items.some(function(i){return i.sub}))g.items=g.items.filter(function(i){return i.sub});g.items.sort(function(a,b){return (a.e.fdate+(a.e.ftime||'')).localeCompare(b.e.fdate+(b.e.ftime||''))});g.first=g.items[0].e;
+    var pl=g.items.map(function(i){return String(i.e.place||'').trim()}).filter(Boolean).sort(function(a,b){return a.length-b.length});g.place=pl[0]||''});return G}
+function fnGrow(g,pre,badge){var r1=mk('div','pl-r'),d=mk('div','');var tt=mk('b','',pre+g.base);if(badge){var b=fnBadge(g.first.fdate),sp=mk('span','fnb',b[0]);sp.style.background=b[1];tt.appendChild(sp)}d.appendChild(tt);
+  g.items.forEach(function(i){var e=i.e;d.appendChild(mk('div','','📆 '+fnDate(e.fdate)+(e.ftime?' · ⏰ '+fnTm(e.ftime):'')+(i.sub?' · '+i.sub:'')+(g.items.length===1&&e.place?' · 📍 '+e.place:'')))});
+  if(g.items.length>1&&g.place)d.appendChild(mk('div','','📍 '+g.place));r1.appendChild(d);
+  if(g.place){var a=mk('a','','📍 Map');a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(g.place);a.target='_blank';a.rel='noopener';r1.appendChild(a)}return r1}
 async function planTile(){
   var box=$('c-plan');if(!box)return;
   try{
@@ -1456,18 +1463,17 @@ async function planTile(){
     var n=0;
     function frow(e,pre){var r1=mk('div','pl-r'),d=mk('div','');d.appendChild(mk('b','',pre+e.title));d.appendChild(mk('div','',(e.ftime?'⏰ '+fnTm(e.ftime)+' ':'')+(e.place?'📍 '+e.place:'')));r1.appendChild(d);
       if(e.place){var a=mk('a','','📍 Map');a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.place);a.target='_blank';a.rel='noopener';r1.appendChild(a)}box.appendChild(r1)}
-    fnT.forEach(function(e){n++;frow(e,'🎊 आज function: ')});
-    fnN.forEach(function(e){n++;frow(e,'🔔 कल function: ')});
+    fnGroup(fnT).forEach(function(g){n++;box.appendChild(fnGrow(g,'🎊 आज function: ',false))});
+    fnGroup(fnN).forEach(function(g){n++;box.appendChild(fnGrow(g,'🔔 कल function: ',false))});
     if(fu.length){n++;var od=fu.filter(function(x){return new Date(x.due_at)<sod}).length;
       var r2=mk('div','pl-r'),d2=mk('div','');d2.appendChild(mk('b','','📞 Follow-up: '+fu.length+' बाकी'+(od?' ('+od+' पुराने)':'')));d2.appendChild(mk('div','',fu.slice(0,3).map(function(x){return x.name||x.mobile||'—'}).join(', ')+(fu.length>3?' …':'')));r2.appendChild(d2);
       var b2=mk('button','','देखें');b2.type='button';b2.onclick=function(){setTab('saved')};r2.appendChild(b2);box.appendChild(r2)}
     if(!n){var e0=mk('div','pl-r');e0.appendChild(mk('div','','🎉 आज कोई function या follow-up नहीं है।'));box.appendChild(e0)}
     var fut=mk('div','');fut.hidden=!PLOPEN;
     if(fnF.length||ff.length){var t2=mk('div','','⏭ आगे के function और tasks');t2.style.cssText='font-weight:800;font-size:13px;margin:12px 0 2px;opacity:.95';fut.appendChild(t2);
-      fnF.slice(0,12).forEach(function(e){var b=fnBadge(e.fdate),r1=mk('div','pl-r'),d=mk('div','');var tt=mk('b','','🎊 '+e.title);var sp=mk('span','fnb',b[0]);sp.style.background=b[1];tt.appendChild(sp);d.appendChild(tt);d.appendChild(mk('div','','📆 '+fnDate(e.fdate)+(e.ftime?' · ⏰ '+fnTm(e.ftime):'')+(e.place?' · 📍 '+e.place:'')));r1.appendChild(d);fut.appendChild(r1)});
-      ff.slice(0,12).forEach(function(x){var dd=new Date(x.due_at),ds=fnYmd(dd),b=fnBadge(ds),r1=mk('div','pl-r'),d=mk('div','');var tt=mk('b','','📞 '+(x.name||x.mobile||'Follow-up'));var sp=mk('span','fnb',b[0]);sp.style.background=b[1];tt.appendChild(sp);d.appendChild(tt);d.appendChild(mk('div','','📆 '+fnDate(ds)+(x.note?' · '+x.note:'')));r1.appendChild(d);
-        if(x.mobile){var a=mk('a','','📞');a.href='tel:+91'+String(x.mobile).replace(/\D/g,'').slice(-10);a.setAttribute('aria-label','कॉल');r1.appendChild(a)}fut.appendChild(r1)});
-      if(fnF.length>12||ff.length>12){var mr=mk('div','','और भी हैं — पूरी सूची Saved Invitations और My Network में देखें');mr.style.cssText='font-size:12px;opacity:.85;margin-top:6px';fut.appendChild(mr)}}
+      fnGroup(fnF).forEach(function(g){fut.appendChild(fnGrow(g,'🎊 ',true))});
+      ff.forEach(function(x){var dd=new Date(x.due_at),ds=fnYmd(dd),b=fnBadge(ds),r1=mk('div','pl-r'),d=mk('div','');var tt=mk('b','','📞 '+(x.name||x.mobile||'Follow-up'));var sp=mk('span','fnb',b[0]);sp.style.background=b[1];tt.appendChild(sp);d.appendChild(tt);d.appendChild(mk('div','','📆 '+fnDate(ds)+(x.note?' · '+x.note:'')));r1.appendChild(d);
+        if(x.mobile){var a=mk('a','','📞');a.href='tel:+91'+String(x.mobile).replace(/\D/g,'').slice(-10);a.setAttribute('aria-label','कॉल');r1.appendChild(a)}fut.appendChild(r1)})}
     else{var e1=mk('div','pl-r');e1.appendChild(mk('div','','आगे कोई function या task नहीं है।'));fut.appendChild(e1)}
     box.appendChild(fut);
     h.onclick=function(){PLOPEN=!PLOPEN;fut.hidden=!PLOPEN;hr.textContent=W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]+'  '+(PLOPEN?'▴':'▾')};
