@@ -219,6 +219,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div id="sa-sum" onclick="document.getElementById('sa-h').click()"></div>
 <div id="sa-body" hidden><div class="card" id="c-addr"></div>
 <div class="card" id="c-addr2"></div></div></div>
+<div class="card" id="c-greet"></div>
 <div class="card" id="c-bill"></div>
 <div class="card" id="c-fn"></div>
 <div class="card" id="c-loc" style="padding:10px 14px"></div>
@@ -690,7 +691,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at,published_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();billTile();fnTile();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
+  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();greetTile();billTile();fnTile();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -1330,7 +1331,7 @@ var TABMAP=null;
 var CURT=null;var H0=location.hash,ADMR=0;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-plan'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-lb'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-bill'),'home'],[$('c-fn'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'saved'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-plan'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-lb'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-greet'),'home'],[$('c-bill'),'home'],[$('c-fn'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'saved'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me','adm'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden)||(t==='adm'&&$('tb-adm').hidden))t='home';
   if(t==='adm'){var ca=$('c-adm');if(!ca.firstChild){var fa=document.createElement('iframe');fa.src='/studio/admin/?embed=1';fa.id='adm-fr';fa.scrolling='no';fa.style.cssText='width:100%;height:900px;border:0;display:block';ca.appendChild(fa)}}
@@ -1437,6 +1438,14 @@ function openAd(k){closeVw(true);var o=document.createElement('div');o.id='vw';o
   var bk=mk('button','','⬅ वापस');bk.type='button';bk.style.cssText='width:auto;margin:0;min-height:40px;padding:6px 12px;background:#fff;color:#d4141c';bk.onclick=function(){history.back()};hd.appendChild(bk);
   var tt=mk('b','',k==='home'?'🏠 Address Card':'🏢 '+(((ADH&&ADH.cj&&ADH.cj[k])||{}).co||'Office Address Card'));tt.style.flex='1';hd.appendChild(tt);o.appendChild(hd);
   var fr=document.createElement('iframe');fr.style.cssText='flex:1 1 0;min-height:0;border:0;width:100%;background:#fff1f0';fr.src='/studio/address/?view=1'+(k!=='home'?'&t='+k:'');o.appendChild(fr);document.body.appendChild(o);VWO=o;try{history.pushState({vw:1},'')}catch(e){}}
+function greetTile(){var box=$('c-greet');if(!box)return;box.textContent='';
+  var h=mk('div','');h.style.cssText='display:flex;align-items:center;gap:12px';var ic=mk('div','','🎉');ic.style.cssText='font-size:34px;flex:none';var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';var t=mk('b','','Greeting Cards');t.style.cssText='display:block;font-size:17px';tx.appendChild(t);var d=mk('div','k','दीपावली, होली, ईद, जन्मदिन और 8 और मौक़े। अपने नाम और फ़ोटो के साथ WhatsApp पर भेजें। मुफ़्त।');d.style.margin='2px 0 0';tx.appendChild(d);h.appendChild(ic);h.appendChild(tx);box.appendChild(h);
+  var b=mk('button','','🎨 Greeting बनाएँ');b.type='button';b.style.cssText='margin:10px 0 0;width:100%';b.onclick=openGr;box.appendChild(b)}
+function openGr(){closeVw(true);var o=document.createElement('div');o.id='vw';o.style.cssText='position:fixed;inset:0;z-index:200;background:#fff;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden';
+  var hd=document.createElement('div');hd.style.cssText='background:#7a0a10;color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px';
+  var bk=mk('button','','⬅ वापस');bk.type='button';bk.style.cssText='width:auto;margin:0;min-height:40px;padding:6px 12px;background:#fff;color:#d4141c';bk.onclick=function(){history.back()};hd.appendChild(bk);
+  var tt=mk('b','','🎉 Greeting Cards');tt.style.flex='1';hd.appendChild(tt);o.appendChild(hd);
+  var fr=document.createElement('iframe');fr.style.cssText='flex:1 1 0;min-height:0;border:0;width:100%;background:#fff4f2';fr.src='/studio/greeting/?view=1';o.appendChild(fr);document.body.appendChild(o);VWO=o;try{history.pushState({vw:1},'')}catch(e){}}
 async function addrTile(){
   var box=$('c-addr');if(!box)return;
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};ADH={cj:cj,name:cj.name||pd.full_name||'',mob:cj.mobile||pd.phone||''};
