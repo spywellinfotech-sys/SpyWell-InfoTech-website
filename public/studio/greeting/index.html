@@ -1,6 +1,6 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Greeting Cards | LiveCard</title>
+<title>Greeting / Offer | LiveCard</title>
 <link rel="icon" href="/studio/vicard-icon.png">
 <style>
 :root{--wine:#b4131b;--ink:#241414;--bg:#fff4f2;--line:#efd3cf;--mut:#6b5a58}
@@ -17,6 +17,7 @@ button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;backg
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two button{margin-top:10px}
 [hidden]{display:none!important}
 body.vw .top{display:none}
+.two .chip{color:var(--wine);text-align:center}.two .chip.on{color:#fff}
 select{width:100%;padding:10px;font:600 15px inherit;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
 /* compact */
 .wrap{padding:8px 10px}h1{font-size:17px;margin:0}.wrap>.k{font-size:12px;margin:0 0 4px}
@@ -31,10 +32,10 @@ button{padding:9px;font-size:14px;margin-top:6px;border-radius:10px}
 
 </style>
 <script>window.I18N_PICKER=false</script><script src="/studio/appback.js"></script><script src="/studio/greeting/oc.js?v=1"></script></head><body>
-<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="30" height="30" style="border-radius:8px;vertical-align:middle;margin-right:8px">🎉 Greeting Cards</b><a href="/studio/">← होम</a></div>
+<div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="30" height="30" style="border-radius:8px;vertical-align:middle;margin-right:8px">🎉 Greeting / Offer</b><a href="/studio/">← होम</a></div>
 <div class="wrap">
-<h1>शुभकामना कार्ड बनाइए</h1>
-<div class="k">अपने नाम और फ़ोटो के साथ, WhatsApp पर भेजिए। मुफ़्त।</div>
+<h1>Greeting / Offer कार्ड बनाइए</h1>
+<div class="k">शुभकामना या अपना ऑफ़र, नाम और फ़ोटो के साथ WhatsApp पर भेजिए। मुफ़्त।</div>
 <div class="card" id="gate" hidden><b>पहले अपना विज़िटिंग कार्ड बनाइए</b><div class="k" style="margin-top:6px">Greeting कार्ड विज़िटिंग कार्ड के साथ मुफ़्त है। कार्ड बनते ही यहाँ सारे डिज़ाइन खुल जाएँगे, और आपका नाम, नंबर और व्यवसाय अपने आप भर जाएगा।</div><button type="button" id="g-mk">⬅ वापस जाकर विज़िटिंग कार्ड बनाएँ</button></div>
 <div id="main" hidden>
 <div class="card"><img id="pv" alt="Greeting card">
@@ -43,8 +44,10 @@ button{padding:9px;font-size:14px;margin-top:6px;border-radius:10px}
 <button type="button" class="alt" id="b-save">⬇ सेव</button></div>
 <div class="ok" id="g-ok"></div><div class="e" id="g-err"></div></div>
 <div class="card">
-<label style="margin-top:0">मौक़ा चुनें</label><div class="chips" id="occ"></div>
-<div id="oth" hidden><label>मौक़े का नाम / शीर्षक</label><input id="g-h" maxlength="40" placeholder="जैसे: नई दुकान की बधाई / गृह प्रवेश / रिटायरमेंट"><label>चिह्न (emoji)</label><div class="chips" id="g-em"></div></div>
+<div class="two" id="seg" style="margin:0 0 6px"><button type="button" id="sg-g" class="chip on" style="margin:0">🎉 Greeting</button><button type="button" id="sg-o" class="chip" style="margin:0">🏷️ Offer</button></div>
+<div id="occw"><label style="margin-top:0">मौक़ा चुनें</label><div class="chips" id="occ"></div></div>
+<div id="ofb" hidden><label style="margin-top:0">ऑफ़र क्या है? (बड़े अक्षरों में दिखेगा)</label><input id="g-ofr" maxlength="30" placeholder="जैसे: 50% तक छूट / ₹100 की बचत / 1 के साथ 1 फ़्री"><label>कब तक वैध (खाली छोड़ सकते हैं)</label><input id="g-val" maxlength="30" placeholder="जैसे: 30 नवंबर तक"></div>
+<div id="oth" hidden><label id="oth-l">मौक़े का नाम / शीर्षक</label><input id="g-h" maxlength="40" placeholder="जैसे: नई दुकान की बधाई / गृह प्रवेश / रिटायरमेंट"><label>चिह्न (emoji)</label><div class="chips" id="g-em"></div></div>
 <label>रंग</label><div class="th" id="th"></div>
 <label>संदेश</label><div class="chips" id="msgs"></div>
 <textarea id="g-msg" rows="2" maxlength="140" placeholder="अपना संदेश भी लिख सकते हैं"></textarea>
@@ -66,10 +69,11 @@ var $=function(i){return document.getElementById(i)},FF='"Hind","Noto Sans Devan
 var OC=window.OC;
 var S={o:0,t:0,m:0,photo:null,card:null,link:'livecard.in'},cv=document.createElement('canvas');cv.width=W;cv.height=H;
 var STAMP=new Image();STAMP.onload=function(){draw()};STAMP.src='/studio/livecard-stamp-t.png';
-var EMS=['🎉','🏠','🎓','🏆','💐','🎁','🥳','🙏','❤️','🌟','👶','🚗','🏪','💼'];
-function isO(){return OC[S.o].id==='other'}
-function hh(){return isO()?($('g-h').value.trim()||'हार्दिक शुभकामनाएँ'):OC[S.o].h}
-function ee(){return isO()?(S.e||'🎉'):OC[S.o].e}
+var EMS=['🎉','🏷️','💥','🛍️','🔥','🏠','🎓','🏆','💐','🎁','🥳','🙏','❤️','🌟','👶','🚗','🏪','💼'];
+function isO(){var i=OC[S.o].id;return i==='other'||i==='offer'}
+function isOf(){return !!OC[S.o].offer}
+function hh(){return isO()?($('g-h').value.trim()||(isOf()?'धमाका ऑफ़र':'हार्दिक शुभकामनाएँ')):OC[S.o].h}
+function ee(){return isO()?(S.e||OC[S.o].e):OC[S.o].e}
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
 function wrap(x,t,mx,font,max){x.font=font;var w=String(t).split(/\s+/),L=[],c='';w.forEach(function(q){var tt=c?c+' '+q:q;if(x.measureText(tt).width>mx&&c){L.push(c);c=q}else c=tt});if(c)L.push(c);return L.slice(0,max||6)}
 function draw(){
@@ -80,8 +84,12 @@ function draw(){
   x.globalAlpha=.2;x.textAlign='center';P.forEach(function(p,i){x.font='400 '+p[2]+'px '+FF;x.fillText(o.d[i%o.d.length],p[0],p[1])});x.globalAlpha=1;
   x.fillStyle='#fff';x.textAlign='center';
   x.font='400 250px '+FF;x.fillText(EE,W/2,330);
-  var hl=wrap(x,HH,W-160,'800 88px '+FF,2),y=470;x.fillStyle=th[2];x.font='800 88px '+FF;hl.forEach(function(l){x.fillText(l,W/2,y);y+=108});
-  var to=$('g-to').value.trim(),msg=$('g-msg').value.trim(),ml=msg?wrap(x,msg,W-260,'500 46px '+FF,5):[];
+  var OF=isOf(),hl,y=470,fs=88;
+  if(OF){x.font='800 '+fs+'px '+FF;while(x.measureText(HH).width>W-160&&fs>44){fs-=4;x.font='800 '+fs+'px '+FF}hl=[HH];x.fillStyle=th[2];hl.forEach(function(l){x.fillText(l,W/2,y);y+=108})}
+  else{hl=wrap(x,HH,W-160,'800 88px '+FF,2);x.fillStyle=th[2];x.font='800 88px '+FF;hl.forEach(function(l){x.fillText(l,W/2,y);y+=108})}
+  var ofr=OF?$('g-ofr').value.trim():'';
+  if(OF&&ofr){var of2=96;x.font='800 '+of2+'px '+FF;while(x.measureText(ofr).width>W-260&&of2>44){of2-=4;x.font='800 '+of2+'px '+FF}x.fillStyle=th[2];rr(x,70,y-52,W-140,150,40);x.fill();x.fillStyle=th[0];x.textAlign='center';x.fillText(ofr,W/2,y+52);x.fillStyle='#fff';y+=140}
+  var to=OF?'':$('g-to').value.trim(),msg=$('g-msg').value.trim(),ml=msg?wrap(x,msg,W-260,'500 46px '+FF,OF?2:5):[];if(OF&&$('g-val').value.trim())ml.push('⏰ '+$('g-val').value.trim());
   var bh=(to?70:0)+ml.length*66+50;
   if(to||ml.length){x.fillStyle='rgba(255,255,255,.16)';var by=y-30;rr(x,70,by,W-140,Math.max(bh,120),36);x.fill();y=by+62;x.fillStyle='#fff';
     if(to){x.font='700 50px '+FF;x.fillText('प्रिय '+to+',',W/2,y);y+=70}
@@ -98,11 +106,13 @@ function draw(){
   if(STAMP.complete&&STAMP.naturalWidth){x.drawImage(STAMP,W-230,fy+70,170,170)}
   x.fillStyle='#d4141c';x.fillRect(0,H-70,W,70);x.fillStyle='#fff';x.textAlign='center';x.font='700 38px '+FF;x.fillText('अपना कार्ड बनाइए: www.livecard.in',W/2,H-22);
   $('pv').src=cv.toDataURL('image/jpeg',.9)}
-function build(){$('oth').hidden=!isO();var em=$('g-em');em.textContent='';EMS.forEach(function(e){var c=document.createElement('span');c.className='chip'+((S.e||'🎉')===e?' on':'');c.textContent=e;c.onclick=function(){S.e=e;build();draw()};em.appendChild(c)});
-  var oc=$('occ');oc.textContent='';var sl=document.createElement('select');sl.id='g-oc';OC.forEach(function(o,i){var op=document.createElement('option');op.value=i;op.textContent=o.n;if(i===S.o)op.selected=true;sl.appendChild(op)});sl.onchange=function(){S.o=+this.value;S.t=0;S.m=0;$('g-msg').value=OC[S.o].m[0];build();draw()};oc.appendChild(sl);
+function build(){$('oth').hidden=!isO();$('ofb').hidden=!isOf();$('occw').hidden=isOf();$('oth-l').textContent=isOf()?'ऑफ़र का शीर्षक':'मौक़े का नाम / शीर्षक';$('sg-g').className='chip'+(isOf()?'':' on');$('sg-o').className='chip'+(isOf()?' on':'');$('g-to').parentNode&&0;var em=$('g-em');em.textContent='';EMS.forEach(function(e){var c=document.createElement('span');c.className='chip'+(ee()===e?' on':'');c.textContent=e;c.onclick=function(){S.e=e;build();draw()};em.appendChild(c)});
+  var oc=$('occ');oc.textContent='';var sl=document.createElement('select');sl.id='g-oc';OC.forEach(function(o,i){if(o.offer)return;var op=document.createElement('option');op.value=i;op.textContent=o.n;if(i===S.o)op.selected=true;sl.appendChild(op)});sl.onchange=function(){S.o=+this.value;S.t=0;S.m=0;$('g-msg').value=OC[S.o].m[0];build();draw()};oc.appendChild(sl);
   var th=$('th');th.textContent='';OC[S.o].t.forEach(function(t,i){var s=document.createElement('span');s.className=i===S.t?'on':'';s.style.background='linear-gradient(135deg,'+t[0]+','+t[1]+')';s.onclick=function(){S.t=i;build();draw()};th.appendChild(s)});
   var ms=$('msgs');ms.textContent='';OC[S.o].m.forEach(function(m,i){var c=document.createElement('span');c.className='chip'+(i===S.m?' on':'');c.textContent='संदेश '+(i+1);c.onclick=function(){S.m=i;$('g-msg').value=m;build();draw()};ms.appendChild(c)})}
-['g-h','g-to','g-msg','g-name','g-biz','g-mob'].forEach(function(i){$(i).oninput=draw});
+$('sg-g').onclick=function(){if(!isOf())return;S.o=0;S.t=0;S.m=0;S.e='';$('g-msg').value=OC[0].m[0];build();draw()};
+$('sg-o').onclick=function(){if(isOf())return;S.o=OC.length-1;S.t=0;S.m=0;S.e='';$('g-msg').value=OC[S.o].m[0];build();draw()};
+['g-h','g-ofr','g-val','g-to','g-msg','g-name','g-biz','g-mob'].forEach(function(i){$(i).oninput=draw});
 $('g-ph').onclick=function(){$('g-file').value='';$('g-file').click()};
 $('g-file').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){S.photo=im;S.pu='';$('g-phx').hidden=false;$('g-ph').textContent='🖼 फ़ोटो बदलें';draw()};im.onerror=function(){$('g-err').textContent='यह फ़ोटो खुल नहीं पाई।'};im.src=u};
 $('g-phx').onclick=function(){S.photo=null;S.pu='';this.hidden=true;$('g-ph').textContent='🖼 अपनी फ़ोटो जोड़ें';draw()};
@@ -112,13 +122,13 @@ $('b-share').onclick=function(){blobOf(function(b){if(!b)return;var f=null;try{f
   if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],text:hh()+' — LiveCard.in'}).catch(function(){});return}
   $('b-save').click()})};
 
-function glinkData(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};if(isO()){d.h=hh();d.e=ee()}if(S.pu&&S.pu.length<300)d.p=S.pu;return d}
+function glinkData(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};if(isO()){d.h=hh();d.e=ee()}if(isOf()){d.ofr=$('g-ofr').value.trim();d.val=$('g-val').value.trim()}if(S.pu&&S.pu.length<300)d.p=S.pu;return d}
 function glink(){var d=glinkData();
   var j=unescape(encodeURIComponent(JSON.stringify(d))),e=btoa(j).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');return location.origin+'/studio/greeting/v/?d='+e}
-$('b-link').onclick=async function(){var btn=this,t=hh()+' '+ee(),u='';btn.disabled=true;$('g-err').textContent='';
+$('b-link').onclick=async function(){var btn=this,t=hh()+' '+(isOf()?$('g-ofr').value.trim():ee()),u='';btn.disabled=true;$('g-err').textContent='';
   try{var d=glinkData(),r=await window.GSB.rpc('studio_greet_save',{p:d});if(!r.error&&r.data)u=location.origin+'/g/?k='+r.data}catch(e){}
   if(!u)u=glink();btn.disabled=false;
-  var cap=t+'\n✨ चलता हुआ कार्ड देखिए:\n'+u;
+  var cap=t+'\n✨ '+(isOf()?'पूरा ऑफ़र देखिए:':'चलता हुआ कार्ड देखिए:')+'\n'+u;
   blobOf(function(b){var f=null;try{if(b)f=new File([b],'greeting-'+OC[S.o].id+'.jpg',{type:'image/jpeg'})}catch(e){}
     if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],text:cap}).catch(function(){});return}
     if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return}
