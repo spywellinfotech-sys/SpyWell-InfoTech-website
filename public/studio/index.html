@@ -88,7 +88,7 @@ html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-
 #c-insall .card{border:0;box-shadow:none;padding:0;margin:10px 0 0;background:transparent}
 input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance:none!important;position:relative!important;flex:none!important;width:52px!important;height:30px!important;min-height:0!important;border-radius:15px!important;border:0!important;background:#9aa8a0!important;padding:0!important;margin:0 10px 0 0!important;cursor:pointer;transition:background .2s;box-shadow:none!important;vertical-align:middle}input[type=checkbox]:not([data-ck])::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:left .2s}input[type=checkbox]:not([data-ck]):checked{background:#1fc260!important}input[type=checkbox]:not([data-ck]):checked::after{left:25px}input[type=checkbox]:not([data-ck]):disabled{opacity:.6}
 #ia-opts button{width:100%;margin:0;min-height:0;padding:14px 14px;border:2px solid #1d4ed8;border-radius:12px;background:#fff;color:#1d4ed8;font-weight:800;font-size:17px;text-align:left}#ia-opts button.on{background:#1d4ed8;color:#fff}#ia-body[data-f=none] #c-ins,#ia-body[data-f=none] #c-insinv{display:none!important}#ia-body[data-f=card] #c-insinv,#ia-body[data-f=site] #c-insinv,#ia-body[data-f=inv] #c-ins,#ia-body[data-f=site] [data-k=card],#ia-body[data-f=card] [data-k=site]{display:none!important}
-</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script>(function(){try{if(!window.Capacitor&&!window.ViNative&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){
+</style><script>(function(){try{var q=new URLSearchParams(location.search).get("saveinv");if(q){localStorage.setItem("lc_pending_inv",q);history.replaceState(null,"",location.pathname)}}catch(e){}})()</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script>(function(){try{if(!window.Capacitor&&!window.ViNative&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){
   document.addEventListener('DOMContentLoaded',function(){var go=function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#7a0a10;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
   var a=document.createElement('a');a.href='/studio/appauth/'+location.hash;a.textContent='📲 LiveCard ऐप में खोलें';a.style.cssText='display:inline-block;margin-left:8px;background:#f59a1a;color:#7a0a10;padding:8px 14px;border-radius:8px;text-decoration:none';
   d.appendChild(document.createTextNode('लॉगिन हो गया।'));d.appendChild(a);document.body.appendChild(d)};try{if(navigator.getInstalledRelatedApps){navigator.getInstalledRelatedApps().then(function(r){if(!(r&&r.length))go()},go)}else go()}catch(e){go()}})}}catch(e){}})();</script>
@@ -303,7 +303,7 @@ var b=document.createElement('a');b.textContent=a[4]?'⬇️ APK':'देखे�
 <div class="k" style="margin:10px 0 0;font-size:11px;line-height:1.8"><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/terms/">Terms</a> · <a href="/dyname/disclaimer/">Disclaimer</a> · <a href="/dyname/refund/">Refund</a></div></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/render.js?v=20261119b"></script>
+<script src="/studio/render.js?v=20261121a"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -1468,6 +1468,14 @@ async function fnTile(){
   var box=$('c-fn');if(!box)return;
   if(FN===null){var ok=false;try{var r=await sb.from('studio_functions').select('*').eq('user_id',ME.id).order('fdate',{ascending:true}).order('ftime',{ascending:true,nullsFirst:true});if(r&&!r.error){FN=r.data||[];ok=true}}catch(e){}
     if(!ok){box.textContent='';var rt=mk('div','');rt.style.cssText='display:flex;align-items:center;gap:10px';rt.appendChild(mk('span','','🎊')).style.fontSize='26px';var rb=mk('b','','Saved Invitations');rb.style.cssText='flex:1;font-size:17px';rt.appendChild(rb);var bt=mk('button','','🔄 दोबारा लोड');bt.type='button';bt.style.cssText='flex:none;width:auto;margin:0;height:36px;min-height:0;padding:0 12px;background:#fff;color:#b4231a;border:0;font-weight:800';bt.onclick=function(){fnTile()};rt.appendChild(bt);box.appendChild(rt);return}}
+  try{var pq=localStorage.getItem('lc_pending_inv');if(pq){localStorage.removeItem('lc_pending_inv');var pa=JSON.parse(decodeURIComponent(escape(atob(pq))));var added=0;
+    if(Array.isArray(pa))for(var pi=0;pi<Math.min(pa.length,8);pi++){var x=pa[pi]||{};var ti=String(x.t||'').trim().slice(0,120),dd=String(x.d||''),tm=/^([01]\d|2[0-3]):[0-5]\d$/.test(x.m||'')?x.m:null,lk=/^https:\/\/livecard\.in\//.test(x.l||'')?String(x.l).slice(0,400):null;
+      if(!ti||!/^\d{4}-\d{2}-\d{2}$/.test(dd))continue;
+      if(FN.some(function(z){return z.fdate===dd&&z.title===ti&&(z.link||null)===lk}))continue;
+      var q2=await sb.from('studio_functions').insert({user_id:ME.id,title:ti,fdate:dd,ftime:tm,place:String(x.p||'').slice(0,300)||null,link:lk}).select().single();
+      if(q2.data){FN.push(q2.data);added++}}
+    FN.sort(function(a,b){return (a.fdate+(a.ftime||''))<(b.fdate+(b.ftime||''))?-1:1});
+    if(added){FNOPEN=true;setTimeout(function(){alert('✓ '+added+' function "Saved Invitations" में सेव हो गया।\nअब 📅 Calendar दबाकर reminder लगा लें।')},300)}}}catch(e){}
   var L=FN,open=FNOPEN||FNED!==null;box.textContent='';
   var td=fnYmd(new Date()),up=L.filter(function(e){return e.fdate>=td}),past=L.filter(function(e){return e.fdate<td}).reverse();
   var hot=up.filter(function(e){return fnDiff(e.fdate)<=1}).length;
@@ -1491,6 +1499,7 @@ async function fnTile(){
     var t=mk('b','',e.title);t.style.cssText='font-size:15px;display:block';var bd=fnBadge(e.fdate),sp=mk('span','fnb',bd[0]);sp.style.background=bd[1];t.appendChild(sp);inf.appendChild(t);
     inf.appendChild(mk('div','','📆 '+fnDate(e.fdate)+(e.ftime?' · ⏰ '+fnTm(e.ftime):'')));
     if(e.place)inf.appendChild(mk('div','','📍 '+e.place));if(e.note){var nt=mk('div','','📝 '+e.note);nt.style.color='#666';inf.appendChild(nt)}
+    if(e.link){var lkx=mk('a','','🔗 कार्ड खोलें');lkx.href=e.link;lkx.target='_blank';lkx.rel='noopener';lkx.style.cssText='color:#b4231a;font-weight:700;text-decoration:none';var lw=mk('div','');lw.appendChild(lkx);inf.appendChild(lw)}
     r1.appendChild(inf);c.appendChild(r1);
     var rw=mk('div','');rw.style.cssText='display:flex;gap:6px;margin-top:8px';
     var bs='height:36px;min-height:0;margin:0;padding:0 10px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;font-weight:700;box-sizing:border-box;white-space:nowrap;';

@@ -292,6 +292,40 @@
       dt.appendChild(cp);
       var dn = el('button', 'sr-save', '✅ ' + T('मैंने शगुन भेज दिया')); dn.type = 'button'; dn.style.cssText = 'font-size:1.25em;padding:1.05em 1em;margin-top:14px;width:100%;background:#1ea952;color:#fff;border-color:#1ea952;font-weight:800'; dn.onclick = function () { shagunOverlay('form', f, opts); }; dt.appendChild(dn); box.appendChild(sg);
     }
+    try {
+      var rem = []; var nmz = [f.bride, f.groom].filter(Boolean).join(' & ') || f.heading || 'Invitation';
+      var plc = [f.venue, f.address].filter(Boolean).join(', ');
+      if (V.date(f.date)) rem.push({ t: nmz, d: f.date, m: V.time(f.time) || '', p: plc });
+      (d.events || []).slice(0, 6).forEach(function (e) { if (e && V.date(e.date)) rem.push({ t: nmz + ' – ' + (e.title || 'Function'), d: e.date, m: V.time(e.time) || '', p: e.place || plc }); });
+      if (rem.length && !(opts && opts.noShagun)) {
+        var rw = el('div', 'sr-cs'); rw.appendChild(el('div', 'sr-sub', '\uD83D\uDD14 ' + T('function याद रखें')));
+        var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+        var lt = function (x) { return x.getFullYear() + pad(x.getMonth() + 1) + pad(x.getDate()) + 'T' + pad(x.getHours()) + pad(x.getMinutes()) + '00'; };
+        var ie = function (x) { return String(x || '').replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); };
+        var b1 = el('button', 'sr-save', '\uD83D\uDCC5 ' + T('Calendar में reminder जोड़ें')); b1.type = 'button';
+        b1.onclick = function () {
+          var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//LiveCard//Invitation//HI', 'CALSCALE:GREGORIAN'];
+          rem.forEach(function (e, i) {
+            L.push('BEGIN:VEVENT', 'UID:inv' + Date.now() + i + '@livecard.in', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, ''));
+            var al = function (tr, tx) { L.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + ie(tx), 'TRIGGER:' + tr, 'END:VALARM'); };
+            if (e.m) { var st = new Date(e.d + 'T' + e.m + ':00'), en = new Date(st.getTime() + 2 * 3600e3); L.push('DTSTART:' + lt(st), 'DTEND:' + lt(en)); }
+            else { var d0 = new Date(e.d + 'T00:00:00'), d1 = new Date(d0.getTime() + 864e5 + 3600e3); L.push('DTSTART;VALUE=DATE:' + lt(d0).slice(0, 8), 'DTEND;VALUE=DATE:' + lt(d1).slice(0, 8)); }
+            L.push('SUMMARY:' + ie('\uD83C\uDF8A ' + e.t)); if (e.p) L.push('LOCATION:' + ie(e.p)); L.push('DESCRIPTION:' + ie(location.href));
+            if (e.m) { al('-P1D', 'Kal function hai: ' + e.t); al('-PT3H', 'Aaj function hai: ' + e.t); al('-PT1H', '1 ghante baad: ' + e.t); } else { al('-PT15H', 'Kal function hai: ' + e.t); al('PT8H', 'Aaj function hai: ' + e.t); }
+            L.push('END:VEVENT');
+          });
+          L.push('END:VCALENDAR');
+          var bl = new Blob([L.join('\r\n')], { type: 'text/calendar;charset=utf-8' }), u = URL.createObjectURL(bl), a = document.createElement('a'); a.href = u; a.download = 'function.ics'; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); URL.revokeObjectURL(u); }, 4000);
+          b1.textContent = '\u2713 ' + T('Calendar में जुड़ गया');
+        };
+        rw.appendChild(b1);
+        try {
+          var pl = btoa(unescape(encodeURIComponent(JSON.stringify(rem.map(function (e) { return { t: e.t, d: e.d, m: e.m, p: e.p, l: location.href.split('#')[0] }; })))));
+          var b2 = el('a', 'sr-save', '\uD83D\uDCBE ' + T('LiveCard में सेव करें')); b2.href = 'https://livecard.in/studio/?saveinv=' + encodeURIComponent(pl); b2.style.cssText = 'display:block;text-align:center;text-decoration:none'; rw.appendChild(b2);
+        } catch (e2) {}
+        box.appendChild(rw);
+      }
+    } catch (e3) {}
     var sw = el('div', 'sr-cs'); sw.appendChild(saveCardBtn(root, f)); box.appendChild(sw);
     root.appendChild(box);
   }
