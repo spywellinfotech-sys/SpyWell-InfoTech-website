@@ -111,10 +111,9 @@ if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',u.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};
   var d=await sb.from('studio_designs').select('slug,content_json').eq('user_id',u.id).eq('product_type','visiting').order('created_at',{ascending:true}).limit(1);
   var dd=(d.data||[])[0];
-  if(!dd){$('gate').hidden=false;return}
-  var f=(dd.content_json&&dd.content_json.fields)||{};
+  var f=(dd&&dd.content_json&&dd.content_json.fields)||{};
   $('g-name').value=f.name||cj.name||pd.full_name||'';$('g-biz').value=f.business||cj.business||'';$('g-mob').value=String(f.mobile||cj.mobile||pd.phone||'').replace(/\D/g,'').slice(-10);
-  S.link=f.miniweb||('livecard.in/studio/view/?t=v&s='+dd.slug);
+  S.link=f.miniweb||(dd?'livecard.in/studio/view/?t=v&s='+dd.slug:'livecard.in');
   $('main').hidden=false;$('g-msg').value=OC[0].m[0];build();draw()
 })();
 })();
