@@ -1579,35 +1579,39 @@ async function fnTile(){
     if(e.photo)fnSign(e.photo).then(function(u){if(u&&!FNPHOTO)showPv(u)});
     var pb=mk('div','');pb.style.cssText='flex:1;display:flex;flex-direction:column;gap:6px';
     function pick(lbl,cap){var b=mk('button','alt',lbl);b.type='button';b.style.cssText='margin:0;height:38px;min-height:0;font-size:13px;font-weight:700';var inp=document.createElement('input');inp.type='file';inp.accept='image/*';if(cap)inp.setAttribute('capture','environment');inp.style.display='none';
-      inp.onchange=function(){var fl=inp.files&&inp.files[0];if(!fl)return;fnResize(fl,function(bl){if(!bl){er.textContent='फोटो नहीं खुली, दूसरी चुनें';return}FNPHOTO=bl;showPv(URL.createObjectURL(bl));scanInv(bl)})};
+      inp.onchange=function(){var fl=inp.files&&inp.files[0];if(!fl)return;fnResize(fl,function(bl){if(!bl){er.textContent='फोटो नहीं खुली, दूसरी चुनें';return}FNPHOTO=bl;showPv(URL.createObjectURL(bl))})};
       b.onclick=function(){inp.click()};pb.appendChild(b);pb.appendChild(inp)}
     var er=mk('div','');er.style.cssText='color:#b00020;font-size:13px;margin-top:6px';
-    var sm=mk('div','');sm.style.cssText='font-size:12.5px;margin:0 0 6px;font-weight:600';var SCANEV=null;
-    function scanInv(bl){sm.style.color='#8a5a00';sm.textContent='⏳ कार्ड पढ़ रहे हैं… (10-20 सेकंड)';SCANEV=null;
-      var rd=new FileReader();rd.onload=async function(){try{var b64=String(rd.result).split(',')[1];var ss=await sb.auth.getSession();if(!ss.data.session)throw new Error('unauthorized');
-        var r=await fetch(B+'/functions/v1/inv-scan',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+ss.data.session.access_token},body:JSON.stringify({files:[{media_type:'image/jpeg',data:b64}]})});
-        var o=await r.json().catch(function(){return{}});
-        if(!r.ok||o.code){var cd=o.code||'';throw new Error(cd==='limit'?'limit':cd==='ai_busy'?'busy':'fail')}
-        var evs=(o.events||[]);if(!o.title&&!evs.length){sm.style.color='#b00020';sm.textContent='कार्ड से कुछ पढ़ नहीं पाया। नीचे खुद भर दें।';return}
-        if(o.title&&!ti.value.trim())ti.value=o.title;var e0=evs[0]||{};if(e0.date&&!dt.value)dt.value=e0.date;if(e0.time&&!tm.value)tm.value=e0.time;if(e0.place&&!pl.value.trim())pl.value=e0.place;
-        var un=(o.uncertain||[]).length;
-        if(isNew&&evs.length>1){SCANEV={title:o.title||'',events:evs};sm.style.color='#0a7d33';sm.textContent='✓ '+evs.length+' कार्यक्रम मिले — सब एक साथ सेव होंगे।'+(un?' जो साफ़ नहीं पढ़ा उसे जाँच लें।':'')}
-        else{sm.style.color='#0a7d33';sm.textContent='✓ कार्ड से भर दिया। एक बार जाँच लें।'+(un?' (कुछ साफ़ नहीं पढ़ा)':'')}
-      }catch(x){sm.style.color='#b00020';var m=String(x&&x.message||'');sm.textContent=m==='limit'?'आज की scan सीमा पूरी हो गई। नीचे खुद भर दें।':m==='busy'?'अभी scan व्यस्त है। थोड़ी देर बाद कोशिश करें या खुद भर दें।':'कार्ड पढ़ा नहीं जा सका। नीचे खुद भर दें।'}};
-      rd.readAsDataURL(bl)}
-    pick('📷 कार्ड की फोटो खींचें',true);pick('🖼 गैलरी से चुनें',false);ph.appendChild(pv);ph.appendChild(pb);f.appendChild(ph);f.appendChild(sm);
+    pick('📷 कार्ड की फोटो खींचें',true);pick('🖼 गैलरी से चुनें',false);ph.appendChild(pv);ph.appendChild(pb);f.appendChild(ph);
     var ti=fld('किसका function? (नाम / मौका)','text',e.title,'जैसे: रमेश जी के बेटे की शादी',120);
     var dt=fld('तारीख़','date',e.fdate);var tm=fld('समय (पता हो तो)','time',e.ftime?e.ftime.slice(0,5):'');
     var pl=fld('जगह / पता','text',e.place,'जैसे: राधा गार्डन, बेहट रोड, सहारनपुर',300);var nt=fld('नोट (खाली छोड़ सकते हैं)','text',e.note,'जैसे: साथ चलना है / गिफ्ट ले जाना',500);
+    var EVR=[],evbox=mk('div',''),evOn=false;evbox.hidden=true;
+    function getEv(){return evOn?EVR.map(function(r){return{title:r.t.value.trim(),date:r.d.value,time:r.m.value||null}}):[]}
+    function addEv(t){var row=mk('div','');row.style.cssText='border:1px solid #e7c9c4;border-radius:10px;padding:6px 8px;margin:6px 0;background:#fff';
+      var r={};r.t=document.createElement('input');r.t.type='text';r.t.maxLength=60;r.t.placeholder='कार्यक्रम का नाम';r.t.value=t||'';r.t.style.marginBottom='4px';
+      var g=mk('div','');g.style.cssText='display:flex;gap:6px';r.d=document.createElement('input');r.d.type='date';r.d.style.flex='1';r.m=document.createElement('input');r.m.type='time';r.m.style.flex='1';
+      var x=mk('span','','✕');x.style.cssText='cursor:pointer;color:#b00020;font-weight:800;padding:0 4px;align-self:center';x.onclick=function(){EVR=EVR.filter(function(z){return z!==r});row.remove()};
+      g.appendChild(r.d);g.appendChild(r.m);g.appendChild(x);row.appendChild(r.t);row.appendChild(g);evbox.appendChild(row);EVR.push(r)}
+    if(isNew){var wb=mk('button','alt','💍 शादी / कई कार्यक्रम (हर एक की अलग तारीख़-समय)');wb.type='button';wb.style.cssText='margin:8px 0 0;width:100%;height:auto;min-height:38px;font-size:13px;font-weight:700';
+      var chips=mk('div','');chips.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px';
+      ['मेहंदी','हल्दी','महिला संगीत','सगाई / टीका','आगमन बारात','शादी / फेरे','रिसेप्शन','प्रीतिभोज','विदाई'].forEach(function(n){var c=mk('span','',n);c.style.cssText='background:#fbe9e7;color:#7a0a10;border-radius:99px;padding:5px 10px;font-size:12.5px;font-weight:700;cursor:pointer';c.onclick=function(){addEv(n)};chips.appendChild(c)});
+      var oc=mk('span','','➕ अन्य');oc.style.cssText='background:#b4231a;color:#fff;border-radius:99px;padding:5px 10px;font-size:12.5px;font-weight:700;cursor:pointer';oc.onclick=function(){addEv('')};chips.appendChild(oc);
+      var hint=mk('div','','ऊपर "किसका function?" में शादी का नाम लिखें। फिर जो कार्यक्रम हैं उन्हें दबाएँ और हर एक की तारीख़ और समय भरें। जगह ऊपर वाले बॉक्स में एक बार भरें, सबके साथ लगेगी।');hint.style.cssText='font-size:12px;color:#555;margin:2px 0';
+      evbox.appendChild(hint);evbox.appendChild(chips);
+      wb.onclick=function(){evOn=!evOn;evbox.hidden=!evOn;wb.textContent=evOn?'✕ कई कार्यक्रम बंद करें (सिर्फ़ एक तारीख़)':'💍 शादी / कई कार्यक्रम (हर एक की अलग तारीख़-समय)';if(evOn&&!EVR.length)addEv('शादी / फेरे')};
+      f.appendChild(wb);f.appendChild(evbox)}
     var sv=mk('button','','💾 सेव करें');sv.type='button';sv.style.marginTop='10px';
     sv.onclick=async function(){er.textContent='';var o={title:ti.value.trim(),fdate:dt.value,ftime:tm.value||null,place:pl.value.trim()||null,note:nt.value.trim()||null};
-      if(!o.title){er.textContent='function का नाम लिखें';return}if(!o.fdate){er.textContent='तारीख़ चुनें';return}
+      var EV=isNew?getEv():[];if(!o.title){er.textContent='function का नाम लिखें';return}
+      if(EV.length){for(var vi=0;vi<EV.length;vi++){if(!EV[vi].date){er.textContent='हर कार्यक्रम की तारीख़ चुनें';return}}o.fdate=EV[0].date}
+      else if(!o.fdate){er.textContent='तारीख़ चुनें';return}
       sv.disabled=true;var id=e.id||(crypto.randomUUID?crypto.randomUUID():null),path=e.photo||null;
       if(FNPHOTO){var np=ME.id+'/'+(id||Date.now())+'-'+Date.now()+'.jpg';var up2=await sb.storage.from('fn-photos').upload(np,FNPHOTO,{contentType:'image/jpeg',upsert:false});
         if(up2.error){sv.disabled=false;er.textContent='फोटो अपलोड नहीं हुई। दोबारा कोशिश करें।';return}
         if(e.photo){try{await sb.storage.from('fn-photos').remove([e.photo])}catch(x){}}path=np}
       o.photo=path;var q,many=null;
-      if(isNew&&SCANEV&&SCANEV.events.length>1){var base=o.title;var rows=SCANEV.events.map(function(ev){return{user_id:ME.id,title:ev.title?base+' – '+ev.title:base,fdate:ev.date||o.fdate,ftime:ev.time||null,place:ev.place||o.place,note:o.note,photo:path}});
+      if(EV.length){var base=o.title;var rows=EV.map(function(ev){return{user_id:ME.id,title:ev.title?base+' – '+ev.title:base,fdate:ev.date,ftime:ev.time||null,place:o.place,note:o.note,photo:path}});
         var qm=await sb.from('studio_functions').insert(rows).select();sv.disabled=false;if(qm.error||!qm.data||!qm.data.length){er.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।';return}
         many=qm.data;FN=FN.concat(many).sort(function(a,b){return (a.fdate+(a.ftime||''))<(b.fdate+(b.ftime||''))?-1:1});FNED=null;FNPHOTO=null;FNOPEN=true;fnTile();
         if(confirm('फोन के Calendar में सब reminder जोड़ें?'))fnAddCalMulti(many);return}
