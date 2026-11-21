@@ -112,7 +112,7 @@ function build(){$('oth').hidden=!isO();$('ofb').hidden=!isOf();$('occw').hidden
   var ms=$('msgs');ms.textContent='';OC[S.o].m.forEach(function(m,i){var c=document.createElement('span');c.className='chip'+(i===S.m?' on':'');c.textContent='संदेश '+(i+1);c.onclick=function(){S.m=i;$('g-msg').value=m;build();draw()};ms.appendChild(c)})}
 $('sg-g').onclick=function(){if(!isOf())return;S.o=0;S.t=0;S.m=0;S.e='';$('g-msg').value=OC[0].m[0];build();draw()};
 $('sg-o').onclick=function(){if(isOf())return;S.o=OC.length-1;S.t=0;S.m=0;S.e='';$('g-msg').value=OC[S.o].m[0];build();draw()};
-['g-h','g-ofr','g-val','g-to','g-msg','g-name','g-biz','g-mob'].forEach(function(i){$(i).oninput=draw});
+['g-h','g-ofr','g-val','g-to','g-msg','g-name','g-biz','g-mob'].forEach(function(i){var tm=null,go=function(){clearTimeout(tm);tm=setTimeout(draw,450)};$(i).oninput=go;$(i).addEventListener('compositionend',go)});
 $('g-ph').onclick=function(){$('g-file').value='';$('g-file').click()};
 $('g-file').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){S.photo=im;S.pu='';$('g-phx').hidden=false;$('g-ph').textContent='🖼 फ़ोटो बदलें';draw()};im.onerror=function(){$('g-err').textContent='यह फ़ोटो खुल नहीं पाई।'};im.src=u};
 $('g-phx').onclick=function(){S.photo=null;S.pu='';this.hidden=true;$('g-ph').textContent='🖼 अपनी फ़ोटो जोड़ें';draw()};
