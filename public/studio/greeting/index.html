@@ -40,7 +40,7 @@ body.vw .top{display:none}
 <input type="file" id="g-file" accept="image/*" hidden>
 </div>
 <div class="card"><img id="pv" alt="Greeting card">
-<button type="button" id="b-link" style="background:linear-gradient(135deg,#ff9a3c,#d4141c)">✨ Animated कार्ड का लिंक भेजें</button>
+<button type="button" id="b-link" style="background:linear-gradient(135deg,#ff9a3c,#d4141c)">✨ फ़ोटो + Animated लिंक भेजें</button>
 <button type="button" class="alt" id="b-share">🖼 फ़ोटो कार्ड भेजें / शेयर करें</button>
 <button type="button" class="alt" id="b-save">⬇ फ़ोटो सेव करें</button>
 <div class="ok" id="g-ok"></div><div class="e" id="g-err"></div></div>
@@ -104,8 +104,11 @@ function glink(){var d=glinkData();
 $('b-link').onclick=async function(){var btn=this,t=hh()+' '+ee(),u='';btn.disabled=true;$('g-err').textContent='';
   try{var d=glinkData(),r=await window.GSB.rpc('studio_greet_save',{p:d});if(!r.error&&r.data)u=location.origin+'/g/?k='+r.data}catch(e){}
   if(!u)u=glink();btn.disabled=false;
-  if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return}
-  window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+u),'_blank')};
+  var cap=t+'\n✨ चलता हुआ कार्ड देखिए:\n'+u;
+  blobOf(function(b){var f=null;try{if(b)f=new File([b],'greeting-'+OC[S.o].id+'.jpg',{type:'image/jpeg'})}catch(e){}
+    if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],text:cap}).catch(function(){});return}
+    if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return}
+    window.open('https://wa.me/?text='+encodeURIComponent(cap),'_blank')})};
 $('g-mk').onclick=function(){if(window.parent&&window.parent!==window)window.parent.history.back();else location.href='/studio/'};
 if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 (async function(){
