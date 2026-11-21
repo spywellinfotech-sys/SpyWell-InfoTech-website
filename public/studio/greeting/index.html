@@ -90,15 +90,15 @@ function build(){$('oth').hidden=!isO();var em=$('g-em');em.textContent='';EMS.f
   var ms=$('msgs');ms.textContent='';OC[S.o].m.forEach(function(m,i){var c=document.createElement('span');c.className='chip'+(i===S.m?' on':'');c.textContent='संदेश '+(i+1);c.onclick=function(){S.m=i;$('g-msg').value=m;build();draw()};ms.appendChild(c)})}
 ['g-h','g-to','g-msg','g-name','g-biz','g-mob'].forEach(function(i){$(i).oninput=draw});
 $('g-ph').onclick=function(){$('g-file').value='';$('g-file').click()};
-$('g-file').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){S.photo=im;$('g-phx').hidden=false;$('g-ph').textContent='🖼 फ़ोटो बदलें';draw()};im.onerror=function(){$('g-err').textContent='यह फ़ोटो खुल नहीं पाई।'};im.src=u};
-$('g-phx').onclick=function(){S.photo=null;this.hidden=true;$('g-ph').textContent='🖼 अपनी फ़ोटो जोड़ें';draw()};
+$('g-file').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){S.photo=im;S.pu='';$('g-phx').hidden=false;$('g-ph').textContent='🖼 फ़ोटो बदलें';draw()};im.onerror=function(){$('g-err').textContent='यह फ़ोटो खुल नहीं पाई।'};im.src=u};
+$('g-phx').onclick=function(){S.photo=null;S.pu='';this.hidden=true;$('g-ph').textContent='🖼 अपनी फ़ोटो जोड़ें';draw()};
 function blobOf(cb){cv.toBlob(function(b){cb(b)},'image/jpeg',.92)}
 $('b-save').onclick=function(){blobOf(function(b){if(!b)return;var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='greeting-'+OC[S.o].id+'.jpg';document.body.appendChild(a);a.click();a.remove();$('g-ok').textContent='✓ फ़ोटो डाउनलोड हो गई। गैलरी या Downloads में देखिए।'})};
 $('b-share').onclick=function(){blobOf(function(b){if(!b)return;var f=null;try{f=new File([b],'greeting-'+OC[S.o].id+'.jpg',{type:'image/jpeg'})}catch(e){}
   if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){navigator.share({files:[f],text:hh()+' — LiveCard.in'}).catch(function(){});return}
   $('b-save').click()})};
 
-function glink(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};if(isO()){d.h=hh();d.e=ee()}
+function glink(){var d={o:OC[S.o].id,t:S.t,m:$('g-msg').value.trim(),to:$('g-to').value.trim(),n:$('g-name').value.trim(),b:$('g-biz').value.trim(),mb:$('g-mob').value.replace(/\D/g,'').slice(-10)};if(isO()){d.h=hh();d.e=ee()}if(S.pu&&S.pu.length<300)d.p=S.pu;
   var j=unescape(encodeURIComponent(JSON.stringify(d))),e=btoa(j).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');return location.origin+'/studio/greeting/v/?d='+e}
 $('b-link').onclick=function(){var u=glink(),t=hh()+' '+ee();
   if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return}
@@ -114,6 +114,8 @@ if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
   var f=(dd&&dd.content_json&&dd.content_json.fields)||{};
   $('g-name').value=f.name||cj.name||pd.full_name||'';$('g-biz').value=f.business||cj.business||'';$('g-mob').value=String(f.mobile||cj.mobile||pd.phone||'').replace(/\D/g,'').slice(-10);
   S.link=f.miniweb||(dd?'livecard.in/studio/view/?t=v&s='+dd.slug:'livecard.in');
+  var im0=(dd&&dd.content_json&&dd.content_json.images)||{},pu=(im0.photo&&im0.photo.url)||(im0.logo&&im0.logo.url)||'';
+  if(/^(https?:\/\/|data:image\/)/.test(pu)){S.pu=/^data:/.test(pu)?'':pu;var pi=new Image();if(!/^data:/.test(pu))pi.crossOrigin='anonymous';pi.onload=function(){S.photo=pi;$('g-phx').hidden=false;$('g-ph').textContent='🖼 फ़ोटो बदलें';draw()};pi.src=pu}
   $('main').hidden=false;$('g-msg').value=OC[0].m[0];build();draw()
 })();
 })();

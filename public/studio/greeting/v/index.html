@@ -23,7 +23,7 @@
 #ft .t{flex:1;min-width:0}#nm{font-weight:700;font-size:19px}#bz{font-size:14px;color:#6b1a1a}
 #ft a.c{display:inline-block;margin-top:6px;background:#25d366;color:#fff;text-decoration:none;font-weight:700;padding:9px 16px;border-radius:99px;font-size:15px}
 #ft a.p{background:#d4141c;margin-left:6px}
-#ft img{width:74px;height:74px;object-fit:contain;flex:none}
+#ft img{width:74px;height:74px;object-fit:contain;flex:none}#ft img.pp{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #d4141c}
 #tp{position:fixed;top:10px;left:0;right:0;text-align:center;z-index:3;font-size:12px;opacity:.75}
 </style></head><body>
 <div id="bg"></div><div id="fl"></div><canvas id="cv"></canvas>
@@ -41,6 +41,7 @@ var HH=o.id==='other'?(String(d.h||'').slice(0,40)||'हार्दिक श�
 var msg=(d.m||'').slice(0,140),to=(d.to||'').slice(0,30);
 if(!msg&&!to)$('bx').hidden=true;else{$('to').textContent=to?'प्रिय '+to+',':'';$('ms').textContent=msg}
 var nm=(d.n||'').slice(0,40),bz=(d.b||'').slice(0,50),mb=String(d.mb||'').replace(/\D/g,'').slice(-10);
+if(/^https:\/\//.test(d.p||'')){var ph=document.createElement('img');ph.src=d.p;ph.alt='';ph.className='pp';ph.onerror=function(){ph.remove()};$('ft').insertBefore(ph,$('ft').firstChild)}
 $('nm').textContent=nm;$('bz').textContent=bz;
 if(mb.length===10){var a=document.createElement('a');a.className='c';a.href='https://wa.me/91'+mb;a.textContent='💬 WhatsApp';$('ac').appendChild(a);var p=document.createElement('a');p.className='c p';p.href='tel:+91'+mb;p.textContent='📞 कॉल';$('ac').appendChild(p)}
 var fl=$('fl');for(var i=0;i<18;i++){var s=document.createElement('i');s.textContent=o.d[i%o.d.length];s.style.left=(Math.random()*95)+'%';s.style.fontSize=(24+Math.random()*34)+'px';s.style.animationDuration=(7+Math.random()*7)+'s';s.style.animationDelay=(-Math.random()*12)+'s';fl.appendChild(s)}
