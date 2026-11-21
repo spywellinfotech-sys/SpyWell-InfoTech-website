@@ -17,20 +17,36 @@ button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;backg
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two button{margin-top:10px}
 [hidden]{display:none!important}
 body.vw .top{display:none}
+/* compact */
+.wrap{padding:8px 10px}h1{font-size:17px;margin:0}.wrap>.k{font-size:12px;margin:0 0 4px}
+.card{padding:9px 10px;margin:8px 0;border-radius:14px}
+label{margin:7px 0 3px;font-size:12.5px}input,textarea{padding:8px 10px;font-size:14px;border-radius:10px}
+button{padding:9px;font-size:14px;margin-top:6px;border-radius:10px}
+.chips{gap:5px}.chip{padding:5px 9px;font-size:12.5px}
+.th{gap:8px}.th span{width:30px;height:30px;border-width:2px}
+.two button{margin-top:6px}
+#pv{width:58%;margin:2px auto}
+#g-msg{min-height:0}
+
 </style>
 <script>window.I18N_PICKER=false</script><script src="/studio/appback.js"></script><script src="/studio/greeting/oc.js?v=1"></script></head><body>
 <div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="30" height="30" style="border-radius:8px;vertical-align:middle;margin-right:8px">🎉 Greeting Cards</b><a href="/studio/">← होम</a></div>
 <div class="wrap">
 <h1>शुभकामना कार्ड बनाइए</h1>
-<div class="k">अपने नाम, फ़ोटो और कार्ड के साथ। फ़ोटो बनाकर सीधे WhatsApp पर भेजिए। विज़िटिंग कार्ड वालों के लिए मुफ़्त।</div>
+<div class="k">अपने नाम और फ़ोटो के साथ, WhatsApp पर भेजिए। मुफ़्त।</div>
 <div class="card" id="gate" hidden><b>पहले अपना विज़िटिंग कार्ड बनाइए</b><div class="k" style="margin-top:6px">Greeting कार्ड विज़िटिंग कार्ड के साथ मुफ़्त है। कार्ड बनते ही यहाँ सारे डिज़ाइन खुल जाएँगे, और आपका नाम, नंबर और व्यवसाय अपने आप भर जाएगा।</div><button type="button" id="g-mk">⬅ वापस जाकर विज़िटिंग कार्ड बनाएँ</button></div>
 <div id="main" hidden>
+<div class="card"><img id="pv" alt="Greeting card">
+<button type="button" id="b-link" style="background:linear-gradient(135deg,#ff9a3c,#d4141c)">✨ फ़ोटो + Animated लिंक भेजें</button>
+<div class="two"><button type="button" class="alt" id="b-share">🖼 फ़ोटो भेजें</button>
+<button type="button" class="alt" id="b-save">⬇ सेव</button></div>
+<div class="ok" id="g-ok"></div><div class="e" id="g-err"></div></div>
 <div class="card">
 <label style="margin-top:0">मौक़ा चुनें</label><div class="chips" id="occ"></div>
 <div id="oth" hidden><label>मौक़े का नाम / शीर्षक</label><input id="g-h" maxlength="40" placeholder="जैसे: नई दुकान की बधाई / गृह प्रवेश / रिटायरमेंट"><label>चिह्न (emoji)</label><div class="chips" id="g-em"></div></div>
 <label>रंग</label><div class="th" id="th"></div>
 <label>संदेश</label><div class="chips" id="msgs"></div>
-<textarea id="g-msg" rows="3" maxlength="140" placeholder="अपना संदेश भी लिख सकते हैं"></textarea>
+<textarea id="g-msg" rows="2" maxlength="140" placeholder="अपना संदेश भी लिख सकते हैं"></textarea>
 <label>किसके लिए (खाली छोड़ सकते हैं)</label><input id="g-to" maxlength="30" placeholder="जैसे: रमेश जी / सभी ग्राहकों">
 </div>
 <div class="card">
@@ -39,11 +55,7 @@ body.vw .top{display:none}
 <div class="two"><button type="button" class="alt" id="g-ph">🖼 अपनी फ़ोटो जोड़ें</button><button type="button" class="alt" id="g-phx" hidden>✕ फ़ोटो हटाएँ</button></div>
 <input type="file" id="g-file" accept="image/*" hidden>
 </div>
-<div class="card"><img id="pv" alt="Greeting card">
-<button type="button" id="b-link" style="background:linear-gradient(135deg,#ff9a3c,#d4141c)">✨ फ़ोटो + Animated लिंक भेजें</button>
-<button type="button" class="alt" id="b-share">🖼 फ़ोटो कार्ड भेजें / शेयर करें</button>
-<button type="button" class="alt" id="b-save">⬇ फ़ोटो सेव करें</button>
-<div class="ok" id="g-ok"></div><div class="e" id="g-err"></div></div>
+
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
