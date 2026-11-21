@@ -62,7 +62,7 @@ button{padding:9px;font-size:14px;margin-top:6px;border-radius:10px}
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
-var $=function(i){return document.getElementById(i)},FF='"Hind","Noto Sans Devanagari",system-ui,sans-serif',W=1080,H=1350;
+var $=function(i){return document.getElementById(i)},FF='"Hind","Noto Sans Devanagari",system-ui,sans-serif',W=1080,H=1420;
 var OC=window.OC;
 var S={o:0,t:0,m:0,photo:null,card:null,link:'livecard.in'},cv=document.createElement('canvas');cv.width=W;cv.height=H;
 var STAMP=new Image();STAMP.onload=function(){draw()};STAMP.src='/studio/livecard-stamp-t.png';
@@ -87,7 +87,7 @@ function draw(){
     if(to){x.font='700 50px '+FF;x.fillText('प्रिय '+to+',',W/2,y);y+=70}
     x.font='500 46px '+FF;ml.forEach(function(l){x.fillText(l,W/2,y);y+=66})}
   /* footer */
-  var fy=H-300;x.fillStyle='#fff';rr(x,0,fy,W,300+40,48);x.fill();
+  var fy=H-370;x.fillStyle='#fff';rr(x,0,fy,W,300+40,48);x.fill();
   var nm=$('g-name').value.trim(),bz=$('g-biz').value.trim(),mb=$('g-mob').value.replace(/\D/g,'').slice(-10),lx=60;
   if(S.photo){x.save();x.beginPath();x.arc(150,fy+150,90,0,Math.PI*2);x.clip();var im=S.photo,s=Math.max(180/im.width,180/im.height),dw=im.width*s,dh=im.height*s;x.drawImage(im,150-dw/2,fy+150-dh/2,dw,dh);x.restore();x.strokeStyle=th[2];x.lineWidth=6;x.beginPath();x.arc(150,fy+150,92,0,Math.PI*2);x.stroke();lx=270}
   x.textAlign='left';x.fillStyle='#241414';var ty=fy+(bz?100:120);
@@ -96,6 +96,7 @@ function draw(){
   if(mb.length===10){x.font='700 44px '+FF;x.fillStyle='#b4131b';x.fillText('📞 +91 '+mb.slice(0,5)+' '+mb.slice(5),lx,ty);ty+=54}
   x.font='500 30px '+FF;x.fillStyle='#6b5a58';x.fillText(S.link.replace(/^https?:\/\//,'').slice(0,40),lx,ty+4);
   if(STAMP.complete&&STAMP.naturalWidth){x.drawImage(STAMP,W-230,fy+70,170,170)}
+  x.fillStyle='#d4141c';x.fillRect(0,H-70,W,70);x.fillStyle='#fff';x.textAlign='center';x.font='700 38px '+FF;x.fillText('अपना कार्ड बनाइए: www.livecard.in',W/2,H-22);
   $('pv').src=cv.toDataURL('image/jpeg',.9)}
 function build(){$('oth').hidden=!isO();var em=$('g-em');em.textContent='';EMS.forEach(function(e){var c=document.createElement('span');c.className='chip'+((S.e||'🎉')===e?' on':'');c.textContent=e;c.onclick=function(){S.e=e;build();draw()};em.appendChild(c)});
   var oc=$('occ');oc.textContent='';var sl=document.createElement('select');sl.id='g-oc';OC.forEach(function(o,i){var op=document.createElement('option');op.value=i;op.textContent=o.n;if(i===S.o)op.selected=true;sl.appendChild(op)});sl.onchange=function(){S.o=+this.value;S.t=0;S.m=0;$('g-msg').value=OC[S.o].m[0];build();draw()};oc.appendChild(sl);
