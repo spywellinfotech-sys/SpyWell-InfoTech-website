@@ -46,11 +46,11 @@ button{padding:9px;font-size:14px;margin-top:6px;border-radius:10px}
 <div class="card">
 <div class="two" id="seg" style="margin:0 0 6px"><button type="button" id="sg-g" class="chip on" style="margin:0">🎉 Greeting</button><button type="button" id="sg-o" class="chip" style="margin:0">🏷️ Offer</button></div>
 <div id="occw"><label style="margin-top:0">मौक़ा चुनें</label><div class="chips" id="occ"></div></div>
-<div id="ofb" hidden><label style="margin-top:0">ऑफ़र क्या है? (बड़े अक्षरों में दिखेगा)</label><input id="g-ofr" maxlength="30" placeholder="जैसे: 50% तक छूट / ₹100 की बचत / 1 के साथ 1 फ़्री"><label>कब तक वैध (खाली छोड़ सकते हैं)</label><input id="g-val" maxlength="30" placeholder="जैसे: 30 नवंबर तक"></div>
-<div id="oth" hidden><label id="oth-l">मौक़े का नाम / शीर्षक</label><input id="g-h" maxlength="40" placeholder="जैसे: नई दुकान की बधाई / गृह प्रवेश / रिटायरमेंट"><label>चिह्न (emoji)</label><div class="chips" id="g-em"></div></div>
+<div id="ofb" hidden><label style="margin-top:0">ऑफ़र क्या है? (बड़े अक्षरों में दिखेगा)</label><input id="g-ofr" maxlength="80" placeholder="जैसे: 50% तक छूट / ₹100 की बचत / 1 के साथ 1 फ़्री"><label>कब तक वैध (खाली छोड़ सकते हैं)</label><input id="g-val" maxlength="50" placeholder="जैसे: 30 नवंबर तक"></div>
+<div id="oth" hidden><label id="oth-l">मौक़े का नाम / शीर्षक</label><input id="g-h" maxlength="60" placeholder="जैसे: नई दुकान की बधाई / गृह प्रवेश / रिटायरमेंट"><label>चिह्न (emoji)</label><div class="chips" id="g-em"></div></div>
 <label>रंग</label><div class="th" id="th"></div>
 <label>संदेश</label><div class="chips" id="msgs"></div>
-<textarea id="g-msg" rows="2" maxlength="140" placeholder="अपना संदेश भी लिख सकते हैं"></textarea>
+<textarea id="g-msg" rows="2" maxlength="200" placeholder="अपना संदेश भी लिख सकते हैं"></textarea>
 <label>किसके लिए (खाली छोड़ सकते हैं)</label><input id="g-to" maxlength="30" placeholder="जैसे: रमेश जी / सभी ग्राहकों">
 </div>
 <div class="card">
@@ -88,7 +88,9 @@ function draw(){
   if(OF){x.font='800 '+fs+'px '+FF;while(x.measureText(HH).width>W-160&&fs>44){fs-=4;x.font='800 '+fs+'px '+FF}hl=[HH];x.fillStyle=th[2];hl.forEach(function(l){x.fillText(l,W/2,y);y+=108})}
   else{hl=wrap(x,HH,W-160,'800 88px '+FF,2);x.fillStyle=th[2];x.font='800 88px '+FF;hl.forEach(function(l){x.fillText(l,W/2,y);y+=108})}
   var ofr=OF?$('g-ofr').value.trim():'';
-  if(OF&&ofr){var of2=96;x.font='800 '+of2+'px '+FF;while(x.measureText(ofr).width>W-260&&of2>44){of2-=4;x.font='800 '+of2+'px '+FF}x.fillStyle=th[2];rr(x,70,y-52,W-140,150,40);x.fill();x.fillStyle=th[0];x.textAlign='center';x.fillText(ofr,W/2,y+52);x.fillStyle='#fff';y+=140}
+  if(OF&&ofr){var of2=96,ol;x.font='800 '+of2+'px '+FF;while(x.measureText(ofr).width>W-260&&of2>56){of2-=4;x.font='800 '+of2+'px '+FF}
+    ol=x.measureText(ofr).width>W-260?wrap(x,ofr,W-260,'800 56px '+FF,2):[ofr];var ph=ol.length>1?230:150;x.fillStyle=th[2];rr(x,70,y-52,W-140,ph,40);x.fill();x.fillStyle=th[0];x.textAlign='center';
+    if(ol.length>1){x.font='800 56px '+FF;ol.forEach(function(l,i){x.fillText(l,W/2,y+30+i*76)});y+=220}else{x.fillText(ofr,W/2,y+52);y+=140}x.fillStyle='#fff'}
   var to=OF?'':$('g-to').value.trim(),msg=$('g-msg').value.trim(),ml=msg?wrap(x,msg,W-260,'500 46px '+FF,OF?2:5):[];if(OF&&$('g-val').value.trim())ml.push('⏰ '+$('g-val').value.trim());
   var bh=(to?70:0)+ml.length*66+50;
   if(to||ml.length){x.fillStyle='rgba(255,255,255,.16)';var by=y-30;rr(x,70,by,W-140,Math.max(bh,120),36);x.fill();y=by+62;x.fillStyle='#fff';

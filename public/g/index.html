@@ -40,8 +40,8 @@ if(KK){fetch('https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/rpc/studio_greet_
 function go(d){
 var o=OC.filter(function(x){return x.id===d.o})[0]||OC[0],th=o.t[d.t]||o.t[0];
 document.body.style.background=th[0];$('bg').style.backgroundImage='linear-gradient(120deg,'+th[0]+','+th[1]+','+th[0]+')';
-var HH=(o.id==='other'||o.id==='offer')?(String(d.h||'').slice(0,40)||'हार्दिक शुभकामनाएँ'):o.h,EE=(o.id==='other'||o.id==='offer')?(String(d.e||'').slice(0,8)||o.e):o.e;$('em').textContent=EE;$('hl').textContent=HH;$('hl').style.color=th[2];
-var msg=(d.m||'').slice(0,140),to=(d.to||'').slice(0,30);if(o.id==='offer'){var ofr=String(d.ofr||'').slice(0,30);if(ofr){$('of').textContent=ofr;$('of').style.display='block';$('of').style.color=th[0]}if(d.val)msg=(msg?msg+'\n':'')+'⏰ '+String(d.val).slice(0,30);to=''}
+var HH=(o.id==='other'||o.id==='offer')?(String(d.h||'').slice(0,60)||'हार्दिक शुभकामनाएँ'):o.h,EE=(o.id==='other'||o.id==='offer')?(String(d.e||'').slice(0,8)||o.e):o.e;$('em').textContent=EE;$('hl').textContent=HH;$('hl').style.color=th[2];
+var msg=(d.m||'').slice(0,200),to=(d.to||'').slice(0,30);if(o.id==='offer'){var ofr=String(d.ofr||'').slice(0,80);if(ofr){$('of').textContent=ofr;$('of').style.display='block';$('of').style.color=th[0]}if(d.val)msg=(msg?msg+'\n':'')+'⏰ '+String(d.val).slice(0,50);to=''}
 if(!msg&&!to)$('bx').hidden=true;else{$('to').textContent=to?'प्रिय '+to+',':'';$('ms').textContent=msg}
 var nm=(d.n||'').slice(0,40),bz=(d.b||'').slice(0,50),mb=String(d.mb||'').replace(/\D/g,'').slice(-10);
 if(/^https:\/\//.test(d.p||'')){var ph=document.createElement('img');ph.src=d.p;ph.alt='';ph.className='pp';ph.onerror=function(){ph.remove()};$('ft').insertBefore(ph,$('ft').firstChild)}
