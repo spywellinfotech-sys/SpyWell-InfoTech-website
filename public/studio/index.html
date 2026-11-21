@@ -229,11 +229,11 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div id="sa-sum" onclick="document.getElementById('sa-h').click()"></div>
 <div id="sa-body" hidden><div class="card" id="c-addr"></div>
 <div class="card" id="c-addr2"></div></div></div>
-<div class="card" id="c-greet"></div>
 <div class="card" id="c-bill"></div>
 <div class="card" id="c-fn"></div>
 <div class="card" id="c-loc" style="padding:10px 14px"></div>
 <div class="card" id="c-inv" hidden></div>
+<div class="card" id="c-greet"></div>
 
 <div class="card" id="c-insall" hidden style="padding:10px 14px">
 <div style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:18px 16px;border:0;border-radius:16px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;box-shadow:0 4px 14px rgba(29,78,216,.35)" onclick="var q=document.getElementById('ia-body');q.hidden=!q.hidden;document.getElementById('ia-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1;font-size:20px">📊 Insights</b><span id="ia-ar" style="font-size:20px">▾</span></div>
@@ -1448,9 +1448,9 @@ function openAd(k){closeVw(true);var o=document.createElement('div');o.id='vw';o
   var bk=mk('button','','⬅ वापस');bk.type='button';bk.style.cssText='width:auto;margin:0;min-height:40px;padding:6px 12px;background:#fff;color:#d4141c';bk.onclick=function(){history.back()};hd.appendChild(bk);
   var tt=mk('b','',k==='home'?'🏠 Address Card':'🏢 '+(((ADH&&ADH.cj&&ADH.cj[k])||{}).co||'Office Address Card'));tt.style.flex='1';hd.appendChild(tt);o.appendChild(hd);
   var fr=document.createElement('iframe');fr.style.cssText='flex:1 1 0;min-height:0;border:0;width:100%;background:#fff1f0';fr.src='/studio/address/?view=1'+(k!=='home'?'&t='+k:'');o.appendChild(fr);document.body.appendChild(o);VWO=o;try{history.pushState({vw:1},'')}catch(e){}}
-function greetTile(){var box=$('c-greet');if(!box)return;box.textContent='';
-  var h=mk('div','');h.style.cssText='display:flex;align-items:center;gap:12px';var ic=mk('div','','🎉');ic.style.cssText='font-size:34px;flex:none';var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';var t=mk('b','','Greeting Cards');t.style.cssText='display:block;font-size:17px';tx.appendChild(t);var d=mk('div','k','दीपावली, होली, ईद, जन्मदिन और 8 और मौक़े। अपने नाम और फ़ोटो के साथ WhatsApp पर भेजें। मुफ़्त।');d.style.margin='2px 0 0';tx.appendChild(d);h.appendChild(ic);h.appendChild(tx);box.appendChild(h);
-  var b=mk('button','','🎨 Greeting बनाएँ');b.type='button';b.style.cssText='margin:10px 0 0;width:100%';b.onclick=openGr;box.appendChild(b)}
+function greetTile(){var box=$('c-greet');if(!box)return;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#ff9a3c,#f0571d 55%,#d4141c);border:0;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.14)';
+  var h=mk('div','');h.style.cssText='display:flex;align-items:center;gap:12px';var ic=mk('div','','🎉');ic.style.cssText='font-size:34px;flex:none';var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';var t=mk('b','','Greeting Cards');t.style.cssText='display:block;font-size:17px;color:#fff';tx.appendChild(t);var d=mk('div','k','दीपावली, होली, ईद, जन्मदिन और 8 और मौक़े। अपने नाम और फ़ोटो के साथ WhatsApp पर भेजें। मुफ़्त।');d.style.cssText='margin:2px 0 0;color:#fff';tx.appendChild(d);h.appendChild(ic);h.appendChild(tx);box.appendChild(h);
+  var b=mk('button','','🎨 Greeting बनाएँ');b.type='button';b.style.cssText='margin:10px 0 0;width:100%;background:#fff;color:#d4141c;border:0';b.onclick=openGr;box.appendChild(b)}
 function openGr(){closeVw(true);var o=document.createElement('div');o.id='vw';o.style.cssText='position:fixed;inset:0;z-index:200;background:#fff;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden';
   var hd=document.createElement('div');hd.style.cssText='background:#7a0a10;color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px';
   var bk=mk('button','','⬅ वापस');bk.type='button';bk.style.cssText='width:auto;margin:0;min-height:40px;padding:6px 12px;background:#fff;color:#d4141c';bk.onclick=function(){history.back()};hd.appendChild(bk);
