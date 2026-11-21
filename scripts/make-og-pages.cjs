@@ -44,8 +44,8 @@ function page(kind, slug, d) {
     '<meta property="og:type" content="website"><meta property="og:site_name" content="' + esc(BRAND) + '"><meta property="og:url" content="' + esc(url) + '">' +
     (THUMB[slug] && img === THUMB[slug] ? '<meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="200"><meta property="og:image:height" content="200">' : '') + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(desc) + '"><meta property="og:image" content="' + esc(img) + '">' +
     '<meta name="twitter:card" content="' + (big ? 'summary_large_image' : 'summary') + '"><meta name="twitter:title" content="' + esc(title) + '"><meta name="twitter:image" content="' + esc(img) + '">' +
-    '<meta name="robots" content="noindex"><script>(function(){var u=' + JSON.stringify(to) + ';if(window.top!==window)location.replace(u);else setTimeout(function(){location.replace(u)},900)})()</script></head>' +
-    '<body style="font-family:sans-serif;text-align:center;padding:40px"><p>' + esc(title) + '</p><p><a href="' + esc(to) + '">खोलें</a></p></body></html>';
+    '<meta name="robots" content="noindex"><script>(function(){var u=' + JSON.stringify(to) + ';if(window.top!==window)location.replace(u);else location.replace(u)})()</script></head>' +
+    '<body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#fff4ee;font-family:sans-serif"><img src="/studio/livecard-stamp-t.png" alt="" width="96" height="96" style="width:96px;height:96px"><noscript><p style="position:fixed;bottom:30px;left:0;right:0;text-align:center"><a href="' + esc(to) + '">' + esc(title) + ' — खोलें</a></p></noscript></body></html>';
 }
 
 (async () => {
