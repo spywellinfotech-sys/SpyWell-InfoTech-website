@@ -1083,22 +1083,22 @@ async function refHome(){
   box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#fff4d6,#ffe1a8);border:1px solid #f0c56a;padding:20px 16px';
   var rt=mk('b','','🎁 Refer & Earn · दोस्त को बुलाओ, कमाओ');rt.style.cssText='display:block;font-size:20px';box.appendChild(rt);
   var u=location.origin+'/studio/?ref='+m.code;
-  var tx=mk('div','k','दोस्त पहली बार पेमेंट करे तो उसके भुगतान का '+m.pct+'% आपके वॉलेट में। वॉलेट से अगला प्लान सस्ता।');tx.style.cssText='margin:8px 0 12px;font-size:14px;line-height:1.5';box.appendChild(tx);
-  var st=mk('div','');st.style.cssText='display:flex;gap:6px;margin-bottom:8px';
-  [['👥','जुड़े',m.joined],['✅','पेमेंट किया',m.paid],['💰','वॉलेट','₹'+m.balance]].forEach(function(p){var c=mk('div','');c.style.cssText='flex:1;background:#fff;border-radius:14px;padding:14px 4px;text-align:center';var n=mk('b','',String(p[2]));n.style.cssText='display:block;font-size:24px;color:#b3141c';c.appendChild(n);c.appendChild(mk('span','k',p[0]+' '+p[1]));st.appendChild(c)});box.appendChild(st);
-  var cd=mk('div','','आपका कोड: '+m.code);cd.style.cssText='text-align:center;font-weight:800;font-size:26px;letter-spacing:3px;background:#fff;border:2px dashed #d4141c;border-radius:14px;padding:16px;color:#7a0a10';box.appendChild(cd);
-  var row=mk('div','');row.style.cssText='display:flex;gap:8px;margin-top:8px';
+  var tx=mk('div','k','दोस्त पहली बार पेमेंट करे तो उसके भुगतान का '+m.pct+'% आपके वॉलेट में। वॉलेट से अगला प्लान सस्ता।');tx.style.cssText='margin:4px 0 6px;font-size:12px;line-height:1.35';box.appendChild(tx);
+  var st=mk('div','');st.style.cssText='display:flex;gap:5px;margin-bottom:6px';
+  [['👥','जुड़े',m.joined],['✅','पेमेंट किया',m.paid],['💰','वॉलेट','₹'+m.balance]].forEach(function(p){var c=mk('div','');c.style.cssText='flex:1;background:#fff;border-radius:10px;padding:5px 2px;text-align:center';var n=mk('b','',String(p[2]));n.style.cssText='display:block;font-size:17px;line-height:1.2;color:#b3141c';c.appendChild(n);var sp=mk('span','k',p[0]+' '+p[1]);sp.style.fontSize='11px';c.appendChild(sp);st.appendChild(c)});box.appendChild(st);
+  var cd=mk('div','','आपका कोड: '+m.code);cd.style.cssText='text-align:center;font-weight:800;font-size:18px;letter-spacing:2px;background:#fff;border:2px dashed #d4141c;border-radius:10px;padding:6px;color:#7a0a10';box.appendChild(cd);
+  var row=mk('div','');row.style.cssText='display:flex;gap:6px;margin-top:6px';
   var wa=mk('a','','💬 WhatsApp पर भेजें');wa.href='https://wa.me/?text='+encodeURIComponent('मैं LiveCard पर अपना लाइव विज़िटिंग कार्ड, वेबसाइट, invitation कार्ड बनाता हूँ।\n\nआप भी बनाइए: '+u+'  (कोड: '+m.code+')');wa.target='_blank';wa.rel='noopener';
-  wa.style.cssText='flex:1;text-align:center;background:#1ea952;color:#fff;border-radius:14px;padding:16px 6px;text-decoration:none;font-weight:800;font-size:16px';
-  var cp=mk('button','alt','🔗 लिंक कॉपी');cp.type='button';cp.style.cssText='margin:0;flex:1;padding:16px 6px;font-size:16px;border-radius:14px';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2000)};
+  wa.style.cssText='flex:1;text-align:center;background:#1ea952;color:#fff;border-radius:10px;padding:9px 6px;text-decoration:none;font-weight:800;font-size:14px';
+  var cp=mk('button','alt','🔗 लिंक कॉपी');cp.type='button';cp.style.cssText='margin:0;flex:1;padding:9px 6px;font-size:14px;border-radius:10px;min-height:0';cp.onclick=async function(){try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2000)};
   row.appendChild(wa);row.appendChild(cp);box.appendChild(row);
-  if(!m.referred_by&&!m.paid&&!m.joined){var q=mk('div','k','किसी दोस्त ने कोड दिया है?');q.style.marginTop='10px';box.appendChild(q);
-    var rw=mk('div','');rw.style.cssText='display:flex;gap:6px;margin-top:4px';var inp=document.createElement('input');inp.placeholder='रेफ़रल कोड';inp.maxLength=10;inp.style.cssText='flex:1;margin:0;text-transform:uppercase';
-    var go=mk('button','','लगाएँ');go.type='button';go.style.cssText='margin:0;width:auto;padding:0 16px';var er=mk('div','e');
+  if(!m.referred_by&&!m.paid&&!m.joined){var q=mk('div','k','किसी दोस्त ने कोड दिया है?');q.style.cssText='margin-top:6px;font-size:12px';box.appendChild(q);
+    var rw=mk('div','');rw.style.cssText='display:flex;gap:6px;margin-top:3px';var inp=document.createElement('input');inp.placeholder='रेफ़रल कोड';inp.maxLength=10;inp.style.cssText='flex:1;margin:0;text-transform:uppercase;padding:7px 10px;font-size:14px';
+    var go=mk('button','','लगाएँ');go.type='button';go.style.cssText='margin:0;width:auto;padding:0 14px;min-height:0;font-size:14px';var er=mk('div','e');
     go.onclick=async function(){er.textContent='';var a=await sb.rpc('studio_ref_apply',{p_code:inp.value});var d=a&&a.data||{};if(d.ok){refHome();return}
       er.textContent={bad_code:'कोड सही नहीं है।',already:'कोड पहले से लगा है।',too_late:'यह कोड सिर्फ़ पेमेंट से पहले लगता है।',self:'अपना कोड नहीं लगा सकते।',off:'अभी रेफ़रल बंद है।'}[d.error]||'लग नहीं पाया।'};
     rw.appendChild(inp);rw.appendChild(go);box.appendChild(rw);box.appendChild(er)}
-  else if(m.referred_by){var rb=mk('div','k','✓ आप किसी के रेफ़रल से जुड़े हैं');rb.style.marginTop='8px';box.appendChild(rb)}
+  else if(m.referred_by){var rb=mk('div','k','✓ आप किसी के रेफ़रल से जुड़े हैं');rb.style.cssText='margin-top:5px;font-size:12px';box.appendChild(rb)}
   var hd=box.firstChild,bd=mk('div','');while(hd.nextSibling)bd.appendChild(hd.nextSibling);
   hd.textContent='';hd.style.cssText='display:flex;align-items:center;gap:8px;cursor:pointer;font-size:15px';
   var h1=mk('span','','🎁 Refer & Earn');h1.style.flex='1';var h2=mk('span','','👥 '+m.joined+' · 💰 ₹'+m.balance);h2.style.cssText='font-size:13px;font-weight:600;color:#7a0a10;background:#fff;border-radius:99px;padding:2px 9px';var h3=mk('span','','▼');h3.style.cssText='color:#b3141c;font-size:13px';
