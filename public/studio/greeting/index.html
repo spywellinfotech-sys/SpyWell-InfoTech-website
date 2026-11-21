@@ -17,6 +17,12 @@ button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;backg
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two button{margin-top:10px}
 [hidden]{display:none!important}
 body.vw .top{display:none}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.rowl{display:flex;align-items:center;gap:10px}.rowl label{margin:6px 0;flex:none}.th span{width:26px!important;height:26px!important}
+#g-em{scrollbar-width:none;flex-wrap:nowrap;overflow-x:auto;gap:3px;padding-bottom:2px;-webkit-overflow-scrolling:touch}#g-em .chip{padding:2px 7px;font-size:18px;flex:none;border-width:1px}
+#msgs .chip{padding:3px 9px;font-size:12px}
+.two button{padding:7px;font-size:13px}
+
 .two .chip{color:var(--wine);text-align:center}.two .chip.on{color:#fff}
 select{width:100%;padding:10px;font:600 15px inherit;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
 /* compact */
@@ -48,14 +54,14 @@ button{padding:9px;font-size:14px;margin-top:6px;border-radius:10px}
 <div id="occw"><label style="margin-top:0">मौक़ा चुनें</label><div class="chips" id="occ"></div></div>
 <div id="ofb" hidden><label style="margin-top:0">ऑफ़र क्या है? (बड़े अक्षरों में दिखेगा)</label><input id="g-ofr" maxlength="80" placeholder="जैसे: 50% तक छूट / ₹100 की बचत / 1 के साथ 1 फ़्री"><label>कब तक वैध (खाली छोड़ सकते हैं)</label><input id="g-val" maxlength="50" placeholder="जैसे: 30 नवंबर तक"></div>
 <div id="oth" hidden><label id="oth-l">मौक़े का नाम / शीर्षक</label><input id="g-h" maxlength="60" placeholder="जैसे: नई दुकान की बधाई / गृह प्रवेश / रिटायरमेंट"><label>चिह्न (emoji)</label><div class="chips" id="g-em"></div></div>
-<label>रंग</label><div class="th" id="th"></div>
+<div class="rowl"><label>रंग</label><div class="th" id="th"></div></div>
 <label>संदेश</label><div class="chips" id="msgs"></div>
 <textarea id="g-msg" rows="2" maxlength="200" placeholder="अपना संदेश भी लिख सकते हैं"></textarea>
-<label>किसके लिए (खाली छोड़ सकते हैं)</label><input id="g-to" maxlength="30" placeholder="जैसे: रमेश जी / सभी ग्राहकों">
+<div id="tow"><label>किसके लिए (खाली छोड़ सकते हैं)</label><input id="g-to" maxlength="30" placeholder="जैसे: रमेश जी / सभी ग्राहकों"></div>
 </div>
 <div class="card">
 <label style="margin-top:0">नीचे आपकी पहचान</label>
-<input id="g-name" maxlength="40" placeholder="आपका नाम"><input id="g-biz" maxlength="50" placeholder="दुकान / कंपनी (खाली छोड़ सकते हैं)" style="margin-top:6px"><input id="g-mob" inputmode="numeric" maxlength="12" placeholder="मोबाइल नंबर" style="margin-top:6px">
+<div class="g2"><input id="g-name" maxlength="40" placeholder="आपका नाम"><input id="g-biz" maxlength="50" placeholder="दुकान / कंपनी"></div><input id="g-mob" inputmode="numeric" maxlength="12" placeholder="मोबाइल नंबर" style="margin-top:5px">
 <div class="two"><button type="button" class="alt" id="g-ph">🖼 अपनी फ़ोटो जोड़ें</button><button type="button" class="alt" id="g-phx" hidden>✕ फ़ोटो हटाएँ</button></div>
 <input type="file" id="g-file" accept="image/*" hidden>
 </div>
@@ -109,7 +115,7 @@ function draw(){
   if(STAMP.complete&&STAMP.naturalWidth){x.drawImage(STAMP,W-230,fy+70,170,170)}
   x.fillStyle='#d4141c';x.fillRect(0,H-70,W,70);x.fillStyle='#fff';x.textAlign='center';x.font='700 38px '+FF;x.fillText('अपना कार्ड बनाइए: www.livecard.in',W/2,H-22);
   $('pv').src=cv.toDataURL('image/jpeg',.9)}
-function build(){$('oth').hidden=!isO();$('ofb').hidden=!isOf();$('occw').hidden=isOf();$('oth-l').textContent=isOf()?'ऑफ़र का शीर्षक':'मौक़े का नाम / शीर्षक';$('sg-g').className='chip'+(isOf()?'':' on');$('sg-o').className='chip'+(isOf()?' on':'');$('g-to').parentNode&&0;var em=$('g-em');em.textContent='';EMS.forEach(function(e){var c=document.createElement('span');c.className='chip'+(ee()===e?' on':'');c.textContent=e;c.onclick=function(){S.e=e;build();draw()};em.appendChild(c)});
+function build(){$('oth').hidden=!isO();$('ofb').hidden=!isOf();$('tow').hidden=isOf();$('occw').hidden=isOf();$('oth-l').textContent=isOf()?'ऑफ़र का शीर्षक':'मौक़े का नाम / शीर्षक';$('sg-g').className='chip'+(isOf()?'':' on');$('sg-o').className='chip'+(isOf()?' on':'');$('g-to').parentNode&&0;var em=$('g-em');em.textContent='';EMS.forEach(function(e){var c=document.createElement('span');c.className='chip'+(ee()===e?' on':'');c.textContent=e;c.onclick=function(){S.e=e;build();draw()};em.appendChild(c)});
   var oc=$('occ');oc.textContent='';var sl=document.createElement('select');sl.id='g-oc';OC.forEach(function(o,i){if(o.offer)return;var op=document.createElement('option');op.value=i;op.textContent=o.n;if(i===S.o)op.selected=true;sl.appendChild(op)});sl.onchange=function(){S.o=+this.value;S.t=0;S.m=0;$('g-msg').value=OC[S.o].m[0];build();draw()};oc.appendChild(sl);
   var th=$('th');th.textContent='';OC[S.o].t.forEach(function(t,i){var s=document.createElement('span');s.className=i===S.t?'on':'';s.style.background='linear-gradient(135deg,'+t[0]+','+t[1]+')';s.onclick=function(){S.t=i;build();draw()};th.appendChild(s)});
   var ms=$('msgs');ms.textContent='';OC[S.o].m.forEach(function(m,i){var c=document.createElement('span');c.className='chip'+(i===S.m?' on':'');c.textContent='संदेश '+(i+1);c.onclick=function(){S.m=i;$('g-msg').value=m;build();draw()};ms.appendChild(c)})}
