@@ -1583,13 +1583,13 @@ async function fnTile(){
       b.onclick=function(){inp.click()};pb.appendChild(b);pb.appendChild(inp)}
     var er=mk('div','');er.style.cssText='color:#b00020;font-size:13px;margin-top:6px';
     pick('📷 कार्ड की फोटो खींचें',true);pick('🖼 गैलरी से चुनें',false);ph.appendChild(pv);ph.appendChild(pb);f.appendChild(ph);
-    var ti=fld('किसका function? (नाम / मौका)','text',e.title,'जैसे: रमेश जी के बेटे की शादी',120);
+    var ti=fld('किसका function? (छोटा नाम, 40 अक्षर तक)','text',e.title,'जैसे: रमेश जी के बेटे की शादी',40);
     var dt=fld('तारीख़','date',e.fdate);var tm=fld('समय (पता हो तो)','time',e.ftime?e.ftime.slice(0,5):'');
     var pl=fld('जगह / पता','text',e.place,'जैसे: राधा गार्डन, बेहट रोड, सहारनपुर',300);var nt=fld('नोट (खाली छोड़ सकते हैं)','text',e.note,'जैसे: साथ चलना है / गिफ्ट ले जाना',500);
     var EVR=[],evbox=mk('div',''),evOn=false;evbox.hidden=true;
     function getEv(){return evOn?EVR.map(function(r){return{title:r.t.value.trim(),date:r.d.value,time:r.m.value||null}}):[]}
     function addEv(t){var row=mk('div','');row.style.cssText='border:1px solid #e7c9c4;border-radius:10px;padding:6px 8px;margin:6px 0;background:#fff';
-      var r={};r.t=document.createElement('input');r.t.type='text';r.t.maxLength=60;r.t.placeholder='कार्यक्रम का नाम';r.t.value=t||'';r.t.style.marginBottom='4px';
+      var r={};r.t=document.createElement('input');r.t.type='text';r.t.maxLength=25;r.t.placeholder='कार्यक्रम का नाम';r.t.value=t||'';r.t.style.marginBottom='4px';
       var g=mk('div','');g.style.cssText='display:flex;gap:6px';r.d=document.createElement('input');r.d.type='date';r.d.style.flex='1';r.m=document.createElement('input');r.m.type='time';r.m.style.flex='1';
       var x=mk('span','','✕');x.style.cssText='cursor:pointer;color:#b00020;font-weight:800;padding:0 4px;align-self:center';x.onclick=function(){EVR=EVR.filter(function(z){return z!==r});row.remove()};
       g.appendChild(r.d);g.appendChild(r.m);g.appendChild(x);row.appendChild(r.t);row.appendChild(g);evbox.appendChild(row);EVR.push(r)}
