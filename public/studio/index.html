@@ -80,7 +80,8 @@ button{min-height:48px;border-radius:12px}
 @keyframes hl-sh{0%{left:-60%}60%,100%{left:130%}}@keyframes hl-tw{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:.95;transform:scale(1.15)}}
 @media (prefers-reduced-motion:reduce){#c-hello,#c-hello *,#c-hello:after{animation:none!important}}
 #c-bill{background:linear-gradient(135deg,#0b5f5a,#17a89e);border:0;color:#fff;box-shadow:0 8px 20px rgba(11,95,90,.35);padding:14px 12px;position:relative;overflow:hidden}#c-bill::after{content:'🏦';position:absolute;right:-8px;top:-14px;font-size:90px;opacity:.1;pointer-events:none}#c-bill .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-bill .sa-i{font-size:30px}#c-bill .sa-h b{display:block;font-size:19px;color:#fff}#c-bill .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}#bl-sum div{background:rgba(255,255,255,.16);border-radius:10px;padding:6px 10px;margin-top:5px;font-size:13px;word-break:break-all}#bl-body .card button{white-space:nowrap}
-#c-loc>div>div>.k{color:rgba(255,255,255,.92)!important}html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-transform:translateZ(0)}#c-sendaddr{background:linear-gradient(135deg,#3a1d8f,#7b5cf0);border:0;color:#fff;box-shadow:0 8px 20px rgba(91,60,220,.35);padding:14px 12px;position:relative;overflow:hidden}
+#c-loc>div>div>.k{color:rgba(255,255,255,.92)!important}#c-fn{background:linear-gradient(135deg,#b4231a,#f0662b);border:0;color:#fff;box-shadow:0 8px 20px rgba(180,35,26,.3);padding:14px 12px;position:relative;overflow:hidden}#c-fn .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-fn .sa-i{font-size:30px}#c-fn .sa-h b{display:block;font-size:19px;color:#fff}#c-fn .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}#fn-sum div{background:rgba(255,255,255,.18);border-radius:10px;padding:6px 10px;margin-top:5px;font-size:13px}.fnb{display:inline-block;border-radius:99px;padding:2px 9px;font-size:11px;font-weight:800;color:#fff;margin-left:6px;vertical-align:middle}
+html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-transform:translateZ(0)}#c-sendaddr{background:linear-gradient(135deg,#3a1d8f,#7b5cf0);border:0;color:#fff;box-shadow:0 8px 20px rgba(91,60,220,.35);padding:14px 12px;position:relative;overflow:hidden}
 #c-sendaddr::after{content:'📨';position:absolute;right:-8px;top:-14px;font-size:90px;opacity:.1;pointer-events:none}
 #c-sendaddr .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-sendaddr .sa-i{font-size:30px}#c-sendaddr .sa-h b{display:block;font-size:19px;color:#fff}#c-sendaddr .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}
 #sa-body>.card{margin:10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.2);border:0;color:var(--ink)}#sa-body>.card button{white-space:nowrap}#sa-n{flex:none;font-size:12px;font-weight:700;color:#3a1d8f;background:#fff;border-radius:99px;padding:3px 10px}#sa-n:empty{display:none}#sa-sum{margin:8px 4px 0}#sa-sum div{background:rgba(255,255,255,.16);border-radius:10px;padding:6px 10px;margin-top:5px;font-size:13px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -217,6 +218,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div id="sa-body" hidden><div class="card" id="c-addr"></div>
 <div class="card" id="c-addr2"></div></div></div>
 <div class="card" id="c-bill"></div>
+<div class="card" id="c-fn"></div>
 <div class="card" id="c-loc" style="padding:10px 14px"></div>
 <div class="card" id="c-inv" hidden></div>
 
@@ -686,7 +688,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at,published_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();billTile();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
+  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();billTile();fnTile();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -1326,7 +1328,7 @@ var TABMAP=null;
 var CURT=null;var H0=location.hash,ADMR=0;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-lb'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-bill'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'saved'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-lb'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-bill'),'home'],[$('c-fn'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'saved'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me','adm'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden)||(t==='adm'&&$('tb-adm').hidden))t='home';
   if(t==='adm'){var ca=$('c-adm');if(!ca.firstChild){var fa=document.createElement('iframe');fa.src='/studio/admin/?embed=1';fa.id='adm-fr';fa.scrolling='no';fa.style.cssText='width:100%;height:900px;border:0;display:block';ca.appendChild(fa)}}
@@ -1438,6 +1440,100 @@ async function addrTile(){
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};ADH={cj:cj,name:cj.name||pd.full_name||'',mob:cj.mobile||pd.phone||''};
   drawAddr(false);drawAddr(false,'office');addrSync();locTile()}
 var BILL=null;
+var FN=null,FNOPEN=false,FNED=null,FNPHOTO=null,FNURL={};
+function fnYmd(d){var m=d.getMonth()+1,x=d.getDate();return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(x<10?'0':'')+x}
+function fnDiff(ds){return Math.round((new Date(ds+'T00:00:00')-new Date(fnYmd(new Date())+'T00:00:00'))/864e5)}
+function fnBadge(ds){var d=fnDiff(ds);if(d<0)return['बीत गया','#999'];if(d===0)return['आज','#d4141c'];if(d===1)return['कल','#f08a00'];if(d<=7)return[d+' दिन बाद','#2563eb'];return[d+' दिन बाद','#6b7280']}
+function fnDate(ds){var D=new Date(ds+'T00:00:00'),W=['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'],M=['जन','फ़र','मार्च','अप्रै','मई','जून','जुला','अग','सित','अक्टू','नव','दिस'];return W[D.getDay()]+', '+D.getDate()+' '+M[D.getMonth()]+' '+D.getFullYear()}
+function fnTm(t){if(!t)return'';var h=+t.slice(0,2),m=t.slice(3,5);return (h%12||12)+':'+m+' '+(h<12?'सुबह':h<16?'दोपहर':h<19?'शाम':'रात')}
+function fnIcs(e){
+  function esc(t){return String(t||'').replace(/\\/g,'\\\\').replace(/;/g,'\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n')}
+  function f2(n){return(n<10?'0':'')+n}
+  function lt(d){return d.getFullYear()+f2(d.getMonth()+1)+f2(d.getDate())+'T'+f2(d.getHours())+f2(d.getMinutes())+'00'}
+  var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//LiveCard//Functions//HI','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:'+e.id+'@livecard.in','DTSTAMP:'+lt(new Date()).replace(/T/,'T')+'Z'.replace('Z','')];
+  L[L.length-1]='DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+  var al=function(tr,t){L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc(t),'TRIGGER:'+tr,'END:VALARM')};
+  var nm='🎊 '+e.title;
+  if(e.ftime){var st=new Date(e.fdate+'T'+e.ftime.slice(0,5)+':00'),en=new Date(st.getTime()+2*3600e3);L.push('DTSTART:'+lt(st),'DTEND:'+lt(en));
+    L.push('SUMMARY:'+esc(nm));if(e.place)L.push('LOCATION:'+esc(e.place));L.push('DESCRIPTION:'+esc((e.note||'')+(e.note?'\n':'')+'LiveCard में सेव किया गया'));
+    al('-P1D','कल function है: '+e.title);al('-PT3H','आज function है: '+e.title+' — '+fnTm(e.ftime)+(e.place?' · '+e.place:''));al('-PT1H','1 घंटे बाद: '+e.title)}
+  else{var d0=new Date(e.fdate+'T00:00:00'),d1=new Date(d0.getTime()+864e5+3600e3);L.push('DTSTART;VALUE=DATE:'+lt(d0).slice(0,8),'DTEND;VALUE=DATE:'+lt(d1).slice(0,8));
+    L.push('SUMMARY:'+esc(nm));if(e.place)L.push('LOCATION:'+esc(e.place));L.push('DESCRIPTION:'+esc((e.note||'')+(e.note?'\n':'')+'LiveCard में सेव किया गया'));
+    al('-PT15H','कल function है: '+e.title);al('PT8H','आज function है: '+e.title+(e.place?' · '+e.place:''))}
+  L.push('END:VEVENT','END:VCALENDAR');return L.join('\r\n')}
+function fnAddCal(e){var b=new Blob([fnIcs(e)],{type:'text/calendar;charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='function-'+e.fdate+'.ics';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(u)},4000)}
+function fnResize(file,cb){var im=new Image(),u=URL.createObjectURL(file);im.onload=function(){var M=1100,w=im.width,h=im.height,k=Math.min(1,M/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*k);c.height=Math.round(h*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){cb(b)},'image/jpeg',.72)};im.onerror=function(){URL.revokeObjectURL(u);cb(null)};im.src=u}
+async function fnSign(path){if(!path)return'';if(FNURL[path]&&FNURL[path].t>Date.now())return FNURL[path].u;try{var r=await sb.storage.from('fn-photos').createSignedUrl(path,3600);if(r&&r.data){FNURL[path]={u:r.data.signedUrl,t:Date.now()+3000e3};return r.data.signedUrl}}catch(e){}return''}
+async function fnTile(){
+  var box=$('c-fn');if(!box)return;
+  if(FN===null){var ok=false;try{var r=await sb.from('studio_functions').select('*').eq('user_id',ME.id).order('fdate',{ascending:true}).order('ftime',{ascending:true,nullsFirst:true});if(r&&!r.error){FN=r.data||[];ok=true}}catch(e){}
+    if(!ok){box.textContent='';var rt=mk('div','');rt.style.cssText='display:flex;align-items:center;gap:10px';rt.appendChild(mk('span','','🎊')).style.fontSize='26px';var rb=mk('b','','Saved Invitations');rb.style.cssText='flex:1;font-size:17px';rt.appendChild(rb);var bt=mk('button','','🔄 दोबारा लोड');bt.type='button';bt.style.cssText='flex:none;width:auto;margin:0;height:36px;min-height:0;padding:0 12px;background:#fff;color:#b4231a;border:0;font-weight:800';bt.onclick=function(){fnTile()};rt.appendChild(bt);box.appendChild(rt);return}}
+  var L=FN,open=FNOPEN||FNED!==null;box.textContent='';
+  var td=fnYmd(new Date()),up=L.filter(function(e){return e.fdate>=td}),past=L.filter(function(e){return e.fdate<td}).reverse();
+  var hot=up.filter(function(e){return fnDiff(e.fdate)<=1}).length;
+  var hd=mk('div','sa-h');hd.style.cursor='pointer';hd.appendChild(mk('span','sa-i','🎊'));
+  var tt=mk('div','');tt.style.cssText='flex:1;min-width:0';tt.appendChild(mk('b','','Saved Invitations'));tt.appendChild(mk('span','','function की फोटो, तारीख़ और जगह सेव करें — reminder पाएँ'));hd.appendChild(tt);
+  var nn=mk('span','',up.length?(hot?'🔔 ':'')+up.length+' आगे':'');nn.style.cssText='flex:none;font-size:12px;font-weight:700;color:#b4231a;background:#fff;border-radius:99px;padding:3px 10px';if(!up.length)nn.hidden=true;hd.appendChild(nn);
+  var ar=mk('span','',open?'▴':'▾');ar.style.fontSize='16px';hd.appendChild(ar);box.appendChild(hd);
+  var sm=mk('div','');sm.id='fn-sum';sm.style.cssText='margin:8px 4px 0';sm.hidden=open;box.appendChild(sm);
+  up.slice(0,2).forEach(function(e){var d=mk('div','','🎊 '+e.title+' · '+fnDate(e.fdate).split(',')[1].trim()+(e.ftime?' · '+fnTm(e.ftime):''));var b=fnBadge(e.fdate),sp=mk('span','fnb',b[0]);sp.style.background=b[1];d.appendChild(sp);sm.appendChild(d)});
+  if(!up.length)sm.appendChild(mk('div','','कोई function सेव नहीं है — दबाकर जोड़ें'));
+  var wrap=mk('div','');wrap.hidden=!open;box.appendChild(wrap);
+  hd.onclick=function(){wrap.hidden=!wrap.hidden;sm.hidden=!wrap.hidden;FNOPEN=!wrap.hidden;ar.textContent=wrap.hidden?'▾':'▴'};
+  function cardEl(){var c=mk('div','card');c.style.cssText='margin:10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.2);border:0;color:var(--ink);padding:10px 12px';wrap.appendChild(c);return c}
+  var hint=mk('div','','📅 "Calendar" दबाने से फोन में reminder बन जाता है — कल और function के दिन बजेगा, ऐप बंद हो तब भी।');hint.style.cssText='font-size:12px;margin:8px 4px 0;opacity:.95';wrap.appendChild(hint);
+  function row(e){
+    var c=cardEl(),r1=mk('div','');r1.style.cssText='display:flex;gap:10px';
+    var th=document.createElement('div');th.style.cssText='flex:none;width:64px;height:84px;border-radius:10px;background:#fbe9e7;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;cursor:pointer';th.textContent='🎊';
+    if(e.photo){fnSign(e.photo).then(function(u){if(!u)return;th.textContent='';var im=document.createElement('img');im.src=u;im.alt='';im.style.cssText='width:100%;height:100%;object-fit:cover';th.appendChild(im);th.onclick=function(){var ov=mk('div','');ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99999;display:flex;align-items:center;justify-content:center;padding:12px';var big=document.createElement('img');big.src=u;big.style.cssText='max-width:100%;max-height:100%;border-radius:10px';ov.appendChild(big);ov.onclick=function(){ov.remove()};document.body.appendChild(ov)}})}
+    r1.appendChild(th);
+    var inf=mk('div','');inf.style.cssText='flex:1;min-width:0;font-size:13px;line-height:1.4';
+    var t=mk('b','',e.title);t.style.cssText='font-size:15px;display:block';var bd=fnBadge(e.fdate),sp=mk('span','fnb',bd[0]);sp.style.background=bd[1];t.appendChild(sp);inf.appendChild(t);
+    inf.appendChild(mk('div','','📆 '+fnDate(e.fdate)+(e.ftime?' · ⏰ '+fnTm(e.ftime):'')));
+    if(e.place)inf.appendChild(mk('div','','📍 '+e.place));if(e.note){var nt=mk('div','','📝 '+e.note);nt.style.color='#666';inf.appendChild(nt)}
+    r1.appendChild(inf);c.appendChild(r1);
+    var rw=mk('div','');rw.style.cssText='display:flex;gap:6px;margin-top:8px';
+    var bs='height:36px;min-height:0;margin:0;padding:0 10px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;font-weight:700;box-sizing:border-box;white-space:nowrap;';
+    var cb=mk('button','','📅 Calendar');cb.type='button';cb.style.cssText=bs+'flex:1;background:#b4231a;color:#fff;border:0';cb.onclick=function(){fnAddCal(e);cb.textContent='✓ बन गया';setTimeout(function(){cb.textContent='📅 Calendar'},2500)};rw.appendChild(cb);
+    if(e.place){var mp=mk('a','','📍');mp.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.place);mp.target='_blank';mp.rel='noopener';mp.setAttribute('aria-label','Map');mp.style.cssText=bs+'flex:none;width:44px;background:#e8f0fe;color:#1a56db;text-decoration:none';rw.appendChild(mp)}
+    var ed=mk('button','alt','✏️');ed.type='button';ed.setAttribute('aria-label','बदलें');ed.style.cssText=bs+'flex:none;width:44px';ed.onclick=function(){FNED=e.id;FNPHOTO=null;FNOPEN=true;fnTile()};
+    var dl=mk('button','alt','🗑');dl.type='button';dl.setAttribute('aria-label','डिलीट');dl.style.cssText=bs+'flex:none;width:44px;color:#b00020';
+    dl.onclick=async function(){if(!confirm('यह function हटाना है?'))return;var q=await sb.from('studio_functions').delete().eq('id',e.id);if(q.error){alert('डिलीट नहीं हो पाया।');return}if(e.photo){try{await sb.storage.from('fn-photos').remove([e.photo])}catch(x){}}FN=FN.filter(function(z){return z.id!==e.id});fnTile()};
+    rw.appendChild(ed);rw.appendChild(dl);c.appendChild(rw)}
+  function form(e){
+    var c=cardEl(),f=mk('div','');var isNew=!e.id;
+    function fld(lbl,type,val,ph,mx){f.appendChild(mk('label','',lbl));var x=document.createElement('input');x.type=type;if(mx)x.maxLength=mx;x.placeholder=ph||'';x.value=val||'';f.appendChild(x);return x}
+    var ph=mk('div','');ph.style.cssText='display:flex;gap:8px;align-items:center;margin-bottom:6px';
+    var pv=document.createElement('div');pv.style.cssText='flex:none;width:64px;height:84px;border-radius:10px;background:#fbe9e7;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden';pv.textContent='🎊';
+    function showPv(u){pv.textContent='';var im=document.createElement('img');im.src=u;im.alt='';im.style.cssText='width:100%;height:100%;object-fit:cover';pv.appendChild(im)}
+    if(e.photo)fnSign(e.photo).then(function(u){if(u&&!FNPHOTO)showPv(u)});
+    var pb=mk('div','');pb.style.cssText='flex:1;display:flex;flex-direction:column;gap:6px';
+    function pick(lbl,cap){var b=mk('button','alt',lbl);b.type='button';b.style.cssText='margin:0;height:38px;min-height:0;font-size:13px;font-weight:700';var inp=document.createElement('input');inp.type='file';inp.accept='image/*';if(cap)inp.setAttribute('capture','environment');inp.style.display='none';
+      inp.onchange=function(){var fl=inp.files&&inp.files[0];if(!fl)return;fnResize(fl,function(bl){if(!bl){er.textContent='फोटो नहीं खुली, दूसरी चुनें';return}FNPHOTO=bl;showPv(URL.createObjectURL(bl))})};
+      b.onclick=function(){inp.click()};pb.appendChild(b);pb.appendChild(inp)}
+    var er=mk('div','');er.style.cssText='color:#b00020;font-size:13px;margin-top:6px';
+    pick('📷 कार्ड की फोटो खींचें',true);pick('🖼 गैलरी से चुनें',false);ph.appendChild(pv);ph.appendChild(pb);f.appendChild(ph);
+    var ti=fld('किसका function? (नाम / मौका)','text',e.title,'जैसे: रमेश जी के बेटे की शादी',120);
+    var dt=fld('तारीख़','date',e.fdate);var tm=fld('समय (पता हो तो)','time',e.ftime?e.ftime.slice(0,5):'');
+    var pl=fld('जगह / पता','text',e.place,'जैसे: राधा गार्डन, बेहट रोड, सहारनपुर',300);var nt=fld('नोट (खाली छोड़ सकते हैं)','text',e.note,'जैसे: साथ चलना है / गिफ्ट ले जाना',500);
+    var sv=mk('button','','💾 सेव करें');sv.type='button';sv.style.marginTop='10px';
+    sv.onclick=async function(){er.textContent='';var o={title:ti.value.trim(),fdate:dt.value,ftime:tm.value||null,place:pl.value.trim()||null,note:nt.value.trim()||null};
+      if(!o.title){er.textContent='function का नाम लिखें';return}if(!o.fdate){er.textContent='तारीख़ चुनें';return}
+      sv.disabled=true;var id=e.id||(crypto.randomUUID?crypto.randomUUID():null),path=e.photo||null;
+      if(FNPHOTO){var np=ME.id+'/'+(id||Date.now())+'-'+Date.now()+'.jpg';var up2=await sb.storage.from('fn-photos').upload(np,FNPHOTO,{contentType:'image/jpeg',upsert:false});
+        if(up2.error){sv.disabled=false;er.textContent='फोटो अपलोड नहीं हुई। दोबारा कोशिश करें।';return}
+        if(e.photo){try{await sb.storage.from('fn-photos').remove([e.photo])}catch(x){}}path=np}
+      o.photo=path;var q;if(isNew){var row0=Object.assign({user_id:ME.id},o);if(id)row0.id=id;q=await sb.from('studio_functions').insert(row0).select().single()}else q=await sb.from('studio_functions').update(o).eq('id',e.id).select().single();
+      sv.disabled=false;if(q.error||!q.data){er.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।';return}
+      FN=FN.filter(function(z){return z.id!==q.data.id}).concat([q.data]).sort(function(a,b){return (a.fdate+(a.ftime||''))<(b.fdate+(b.ftime||''))?-1:1});FNED=null;FNPHOTO=null;FNOPEN=true;fnTile();
+      if(isNew&&confirm('फोन के Calendar में reminder जोड़ें?\n(कल और function के दिन याद दिलाएगा)'))fnAddCal(q.data)};
+    f.appendChild(er);f.appendChild(sv);var cn=mk('button','alt','रद्द करें');cn.type='button';cn.onclick=function(){FNED=null;FNPHOTO=null;fnTile()};f.appendChild(cn);c.appendChild(f)}
+  if(FNED==='new')form({});
+  up.forEach(function(e){if(FNED===e.id)form(e);else row(e)});
+  if(FNED===null){var am=mk('button','','➕ नया Invitation / function जोड़ें');am.type='button';am.style.cssText='width:100%;margin:10px 0 0;background:#fff;color:#b4231a;border:0;font-weight:800';am.onclick=function(){FNED='new';FNPHOTO=null;FNOPEN=true;fnTile()};wrap.appendChild(am)}
+  if(past.length){var pd=document.createElement('details');pd.style.cssText='margin-top:10px;background:rgba(255,255,255,.16);border-radius:10px;padding:8px 10px';var ps=document.createElement('summary');ps.textContent='पुराने function ('+past.length+')';ps.style.cssText='cursor:pointer;font-weight:700;font-size:13px';pd.appendChild(ps);wrap.appendChild(pd);
+    past.forEach(function(e){if(FNED===e.id){form(e);return}var d=mk('div','','🎊 '+e.title+' · '+fnDate(e.fdate).split(',')[1].trim());d.style.cssText='font-size:12px;margin-top:6px;display:flex;justify-content:space-between;gap:8px';var x=mk('span','','🗑');x.style.cursor='pointer';x.onclick=async function(){if(!confirm('हटाना है?'))return;var q=await sb.from('studio_functions').delete().eq('id',e.id);if(q.error)return;if(e.photo){try{await sb.storage.from('fn-photos').remove([e.photo])}catch(z){}}FN=FN.filter(function(z){return z.id!==e.id});fnTile()};d.appendChild(x);pd.appendChild(d)})}
+}
 var BILL=null,BILLOPEN=false,BILLED=-1,BILLMAX=5;
 function billNorm(d){d=d||{};if(Array.isArray(d.items))return d.items;if(d.acc||d.upi||d.gst||d.baddr||d.bank||d.name)return [d];return []}
 async function billSave(list){var q=await sb.from('studio_billing').upsert({user_id:ME.id,d:{items:list},updated_at:new Date().toISOString()});return !q.error}
