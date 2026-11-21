@@ -83,6 +83,8 @@
   window.I18N = { LANGS: LANGS, tr: tr, setLang: setLang, get lang() { return cur; }, apply: applyAll };
   function reveal() { var st = document.getElementById('i18n-hide'); if (st) st.remove(); }
   if (cur !== 'hi') { try { var hs = document.createElement('style'); hs.id = 'i18n-hide'; hs.textContent = 'body{visibility:hidden}'; (document.head || document.documentElement).appendChild(hs); setTimeout(reveal, 1500); } catch (e) { } }
+  /* keyboard: let the person switch Hindi/English freely in every field */
+  document.addEventListener('focusin', function (e) { var t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA') && t.getAttribute('lang') === null) { t.setAttribute('lang', ''); if (!t.getAttribute('autocapitalize') && t.type !== 'email') t.setAttribute('autocapitalize', 'sentences'); } }, true);
   function init() { document.documentElement.lang = cur; document.documentElement.dir = LANGS[cur][1]; picker(); applyAll(); start(); reveal(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
