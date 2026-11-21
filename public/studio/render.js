@@ -1006,7 +1006,7 @@
   (function () {
     var SEL = 'img.ph,img.pf-ph,img.bz-ph,img.sr-lg,img.pf-lg,img.bz-lg';
     function stamp(img) {
-      if (img.__lcs || !img.closest || !img.closest('.sr-vc,.sr-site')) return;
+      if (img.__lcs || /\/dyname\/logo/.test(img.src) || !img.closest || !img.closest('.sr-vc,.sr-site')) return;
       img.__lcs = 1;
       var run = function () {
         var w = img.offsetWidth || parseFloat(img.style.width) || 0, h = img.offsetHeight || w;
