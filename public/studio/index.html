@@ -81,6 +81,7 @@ button{min-height:48px;border-radius:12px}
 @media (prefers-reduced-motion:reduce){#c-hello,#c-hello *,#c-hello:after{animation:none!important}}
 #c-bill{background:linear-gradient(135deg,#0b5f5a,#17a89e);border:0;color:#fff;box-shadow:0 8px 20px rgba(11,95,90,.35);padding:14px 12px;position:relative;overflow:hidden}#c-bill::after{content:'🏦';position:absolute;right:-8px;top:-14px;font-size:90px;opacity:.1;pointer-events:none}#c-bill .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-bill .sa-i{font-size:30px}#c-bill .sa-h b{display:block;font-size:19px;color:#fff}#c-bill .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}#bl-sum div{background:rgba(255,255,255,.16);border-radius:10px;padding:6px 10px;margin-top:5px;font-size:13px;word-break:break-all}#bl-body .card button{white-space:nowrap}
 #c-loc>div>div>.k{color:rgba(255,255,255,.92)!important}#c-fn{background:linear-gradient(135deg,#b4231a,#f0662b);border:0;color:#fff;box-shadow:0 8px 20px rgba(180,35,26,.3);padding:14px 12px;position:relative;overflow:hidden}#c-fn .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-fn .sa-i{font-size:30px}#c-fn .sa-h b{display:block;font-size:19px;color:#fff}#c-fn .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}#fn-sum div{background:rgba(255,255,255,.18);border-radius:10px;padding:6px 10px;margin-top:5px;font-size:13px}.fnb{display:inline-block;border-radius:99px;padding:2px 9px;font-size:11px;font-weight:800;color:#fff;margin-left:6px;vertical-align:middle}
+#c-plan{background:linear-gradient(135deg,#0f3d91,#2f6fe4);border:0;color:#fff;box-shadow:0 8px 20px rgba(15,61,145,.3);padding:12px 14px}#c-plan .pl-h{display:flex;align-items:center;justify-content:space-between;gap:8px}#c-plan .pl-h b{font-size:17px}#c-plan .pl-h span{font-size:12px;opacity:.9}#c-plan .pl-r{background:rgba(255,255,255,.16);border-radius:12px;padding:8px 10px;margin-top:7px;font-size:13px;display:flex;align-items:center;gap:8px}#c-plan .pl-r>div{flex:1;min-width:0}#c-plan .pl-r a,#c-plan .pl-r button{flex:none;width:auto;margin:0;height:34px;min-height:0;padding:0 12px;border:0;border-radius:10px;background:#fff;color:#0f3d91;font-weight:800;font-size:13px;display:flex;align-items:center;text-decoration:none}
 html{scroll-behavior:smooth}body{-webkit-overflow-scrolling:touch}.card{-webkit-transform:translateZ(0)}#c-sendaddr{background:linear-gradient(135deg,#3a1d8f,#7b5cf0);border:0;color:#fff;box-shadow:0 8px 20px rgba(91,60,220,.35);padding:14px 12px;position:relative;overflow:hidden}
 #c-sendaddr::after{content:'📨';position:absolute;right:-8px;top:-14px;font-size:90px;opacity:.1;pointer-events:none}
 #c-sendaddr .sa-h{display:flex;align-items:center;gap:10px;padding:0 4px 2px}#c-sendaddr .sa-i{font-size:30px}#c-sendaddr .sa-h b{display:block;font-size:19px;color:#fff}#c-sendaddr .sa-h span:not(.sa-i){display:block;font-size:13px;opacity:.92}
@@ -203,6 +204,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="ok" id="pf-ok2"></div>
 </form>
 <div id="c-hello"><b><span class="hw">👋</span> Welcome<span id="hl-n"></span></b><small>Your Identity. Your Digital Card.</small><button type="button" id="hl-ref" hidden style="position:relative;z-index:2;display:block;width:100%;text-align:center;margin:12px 0 0;padding:12px 16px;min-height:0;border:0;border-radius:14px;background:#fff;color:#7a0a10;font-weight:800;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.25)">🎁 Refer &amp; Earn</button><i style="right:16px;top:10px">✨</i><i style="right:52px;top:34px;animation-delay:.7s;font-size:12px">✨</i><i style="right:24px;bottom:8px;animation-delay:1.3s;font-size:13px">⭐</i></div>
+<div class="card" id="c-plan" hidden></div>
 <div class="card" id="c-welcome" hidden style="background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff"><b style="font-size:18px">🎉 स्वागत है! अपना डिजिटल कार्ड बनाइए</b>
 <div style="margin-top:8px;font-size:15px">1️⃣ अपनी जानकारी भरें<br>2️⃣ कार्ड प्रकाशित करें<br>3️⃣ WhatsApp पर शेयर करें और QR बाँटें</div>
 <button type="button" id="wl-go" style="background:#f59a1a;color:#7a0a10;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
@@ -1328,7 +1330,7 @@ var TABMAP=null;
 var CURT=null;var H0=location.hash,ADMR=0;
 function setTab(t,nopush){
   if(!TABMAP){var dc=$('v-dash').children;TABMAP=[];
-    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-lb'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-bill'),'home'],[$('c-fn'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'saved'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
+    var items=[[$('d-name').closest('.card'),'me'],[$('c-hello'),'home'],[$('c-plan'),'home'],[$('c-welcome'),'home'],[$('c-qa'),'home'],[$('c-my'),'home'],[$('c-plans'),'me'],[$('c-ref'),'home'],[$('c-lb'),'home'],[$('c-inv'),'home'],[$('c-insall'),'home'],[$('c-sendaddr'),'home'],[$('c-addr'),'home'],[$('c-addr2'),'home'],[$('c-bill'),'home'],[$('c-fn'),'home'],[$('c-loc'),'home'],[$('c-enq'),'home'],[$('c-uns'),'home'],[$('c-bc'),'saved'],[$('c-chat'),'home'],[$('c-note'),'me'],[$('c-new'),'me'],[$('c-pick'),'me'],[$('c-disc'),'disc'],[$('c-dir'),'dir'],[$('c-adm'),'adm'],[$('c-saved'),'saved'],[$('d-list')&&$('d-list').parentNode,'none'],[$('d-act')&&$('d-act').parentNode,'none'],[$('c-sub'),'me'],[$('v-prof'),'me'],[$('c-apps'),'me'],[$('c-sup'),'me'],[$('out'),'me']];
     items.forEach(function(x){if(x[0])TABMAP.push(x)})}
   if(t==='disc')t=$('tb-dir').hidden?'home':'dir';if(['home','dir','saved','me','adm'].indexOf(t)<0||(t==='dir'&&$('tb-dir').hidden)||(t==='adm'&&$('tb-adm').hidden))t='home';
   if(t==='adm'){var ca=$('c-adm');if(!ca.firstChild){var fa=document.createElement('iframe');fa.src='/studio/admin/?embed=1';fa.id='adm-fr';fa.scrolling='no';fa.style.cssText='width:100%;height:900px;border:0;display:block';ca.appendChild(fa)}}
@@ -1440,6 +1442,26 @@ async function addrTile(){
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',ME.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};ADH={cj:cj,name:cj.name||pd.full_name||'',mob:cj.mobile||pd.phone||''};
   drawAddr(false);drawAddr(false,'office');addrSync();locTile()}
 var BILL=null;
+async function planTile(){
+  var box=$('c-plan');if(!box)return;
+  try{
+    var now=new Date(),td=fnYmd(now),W=['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'],M=['जन','फ़र','मार्च','अप्रै','मई','जून','जुला','अग','सित','अक्टू','नव','दिस'];
+    var fnT=(FN||[]).filter(function(e){return e.fdate===td}),fnN=(FN||[]).filter(function(e){return fnDiff(e.fdate)===1});
+    var eod=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59);var fu=[];
+    try{var r=await sb.from('studio_followups').select('id,name,mobile,due_at').eq('status','open').eq('kind','task').lte('due_at',eod.toISOString()).order('due_at',{ascending:true}).limit(50);if(r&&!r.error)fu=r.data||[]}catch(e){}
+    box.textContent='';
+    var h=mk('div','pl-h');h.appendChild(mk('b','','📋 आज का प्लान'));h.appendChild(mk('span','',W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]));box.appendChild(h);
+    var n=0;
+    fnT.forEach(function(e){n++;var r1=mk('div','pl-r'),d=mk('div','');d.appendChild(mk('b','','🎊 आज function: '+e.title));d.appendChild(mk('div','',(e.ftime?'⏰ '+fnTm(e.ftime)+' ':'')+(e.place?'📍 '+e.place:'')));r1.appendChild(d);
+      if(e.place){var a=mk('a','','📍 Map');a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.place);a.target='_blank';a.rel='noopener';r1.appendChild(a)}box.appendChild(r1)});
+    fnN.forEach(function(e){n++;var r1=mk('div','pl-r'),d=mk('div','');d.appendChild(mk('b','','🔔 कल function: '+e.title));d.appendChild(mk('div','',(e.ftime?'⏰ '+fnTm(e.ftime)+' ':'')+(e.place?'📍 '+e.place:'')));r1.appendChild(d);
+      var b=mk('button','','खोलें');b.type='button';b.onclick=function(){FNOPEN=true;fnTile();var c=$('c-fn');if(c)c.scrollIntoView({behavior:'smooth'})};r1.appendChild(b);box.appendChild(r1)});
+    if(fu.length){n++;var od=fu.filter(function(x){return new Date(x.due_at)<new Date(now.getFullYear(),now.getMonth(),now.getDate())}).length;
+      var r2=mk('div','pl-r'),d2=mk('div','');d2.appendChild(mk('b','','📞 Follow-up: '+fu.length+' बाकी'+(od?' ('+od+' पुराने)':'')));d2.appendChild(mk('div','',fu.slice(0,3).map(function(x){return x.name||x.mobile||'—'}).join(', ')+(fu.length>3?' …':'')));r2.appendChild(d2);
+      var b2=mk('button','','देखें');b2.type='button';b2.onclick=function(){setTab('saved')};r2.appendChild(b2);box.appendChild(r2)}
+    if(!n){var e0=mk('div','pl-r');e0.appendChild(mk('div','','🎉 आज कोई function या follow-up नहीं है। अपना कार्ड शेयर करें!'));box.appendChild(e0)}
+    box.hidden=false}catch(e){box.hidden=true}
+}
 var FN=null,FNOPEN=false,FNED=null,FNPHOTO=null,FNURL={};
 function fnYmd(d){var m=d.getMonth()+1,x=d.getDate();return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(x<10?'0':'')+x}
 function fnDiff(ds){return Math.round((new Date(ds+'T00:00:00')-new Date(fnYmd(new Date())+'T00:00:00'))/864e5)}
@@ -1476,6 +1498,7 @@ async function fnTile(){
       if(q2.data){FN.push(q2.data);added++}}
     FN.sort(function(a,b){return (a.fdate+(a.ftime||''))<(b.fdate+(b.ftime||''))?-1:1});
     if(added){FNOPEN=true;setTimeout(function(){alert('✓ '+added+' function "Saved Invitations" में सेव हो गया।\nअब 📅 Calendar दबाकर reminder लगा लें।')},300)}}}catch(e){}
+  planTile();
   var L=FN,open=FNOPEN||FNED!==null;box.textContent='';
   var td=fnYmd(new Date()),up=L.filter(function(e){return e.fdate>=td}),past=L.filter(function(e){return e.fdate<td}).reverse();
   var hot=up.filter(function(e){return fnDiff(e.fdate)<=1}).length;
