@@ -80,9 +80,9 @@ function createForm(){
 
 /* ---------- tabs ---------- */
 function drawTabs(){
-  var EMPO=O&&O.role==='employee',MGR=O&&O.role==='manager';var T=MGR?[['over','📊 Overview'],['me','👤 मेरा पैनल'],['mylead','📨 मेरे Leads'],['emp','👥 टीम'],['ana','📈 Analytics']]:EMPO?[['me','👤 मेरा पैनल'],['mylead','📨 मेरे Leads'],['co','🏢 कंपनी']]:[['over','📊 Overview'],['me','👤 मेरा पैनल'],['mylead','📨 मेरे Leads'],['emp','👥 कर्मचारी'],['cards','🪪 कार्ड'],['ana','📈 Analytics'],['brand','🎨 Brand'],['site','🌐 Website'],['enq','📨 Enquiries'],['log','🧾 Audit']];if(ISADM&&!EMPO)T.push(['adm','🛡 Super Admin']);
+  var EMPO=O&&O.role==='employee',MGR=O&&O.role==='manager';var T=MGR?[['over','📊 Overview'],['me','👤 मेरा पैनल'],['mylead','📨 मेरे Leads'],['emp','👥 टीम'],['loc','📍 Location'],['ana','📈 Analytics']]:EMPO?[['me','👤 मेरा पैनल'],['mylead','📨 मेरे Leads'],['co','🏢 कंपनी']]:[['over','📊 Overview'],['me','👤 मेरा पैनल'],['mylead','📨 मेरे Leads'],['emp','👥 कर्मचारी'],['cards','🪪 कार्ड'],['loc','📍 Location'],['ana','📈 Analytics'],['brand','🎨 Brand'],['site','🌐 Website'],['enq','📨 Enquiries'],['log','🧾 Audit']];if(ISADM&&!EMPO)T.push(['adm','🛡 Super Admin']);
   tabsEl.textContent='';tabsEl.hidden=false;T.forEach(function(t){var b=mk('button',TAB===t[0]?'on':'',t[1]);b.type='button';b.onclick=function(){TAB=t[0];drawTabs();show()};tabsEl.appendChild(b)})}
-function show(){app.textContent='';({ana:vAna,me:vMe,mylead:vMyLeads,co:vCo,over:vOver,emp:vEmp,cards:vCards,brand:vBrand,site:vSite,enq:vEnq,log:vLog,adm:vAdm})[TAB]()}
+var LT=null;function show(){if(LT){clearInterval(LT);LT=null}app.textContent='';({loc:vLoc,ana:vAna,me:async function(){await vMe();await locBlock()},mylead:vMyLeads,co:vCo,over:vOver,emp:vEmp,cards:vCards,brand:vBrand,site:vSite,enq:vEnq,log:vLog,adm:vAdm})[TAB]()}
 async function loadMems(){var r=await sb.rpc('corp_list_members',{p_org:O.id});MEMS=r.data||[];return r}
 
 /* ---------- Overview ---------- */
@@ -192,6 +192,42 @@ async function vAna(){
   c.appendChild(btn('⬇ CSV निकालें',function(){csvDl('analytics.csv',[['Name','Designation','Department','Views','Views 7d','Clicks','Shares','Shares opened','Leads']].concat(d.people.map(function(x){return[x.name,x.designation,x.department,x.views,x.views7,x.clicks,x.shares,x.opened,x.leads]})))},'alt'))}
 function shrinkLogo(file){return new Promise(function(res){var u=URL.createObjectURL(file),im=new Image();im.onload=function(){var m=600,sc=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){res(b)},'image/png')};im.onerror=function(){URL.revokeObjectURL(u);res(null)};im.src=u})}
 
+
+/* ---------- Location (role-wise rules, optional, work hours only) ---------- */
+var DN=['सोम','मंगल','बुध','गुरु','शुक्र','शनि','रवि'];
+function ago(t){var m=Math.max(0,Math.round((Date.now()-new Date(t).getTime())/60000));return m<1?'अभी':m+' मिनट पहले'}
+async function vLoc(){
+  var ADM=O.role==='owner'||O.role==='admin'||O.role==='hr'||ISADM;
+  if(ADM){var rc=card('📍 Location नियम (हर role के अलग)');app.appendChild(rc);
+    rc.appendChild(mk('div','k','कर्मचारी की मर्ज़ी से ही चालू होगी, सिर्फ़ काम के समय में। छुट्टी पर (paid/unpaid) या कंपनी छोड़ने पर अपने आप बंद। सिर्फ़ आख़िरी location रहती है, history नहीं।'));
+    var rr=await sb.rpc('corp_loc_rules',{p_org:O.id}),cur={};(rr.data||[]).forEach(function(x){cur[x.role]=x});var st={};
+    [['owner','मालिक'],['admin','Director / Admin'],['hr','HR'],['manager','मैनेजर'],['employee','कर्मचारी']].forEach(function(R){
+      var c0=cur[R[0]]||{enabled:false,start:'09:00',end:'19:00',days:[1,2,3,4,5,6]};var S=st[R[0]]={role:R[0],enabled:c0.enabled,start:c0.start,end:c0.end,days:c0.days.slice()};
+      var bx=mk('div');bx.style.cssText='border-top:1px solid #e5e7eb;padding:7px 0';var top=mk('div');top.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:6px';top.appendChild(mk('b','',R[1]));
+      var sel=mk('select');[['0','बंद'],['1','वैकल्पिक (कर्मचारी चुने)']].forEach(function(o){var op=mk('option','',o[1]);op.value=o[0];sel.appendChild(op)});sel.value=S.enabled?'1':'0';top.appendChild(sel);bx.appendChild(top);
+      var det=mk('div');det.style.cssText='margin-top:6px;display:'+(S.enabled?'block':'none');
+      var tr=mk('div');tr.style.cssText='display:flex;gap:6px;align-items:center;font-size:12px';var t1=mk('input');t1.type='time';t1.value=S.start;var t2=mk('input');t2.type='time';t2.value=S.end;t1.onchange=function(){S.start=t1.value};t2.onchange=function(){S.end=t2.value};tr.appendChild(mk('span','','से'));tr.appendChild(t1);tr.appendChild(mk('span','','तक'));tr.appendChild(t2);det.appendChild(tr);
+      var dr=mk('div');dr.style.cssText='display:flex;gap:3px;margin-top:5px;flex-wrap:wrap';DN.forEach(function(n,i){var d=i+1,b=mk('button','',n);b.type='button';function paint(){var on=S.days.indexOf(d)>=0;b.style.cssText='padding:3px 7px;font-size:11px;border-radius:8px;border:1px solid #1d3557;'+(on?'background:#1d3557;color:#fff':'background:#fff;color:#1d3557')}paint();b.onclick=function(){var k=S.days.indexOf(d);if(k>=0)S.days.splice(k,1);else S.days.push(d);paint()};dr.appendChild(b)});det.appendChild(dr);bx.appendChild(det);
+      sel.onchange=function(){S.enabled=sel.value==='1';det.style.display=S.enabled?'block':'none'};rc.appendChild(bx)});
+    var er=mk('div','e');rc.appendChild(btn('💾 नियम सेव करें',async function(){er.textContent='';var q=await sb.rpc('corp_set_loc_rules',{p_org:O.id,p_rules:Object.keys(st).map(function(k){return st[k]})});er.textContent=q.error?errT(q.error):'✅ सेव हो गया';if(!q.error){app.textContent='';vLoc()}}));rc.appendChild(er)}
+  var tc=card('🗺 अभी कौन कहाँ है');app.appendChild(tc);var r=await sb.rpc('corp_team_locations',{p_org:O.id});
+  if(r.error){tc.appendChild(mk('div','e',errT(r.error)));return}var d=r.data;
+  tc.appendChild(mk('div','k','Location शेयर करने वाले: '+d.sharing+' · सिर्फ़ पिछले 30 मिनट की और काम के समय की दिखती है।'));
+  if(!d.list.length)tc.appendChild(mk('div','k','अभी कोई लाइव location नहीं है।'));
+  d.list.forEach(function(x){var row=mk('div','row');row.style.cssText='display:flex;justify-content:space-between;gap:8px;align-items:center;padding:5px 0;border-top:1px solid #eee';var l=mk('div');l.appendChild(mk('div','',x.name||'-'));l.appendChild(mk('div','k',(x.designation||x.role)+' · '+ago(x.at)));row.appendChild(l);
+    var a=mk('a','','🗺 Map');a.href='https://www.google.com/maps?q='+Number(x.lat)+','+Number(x.lng);a.target='_blank';a.rel='noopener';row.appendChild(a);tc.appendChild(row)});
+  tc.appendChild(btn('🔄 रीफ़्रेश',function(){app.textContent='';vLoc()},'alt'))}
+async function locBlock(){
+  var r=await sb.rpc('corp_my_loc',{p_org:O.id});if(r.error||!r.data||!r.data.enabled)return;var d=r.data,share=d.share;
+  var c=card('📍 Location (वैकल्पिक)');app.appendChild(c);
+  c.appendChild(mk('div','k','काम का समय '+d.start+'–'+d.end+' ('+d.days.map(function(n){return DN[n-1]}).join(', ')+')। आप चालू करेंगे तभी कंपनी देख पाएगी। सिर्फ़ काम के समय में, और छुट्टी पर बंद। पैनल खुला होने पर ही अपडेट होती है।'));
+  var stt=mk('div','k');stt.style.cssText='margin:6px 0;font-weight:600';c.appendChild(stt);var tg=btn('',null,'');c.appendChild(tg);
+  var MSG={leave:'🏖 आप छुट्टी पर हैं, Location बंद है।',inactive:'Location बंद है।',off:'Location बंद है।',hours:'⏰ अभी काम का समय नहीं है, Location बंद है।'};
+  function paint(m){stt.textContent=m||(d.status==='on_leave'?MSG.leave:share?'✅ चालू — कंपनी देख सकती है':'⚪ बंद');tg.textContent=share?'⏹ बंद करें':'▶ चालू करें';tg.style.display=d.status==='on_leave'?'none':''}
+  function push(){if(!navigator.geolocation){paint('इस फ़ोन में Location नहीं है');return}navigator.geolocation.getCurrentPosition(async function(p){var q=await sb.rpc('corp_push_loc',{p_org:O.id,p_lat:p.coords.latitude,p_lng:p.coords.longitude,p_acc:p.coords.accuracy});if(q.error){paint(errT(q.error));return}paint(q.data.ok?'✅ चालू — कंपनी देख सकती है (अपडेट: अभी)':MSG[q.data.reason]||'बंद')},function(){paint('⚠ Location की अनुमति नहीं मिली (फ़ोन/ब्राउज़र सेटिंग में अनुमति दें)')},{enableHighAccuracy:false,timeout:15000,maximumAge:60000})}
+  function go(){if(LT)clearInterval(LT);push();LT=setInterval(push,300000)}
+  tg.onclick=async function(){var q=await sb.rpc('corp_my_set_loc',{p_org:O.id,p_on:!share});if(q.error){paint(errT(q.error));return}share=!share;if(share)go();else{if(LT){clearInterval(LT);LT=null}paint()}};
+  paint();if(share&&d.status==='active')go()}
 /* ---------- Employee panel ---------- */
 function fdate(d){return d?d.split('-').reverse().join('-'):'—'}
 function shrinkImg(file){return new Promise(function(res){var u=URL.createObjectURL(file),im=new Image();im.onload=function(){var m=800,sc=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){res(b)},'image/jpeg',0.85)};im.onerror=function(){URL.revokeObjectURL(u);res(null)};im.src=u})}
