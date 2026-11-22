@@ -222,6 +222,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-enq" hidden style="padding:10px 14px"></div>
 <div class="card" id="c-greet"></div>
+<div class="card" id="c-corp" hidden></div>
 <div class="card" id="c-uns" style="display:none;padding:10px 12px"></div>
 <div class="card" id="c-bc" style="display:none;padding:10px 12px"></div>
 <div class="card" id="c-chat" style="display:none;padding:10px 12px"></div>
@@ -701,7 +702,7 @@ $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(
 async function loadList(){
   var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at,published_at').eq('user_id',ME.id).order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();greetTile();billTile();fnTile();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
+  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});drawList();loadSubs();myHome();refHome();lbHome();greetTile();corpTile();billTile();fnTile();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
@@ -1451,6 +1452,9 @@ function openAd(k){closeVw(true);var o=document.createElement('div');o.id='vw';o
 function greetTile(){var box=$('c-greet');if(!box)return;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#ff9a3c,#f0571d 55%,#d4141c);border:0;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.14)';
   var h=mk('div','');h.style.cssText='display:flex;align-items:center;gap:12px';var ic=mk('div','','🎉');ic.style.cssText='font-size:34px;flex:none';var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';var t=mk('b','','Greeting / Offer');t.style.cssText='display:block;font-size:17px;color:#fff';tx.appendChild(t);var d=mk('div','k','शुभकामना या अपना ऑफ़र, नाम और फ़ोटो के साथ WhatsApp पर भेजें। मुफ़्त।');d.style.cssText='margin:2px 0 0;color:#fff';tx.appendChild(d);h.appendChild(ic);h.appendChild(tx);box.appendChild(h);
   var b=mk('button','','🎨 Greeting / Offer बनाएँ');b.type='button';b.style.cssText='margin:10px 0 0;width:100%;background:#fff;color:#d4141c;border:0';b.onclick=openGr;box.appendChild(b)}
+async function corpTile(){var box=$('c-corp');if(!box)return;try{var r=await sb.rpc('corp_allowed');if(!r.data){box.hidden=true;return}}catch(e){return}
+  box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#1d3557,#457b9d);border:0;color:#fff;padding:10px 14px';
+  var b=mk('button','','🏢 LiveCard Corporate (कंपनी)');b.type='button';b.style.cssText='width:100%;background:#fff;color:#1d3557;border:0';b.onclick=function(){location.href='/studio/corporate/'};box.appendChild(b)}
 function openGr(){location.href='/studio/greeting/'}
 async function addrTile(){
   var box=$('c-addr');if(!box)return;
