@@ -1,73 +1,172 @@
 <!doctype html>
 <html><head><meta http-equiv="Cache-Control" content="no-cache, must-revalidate"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LiveCard Corporate</title>
+<title>LiveCard Corporate – Control Panel</title>
 <link rel="icon" href="/studio/vicard-icon.png">
 <style>
 :root{--wine:#b4131b;--ink:#241414;--bg:#fff4f2;--line:#efd3cf;--mut:#6b5a58}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Hind,"Noto Sans Devanagari",system-ui,sans-serif;padding-bottom:30px}
-.top{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}.top a{color:#fff;font-size:14px;text-decoration:none}
-.wrap{max-width:520px;margin:auto;padding:10px}h1{font-size:18px;color:var(--wine);margin:4px 0}
+.top{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#1d3557,#457b9d);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}.top a{color:#fff;font-size:14px;text-decoration:none}
+.tabs{position:sticky;top:46px;z-index:49;background:#fff;border-bottom:1px solid var(--line);display:flex;overflow-x:auto;scrollbar-width:none}.tabs button{flex:none;width:auto;margin:0;border-radius:0;background:none;color:var(--mut);padding:10px 12px;font-size:14px;border-bottom:3px solid transparent}.tabs button.on{color:#1d3557;border-color:#1d3557}
+.wrap{max-width:560px;margin:auto;padding:10px}h1{font-size:18px;color:#1d3557;margin:4px 0}
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
-label{display:block;font-weight:600;margin:8px 0 3px;font-size:14px}input,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit}
-button{width:100%;margin-top:10px;padding:12px;border:0;border-radius:12px;background:var(--wine);color:#fff;font:600 16px inherit;cursor:pointer}button.alt{background:#fff;color:var(--wine);border:1.5px solid var(--wine)}
-.k{font-size:13px;color:var(--mut)}.e{color:#b00020;font-size:14px;margin-top:6px}
-.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}.st{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}.st b{display:block;font-size:26px;color:var(--wine)}
-.qa{display:grid;grid-template-columns:1fr 1fr;gap:8px}.qa button{margin:0;background:#fff;color:var(--wine);border:1.5px solid var(--line);font-size:14px}
+label{display:block;font-weight:600;margin:8px 0 3px;font-size:14px}input,textarea,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+button{width:100%;margin-top:10px;padding:12px;border:0;border-radius:12px;background:#1d3557;color:#fff;font:600 16px inherit;cursor:pointer}button.alt{background:#fff;color:#1d3557;border:1.5px solid #1d3557}button.sm{width:auto;padding:6px 12px;font-size:13px;margin:4px 6px 0 0}
+.k{font-size:13px;color:var(--mut)}.e{color:#b00020;font-size:14px;margin-top:6px}.ok{color:#0a7a3b;font-size:14px;margin-top:6px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}.st{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}.st b{display:block;font-size:26px;color:#1d3557}
+.row{border-top:1px solid var(--line);padding:8px 0}.row:first-of-type{border-top:0}
+.c2{display:grid;grid-template-columns:1fr 1fr;gap:8px}input[type=color]{padding:2px;height:42px}
 [hidden]{display:none!important}
+
+@media(min-width:900px){
+ body{padding-left:230px}
+ .top{position:fixed;left:0;right:0;top:0;height:52px}
+ .tabs{position:fixed;left:0;top:52px;bottom:0;width:230px;flex-direction:column;overflow-y:auto;border-right:1px solid var(--line);border-bottom:0;background:#fff;padding:8px 0}
+ .tabs button{text-align:left;border-bottom:0;border-left:4px solid transparent;padding:12px 18px;font-size:15px}.tabs button.on{border-left-color:#1d3557;background:#eef3f8}
+ .wrap{max-width:1000px;margin:52px auto 0;padding:20px 28px}
+ .g{grid-template-columns:repeat(4,1fr)}
+ .card{padding:16px 18px}
+ button{width:auto;min-width:200px;padding:11px 20px}.card>button,.card>div>button{margin-right:8px}
+ #app>.card input,#app>.card textarea,#app>.card select{max-width:640px}
+ .c2{grid-template-columns:repeat(3,1fr);max-width:640px}
+ .tabs button,.row button,.row select{min-width:0}
+}
 </style></head><body>
-<div class="top"><a href="/studio/">← वापस</a><b>🏢 LiveCard Corporate</b><span></span></div>
+<div class="top"><a href="/studio/">← वापस</a><b id="ttl">🏢 Corporate Control Panel</b><span></span></div>
+<div class="tabs" id="tabs" hidden></div>
 <div class="wrap" id="app"><p class="k">लोड हो रहा है…</p></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
-var sb=supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}}),app=document.getElementById('app');
+var sb=supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}}),app=document.getElementById('app'),tabsEl=document.getElementById('tabs');
+var O=null,TAB='over',ISADM=false,MEMS=[];
 function mk(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-function inp(l,id,ph,area){var w=mk('div');w.appendChild(mk('label','',l));var i=mk(area?'textarea':'input');i.id=id;if(ph)i.placeholder=ph;if(area)i.rows=2;i.maxLength=area?600:120;w.appendChild(i);return w}
+function inp(l,id,ph,area,val,max){var w=mk('div');w.appendChild(mk('label','',l));var i=mk(area?'textarea':'input');i.id=id;if(ph)i.placeholder=ph;if(area)i.rows=3;i.maxLength=max||(area?1200:200);if(val!=null)i.value=val;w.appendChild(i);return w}
+function gv(root,id){return root.querySelector('#'+id).value.trim()}
+function btn(t,fn,cls){var b=mk('button',cls||'',t);b.type='button';b.onclick=fn;return b}
+function card(title){var c=mk('div','card');if(title)c.appendChild(mk('b','',title));return c}
+function errT(e){return e&&e.message?e.message:'कुछ गड़बड़ हुई'}
+function pubUrl(p){return 'https://livecard.in/c/'+p}
+function copy(t,b){try{navigator.clipboard.writeText(t)}catch(e){}if(b){var o=b.textContent;b.textContent='कॉपी ✅';setTimeout(function(){b.textContent=o},1500)}}
+var CAN=function(){return O&&(O.role==='owner'||O.role==='admin')};
+var CANH=function(){return O&&(O.role==='owner'||O.role==='admin'||O.role==='hr')};
+
+/* ---------- create company ---------- */
 function createForm(){
-  app.textContent='';var c=mk('div','card');c.appendChild(mk('h1','','अपनी कंपनी बनाएँ'));
-  c.appendChild(inp('कंपनी का नाम *','o-name','जैसे: ABC Pvt Ltd'));var sw=inp('पसंदीदा subdomain (वैकल्पिक)','o-sd','जैसे: abc');var sm=mk('div','k','आपका पता: ___.livecard.in');sw.appendChild(sm);c.appendChild(sw);
-  var tm=null;sw.querySelector('input').oninput=function(){var i=this;i.value=i.value.toLowerCase().replace(/[^a-z0-9-]/g,'');clearTimeout(tm);if(!i.value){sm.textContent='आपका पता: ___.livecard.in';return}sm.textContent='जाँच रहा हूँ…';tm=setTimeout(async function(){var r=await sb.rpc('corp_subdomain_ok',{p:i.value}),m={ok:'✅ उपलब्ध: '+i.value+'.livecard.in',taken:'❌ यह नाम पहले से लिया हुआ है',reserved:'❌ यह नाम सिस्टम के लिए सुरक्षित है',invalid:'❌ 3-30 अक्षर, सिर्फ़ a-z, 0-9 और -'};sm.textContent=m[r.data]||'जाँच नहीं हो पाई'},400)};
-  c.appendChild(inp('इंडस्ट्री','o-ind'));c.appendChild(inp('टैगलाइन','o-tag'));
-  c.appendChild(inp('फ़ोन','o-ph'));c.appendChild(inp('ईमेल','o-em'));c.appendChild(inp('वेबसाइट','o-web'));c.appendChild(inp('पता','o-ad','',1));c.appendChild(inp('GSTIN (वैकल्पिक)','o-gst'));
-  var er=mk('div','e');var b=mk('button','','✅ कंपनी बनाएँ');b.type='button';
-  b.onclick=async function(){var v=function(i){return document.getElementById(i).value.trim()};if(v('o-name').length<2){er.textContent='कंपनी का नाम लिखें';return}
-    b.disabled=true;er.textContent='';var r=await sb.rpc('corp_create_org',{p:{name:v('o-name'),subdomain:v('o-sd'),industry:v('o-ind'),tagline:v('o-tag'),phone:v('o-ph'),email:v('o-em'),website:v('o-web'),address:v('o-ad'),gstin:v('o-gst')}});
-    b.disabled=false;if(r.error){er.textContent='नहीं बन पाई: '+r.error.message;return}start()};
-  c.appendChild(b);c.appendChild(er);app.appendChild(c)}
-async function dash(o){
-  app.textContent='';var r=await sb.rpc('corp_dashboard',{p_org:o.id});if(r.error){app.textContent=r.error.message;return}var d=r.data;
-  var h=mk('div','card');h.appendChild(mk('h1','',d.org.name));h.appendChild(mk('div','k',d.org.org_code+(d.org.tagline?' · '+d.org.tagline:'')));app.appendChild(h);
-  var g=mk('div','g');[['कुल कर्मचारी',d.employees],['Active',d.active],['Inactive',d.inactive],['Invited',d.invited],['कुल Views',d.views],['कुल Leads',d.leads]].forEach(function(s){var x=mk('div','st');x.appendChild(mk('b','',s[1]));x.appendChild(mk('span','k',s[0]));g.appendChild(x)});app.appendChild(g);
-  var u=mk('div','card');var sd=d.org.subdomain;u.appendChild(mk('b','','🔗 कंपनी का पता'));
-  var ul=mk('div','k',sd?(sd+'.livecard.in  (अभी चालू लिंक: livecard.in/c/'+sd+')'):'subdomain अभी नहीं चुना');ul.style.margin='4px 0';u.appendChild(ul);
-  if(sd){var cb=mk('button','alt','📋 लिंक कॉपी करें');cb.type='button';cb.onclick=function(){var t='https://livecard.in/c/'+sd;navigator.clipboard&&navigator.clipboard.writeText(t);cb.textContent='कॉपी हो गया ✅'};u.appendChild(cb)}
-  else if(o.role==='owner'||o.role==='admin'){var rb=mk('button','alt','subdomain माँगें');rb.type='button';rb.onclick=async function(){var v=prompt('पसंदीदा subdomain (a-z, 0-9, -)');if(!v)return;var r=await sb.rpc('corp_request_subdomain',{p_org:o.id,p_sd:v.toLowerCase().trim()});alert(r.error?r.error.message:(r.data==='pending'?'अनुरोध भेज दिया, मंज़ूरी का इंतज़ार':'यह नाम नहीं चल सकता: '+r.data))};u.appendChild(rb)}
+  tabsEl.hidden=true;app.textContent='';var c=card();c.appendChild(mk('h1','','अपनी कंपनी बनाएँ'));
+  c.appendChild(inp('कंपनी का नाम *','o-name','जैसे: ABC Pvt Ltd'));
+  var sw=inp('पसंदीदा subdomain','o-sd','जैसे: abc');var sm=mk('div','k','आपका पता: ___.livecard.in');sw.appendChild(sm);c.appendChild(sw);var tm=null;
+  sw.querySelector('input').oninput=function(){var i=this;i.value=i.value.toLowerCase().replace(/[^a-z0-9-]/g,'');clearTimeout(tm);if(!i.value){sm.textContent='आपका पता: ___.livecard.in';return}sm.textContent='जाँच रहा हूँ…';tm=setTimeout(async function(){var r=await sb.rpc('corp_subdomain_ok',{p:i.value}),m={ok:'✅ उपलब्ध: '+i.value+'.livecard.in',taken:'❌ यह नाम पहले से लिया हुआ है',reserved:'❌ यह नाम सिस्टम के लिए सुरक्षित है',invalid:'❌ 3-30 अक्षर, सिर्फ़ a-z, 0-9 और -'};sm.textContent=m[r.data]||'जाँच नहीं हो पाई'},400)};
+  [['इंडस्ट्री','o-ind'],['टैगलाइन','o-tag'],['फ़ोन','o-ph'],['ईमेल','o-em'],['वेबसाइट','o-web'],['GSTIN (वैकल्पिक)','o-gst']].forEach(function(x){c.appendChild(inp(x[0],x[1]))});c.appendChild(inp('पता','o-ad','',1));
+  var er=mk('div','e');c.appendChild(btn('✅ कंपनी बनाएँ',async function(){if(gv(c,'o-name').length<2){er.textContent='कंपनी का नाम लिखें';return}er.textContent='';
+    var r=await sb.rpc('corp_create_org',{p:{name:gv(c,'o-name'),subdomain:gv(c,'o-sd'),industry:gv(c,'o-ind'),tagline:gv(c,'o-tag'),phone:gv(c,'o-ph'),email:gv(c,'o-em'),website:gv(c,'o-web'),address:gv(c,'o-ad'),gstin:gv(c,'o-gst')}});
+    if(r.error){er.textContent='नहीं बन पाई: '+errT(r.error);return}start()}));c.appendChild(er);app.appendChild(c)}
+
+/* ---------- tabs ---------- */
+function drawTabs(){
+  var T=[['over','📊 Overview'],['emp','👥 कर्मचारी'],['cards','🪪 कार्ड'],['brand','🎨 Brand'],['site','🌐 Website'],['enq','📨 Enquiries'],['log','🧾 Audit']];if(ISADM)T.push(['adm','🛡 Super Admin']);
+  tabsEl.textContent='';tabsEl.hidden=false;T.forEach(function(t){var b=mk('button',TAB===t[0]?'on':'',t[1]);b.type='button';b.onclick=function(){TAB=t[0];drawTabs();show()};tabsEl.appendChild(b)})}
+function show(){app.textContent='';({over:vOver,emp:vEmp,cards:vCards,brand:vBrand,site:vSite,enq:vEnq,log:vLog,adm:vAdm})[TAB]()}
+async function loadMems(){var r=await sb.rpc('corp_list_members',{p_org:O.id});MEMS=r.data||[];return r}
+
+/* ---------- Overview ---------- */
+async function vOver(){
+  var r=await sb.rpc('corp_dashboard',{p_org:O.id});if(r.error){app.textContent=errT(r.error);return}var d=r.data,o=d.org;O.sd=o.subdomain;
+  var h=card();h.appendChild(mk('h1','',o.name));h.appendChild(mk('div','k',o.org_code+(o.tagline?' · '+o.tagline:'')+' · आपकी भूमिका: '+O.role));app.appendChild(h);
+  var g=mk('div','g');[['कुल कर्मचारी',d.employees],['Active',d.active],['Inactive',d.inactive],['Invited',d.invited],['कुल कार्ड',d.cards],['कुल Views',d.views],['कुल Leads',d.leads],['नई Enquiries',d.new_enquiries]].forEach(function(s){var x=mk('div','st');x.appendChild(mk('b','',s[1]));x.appendChild(mk('span','k',s[0]));g.appendChild(x)});app.appendChild(g);
+  var u=card('🔗 कंपनी का पता');
+  if(o.subdomain){u.appendChild(mk('div','k',o.subdomain+'.livecard.in'));var l=pubUrl(o.subdomain);u.appendChild(mk('div','k','अभी चालू लिंक: '+l));var cb=btn('📋 लिंक कॉपी करें',function(){copy(l,cb)},'alt');u.appendChild(cb);u.appendChild(btn('👁 कंपनी की website देखें',function(){window.open(l,'_blank')},'alt'));
+    u.appendChild(btn('📤 WhatsApp पर भेजें',function(){window.open('https://wa.me/?text='+encodeURIComponent(o.name+' — '+l),'_blank')},'alt'))}
+  else u.appendChild(mk('div','k','subdomain अभी नहीं चुना'));
+  if(CAN()){u.appendChild(btn(o.subdomain?'✏️ subdomain बदलने का अनुरोध':'subdomain माँगें',async function(){var v=prompt('पसंदीदा subdomain (a-z, 0-9, -)');if(!v)return;var q=await sb.rpc('corp_request_subdomain',{p_org:O.id,p_sd:v.toLowerCase().trim()});alert(q.error?errT(q.error):(q.data==='pending'?'अनुरोध भेज दिया, मंज़ूरी का इंतज़ार':'यह नाम नहीं चल सकता: '+q.data))},'alt'))}
   app.appendChild(u);
-  var canEdit=(o.role==='owner'||o.role==='admin'||o.role==='hr');
-  var m=mk('div','card');m.appendChild(mk('b','','👥 कर्मचारी'));var ml=mk('div');m.appendChild(ml);
-  async function loadM(){var r=await sb.rpc('corp_list_members',{p_org:o.id});ml.textContent='';if(r.error){ml.textContent=r.error.message;return}
-    (r.data||[]).forEach(function(x){var row=mk('div');row.style.cssText='border-top:1px solid #efd3cf;padding:8px 0';row.appendChild(mk('div','',x.full_name||'-'));
-      row.appendChild(mk('div','k',[x.designation,x.department,x.phone,x.email].filter(Boolean).join(' · ')));
-      var st=mk('div','k',x.role+' · '+x.status+(x.joined?'':' (जुड़ना बाकी)'));row.appendChild(st);
-      if(canEdit&&x.role!=='owner'){var sl=mk('select');sl.style.cssText='margin-top:4px;padding:6px;border-radius:8px';[['','स्थिति बदलें'],['active','Active'],['on_leave','छुट्टी पर'],['suspended','निलंबित'],['resigned','इस्तीफ़ा'],['terminated','हटाया'],['archived','Archive']].forEach(function(z){var op=mk('option','',z[1]);op.value=z[0];sl.appendChild(op)});
-        sl.onchange=async function(){if(!sl.value)return;if(!confirm('स्थिति बदलें?')){sl.value='';return}var q=await sb.rpc('corp_set_member_status',{p_member:x.id,p_status:sl.value});if(q.error)alert(q.error.message);dash(o)};row.appendChild(sl)}
-      ml.appendChild(row)})}
-  m.appendChild(ml);app.appendChild(m);loadM();
-  if(canEdit){var f=mk('div','card');f.appendChild(mk('b','','➕ कर्मचारी जोड़ें'));f.appendChild(inp('नाम *','m-n'));f.appendChild(inp('मोबाइल','m-p'));f.appendChild(inp('ईमेल','m-e'));f.appendChild(inp('पद (Designation)','m-d'));f.appendChild(inp('विभाग','m-dp'));f.appendChild(inp('Employee ID','m-id'));
-    var er=mk('div','e');var ab=mk('button','','जोड़ें');ab.type='button';ab.onclick=async function(){var v=function(i){return f.querySelector('#'+i).value.trim()};er.textContent='';var r=await sb.rpc('corp_add_member',{p_org:o.id,p:{full_name:v('m-n'),phone:v('m-p'),email:v('m-e'),designation:v('m-d'),department:v('m-dp'),employee_id:v('m-id')}});if(r.error){er.textContent=r.error.message;return}dash(o)};f.appendChild(ab);f.appendChild(er);app.appendChild(f);
-    var im=mk('div','card');im.appendChild(mk('b','','📥 CSV / Excel से जोड़ें'));im.appendChild(mk('div','k','पहली पंक्ति: name,phone,email,designation,department,employee_id (Excel को CSV में सेव करें)'));
-    var fi=mk('input');fi.type='file';fi.accept='.csv,text/csv,text/plain';var ie=mk('div','k');fi.onchange=function(){var fr=new FileReader();fr.onload=async function(){var rows=parseCsv(String(fr.result));if(!rows.length){ie.textContent='कोई पंक्ति नहीं मिली';return}ie.textContent='भेज रहा हूँ…';var r=await sb.rpc('corp_import_members',{p_org:o.id,p_rows:rows.slice(0,500)});if(r.error){ie.textContent=r.error.message;return}ie.textContent='जुड़े: '+r.data.added+' · छोड़े गए: '+r.data.skipped;loadM()};fr.readAsText(fi.files[0])};im.appendChild(fi);im.appendChild(ie);app.appendChild(im)}
-  var n=mk('div','k','आपकी भूमिका: '+o.role+' · कंपनी की mini website और कर्मचारी कार्ड अगले phase में।');n.style.margin='8px 4px';app.appendChild(n)}
-function parseCsv(t){var L=t.replace(/^\uFEFF/,'').split(/\r?\n/).filter(function(x){return x.trim()});if(L.length<2)return[];var sp=function(l){var o=[],c='',q=false;for(var i=0;i<l.length;i++){var ch=l[i];if(ch==='"'){q=!q}else if(ch===','&&!q){o.push(c);c=''}else c+=ch}o.push(c);return o.map(function(x){return x.trim()})};
+  var qa=card('⚡ Quick Actions');var qg=mk('div','g');qg.style.marginTop='8px';[['👥 कर्मचारी जोड़ें','emp'],['🪪 कार्ड बनाएँ','cards'],['🎨 Brand Kit','brand'],['📨 Enquiries','enq']].forEach(function(x){var b=btn(x[0],function(){TAB=x[1];drawTabs();show()},'alt');b.style.margin='0';qg.appendChild(b)});qa.appendChild(qg);app.appendChild(qa)}
+
+/* ---------- Employees ---------- */
+function parseCsv(t){var L=t.replace(/^﻿/,'').split(/\r?\n/).filter(function(x){return x.trim()});if(L.length<2)return[];var sp=function(l){var o=[],c='',q=false;for(var i=0;i<l.length;i++){var ch=l[i];if(ch==='"'){q=!q}else if(ch===','&&!q){o.push(c);c=''}else c+=ch}o.push(c);return o.map(function(x){return x.trim()})};
   var h=sp(L[0]).map(function(x){return x.toLowerCase()}),out=[];for(var i=1;i<L.length;i++){var v=sp(L[i]),r={};h.forEach(function(k,j){if(k==='name')k='full_name';r[k]=v[j]||''});out.push(r)}return out}
+async function vEmp(){
+  var m=card('👥 कर्मचारी');var q=mk('input');q.placeholder='🔍 नाम से खोजें';q.style.marginTop='8px';m.appendChild(q);var ml=mk('div');m.appendChild(ml);app.appendChild(m);
+  function paint(){ml.textContent='';var t=q.value.toLowerCase();MEMS.filter(function(x){return !t||(x.full_name||'').toLowerCase().indexOf(t)>-1}).forEach(function(x){
+    var row=mk('div','row');row.appendChild(mk('div','',x.full_name||'-'));row.appendChild(mk('div','k',[x.designation,x.department,x.phone,x.email].filter(Boolean).join(' · ')));row.appendChild(mk('div','k',x.role+' · '+x.status+(x.joined?'':' (जुड़ना बाकी)')));
+    if(CANH()&&x.role!=='owner'){
+      var ed=btn('✏️ बदलें',function(){var n=prompt('नाम',x.full_name||'');if(n===null)return;var d=prompt('पद (Designation)',x.designition||x.designation||'');if(d===null)return;var dp=prompt('विभाग',x.department||'');if(dp===null)return;var ro=x.role;if(CAN()){var rr=prompt('भूमिका: admin / hr / manager / employee',x.role);if(rr)ro=rr.trim().toLowerCase()}
+        sb.rpc('corp_update_member',{p_member:x.id,p:{full_name:n,designation:d,department:dp,role:ro}}).then(function(r){if(r.error)alert(errT(r.error));loadMems().then(paint)})},'alt');ed.className='alt sm';row.appendChild(ed);
+      var sl=mk('select');sl.style.cssText='width:auto;padding:6px;margin-top:4px';[['','स्थिति बदलें'],['active','Active'],['on_leave','छुट्टी पर'],['suspended','निलंबित'],['resigned','इस्तीफ़ा'],['terminated','हटाया'],['archived','Archive']].forEach(function(z){var op=mk('option','',z[1]);op.value=z[0];sl.appendChild(op)});
+      sl.onchange=async function(){if(!sl.value)return;if(!confirm('स्थिति बदलें? (निष्क्रिय होने पर कार्ड "inactive" दिखेगा)')){sl.value='';return}var r=await sb.rpc('corp_set_member_status',{p_member:x.id,p_status:sl.value});if(r.error)alert(errT(r.error));loadMems().then(paint)};row.appendChild(sl)}
+    ml.appendChild(row)})}
+  q.oninput=paint;var r=await loadMems();if(r.error){ml.textContent=errT(r.error)}else paint();
+  if(CANH()){var f=card('➕ कर्मचारी जोड़ें');[['नाम *','m-n'],['मोबाइल','m-p'],['ईमेल','m-e'],['पद (Designation)','m-d'],['विभाग','m-dp'],['Employee ID','m-id']].forEach(function(x){f.appendChild(inp(x[0],x[1]))});
+    var er=mk('div','e');f.appendChild(btn('जोड़ें',async function(){er.textContent='';var r=await sb.rpc('corp_add_member',{p_org:O.id,p:{full_name:gv(f,'m-n'),phone:gv(f,'m-p'),email:gv(f,'m-e'),designation:gv(f,'m-d'),department:gv(f,'m-dp'),employee_id:gv(f,'m-id')}});if(r.error){er.textContent=errT(r.error);return}show()}));f.appendChild(er);app.appendChild(f);
+    var im=card('📥 CSV से जोड़ें');im.appendChild(mk('div','k','पहली पंक्ति: name,phone,email,designation,department,employee_id (Excel को CSV में सेव करें, 500 तक)'));var fi=mk('input');fi.type='file';fi.accept='.csv,text/csv,text/plain';var ie=mk('div','k');
+    fi.onchange=function(){var fr=new FileReader();fr.onload=async function(){var rows=parseCsv(String(fr.result));if(!rows.length){ie.textContent='कोई पंक्ति नहीं मिली';return}ie.textContent='भेज रहा हूँ…';var r=await sb.rpc('corp_import_members',{p_org:O.id,p_rows:rows.slice(0,500)});if(r.error){ie.textContent=errT(r.error);return}ie.textContent='जुड़े: '+r.data.added+' · छोड़े गए: '+r.data.skipped;loadMems().then(paint)};fr.readAsText(fi.files[0])};im.appendChild(fi);im.appendChild(ie);app.appendChild(im)}}
+
+/* ---------- Cards ---------- */
+async function vCards(){
+  var c=card('🪪 कर्मचारी कार्ड');c.appendChild(mk('div','k','हर कर्मचारी का कंपनी-नियंत्रित कार्ड। Brand Kit अपने-आप लगता है।'));
+  if(!O.sd){c.appendChild(mk('div','e','पहले Overview में subdomain चुनें।'));app.appendChild(c);return}
+  var msg=mk('div','ok');if(CANH())c.appendChild(btn('✨ बिना कार्ड वाले सबके कार्ड बनाएँ',async function(){msg.textContent='बना रहा हूँ…';var r=await sb.rpc('corp_generate_cards',{p_org:O.id});if(r.error){msg.className='e';msg.textContent=errT(r.error);return}msg.className='ok';msg.textContent='नए कार्ड: '+r.data.created;vCardsList(l)}));c.appendChild(msg);var l=mk('div');c.appendChild(l);app.appendChild(c);vCardsList(l)}
+async function vCardsList(l){l.textContent='';await loadMems();var r=await sb.from('organization_employee_cards').select('member_id,emp_slug').eq('org_id',O.id);var by={};(r.data||[]).forEach(function(x){by[x.member_id]=x.emp_slug});
+  MEMS.forEach(function(x){var row=mk('div','row');row.appendChild(mk('div','',x.full_name||'-'));var s=by[x.id];if(!s){row.appendChild(mk('div','k','कार्ड नहीं बना'));l.appendChild(row);return}var u=pubUrl(O.sd+'/'+s);row.appendChild(mk('div','k',u));
+    var a=btn('खोलें',function(){window.open(u,'_blank')},'alt');a.className='alt sm';var b=btn('कॉपी',function(){copy(u,b)},'alt');b.className='alt sm';var w=btn('WhatsApp',function(){window.open('https://wa.me/'+(x.phone?x.phone.replace(/\D/g,'').slice(-10).replace(/^/,'91'):'')+'?text='+encodeURIComponent('आपका डिजिटल कार्ड: '+u),'_blank')},'alt');w.className='alt sm';row.appendChild(a);row.appendChild(b);row.appendChild(w);l.appendChild(row)})}
+
+/* ---------- Brand ---------- */
+async function vBrand(){
+  var r=await sb.rpc('corp_get_brand',{p_org:O.id});if(r.error){app.textContent=errT(r.error);return}var b=r.data,c=card('🎨 Brand Kit');c.appendChild(mk('div','k','यहाँ से बदलते ही सभी कर्मचारी कार्ड अपने-आप बदल जाते हैं।'));
+  c.appendChild(inp('लोगो का लिंक (URL)','b-logo','https://…',0,b.logo_url||'',500));
+  var cg=mk('div','c2');[['मुख्य रंग (Background)','b-pc',b.primary_color],['लिखावट का रंग','b-sc',b.secondary_color],['Accent रंग','b-ac',b.accent_color]].forEach(function(x){var w=mk('div');w.appendChild(mk('label','',x[0]));var i=mk('input');i.type='color';i.id=x[1];i.value=x[2];w.appendChild(i);cg.appendChild(w)});c.appendChild(cg);
+  function sel(l,id,opts,v){var w=mk('div');w.appendChild(mk('label','',l));var s=mk('select');s.id=id;opts.forEach(function(o){var op=mk('option','',o[1]);op.value=o[0];if(o[0]===v)op.selected=true;s.appendChild(op)});w.appendChild(s);return w}
+  c.appendChild(sel('Font','b-font',[['poppins','Poppins'],['playfair','Playfair'],['inter','Inter'],['hind','Hind']],b.font));
+  c.appendChild(sel('Layout','b-lay',[['card','Card'],['band','Band']],b.layout));
+  c.appendChild(sel('कार्ड डिज़ाइन','b-tpl',[['vc-p1','Premium 1'],['vc-p2','Premium 2']],b.template_id));
+  c.appendChild(inp('Footer लिखावट','b-ft','',0,b.footer_text||'',160));
+  c.appendChild(sel('कर्मचारी कितना बदल सकता है','b-mode',[['A','A: कुछ नहीं (पूरा नियंत्रण कंपनी का)'],['B','B: सिर्फ़ फ़ोन, ईमेल, फ़ोटो (नाम/पद Admin बदले)'],['C','C: नाम/पद भी, branding लॉक']],b.edit_mode));
+  var er=mk('div','e');if(CAN())c.appendChild(btn('💾 सेव करें और सब कार्ड पर लगाएँ',async function(){er.textContent='';var r2=await sb.rpc('corp_save_brand',{p_org:O.id,p:{logo_url:gv(c,'b-logo'),primary_color:gv(c,'b-pc'),secondary_color:gv(c,'b-sc'),accent_color:gv(c,'b-ac'),font:gv(c,'b-font'),layout:gv(c,'b-lay'),template_id:gv(c,'b-tpl'),footer_text:gv(c,'b-ft'),edit_mode:gv(c,'b-mode')}});er.className=r2.error?'e':'ok';er.textContent=r2.error?errT(r2.error):'सेव हो गया, सब कार्ड अपडेट ✅'}));else c.appendChild(mk('div','k','सिर्फ़ Owner/Admin बदल सकते हैं'));c.appendChild(er);app.appendChild(c)}
+
+/* ---------- Website ---------- */
+async function vSite(){
+  var r=await sb.rpc('corp_dashboard',{p_org:O.id});if(r.error){app.textContent=errT(r.error);return}var o=r.data.org,c=card('🌐 कंपनी की mini website');
+  if(o.subdomain)c.appendChild(btn('👁 देखें: '+o.subdomain+'.livecard.in',function(){window.open(pubUrl(o.subdomain),'_blank')},'alt'));
+  c.appendChild(inp('टैगलाइन','s-tag','',0,o.tagline||'',160));c.appendChild(inp('कंपनी के बारे में','s-desc','',1,o.description||'',1200));c.appendChild(inp('Services (हर लाइन में एक)','s-srv','',1,(o.services||[]).join('\n'),1600));
+  [['इंडस्ट्री','s-ind',o.industry],['फ़ोन','s-ph',o.phone],['ईमेल','s-em',o.email],['वेबसाइट','s-web',o.website],['Google Map का लिंक','s-map',o.map_url]].forEach(function(x){c.appendChild(inp(x[0],x[1],'',0,x[2]||''))});c.appendChild(inp('पता','s-ad','',1,o.address||'',300));
+  var w=mk('div');w.appendChild(mk('label','','Employee Directory'));var s=mk('select');s.id='s-vis';[['public','सबको दिखे (Public)'],['private','छुपा रहे (Private)']].forEach(function(z){var op=mk('option','',z[1]);op.value=z[0];if(o.directory_visibility===z[0])op.selected=true;s.appendChild(op)});w.appendChild(s);c.appendChild(w);
+  var er=mk('div','e');if(CAN())c.appendChild(btn('💾 सेव करें',async function(){er.textContent='';var q=await sb.rpc('corp_save_site',{p_org:O.id,p:{tagline:gv(c,'s-tag'),description:gv(c,'s-desc'),services:gv(c,'s-srv').split(/\n/).map(function(x){return x.trim()}).filter(Boolean),industry:gv(c,'s-ind'),phone:gv(c,'s-ph'),email:gv(c,'s-em'),website:gv(c,'s-web'),map_url:gv(c,'s-map'),address:gv(c,'s-ad'),directory_visibility:gv(c,'s-vis')}});er.className=q.error?'e':'ok';er.textContent=q.error?errT(q.error):'सेव हो गया ✅'}));c.appendChild(er);app.appendChild(c)}
+
+/* ---------- Enquiries ---------- */
+async function vEnq(){
+  var c=card('📨 कंपनी की Enquiries');app.appendChild(c);var r=await sb.rpc('corp_list_enquiries',{p_org:O.id});if(r.error){c.appendChild(mk('div','e',errT(r.error)));return}await loadMems();
+  if(!(r.data||[]).length)c.appendChild(mk('div','k','अभी कोई enquiry नहीं'));
+  (r.data||[]).forEach(function(x){var row=mk('div','row');row.appendChild(mk('b','',x.name+' · '+(x.mobile||'')));row.appendChild(mk('div','k',x.message||''));row.appendChild(mk('div','k',new Date(x.at).toLocaleString('hi-IN')+(x.assigned?' · '+x.assigned:'')));
+    var st=mk('select');st.style.cssText='width:auto;padding:6px;margin-top:4px';[['new','नई'],['contacted','बात हुई'],['closed','बंद']].forEach(function(z){var op=mk('option','',z[1]);op.value=z[0];if(z[0]===x.status)op.selected=true;st.appendChild(op)});
+    var as=mk('select');as.style.cssText='width:auto;padding:6px;margin:4px 0 0 6px';var o0=mk('option','','किसे सौंपें');o0.value='';as.appendChild(o0);MEMS.forEach(function(m){var op=mk('option','',m.full_name||'-');op.value=m.id;as.appendChild(op)});
+    var go=function(){sb.rpc('corp_update_enquiry',{p_id:x.id,p_status:st.value,p_assign:as.value||null}).then(function(q){if(q.error)alert(errT(q.error))})};st.onchange=go;as.onchange=go;row.appendChild(st);row.appendChild(as);
+    if(x.mobile){var wb=btn('WhatsApp',function(){window.open('https://wa.me/91'+x.mobile.replace(/\D/g,'').slice(-10),'_blank')},'alt');wb.className='alt sm';row.appendChild(wb)}c.appendChild(row)})}
+
+/* ---------- Audit ---------- */
+async function vLog(){var c=card('🧾 Audit Log');app.appendChild(c);var r=await sb.rpc('corp_list_audit',{p_org:O.id});if(r.error){c.appendChild(mk('div','e',errT(r.error)));return}
+  (r.data||[]).forEach(function(x){var row=mk('div','row');row.appendChild(mk('div','',x.action));row.appendChild(mk('div','k',new Date(x.at).toLocaleString('hi-IN')+(x.detail?' · '+JSON.stringify(x.detail):'')));c.appendChild(row)})}
+
+/* ---------- Super Admin ---------- */
+async function vAdm(){
+  var r=await sb.rpc('corp_admin_overview');if(r.error){app.textContent=errT(r.error);return}var d=r.data;
+  var o=card('🚪 Corporate सबके लिए');o.appendChild(mk('div','k','अभी: '+(d.open?'सबके लिए खुला':'सिर्फ़ आपके लिए')));o.appendChild(btn(d.open?'फिर से सिर्फ़ मेरे लिए करें':'सबके लिए खोलें',async function(){var q=await sb.rpc('corp_admin_open',{p_open:!d.open});if(q.error)alert(errT(q.error));vAdmRe()},'alt'));app.appendChild(o);
+  var rq=card('📝 Subdomain अनुरोध');if(!d.requests.length)rq.appendChild(mk('div','k','कोई अनुरोध नहीं'));
+  d.requests.forEach(function(x){var row=mk('div','row');row.appendChild(mk('div','',x.org+' → '+x.requested+'.livecard.in'));[['✅ मंज़ूर',true],['❌ नामंज़ूर',false]].forEach(function(z){var b=btn(z[0],async function(){var q=await sb.rpc('corp_review_subdomain',{p_req:x.id,p_approve:z[1]});if(q.error)alert(errT(q.error));vAdmRe()},'alt');b.className='alt sm';row.appendChild(b)});rq.appendChild(row)});app.appendChild(rq);
+  var oc=card('🏢 सभी कंपनियाँ ('+d.orgs.length+')');d.orgs.forEach(function(x){var row=mk('div','row');row.appendChild(mk('div','',x.name+' ('+x.code+')'));row.appendChild(mk('div','k',(x.subdomain?x.subdomain+'.livecard.in':'—')+' · '+x.members+' सदस्य · '+x.status));
+    var nx=x.status==='active'?'suspended':'active';var b=btn(nx==='suspended'?'⛔ Suspend':'▶ Activate',async function(){if(!confirm('पक्का?'))return;var q=await sb.rpc('corp_admin_set_org_status',{p_org:x.id,p_status:nx});if(q.error)alert(errT(q.error));vAdmRe()},'alt');b.className='alt sm';row.appendChild(b);
+    var lb=btn('Audit',async function(){var q=await sb.rpc('corp_list_audit',{p_org:x.id});alert((q.data||[]).slice(0,15).map(function(y){return new Date(y.at).toLocaleDateString('hi-IN')+' '+y.action}).join('\n')||'खाली')},'alt');lb.className='alt sm';row.appendChild(lb);oc.appendChild(row)});app.appendChild(oc);
+  var rs=card('🔒 सुरक्षित नाम');rs.appendChild(mk('div','k',d.reserved.join(', ')));rs.appendChild(btn('➕ नाम जोड़ें',async function(){var v=prompt('सुरक्षित करने वाला नाम');if(!v)return;var q=await sb.rpc('corp_admin_reserved',{p_name:v,p_add:true});if(q.error)alert(errT(q.error));vAdmRe()},'alt'));rs.appendChild(btn('➖ नाम हटाएँ',async function(){var v=prompt('हटाने वाला नाम');if(!v)return;var q=await sb.rpc('corp_admin_reserved',{p_name:v,p_add:false});if(q.error)alert(errT(q.error));vAdmRe()},'alt'));app.appendChild(rs)}
+function vAdmRe(){app.textContent='';vAdm()}
+
+/* ---------- start ---------- */
 async function start(){
   var s=await sb.auth.getSession();if(!s.data.session){location.href='/studio/';return}
   var ok=await sb.rpc('corp_allowed');if(!ok.data){app.textContent='';app.appendChild(mk('p','k','Corporate अभी आपके खाते पर चालू नहीं है।'));return}
+  var a=await sb.rpc('studio_is_admin');ISADM=!!a.data;
   try{await sb.rpc('corp_claim_invites')}catch(e){}
   var r=await sb.rpc('corp_my_orgs'),l=r.data||[];
-  if(!l.length){createForm();return}
-  if(l.length===1){dash(l[0]);return}
-  app.textContent='';var c=mk('div','card');c.appendChild(mk('h1','','अपनी कंपनी चुनें'));l.forEach(function(o){var b=mk('button','alt',o.name+' ('+o.role+')');b.type='button';b.onclick=function(){dash(o)};c.appendChild(b)});
-  var nb=mk('button','','➕ नई कंपनी');nb.type='button';nb.onclick=createForm;c.appendChild(nb);app.appendChild(c)}
+  if(!l.length){if(ISADM){TAB='adm'}createForm();if(ISADM){var b=btn('🛡 Super Admin',function(){O={id:null,role:'admin'};TAB='adm';drawTabs();show()},'alt');app.appendChild(b)}return}
+  if(l.length===1){open_(l[0]);return}
+  app.textContent='';tabsEl.hidden=true;var c=card();c.appendChild(mk('h1','','अपनी कंपनी चुनें'));l.forEach(function(o){c.appendChild(btn(o.name+' ('+o.role+')',function(){open_(o)},'alt'))});c.appendChild(btn('➕ नई कंपनी',createForm));app.appendChild(c)}
+function open_(o){O=o;TAB='over';document.getElementById('ttl').textContent='🏢 '+o.name;drawTabs();show()}
 start();
 </script></body></html>

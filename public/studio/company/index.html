@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Company | LiveCard</title><meta name="description" content="LiveCard Corporate">
+<link rel="icon" href="/studio/vicard-icon.png">
+<style>
+:root{--pc:#15151a;--sc:#f2efe6;--ac:#d4af37}
+*{box-sizing:border-box}body{margin:0;font:16px/1.6 Hind,Poppins,"Noto Sans Devanagari",system-ui,sans-serif;color:#222;background:#f6f6f8}
+.hero{background:var(--pc);color:var(--sc);text-align:center;padding:40px 18px 34px}
+.hero img{width:92px;height:92px;object-fit:contain;border-radius:20px;background:#fff;padding:6px;margin-bottom:10px}
+.hero h1{margin:0;font-size:30px}.hero p{margin:6px auto 0;max-width:640px;opacity:.9}
+.hero .cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.btn{display:inline-block;padding:11px 20px;border-radius:99px;background:var(--ac);color:var(--pc);font-weight:700;text-decoration:none;border:0;font:700 15px inherit;cursor:pointer}.btn.o{background:none;color:var(--sc);border:1.5px solid var(--sc)}
+main{max-width:1050px;margin:0 auto;padding:10px 14px 30px}
+section{background:#fff;border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+h2{margin:0 0 10px;font-size:20px;color:var(--pc);border-left:5px solid var(--ac);padding-left:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:7px 14px;border-radius:99px;background:#f0f0f4;font-size:14px}
+.emp{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+.e{display:block;text-decoration:none;color:inherit;border:1px solid #e6e6ee;border-radius:14px;padding:14px 10px;text-align:center;background:#fff}.e:hover{border-color:var(--ac);box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.e .av{width:72px;height:72px;border-radius:50%;margin:0 auto 8px;background:var(--pc);color:var(--sc);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;overflow:hidden}.e .av img{width:100%;height:100%;object-fit:cover}
+.e b{display:block;font-size:15px}.e span{font-size:13px;color:#666}
+input,textarea{width:100%;padding:11px;border:1px solid #d8d8e0;border-radius:10px;font:inherit;margin-top:8px}
+.two{display:grid;grid-template-columns:1fr;gap:14px}@media(min-width:800px){.two{grid-template-columns:1fr 1fr}.hero h1{font-size:40px}.hero{padding:56px 18px 46px}}
+.k{font-size:14px;color:#666}.ok{color:#0a7a3b}.er{color:#b00020}
+footer{text-align:center;font-size:13px;padding:16px;color:#666}footer a{color:#b4131b;font-weight:700;text-decoration:none}
+.msg{padding:80px 20px;text-align:center}.msg b{display:block;font-size:22px;margin-bottom:6px}
+</style></head><body>
+<div id="root"><div class="msg">लोड हो रहा है…</div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
+var root=document.getElementById('root');
+function mk(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function msg(a,b){root.textContent='';var d=mk('div','msg');d.appendChild(mk('b','',a));d.appendChild(document.createTextNode(b||''));root.appendChild(d)}
+var q=new URLSearchParams(location.search),sd=(q.get('o')||'').toLowerCase(),host=location.hostname.toLowerCase(),onSub=false;
+var hm=host.match(/^([a-z0-9-]+)\.livecard\.in$/);if(hm&&hm[1]!=='www'&&hm[1]!=='app'){sd=hm[1];onSub=true}
+if(!/^[a-z0-9]([a-z0-9-]{0,28}[a-z0-9])?$/.test(sd)){msg('यह लिंक सही नहीं है','कृपया पूरा लिंक दोबारा माँगें।');return}
+var sb=supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshToken:false}});
+function cardUrl(s){return onSub?'/'+s:'/c/'+sd+'/'+s}
+function safeUrl(u,mail){u=String(u||'').trim();if(/^https?:\/\//i.test(u))return u;return ''}
+function meta(n,v,prop){var m=document.querySelector('meta['+(prop?'property':'name')+'="'+n+'"]');if(!m){m=document.createElement('meta');m.setAttribute(prop?'property':'name',n);document.head.appendChild(m)}m.setAttribute('content',v)}
+sb.rpc('corp_pub_company',{p_sd:sd}).then(function(r){
+  if(r.error||!r.data){msg('अभी पेज नहीं खुल पाया','थोड़ी देर बाद दोबारा कोशिश करें।');return}
+  var d=r.data;if(d.state==='notfound'){msg('यह कंपनी उपलब्ध नहीं है','लिंक जाँच लें।');return}if(d.state==='suspended'){msg('यह कंपनी पेज अभी बंद है',d.name||'');return}
+  var br=d.brand||{};var st=document.documentElement.style;if(br.primary_color)st.setProperty('--pc',br.primary_color);if(br.secondary_color)st.setProperty('--sc',br.secondary_color);if(br.accent_color)st.setProperty('--ac',br.accent_color);
+  document.title=d.name+(d.tagline?' – '+d.tagline:'')+' | LiveCard';meta('description',d.description||d.tagline||d.name);meta('og:title',d.name,1);meta('og:description',d.tagline||d.description||'LiveCard Corporate',1);meta('og:type','website',1);if(safeUrl(d.logo_url))meta('og:image',d.logo_url,1);
+  root.textContent='';
+  var h=mk('div','hero');if(safeUrl(d.logo_url)){var im=mk('img');im.src=d.logo_url;im.alt=d.name;h.appendChild(im)}h.appendChild(mk('h1','',d.name));if(d.tagline)h.appendChild(mk('p','',d.tagline));
+  var cta=mk('div','cta');if(d.phone){var a=mk('a','btn','📞 कॉल करें');a.href='tel:'+d.phone.replace(/[^0-9+]/g,'');cta.appendChild(a);var w=mk('a','btn o','💬 WhatsApp');w.href='https://wa.me/'+d.phone.replace(/\D/g,'').slice(-10).replace(/^/,'91');cta.appendChild(w)}
+  var e0=mk('a','btn o','✉ Enquiry');e0.href='#enq';cta.appendChild(e0);h.appendChild(cta);root.appendChild(h);
+  var m=mk('main');root.appendChild(m);
+  function sec(t){var s=mk('section');s.appendChild(mk('h2','',t));m.appendChild(s);return s}
+  if(d.description){var s1=sec('हमारे बारे में');var p=mk('p','',d.description);p.style.whiteSpace='pre-line';s1.appendChild(p)}
+  if((d.services||[]).length){var s2=sec('Services');var c=mk('div','chips');d.services.forEach(function(x){c.appendChild(mk('span','chip',x))});s2.appendChild(c)}
+  if((d.departments||[]).length){var s3=sec('Departments');var c3=mk('div','chips');d.departments.forEach(function(x){c3.appendChild(mk('span','chip',x))});s3.appendChild(c3)}
+  if(d.directory==='public'&&(d.employees||[]).length){var s4=sec('Employee Directory ('+d.employees.length+')');var qi=mk('input');qi.placeholder='🔍 कर्मचारी खोजें (नाम / पद)';s4.appendChild(qi);var g=mk('div','emp');s4.appendChild(g);
+    function paint(){g.textContent='';var t=qi.value.toLowerCase();d.employees.filter(function(x){return !t||((x.name||'')+' '+(x.designation||'')+' '+(x.department||'')).toLowerCase().indexOf(t)>-1}).forEach(function(x){var a=mk('a','e');a.href=cardUrl(x.slug);var av=mk('div','av');if(safeUrl(x.photo)){var i=mk('img');i.src=x.photo;i.alt='';i.loading='lazy';av.appendChild(i)}else av.textContent=(x.name||'?').trim().charAt(0).toUpperCase();a.appendChild(av);a.appendChild(mk('b','',x.name||''));a.appendChild(mk('span','',x.designation||''));g.appendChild(a)});if(!g.children.length)g.appendChild(mk('div','k','कोई नहीं मिला'))}
+    qi.oninput=paint;paint()}
+  var two=mk('div','two');m.appendChild(two);
+  var sc=mk('section');sc.appendChild(mk('h2','','संपर्क'));[['📞',d.phone],['✉',d.email],['🌐',d.website],['📍',d.address]].forEach(function(x){if(x[1]){var l=mk('div','');l.style.margin='6px 0';l.appendChild(document.createTextNode(x[0]+' '));if(x[0]==='🌐'&&safeUrl(x[1])){var a=mk('a','',x[1]);a.href=x[1];a.rel='noopener';l.appendChild(a)}else if(x[0]==='✉'){var a2=mk('a','',x[1]);a2.href='mailto:'+x[1];l.appendChild(a2)}else l.appendChild(document.createTextNode(x[1]));sc.appendChild(l)}});
+  if(safeUrl(d.map_url)){var mb=mk('a','btn','🗺 नक्शा देखें');mb.href=d.map_url;mb.target='_blank';mb.rel='noopener';mb.style.marginTop='8px';sc.appendChild(mb)}two.appendChild(sc);
+  var se=mk('section');se.id='enq';se.appendChild(mk('h2','','Enquiry भेजें'));var n=mk('input');n.placeholder='आपका नाम';n.maxLength=80;var mo=mk('input');mo.placeholder='मोबाइल नंबर';mo.type='tel';mo.maxLength=15;var ms=mk('textarea');ms.placeholder='आपका संदेश';ms.rows=3;ms.maxLength=600;var out=mk('div','k');
+  var sbn=mk('button','btn','भेजें');sbn.type='button';sbn.style.marginTop='10px';
+  sbn.onclick=function(){out.className='k';out.textContent='';if(n.value.trim().length<2||mo.value.replace(/\D/g,'').length<8){out.className='k er';out.textContent='नाम और सही मोबाइल नंबर लिखें';return}sbn.disabled=true;
+    sb.rpc('corp_pub_enquiry',{p_sd:sd,p_name:n.value,p_mobile:mo.value,p_msg:ms.value}).then(function(x){sbn.disabled=false;if(x.data==='ok'){out.className='k ok';out.textContent='धन्यवाद! हम जल्द संपर्क करेंगे।';n.value=mo.value=ms.value=''}else{out.className='k er';out.textContent=x.data==='slow'?'थोड़ी देर बाद दोबारा भेजें':'नहीं भेज पाए, दोबारा कोशिश करें'}},function(){sbn.disabled=false;out.className='k er';out.textContent='इंटरनेट जाँचें'})};
+  se.appendChild(n);se.appendChild(mo);se.appendChild(ms);se.appendChild(sbn);se.appendChild(out);two.appendChild(se);
+  var ft=mk('footer');ft.appendChild(document.createTextNode((br.footer_text?br.footer_text+' · ':'')+'Powered by '));var fa=mk('a','','LiveCard');fa.href='https://livecard.in/';ft.appendChild(fa);ft.appendChild(document.createTextNode(' — Your Identity, Dynamically Connected'));root.appendChild(ft);
+},function(){msg('अभी पेज नहीं खुल पाया','इंटरनेट जाँचें')});
+})();
+</script></body></html>

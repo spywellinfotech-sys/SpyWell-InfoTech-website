@@ -1,6 +1,6 @@
 // Builds dist/404.html: the React app plus a redirect for Studio public links (/i/<slug>, /v/<slug>).
 const fs = require('fs');
 const h = fs.readFileSync('dist/index.html', 'utf8');
-const s = "<script>(function(){var m=location.pathname.toLowerCase().match(/^\\/(i|inv|v|web)\\/([a-z0-9-]+)\\/?$/);if(m){document.documentElement.style.cssText='display:none';try{window.stop()}catch(e){}location.replace('/studio/view/?t='+(m[1]==='inv'?'i':m[1]==='web'?'w':m[1])+'&s='+m[2]+'&b="+Date.now().toString(36)+"')}})()</script>";
+const s = "<script>(function(){var c=location.pathname.toLowerCase().match(/^\\/c\\/([a-z0-9-]+)(?:\\/([a-z0-9-]+))?\\/?$/);if(c){document.documentElement.style.cssText='display:none';try{window.stop()}catch(e){}location.replace(c[2]?'/studio/view/?c='+c[1]+'&e='+c[2]:'/studio/company/?o='+c[1]);return}var m=location.pathname.toLowerCase().match(/^\\/(i|inv|v|web)\\/([a-z0-9-]+)\\/?$/);if(m){document.documentElement.style.cssText='display:none';try{window.stop()}catch(e){}location.replace('/studio/view/?t='+(m[1]==='inv'?'i':m[1]==='web'?'w':m[1])+'&s='+m[2]+'&b="+Date.now().toString(36)+"')}})()</script>";
 if (!/<head[^>]*>/.test(h)) throw new Error('no <head> in dist/index.html');
 fs.writeFileSync('dist/404.html', h.replace(/<head[^>]*>/, (x) => x + s));

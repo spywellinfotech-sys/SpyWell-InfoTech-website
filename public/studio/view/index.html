@@ -19,12 +19,18 @@
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 var q=new URLSearchParams(location.search),t=q.get('t')==='i'?'invitation':(q.get('t')==='v'||q.get('t')==='w')?'visiting':'',asWeb=q.get('t')==='w',s=(q.get('s')||'').toLowerCase();
+var cs=(q.get('c')||'').toLowerCase(),ce=(q.get('e')||'').toLowerCase(),hmm=location.hostname.toLowerCase().match(/^([a-z0-9-]+)\.livecard\.in$/);if(!cs&&hmm&&hmm[1]!=='www'&&hmm[1]!=='app'){cs=hmm[1];ce=location.pathname.replace(/^\/+|\/+$/g,'').toLowerCase()}
+if(cs&&/^[a-z0-9-]{1,60}$/.test(ce)){t='visiting'}else{cs=''}
 var box=document.getElementById('sheet');
 function msg(a,b){box.textContent='';var d=document.createElement('div');d.className='msg';var x=document.createElement('b');x.textContent=a;d.appendChild(x);d.appendChild(document.createTextNode(b||''));box.appendChild(d)}
-if(!t||!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(s)||s.length<3||s.length>60){msg('यह लिंक सही नहीं है','कृपया भेजने वाले से पूरा लिंक दोबारा माँगें।');return}
+if(!cs&&(!t||!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(s)||s.length<3||s.length>60)){msg('यह लिंक सही नहीं है','कृपया भेजने वाले से पूरा लिंक दोबारा माँगें।');return}
 if(!window.supabase||!window.StudioRender){msg('पेज लोड नहीं हो पाया','इंटरनेट जाँचकर दोबारा खोलें।');return}
 var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshToken:false}});
 (async function(){
+  if(cs){var cr=await sb.rpc('corp_pub_card',{p_sd:cs,p_emp:ce}),cd=cr.data||{};
+    if(cd.state==='inactive'){box.textContent='';var ib=document.createElement('div');ib.className='msg';ib.style.opacity=1;ib.style.animation='none';var ibb=document.createElement('b');ibb.textContent='यह कार्ड अब सक्रिय नहीं है';ib.appendChild(ibb);ib.appendChild(document.createTextNode((cd.name?cd.name+' अब ':'यह व्यक्ति अब ')+(cd.company||'इस कंपनी')+' से जुड़े नहीं हैं।'));var ia=document.createElement('a');ia.href=location.hostname.match(/^[a-z0-9-]+\.livecard\.in$/)?'/':'/c/'+cd.company_slug+'/';ia.textContent='कंपनी का पेज देखें';ia.style.cssText='display:block;margin-top:14px;color:#8b1a2b;font-weight:700';ib.appendChild(ia);box.appendChild(ib);return}
+    if(cd.state!=='ok'){msg('यह कार्ड उपलब्ध नहीं है','लिंक जाँच लें।');return}
+    s=cd.design_slug}
   var r=await sb.from('studio_designs').select('user_id,template_id,product_type,title,content_json').eq('slug',s).eq('status','published').eq('product_type',t).maybeSingle();
   if(r.error){msg('अभी कार्ड नहीं खुल पाया','थोड़ी देर बाद दोबारा कोशिश करें।');return}
   if(!r.data){msg('यह कार्ड उपलब्ध नहीं है','हो सकता है यह हटा दिया गया हो या अभी प्रकाशित न हो।');return}
