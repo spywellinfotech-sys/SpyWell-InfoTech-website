@@ -264,10 +264,10 @@ function pPhoto(p){
 }
 function shrink(file,keepPng){return new Promise(function(res){
   var img=new Image(),u=URL.createObjectURL(file);
-  img.onload=function(){URL.revokeObjectURL(u);var m=1600,s=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement('canvas');
+  img.onload=function(){URL.revokeObjectURL(u);var m=(keepPng&&file.type==='image/png')?700:1000,s=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement('canvas');
     c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));
     var x=c.getContext('2d');var png=keepPng&&file.type==='image/png';if(!png){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}x.drawImage(img,0,0,c.width,c.height);
-    c.toBlob(function(b){res(b||file)},png?'image/png':'image/jpeg',0.85)};
+    c.toBlob(function(b){res(b||file)},png?'image/png':'image/jpeg',0.72)};
   img.onerror=function(){URL.revokeObjectURL(u);res(null)};img.src=u})}
 async function upload(k,file,defSize,msg){
   msg.textContent='';
@@ -277,7 +277,7 @@ async function upload(k,file,defSize,msg){
   var blob=await shrink(file,k==='logo');
   if(!blob){msg.className='e';msg.textContent='यह फ़ोटो खुल नहीं पाई। दूसरी फ़ोटो चुनें।';return}
   var path=UID+'/'+D.id+'/'+k+'-'+Date.now()+(blob.type==='image/png'?'.png':'.jpg');
-  var r=await sb.storage.from('studio-assets').upload(path,blob,{contentType:blob.type,upsert:false});
+  var r=await sb.storage.from('studio-assets').upload(path,blob,{contentType:blob.type,upsert:false,cacheControl:'31536000'});
   if(r.error){msg.className='e';msg.textContent='अपलोड नहीं हुआ। दोबारा कोशिश करें।';return}
   await sb.from('studio_assets').insert({user_id:UID,design_id:D.id,path:path,mime:blob.type,size_bytes:blob.size});
   var old=C.images[k]||{};C.images[k]={url:R.BUCKET+path,size:old.size||defSize||0,pos:old.pos==null?50:old.pos};
