@@ -36,7 +36,10 @@ button{padding:9px;font-size:14px;margin-top:6px;border-radius:10px}
 #pv{width:38%;margin:0 auto}
 #g-msg{min-height:0}
 
-</style>
+/*desk-v1*/@media(min-width:1000px){.wrap{max-width:1000px}
+#main{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:0 18px;align-items:start}
+#main>.card:first-child{grid-column:2;grid-row:1/span 4;position:sticky;top:12px}
+#main>.card:not(:first-child){grid-column:1}}</style>
 <script>window.I18N_PICKER=false</script><script src="/studio/appback.js"></script><script src="/studio/greeting/oc.js?v=3"></script></head><body>
 <div class="top"><b><img src="/studio/vicard-icon.png" alt="" width="30" height="30" style="border-radius:8px;vertical-align:middle;margin-right:8px">🎉 Greeting / Offer</b><a href="/studio/">← होम</a></div>
 <div class="wrap">
