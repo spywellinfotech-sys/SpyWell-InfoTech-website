@@ -23,11 +23,11 @@ function page(url, to, title, desc, img) {
       const sd = String(o.sd || '').toLowerCase(); if (!/^[a-z0-9-]{3,30}$/.test(sd)) continue;
       const dir = path.join('dist', 'c', sd); fs.mkdirSync(dir, { recursive: true });
       const cimg = okImg(o.logo) || FALL;
-      fs.writeFileSync(path.join(dir, 'index.html'), page(ORIGIN + '/c/' + sd + '/', '/studio/company/?o=' + sd, clip(o.name, 90), clip(o.tagline || 'Official company page · LiveCard Corporate', 160), cimg)); n++;
+      fs.writeFileSync(path.join(dir, 'index.html'), page(ORIGIN + '/c/' + sd + '/', '/studio/company/?o=' + sd, clip(o.name, 90), clip(o.tagline || 'Official company page · Digital Identity Platform · LiveCard Corporate', 160), cimg)); n++;
       for (const e of o.employees || []) {
         const es = String(e.slug || '').toLowerCase(); if (!/^[a-z0-9-]{1,60}$/.test(es)) continue;
         const ed = path.join(dir, es); fs.mkdirSync(ed, { recursive: true });
-        fs.writeFileSync(path.join(ed, 'index.html'), page(ORIGIN + '/c/' + sd + '/' + es, '/studio/view/?c=' + sd + '&e=' + es, clip(e.name + ' · ' + o.name, 90), clip([e.designation, o.name, 'डिजिटल विज़िटिंग कार्ड'].filter(Boolean).join(' · '), 160), okImg(e.photo) || cimg)); n++;
+        fs.writeFileSync(path.join(ed, 'index.html'), page(ORIGIN + '/c/' + sd + '/' + es, '/studio/view/?c=' + sd + '&e=' + es, clip(e.name + ' · ' + o.name, 90), clip([e.designation, o.name, 'डिजिटल पहचान · Digital Identity'].filter(Boolean).join(' · '), 160), okImg(e.photo) || cimg)); n++;
       }
     }
     console.log('corp pages', n);

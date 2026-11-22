@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Company | LiveCard</title><meta name="description" content="LiveCard Corporate">
+<title>Company | LiveCard</title><meta name="description" content="LiveCard Corporate · Digital Identity Platform">
 <link rel="icon" href="/studio/vicard-icon.png">
 <style>
 :root{--pc:#15151a;--sc:#f2efe6;--ac:#d4af37}
@@ -48,7 +48,7 @@ sb.rpc('corp_pub_company',{p_sd:sd}).then(function(r){
   if(r.error||!r.data){msg('अभी पेज नहीं खुल पाया','थोड़ी देर बाद दोबारा कोशिश करें।');return}
   var d=r.data;if(d.state==='notfound'){msg('यह कंपनी उपलब्ध नहीं है','लिंक जाँच लें।');return}if(d.state==='suspended'){msg('यह कंपनी पेज अभी बंद है',d.name||'');return}
   var br=d.brand||{};var st=document.documentElement.style;if(br.primary_color)st.setProperty('--pc',br.primary_color);if(br.secondary_color)st.setProperty('--sc',br.secondary_color);if(br.accent_color)st.setProperty('--ac',br.accent_color);
-  document.title=d.name+(d.tagline?' – '+d.tagline:'')+' | LiveCard';meta('description',d.description||d.tagline||d.name);meta('og:title',d.name,1);meta('og:description',d.tagline||d.description||'LiveCard Corporate',1);meta('og:type','website',1);if(safeUrl(d.logo_url))meta('og:image',d.logo_url,1);
+  document.title=d.name+(d.tagline?' – '+d.tagline:'')+' | LiveCard';meta('description',d.description||d.tagline||d.name);meta('og:title',d.name,1);meta('og:description',d.tagline||d.description||'Digital Identity Platform · LiveCard Corporate',1);meta('og:type','website',1);if(safeUrl(d.logo_url))meta('og:image',d.logo_url,1);
   root.textContent='';
   var h=mk('div','hero');if(safeUrl(d.logo_url)){var im=mk('img');im.src=d.logo_url;im.alt=d.name;h.appendChild(im)}h.appendChild(mk('h1','',d.name));if(d.tagline)h.appendChild(mk('p','',d.tagline));
   var cta=mk('div','cta');if(d.phone){var a=mk('a','btn','📞 कॉल करें');a.href='tel:'+d.phone.replace(/[^0-9+]/g,'');cta.appendChild(a);var w=mk('a','btn o','💬 WhatsApp');w.href='https://wa.me/'+d.phone.replace(/\D/g,'').slice(-10).replace(/^/,'91');cta.appendChild(w)}

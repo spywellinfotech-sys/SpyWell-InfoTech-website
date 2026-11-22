@@ -1466,7 +1466,7 @@ function greetTile(){var box=$('c-greet');if(!box)return;box.textContent='';box.
   var b=mk('button','','🎨 Greeting / Offer बनाएँ');b.type='button';b.style.cssText='margin:10px 0 0;width:100%;background:#fff;color:#d4141c;border:0';b.onclick=openGr;box.appendChild(b)}
 async function corpTile(){var box=$('c-corp');if(!box)return;try{var r=await sb.rpc('corp_allowed');if(!r.data){box.hidden=true;return}}catch(e){return}
   box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#1d3557,#457b9d);border:0;color:#fff;padding:10px 14px';
-  var lbl='🏢 LiveCard Corporate (कंपनी बनाएँ)';try{var mo=await sb.rpc('corp_my_orgs');if(mo.data&&mo.data.length){lbl='🏢 '+mo.data[0].name+(mo.data.length>1?' +'+(mo.data.length-1):'')+' · '+(mo.data[0].role==='employee'?'मेरा पैनल':'Control Panel')}}catch(e){}
+  var lbl='🏢 Digital Identity Platform (कंपनी बनाएँ)';try{var mo=await sb.rpc('corp_my_orgs');if(mo.data&&mo.data.length){lbl='🏢 '+mo.data[0].name+(mo.data.length>1?' +'+(mo.data.length-1):'')+' · '+(mo.data[0].role==='employee'?'मेरा पैनल':'Control Panel')}}catch(e){}
   var b=mk('button','',lbl);b.type='button';b.style.cssText='width:100%;background:#fff;color:#1d3557;border:0';b.onclick=function(){location.href='/studio/corporate/'};box.appendChild(b)}
 function openGr(){location.href='/studio/greeting/'}
 async function addrTile(){
