@@ -8,7 +8,7 @@
 header{background:var(--r);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px}header img{border-radius:50%;background:#fff}header a{color:#fff;text-decoration:none;font-weight:700}header .sp{margin-left:auto}
 main{max-width:980px;margin:0 auto;padding:18px 16px 40px}h1{font-size:28px;margin:6px 0 4px;color:var(--rd)}h2{font-size:20px;margin:28px 0 8px;color:var(--rd)}.m{color:var(--m);font-size:14px}
 .free{background:#fff4f4;border:1px solid #f4c4c6;border-radius:12px;padding:12px 14px;margin:14px 0;font-weight:600}
-.g{display:grid;gap:14px;margin-top:14px}@media(min-width:760px){.g{grid-template-columns:repeat(3,1fr)}}
+.g4{}@media(min-width:760px){.g.g4{grid-template-columns:repeat(2,1fr)}}@media(min-width:1000px){.g.g4{grid-template-columns:repeat(4,1fr)}}.g{display:grid;gap:14px;margin-top:14px}@media(min-width:760px){.g{grid-template-columns:repeat(3,1fr)}}
 .p{position:relative;border:1.5px solid var(--l);border-radius:18px;padding:18px 16px;background:#fff;display:flex;flex-direction:column}.p.h{border-color:var(--r);box-shadow:0 8px 24px rgba(237,28,36,.18)}
 .p .t{display:inline-block;align-self:flex-start;background:var(--r);color:#fff;font-size:12px;font-weight:800;padding:3px 10px;border-radius:8px;margin-bottom:8px}
 .p h3{margin:0;font-size:20px}.p .pr{font-size:32px;font-weight:800;color:var(--rd);margin:6px 0 2px}.p .pr small{font-size:14px;color:var(--m);font-weight:600}
@@ -24,7 +24,8 @@ footer{background:#111;color:#bbb;text-align:center;padding:18px 14px;font-size:
 <h1>Plans and Pricing</h1>
 <p class="m">Simple yearly plans. Pick what you need and upgrade any time.</p>
 <div class="free" style="text-align:center;font-size:18px">🎁 <b>7 DAYS FREE</b> on every plan. Start today, no payment needed.<div class="m" style="font-weight:400;margin-top:4px">Right now everything is free for a limited time.</div></div>
-<div class="g">
+<div class="g g4">
+<div class="p"><h3>Free</h3><div class="pr">₹0<small> forever</small></div><ul><li>Live visiting card with your own link</li><li>Call, WhatsApp, email and map buttons</li><li>QR code and save contact (.vcf)</li><li><b>5 link shares free</b> (+5 more for every 10 referrals)</li><li>Free themes, Greeting cards and Car Call QR</li></ul><a class="btn o" href="/studio/">Start Free</a></div>
 <div class="p"><h3>Visiting Card</h3><div class="pr">₹600<small> / year</small></div><ul><li>Live visiting card with your own link</li><li>Call, WhatsApp, email and map buttons</li><li>QR code and save contact (.vcf)</li><li>Share on WhatsApp and everywhere</li><li>Insights: views and clicks</li></ul><a class="btn o" href="/studio/">Start 7 Days Free</a></div>
 <div class="p h"><span class="t">MOST POPULAR</span><h3>Mini Website</h3><div class="pr">₹1,200<small> / year</small></div><ul><li>Everything in Visiting Card</li><li>Your own one-page Mini Website</li><li>Services, about, hours and gallery</li><li>Address Cards: home and office</li><li><b>My Saved Locations FREE</b> with this plan</li></ul><a class="btn" href="/studio/">Start 7 Days Free</a></div>
 <div class="p"><h3>Full Website + Own Domain</h3><div class="pr">₹6,000<small> / year</small></div><ul><li>Everything in Mini Website</li><li>Your own domain, like www.yourname.com</li><li>Full website for your business</li><li>Best for shops and companies</li></ul><a class="btn o" href="/studio/">Start 7 Days Free</a></div>
@@ -36,12 +37,13 @@ footer{background:#111;color:#bbb;text-align:center;padding:18px 14px;font-size:
 <div class="p"><h3>Premium Themes</h3><div class="pr">₹99<small> and up</small></div><ul><li>Visiting card theme ₹99</li><li>Mini website theme ₹199</li><li>Free themes are always available</li></ul><a class="btn o" href="/studio/">See Themes</a></div>
 </div>
 <h2>Compare plans</h2>
-<div class="ov"><table><tr><th>Feature</th><th>Visiting Card</th><th>Mini Website</th><th>Full Website</th></tr>
-<tr><td>Live visiting card + QR</td><td>✔</td><td>✔</td><td>✔</td></tr>
-<tr><td>Mini Website</td><td>–</td><td>✔</td><td>✔</td></tr>
-<tr><td>Address Cards and saved locations</td><td>–</td><td>✔</td><td>✔</td></tr>
-<tr><td>Own domain name</td><td>–</td><td>–</td><td>✔</td></tr>
-<tr><td>Price per year</td><td>₹600</td><td>₹1,200</td><td>₹6,000</td></tr></table></div>
+<div class="ov"><table><tr><th>Feature</th><th>Free</th><th>Visiting Card</th><th>Mini Website</th><th>Full Website</th></tr>
+<tr><td>Live visiting card + QR</td><td>✔</td><td>✔</td><td>✔</td><td>✔</td></tr>
+<tr><td>Link shares</td><td>5 (+5 per 10 referrals)</td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+<tr><td>Mini Website</td><td>–</td><td>–</td><td>✔</td><td>✔</td></tr>
+<tr><td>Address Cards and saved locations</td><td>–</td><td>–</td><td>✔</td><td>✔</td></tr>
+<tr><td>Own domain name</td><td>–</td><td>–</td><td>–</td><td>✔</td></tr>
+<tr><td>Price per year</td><td>₹0</td><td>₹600</td><td>₹1,200</td><td>₹6,000</td></tr></table></div>
 <h2>Good to know</h2>
 <ul class="r"><li>All plans are for 1 year. Directory Listing is also yearly.</li><li>Upgrading? You pay only the difference, and your year-end date stays the same.</li><li>After expiry you get 7 extra days. Then your link pauses. Your data stays safe and it turns back on when you renew.</li><li>Car Call QR is always free.</li><li>Refer 10 friends and get 5 more free shares (every 10 referrals = 5 more).</li><li>Free start: every visiting card, mini website and invitation can be shared 5 times for free. After that the link stops opening until the plan is paid. Invitation Card is a one-time fee of ₹999.</li><li>Prices are in Indian rupees. See our <a href="/dyname/refund/">Refund Policy</a>.</li></ul>
 <h2>Questions?</h2>
