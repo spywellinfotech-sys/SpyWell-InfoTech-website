@@ -12,7 +12,7 @@ function page(url, to, title, desc, img) {
     '<title>' + esc(title) + '</title><meta name="description" content="' + esc(desc) + '"><link rel="canonical" href="' + esc(url) + '">' +
     '<meta property="og:type" content="website"><meta property="og:site_name" content="LiveCard"><meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(desc) + '"><meta property="og:url" content="' + esc(url) + '"><meta property="og:image" content="' + esc(img) + '">' +
     '<meta name="twitter:card" content="summary"><meta name="twitter:title" content="' + esc(title) + '"><meta name="twitter:description" content="' + esc(desc) + '">' +
-    '<script>location.replace(' + JSON.stringify(to) + ')</script></head><body><p>' + esc(title) + '</p><noscript><a href="' + esc(to) + '">खोलें</a></noscript></body></html>';
+    '<script>location.replace(' + JSON.stringify(to) + '+(location.search?\'&\'+location.search.slice(1):\'\'))</script></head><body><p>' + esc(title) + '</p><noscript><a href="' + esc(to) + '">खोलें</a></noscript></body></html>';
 }
 (async () => {
   try {
