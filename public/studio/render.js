@@ -608,16 +608,16 @@
     if (row.children.length) bd.appendChild(row);
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save pf-save', '👤 ' + P('कॉन्टैक्ट सेव करें', 'Save Contact')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; bd.appendChild(sv0); }
     var panel = el('div', 'pf-panel'); panel.hidden = true;
-    var tiles = el('div', 'pf-tiles'), cur = '';
+    var tiles = el('div', 'pf-tiles'), cur = '', tb = {};
     function tile(ic, label, key, build) {
       var t = el('button', 'pf-tile'); t.type = 'button'; t.appendChild(el('i', '', ic)); t.appendChild(el('span', '', label));
       t.onclick = function () { if (cur === key) { cur = ''; panel.hidden = true; t.classList.remove('on'); return; } cur = key; panel.hidden = false; panel.textContent = ''; build(panel); Array.prototype.forEach.call(tiles.children, function (x) { x.classList.remove('on'); }); t.classList.add('on'); };
-      tiles.appendChild(t);
+      tb[key] = t; tiles.appendChild(t);
     }
     if (f.about) tile('🏢', P('हमारे बारे में', 'About Us'), 'a', function (pn) { pn.appendChild(el('p', 'pf-about', f.about)); });
-    if (d.services.length) tile('⚙️', P('सेवाएँ', 'Our Services'), 's', function (pn) { var w = el('div', 'sr-svs'); d.services.forEach(function (x) { w.appendChild(el('span', 'sr-chip', svName(x))); }); pn.appendChild(w); });
+    if (d.services.length) tile('⚙️', P('प्रोडक्ट और सेवाएँ', 'Products & Services'), 's', function (pn) { var w = el('div', 'sr-svs'); d.services.forEach(function (x) { w.appendChild(el('span', 'sr-chip', svName(x))); }); pn.appendChild(w); });
     if (mini) { var tm = link('pf-tile', '', mini); tm.appendChild(el('i', '', '🌐')); tm.appendChild(el('span', '', P('मिनी वेबसाइट', 'Mini Website'))); tiles.appendChild(actA(tm, 'miniweb')); }
-    if (tiles.children.length) { bd.appendChild(tiles); bd.appendChild(panel); }
+    if (tiles.children.length) { bd.appendChild(tiles); bd.appendChild(panel); var t0 = tb.s || tb.a; if (t0) t0.onclick(); }
     var ib = el('div', 'pf-info'), ad2 = [f.address, f.city, f.state].filter(Boolean).join(', '), wb2 = web || mini;
     [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(el('span', '', q[1])); ib.appendChild(rw); });
     if (ib.children.length) bd.appendChild(ib);
