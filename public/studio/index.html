@@ -1238,14 +1238,19 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
   if(x.status==='published'&&x.slug){var r2=mk('div','');r2.style.cssText='display:flex;gap:8px;margin-top:8px';var u=location.origin+'/v/'+x.slug;
     var cp=mk('button','alt','🔗 लिंक');cp.type='button';cp.style.cssText='margin:0;flex:1';cp.onclick=async function(){shTick(x.id);try{await navigator.clipboard.writeText(u);cp.textContent='कॉपी हुआ ✓'}catch(e){cp.textContent='कॉपी नहीं हुआ'}setTimeout(function(){cp.textContent='🔗 लिंक'},2000)};
     var wa=mk('a','','💬 WhatsApp');wa.href='https://wa.me/?text='+encodeURIComponent('मेरा डिजिटल कार्ड: '+u);wa.target='_blank';wa.rel='noopener';
-    var qr=mk('a','','QR');qr.href='/studio/editor/?v=20261116&id='+x.id+'&tab=pub';
+    var qr=mk('a','','QR');qr.href='#';var qh=mk('div','');qh.style.cssText='width:100%;text-align:center';
+    qr.onclick=function(ev){ev.preventDefault();if(qh.firstChild){qh.textContent='';return}
+      var cv=document.createElement('canvas');try{window.StudioQR.draw(cv,u+'?src=qr',700)}catch(e){qh.textContent='QR नहीं बन पाया';return}
+      cv.style.cssText='width:210px;height:210px;border:1px solid #e8d5ad;border-radius:8px;margin-top:8px';qh.appendChild(cv);
+      var dl=mk('button','','⬇️ QR डाउनलोड (प्रिंट के लिए)');dl.type='button';dl.style.cssText='display:block;margin:8px auto 0;padding:10px 14px;min-height:0;border-radius:12px;background:#fff;border:1px solid var(--wine);color:var(--wine);font-weight:700;font-size:13px';
+      dl.onclick=function(){var a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='livecard-qr.png';document.body.appendChild(a);a.click();a.remove()};qh.appendChild(dl)};
     var NVb=window.ViNative;if(NVb&&NVb.openWa){var wb=mk('a','','🛍 WA Business');wb.href='#';wb.onclick=function(ev){ev.preventDefault();var m='मेरा डिजिटल कार्ड: '+u;if(!NVb.openWa('',m,true)&&NVb.shareText)NVb.shareText(m)};[wb].forEach(function(a){a.style.cssText='flex:1;text-align:center;background:#075e54;border:1px solid #075e54;color:#fff;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px'})}
     wa.style.cssText='flex:1;text-align:center;background:#e7f8ee;border:1px solid #1ea952;color:#0b6b32;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:700;font-size:14px';[qr].forEach(function(a){a.style.cssText='flex:1;text-align:center;border:1px solid var(--wine);color:var(--wine);border-radius:12px;padding:8px 6px;text-decoration:none;font-weight:600;font-size:14px'});if(wb)r2.appendChild(wb);
     var nf=mk('button','','📲 NFC');nf.type='button';nf.style.cssText='flex:1;margin:0;padding:12px 6px;min-height:0;border-radius:12px;background:#fff;border:1px solid #0b3d5c;color:#0b3d5c;font-weight:700;font-size:14px';
     nf.onclick=async function(){if(!('NDEFReader' in window)){alert('NFC लिखना सिर्फ़ Android के Chrome में चलता है (HTTPS)। अपने Android फ़ोन के Chrome में LiveCard खोलें।');return}
       try{nf.textContent='📲 टैग फ़ोन से छुआएँ…';var rd=new NDEFReader();await rd.write({records:[{recordType:'url',data:u+'?src=nfc'}]});nf.textContent='✅ NFC में लिख गया'}catch(e){nf.textContent=(e&&e.name==='NotAllowedError')?'NFC की अनुमति/चालू करें':'लिखा नहीं जा सका'}
       setTimeout(function(){nf.textContent='📲 NFC'},4000)};
-    r2.appendChild(nf);box.appendChild(r2)}
+    r2.appendChild(nf);r2.style.flexWrap='wrap';r2.appendChild(qh);box.appendChild(r2)}
   (function(){var pub=x.status==='published'&&!!x.slug,nm=(x.title||'मेरी वेबसाइट');
     var hero=mk('div','');hero.style.cssText='margin-top:14px;background:linear-gradient(135deg,#0b3d5c,#1a8fd1);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(26,143,209,.3)';
     hero.appendChild(mk('b','','🌐 मेरी मिनी वेबसाइट')).style.cssText='display:block;font-size:17px';
@@ -1883,4 +1888,4 @@ var st=ios?['नीचे (या ऊपर) <b>Share</b> बटन ⬆️ द�
 c.innerHTML='<b style="font-size:18px;color:#d4141c">📲 होम स्क्रीन पर जोड़ें</b><div style="margin:6px 0 10px;color:#6e5b5b;font-size:14px">एक बार जोड़ने पर आइकन दबाते ही LiveCard खुल जाएगा, URL टाइप नहीं करना पड़ेगा।'+(ios?' (iPhone में यह <b>Safari</b> में ही होता है।)':'')+'</div><ol style="margin:0;padding-left:22px">'+st.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ol>';
 var x=document.createElement('button');x.type='button';x.textContent='ठीक है';x.style.cssText='width:100%;margin:14px 0 0;min-height:44px;background:#d4141c;color:#fff;border:0;border-radius:12px;font-size:16px;font-weight:700';x.onclick=function(){o.remove()};
 c.appendChild(x);o.appendChild(c);o.onclick=function(e){if(e.target===o)o.remove()};document.body.appendChild(o)}
-b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).catch(function(){})}else help()}})();</script></body></html>
+b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).catch(function(){})}else help()}})();</script><script src="/studio/qr.js"></script></body></html>
