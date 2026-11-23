@@ -55,7 +55,7 @@ function show(d0){
   d.days.forEach(function(x){var b=el('div');b.style.height=Math.round(x.n/mx*100)+'%';b.title=x.d+': '+x.n;bars.appendChild(b);lb.appendChild(el('span','',x.d.slice(8)))});bx.appendChild(bars);bx.appendChild(lb);
   var ck=Object.keys(d.clicks||{});if(ck.length){var cb=box('बटन क्लिक');ck.forEach(function(x){row(cb,LB[x]||x,d.clicks[x])})}
   var dv=Object.keys(d.devices||{});if(dv.length){var db=box('फ़ोन / कंप्यूटर');dv.forEach(function(x){row(db,x==='mobile'?'फ़ोन':'कंप्यूटर',d.devices[x])})}
-  var sr=Object.keys(d.sources||{});if(sr.length){var sb2=box('कहाँ से आए');sr.forEach(function(x){row(sb2,x==='direct'?'सीधा लिंक / WhatsApp':(x==='nfc'?'📲 NFC टैप':x),d.sources[x])})}
+  var sr=Object.keys(d.sources||{});if(sr.length){var sb2=box('कहाँ से आए');sr.forEach(function(x){row(sb2,x==='direct'?'सीधा लिंक / WhatsApp':(x==='nfc'?'📲 NFC टैप':(x==='qr'?'▣ QR स्कैन':x)),d.sources[x])})}
   if(d.gate||(d.leads||[]).length){var lbx=box('👥 कार्ड देखने वाले ('+(d.lead_count||0)+')');
     if(!(d.leads||[]).length)lbx.appendChild(el('div','k','अभी किसी ने नाम और नंबर नहीं दिया।'));
     (d.leads||[]).forEach(function(x){var r=el('div','r');var nm=el('span','',x.n);r.appendChild(nm);var a2=el('a','',x.m);a2.href='tel:+91'+x.m;a2.style.cssText='font-weight:700;color:#12307f;text-decoration:none';r.appendChild(a2);lbx.appendChild(r)});
