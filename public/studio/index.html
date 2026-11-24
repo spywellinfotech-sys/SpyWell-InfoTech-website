@@ -723,8 +723,8 @@ async function loadList(){
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
-  try{var LAY=localStorage.getItem('lc_layout')||'classic';
-    var pf2=await sb.from('studio_profiles').select('card_json').eq('id',ME.id).maybeSingle();var hl=pf2.data&&pf2.data.card_json&&pf2.data.card_json.home_layout;if(hl&&hl!==LAY){LAY=hl;localStorage.setItem('lc_layout',hl)}
+  try{var LAY=localStorage.getItem('lc_layout')||'';
+    var pf2=await sb.from('studio_profiles').select('card_json').eq('id',ME.id).maybeSingle();var hl=pf2.data&&pf2.data.card_json&&pf2.data.card_json.home_layout;if(!LAY){LAY=hl||'classic';localStorage.setItem('lc_layout',LAY);if(LAY==='tiles'&&!location.search.match(/classic|app=1/)&&!sessionStorage.getItem('lc_go')){location.replace('/studio/apphome/');return}}else if((hl||'classic')!==LAY){var cj0=Object.assign({},(pf2.data&&pf2.data.card_json)||{});cj0.home_layout=LAY;sb.from('studio_profiles').update({card_json:cj0}).eq('id',ME.id).then(function(){})}
     var lc=$('lay-c'),lt=$('lay-t');
     var paintL=function(){[[lc,'classic'],[lt,'tiles']].forEach(function(z){var on=LAY===z[1];z[0].style.cssText+=';background:'+(on?'#d4141c':'#fff')+';color:'+(on?'#fff':'#d4141c')+';border:1.5px solid #d4141c'})};paintL();
     var setL=async function(v){LAY=v;localStorage.setItem('lc_layout',v);paintL();var cur=await sb.from('studio_profiles').select('card_json').eq('id',ME.id).maybeSingle();var cj=Object.assign({},(cur.data&&cur.data.card_json)||{});cj.home_layout=v;await sb.from('studio_profiles').update({card_json:cj}).eq('id',ME.id);if(v==='tiles'){sessionStorage.setItem('lc_lay','1');location.href='/studio/apphome/'}};
@@ -732,7 +732,7 @@ async function loadList(){
   try{var gq=sessionStorage.getItem('lc_go')||new URLSearchParams(location.search).get('go');sessionStorage.removeItem('lc_go');
     if(gq&&/^(visiting|invitation|dir|disc|saved|me|ref|greeting|address|car|leads|places)$/.test(gq)){try{history.replaceState(null,'',location.pathname)}catch(e){}
       setTimeout(function(){if(gq==='visiting'||gq==='invitation'){var gb=document.querySelector('[data-new='+gq+']');if(gb)gb.click()}
-        else if(gq==='ref'){if(typeof openRef==='function')openRef()}
+        else if(gq==='ref'){setTab('home');if(typeof openRef==='function')openRef()}
         else if(gq==='greeting')openGr();else if(gq==='address')openAd('home');
         else if(gq==='car')location.href='/studio/carqr/';else if(gq==='leads')location.href='/studio/leads/';else if(gq==='places')location.href='/studio/places/';
         else if(typeof setTab==='function')setTab(gq)},500)}}catch(e){}
