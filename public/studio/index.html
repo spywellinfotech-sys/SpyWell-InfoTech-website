@@ -719,7 +719,7 @@ async function loadList(){
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
-  try{var gq=new URLSearchParams(location.search).get('go');if(gq==='visiting'||gq==='invitation'){history.replaceState(null,'',location.pathname);setTimeout(function(){var gb=document.querySelector('[data-new='+gq+']');if(gb)gb.click()},400)}}catch(e){}
+  try{var gq=new URLSearchParams(location.search).get('go');if(/^(visiting|invitation|dir|disc|saved|me|ref)$/.test(gq)){history.replaceState(null,'',location.pathname);setTimeout(function(){if(gq==='visiting'||gq==='invitation'){var gb=document.querySelector('[data-new='+gq+']');if(gb)gb.click()}else if(gq==='ref'){if(typeof openRef==='function')openRef()}else if(typeof setTab==='function')setTab(gq)},400)}}catch(e){}
 }
 var SUBI={},PLN2={card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'वेबसाइट + अपना डोमेन'},STX={free:'🆓 फ्री',active:'✅ चालू',grace:'⚠️ ग्रेस पीरियड',expired:'⛔ खत्म',unpaid:'💳 भुगतान बाकी',upgrade:'⬆️ अपग्रेड चाहिए'};
 async function loadSubs(){
