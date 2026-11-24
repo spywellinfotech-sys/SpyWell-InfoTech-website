@@ -39,7 +39,7 @@ header a{color:#fff;text-decoration:none;font-weight:700;font-size:13px;backgrou
 .fl{position:fixed;right:max(14px,calc(50% - 246px));bottom:18px;z-index:20;width:56px;height:56px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3);text-decoration:none;font-size:28px}
 footer{text-align:center;color:#8a8a90;font-size:12px;padding:6px 14px 0}footer a{color:#8a8a90}
 </style></head><body><div class="app">
-<header><img src="/studio/livecard-logo.png" alt="LiveCard"><b>LiveCard</b><a href="/studio/?app=1">ऐप खोलें</a></header>
+<header><img src="/studio/livecard-logo.png" alt="LiveCard"><b>LiveCard</b><a href="/studio/?app=1" id="lg">ऐप खोलें</a></header>
 <div class="w">
 <div class="car" id="car">
  <div class="sl"><h2>डिजिटल विज़िटिंग कार्ड</h2><p>नाम, कॉल, WhatsApp, लोकेशन सब एक लिंक में</p><a href="/studio/?go=visiting">अभी बनाएँ</a><span class="em">📇</span></div>
@@ -78,4 +78,5 @@ function mark(){d.forEach(function(x,j){x.className=j===i?'on':''})}
 c.addEventListener('scroll',function(){var k=Math.round(c.scrollLeft/(c.scrollWidth/n));if(k!==i&&k>=0&&k<n){i=k;mark()}});
 function run(){clearInterval(t);t=setInterval(function(){go(i+1)},3800)}
 c.addEventListener('touchstart',function(){clearInterval(t)},{passive:true});c.addEventListener('touchend',run,{passive:true});run()})();
+try{var au=localStorage.getItem('spywell-studio-auth');if(!au)document.getElementById('lg').textContent='लॉगिन'}catch(e){}
 try{document.getElementById('back').onclick=function(){localStorage.setItem('lc_layout','classic')}}catch(e){}</script></body></html>
