@@ -715,9 +715,10 @@ $('ct-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)re
   bt.disabled=false};
 $('ct-i').onchange=function(){var o=$('ct-io');o.hidden=this.value!=='other';if(o.hidden)o.value=''};
 async function loadList(){
-  var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at,published_at').eq('user_id',ME.id).or('org_id.is.null,status.eq.published').order('updated_at',{ascending:false});
+  var d=await sb.from('studio_designs').select('id,title,status,product_type,template_id,slug,updated_at,published_at,org_id').eq('user_id',ME.id).or('org_id.is.null,status.eq.published').order('updated_at',{ascending:false});
   if(d.error){$('d-list').textContent='डिज़ाइन लोड नहीं हुए। पेज दोबारा खोलें।';return}
-  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')});
+  var MYD=[];try{var md=await sb.rpc('corp_my_design_ids');MYD=md.data||[]}catch(e){}
+  LIST=(d.data||[]).filter(function(x){return !/^demo/.test(x.slug||'')&&(!x.org_id||MYD.indexOf(x.id)>=0)});
   try{var pf=await sb.from('studio_profiles').select('card_json').eq('id',ME.id).maybeSingle();DEFID=(pf.data&&pf.data.card_json&&pf.data.card_json.default_card)||''}catch(e){DEFID=''}
   LIST.sort(function(a,b){return (b.id===DEFID)-(a.id===DEFID)});drawList();loadSubs();myHome();refHome();lbHome();greetTile();corpTile();billTile();fnTile();invHome();dirInit();$('c-welcome').hidden=LIST.length>0;$('wl-go').onclick=function(){if(window.SWWizard)SWWizard.open({mode:'new'});else{var t=document.querySelector('[data-new=visiting]');if(t)t.click()}};
   var A=$('d-act');A.textContent='';
@@ -1502,7 +1503,7 @@ function greetTile(){var box=$('c-greet');if(!box)return;box.textContent='';box.
 async function corpTile(){var box=$('c-corp');if(!box)return;try{var r=await sb.rpc('corp_allowed');if(!r.data){box.hidden=true;return}}catch(e){return}
   box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#1d3557,#457b9d);border:0;color:#fff;padding:10px 14px';
   var lbl='🏢 Digital Identity Platform (कंपनी बनाएँ)';try{var mo=await sb.rpc('corp_my_orgs');if(mo.data&&mo.data.length){lbl='🏢 '+mo.data[0].name+(mo.data.length>1?' +'+(mo.data.length-1):'')+' · '+(mo.data[0].role==='employee'?'मेरा पैनल':'Control Panel')}}catch(e){}
-  var b=mk('button','',lbl);b.type='button';b.style.cssText='width:100%;background:#fff;color:#1d3557;border:0';b.onclick=function(){location.href='/studio/corporate/'};box.appendChild(b)}
+  var b=mk('button','',lbl);b.type='button';b.style.cssText='width:100%;background:#fff;color:#1d3557;border:0';b.onclick=function(){location.href='/studio/corporate/'};box.textContent='';box.appendChild(b)}
 function qrPanel(u,holder){if(holder.firstChild){holder.textContent='';return}
   var cv=document.createElement('canvas');try{window.StudioQR.draw(cv,u,900)}catch(e){holder.textContent='QR नहीं बन पाया';return}
   cv.style.cssText='width:220px;height:220px;border:1px solid #e8d5ad;border-radius:8px;background:#fff;display:block;margin:8px auto 0';holder.appendChild(cv);
