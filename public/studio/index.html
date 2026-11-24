@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="hi"><head><meta http-equiv="Cache-Control" content="no-cache, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LiveCard</title>
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex"><script>try{if(localStorage.getItem("lc_layout")==="tiles"&&!location.search&&!location.hash&&!sessionStorage.getItem("lc_lay")){sessionStorage.setItem("lc_lay","1");location.replace("/studio/apphome/")}}catch(e){}</script>
 <link rel="icon" href="/dyname/logo.png"><link rel="manifest" href="/studio/manifest.webmanifest"><link rel="apple-touch-icon" href="/studio/vicard-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="LiveCard"><meta name="theme-color" content="#d4141c">
 <style>
 :root{--wine:#d4141c;--ink:#1a1212;--bg:#fbf5f4;--line:#f0d6d4;--mut:#6e5b5b;--org:#f59a1a}
@@ -189,6 +189,7 @@ body{padding:0 0 24px 220px}
 <h1 style="font-size:18px;margin:0;line-height:1.3">नमस्ते, <span id="d-name"></span><span class="badge" id="d-admin" hidden>Admin</span></h1>
 <div class="k" style="margin:0;font-size:12px" id="d-mail"></div>
 </div>
+<div class="card" id="c-lay" style="padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b style="font-size:13px;flex:1;min-width:110px">🎨 होम लेआउट</b><button type="button" id="lay-c" style="width:auto;margin:0;min-height:0;padding:7px 14px;border-radius:10px;font-size:13px;font-weight:700">क्लासिक</button><button type="button" id="lay-t" style="width:auto;margin:0;min-height:0;padding:7px 14px;border-radius:10px;font-size:13px;font-weight:700">टाइल्स</button></div>
 <div class="card" id="c-new">
 <b>नया बनाएँ</b>
 <button type="button" data-wizard class="btn" style="margin:6px 0 2px;background:linear-gradient(120deg,#f59a1a,#d4141c);color:#fff;border:0;border-radius:12px;padding:10px;font-weight:800;font-size:14px;width:100%">🚀 Get Started — सवाल-जवाब से कार्ड बनाएँ</button>
@@ -719,6 +720,12 @@ async function loadList(){
   var A=$('d-act');A.textContent='';
   if(!LIST.length)A.textContent='अभी कोई गतिविधि नहीं है।';
   LIST.slice(0,5).forEach(function(x){A.appendChild(mk('div','',x.title+' · '+STN[x.status]+' · '+when(x.updated_at)))});
+  try{var LAY=localStorage.getItem('lc_layout')||'classic';
+    var pf2=await sb.from('studio_profiles').select('card_json').eq('id',ME.id).maybeSingle();var hl=pf2.data&&pf2.data.card_json&&pf2.data.card_json.home_layout;if(hl&&hl!==LAY){LAY=hl;localStorage.setItem('lc_layout',hl)}
+    var lc=$('lay-c'),lt=$('lay-t');
+    var paintL=function(){[[lc,'classic'],[lt,'tiles']].forEach(function(z){var on=LAY===z[1];z[0].style.cssText+=';background:'+(on?'#d4141c':'#fff')+';color:'+(on?'#fff':'#d4141c')+';border:1.5px solid #d4141c'})};paintL();
+    var setL=async function(v){LAY=v;localStorage.setItem('lc_layout',v);paintL();var cur=await sb.from('studio_profiles').select('card_json').eq('id',ME.id).maybeSingle();var cj=Object.assign({},(cur.data&&cur.data.card_json)||{});cj.home_layout=v;await sb.from('studio_profiles').update({card_json:cj}).eq('id',ME.id);if(v==='tiles'){sessionStorage.setItem('lc_lay','1');location.href='/studio/apphome/'}};
+    lc.onclick=function(){setL('classic')};lt.onclick=function(){setL('tiles')}}catch(e){}
   try{var gq=new URLSearchParams(location.search).get('go');if(/^(visiting|invitation|dir|disc|saved|me|ref)$/.test(gq)){history.replaceState(null,'',location.pathname);setTimeout(function(){if(gq==='visiting'||gq==='invitation'){var gb=document.querySelector('[data-new='+gq+']');if(gb)gb.click()}else if(gq==='ref'){if(typeof openRef==='function')openRef()}else if(typeof setTab==='function')setTab(gq)},400)}}catch(e){}
 }
 var SUBI={},PLN2={card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'वेबसाइट + अपना डोमेन'},STX={free:'🆓 फ्री',active:'✅ चालू',grace:'⚠️ ग्रेस पीरियड',expired:'⛔ खत्म',unpaid:'💳 भुगतान बाकी',upgrade:'⬆️ अपग्रेड चाहिए'};

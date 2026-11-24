@@ -67,6 +67,7 @@ footer{text-align:center;color:#8a8a90;font-size:12px;padding:6px 14px 0}footer 
 <div class="sec">और जानें</div>
 <div class="row"><a href="/studio/promo/">कैसे काम करता है</a><a href="/studio/sample/">मिनी वेबसाइट का नमूना</a></div>
 </div>
+<div style="text-align:center;margin:14px 0 0"><a href="/studio/?classic=1" id="back" style="display:inline-block;color:#b8121a;font-weight:700;font-size:13.5px;text-decoration:none;border:1.5px solid #b8121a;border-radius:999px;padding:9px 18px">🎨 क्लासिक लेआउट पर जाएँ</a></div>
 <footer><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/terms/">Terms</a> · livecard.in</footer>
 <a class="fl" href="https://wa.me/919837900303" aria-label="WhatsApp">💬</a>
 </div>
@@ -77,4 +78,4 @@ function mark(){d.forEach(function(x,j){x.className=j===i?'on':''})}
 c.addEventListener('scroll',function(){var k=Math.round(c.scrollLeft/(c.scrollWidth/n));if(k!==i&&k>=0&&k<n){i=k;mark()}});
 function run(){clearInterval(t);t=setInterval(function(){go(i+1)},3800)}
 c.addEventListener('touchstart',function(){clearInterval(t)},{passive:true});c.addEventListener('touchend',run,{passive:true});run()})();
-</script></body></html>
+try{document.getElementById('back').onclick=function(){localStorage.setItem('lc_layout','classic')}}catch(e){}</script></body></html>
