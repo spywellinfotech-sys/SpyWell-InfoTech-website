@@ -52,10 +52,10 @@ button:disabled{opacity:.5}.err{color:#b00020;margin-top:10px;min-height:1em}.ok
 #sv-list .des .acts button,#sv-list .des .acts a{font-size:12px;padding:1px 8px;min-height:26px;border-radius:7px}#sv-list .des .acts{margin-top:3px;gap:4px}#sv-list .des{padding:5px 8px!important;margin-top:5px!important}#sv-list .des>b{font-size:14.5px;line-height:1.25}
 .des .acts a{background:var(--wine);color:#fff}.des .acts button{background:#fff;color:var(--wine);border:1px solid var(--wine)}.des .acts button.danger{background:#b00020;color:#fff;border-color:#b00020}
 .st{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;margin-left:6px;background:#eee;color:#444}.st.published{background:#1b6e3c;color:#fff}.st.unpublished{background:#7a6248;color:#fff}
-.minis{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
-.mini{width:150px;border:2px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;background:#fff;padding:0;margin:0;text-align:left;color:var(--ink);font-weight:400}
-.mini .box{height:215px;overflow:hidden}.mini .in2{width:360px;transform:scale(.4056);transform-origin:0 0;pointer-events:none}
-.mini .cap{font-size:12px;padding:5px 7px;border-top:1px solid var(--line)}.mini .cap span{color:var(--mut);display:block}
+.minis{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.mini{width:106px;border:2px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;background:#fff;padding:0;margin:0;text-align:left;color:var(--ink);font-weight:400}
+.mini .box{height:152px;overflow:hidden}.mini .in2{width:360px;transform:scale(.2861);transform-origin:0 0;pointer-events:none}
+.mini .cap{font-size:11px;padding:3px 5px;line-height:1.25;border-top:1px solid var(--line)}.mini .cap span{color:var(--mut);display:block}
 @media(min-width:700px){.wrap{max-width:760px}}
 [hidden]{display:none!important}
 
@@ -275,7 +275,7 @@ body{padding:0 0 24px 220px}
 <div style="display:flex;gap:8px;margin-top:10px"><button type="button" id="ct-scan" style="flex:1;background:#d4141c;color:#fff;border:0;padding:10px 6px;font-size:15px">📷 कार्ड की फ़ोटो</button><button type="button" id="ct-addb" style="flex:1;background:#fff;color:#9d0b12;border:1.5px solid #d4141c;padding:10px 6px;font-size:15px">➕ नया कॉन्टैक्ट</button></div><input id="ct-scanf" type="file" accept="image/*" hidden>
 <div class="k" id="ct-scanm" style="margin-top:6px"></div>
 <details id="ct-det" style="margin-top:10px"><summary style="display:none">➕ नया कॉन्टैक्ट जोड़ें</summary>
-<label>नाम</label><input id="ct-n" maxlength="80">
+<button type="button" id="ct-pk" style="display:block;width:100%;margin:0 0 6px;min-height:0;padding:9px 10px;border:1.5px dashed #d4141c;background:#fff;color:#d4141c;font-weight:700;border-radius:10px;font-size:14px">📇 फ़ोन के कॉन्टैक्ट से चुनें</button><div class="k" id="ct-pkm"></div><label>नाम</label><input id="ct-n" maxlength="80">
 <label>दुकान / कंपनी (खाली छोड़ सकते हैं)</label><input id="ct-b" maxlength="80">
 <label>मोबाइल नंबर (10 अंक)</label><input id="ct-m" type="tel" inputmode="numeric" maxlength="10">
 <label>व्यवसाय का प्रकार</label><select id="ct-i"></select><input id="ct-io" type="text" maxlength="30" placeholder="अपना व्यवसाय लिखें" hidden style="margin-top:6px">
@@ -702,6 +702,9 @@ $('ct-add').onclick=async function(){var n=$('ct-n').value.trim(),m=$('ct-m').va
 var SCANX=null,SCANPIC=null;
 function scanNote(){if(!SCANX)return '';var a=[];if(SCANX.designation)a.push(SCANX.designation);if(SCANX.email)a.push(SCANX.email);if(SCANX.mobile2)a.push('2: '+SCANX.mobile2);if(SCANX.website)a.push(SCANX.website);if(SCANX.address)a.push(SCANX.address);return a.join(' | ').slice(0,200)}
 function scanShrink(f){return new Promise(function(res,rej){var u=URL.createObjectURL(f),im=new Image();im.onload=function(){var m=1600,sc=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){if(!b){rej(new Error('img'));return}var r=new FileReader();r.onload=function(){res(String(r.result).split(',')[1])};r.readAsDataURL(b)},'image/jpeg',0.85)};im.onerror=function(){URL.revokeObjectURL(u);rej(new Error('img'))};im.src=u})}
+$('ct-pk').onclick=async function(){var m=$('ct-pkm');m.textContent='';if(!(navigator.contacts&&navigator.contacts.select)){m.textContent='यह फ़ोन/ब्राउज़र कॉन्टैक्ट चुनने नहीं देता। Android Chrome में आज़माएँ, या नंबर हाथ से लिखें।';return}
+  try{var r=await navigator.contacts.select(['name','tel'],{multiple:false});if(!r||!r.length)return;var q=r[0],nm=(q.name&&q.name[0])||'',ph=((q.tel||[]).map(function(t){return String(t).replace(/\D/g,'').slice(-10)}).filter(function(t){return t.length===10})[0])||'';
+    if(!ph){m.textContent='इस कॉन्टैक्ट में 10 अंक का मोबाइल नंबर नहीं मिला।';return}$('ct-n').value=nm.slice(0,80);$('ct-m').value=ph;m.textContent='✓ भर दिया। अब "कॉन्टैक्ट सेव करें" दबाएँ।'}catch(e){m.textContent='कॉन्टैक्ट नहीं चुना जा सका।'}};
 $('ct-addb').onclick=function(){var d=$('ct-det');d.open=!d.open;if(d.open){try{d.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}}};
 $('ct-scan').onclick=function(){$('ct-scanf').value='';$('ct-scanf').click()};
 $('ct-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;var msg=$('ct-scanm'),bt=$('ct-scan');msg.style.color='';msg.textContent='फ़ोटो तैयार हो रही है…';bt.disabled=true;
@@ -1253,7 +1256,8 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
       var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(u.error||!u.data||!u.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;paint()};
     var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:10px;width:100%';hd.appendChild(gl);hd.appendChild(lb2);hd.appendChild(sw);gr.appendChild(hd);gph.appendChild(gr)})();
     box.appendChild(hero);
-    var nc=mk('button','','➕ दूसरी कंपनी का कार्ड');nc.type='button';nc.style.cssText='flex:1.6;margin:0;padding:9px 6px;min-height:0;border-radius:12px;background:#fff;color:#d4141c;border:1.5px dashed #d4141c;font-weight:700;font-size:13px';nc.onclick=function(){NEWCO=true;pick('visiting')};var ndr=mk('div','');ndr.style.cssText='display:flex;gap:6px;margin-top:8px';var isD=x.id===DEFID,df2=mk('button','',isD?'⭐ डिफ़ॉल्ट कार्ड ✓':'☆ डिफ़ॉल्ट बनाएँ');df2.type='button';df2.style.cssText='flex:1.2;margin:0;padding:9px 6px;min-height:0;border-radius:12px;font-weight:700;font-size:13px;border:1.5px solid #d4141c;background:'+(isD?'#d4141c':'#fff')+';color:'+(isD?'#fff':'#d4141c');df2.onclick=async function(){await setDef(isD?'':x.id,df2);MYSEL=null;myHome()};ndr.appendChild(df2);ndr.appendChild(nc);var pa=$('pf-cardact');pa.textContent='';ndr.style.marginBottom='8px';pa.appendChild(ndr);
+    var nc=mk('button','','➕ दूसरी कंपनी का कार्ड');nc.type='button';nc.style.cssText='flex:1.6;margin:0;padding:9px 6px;min-height:0;border-radius:12px;background:#fff;color:#d4141c;border:1.5px dashed #d4141c;font-weight:700;font-size:13px';nc.onclick=function(){NEWCO=true;pick('visiting')};var ndr=mk('div','');ndr.style.cssText='display:flex;gap:6px;margin-top:8px';var isD=x.id===DEFID,df2=mk('button','',isD?'⭐ डिफ़ॉल्ट कार्ड ✓':'☆ डिफ़ॉल्ट बनाएँ');df2.type='button';df2.style.cssText='flex:1.2;margin:0;padding:9px 6px;min-height:0;border-radius:12px;font-weight:700;font-size:13px;border:1.5px solid #d4141c;background:'+(isD?'#d4141c':'#fff')+';color:'+(isD?'#fff':'#d4141c');df2.onclick=async function(){await setDef(isD?'':x.id,df2);MYSEL=null;myHome()};ndr.appendChild(df2);ndr.appendChild(nc);var pa=$('pf-cardact');var qh2=mk('div',''),qb2=mk('button','','▣ QR देखें / प्रिंट करें');qb2.type='button';qb2.style.cssText='flex:1;margin:0;padding:9px 6px;min-height:0;border-radius:12px;font-weight:700;font-size:13px;border:1.5px solid #d4141c;background:#fff;color:#d4141c';
+    qb2.onclick=function(){if(x.status!=='published'||!x.slug){alert('पहले कार्ड प्रकाशित करें, फिर QR बनेगा।');return}qrPanel(location.origin+(x.product_type==='invitation'?'/inv/':'/v/')+x.slug+'?src=qr',qh2)};ndr.appendChild(qb2);ndr.style.flexWrap='wrap';pa.textContent='';ndr.style.marginBottom='8px';pa.appendChild(ndr);pa.appendChild(qh2);
     var dl=mk('button','','🗑 हटाएँ');dl.type='button';dl.style.cssText='flex:1;margin:0;padding:9px 6px;min-height:0;border-radius:12px;background:#fff;color:#b00020;border:1px solid #b00020;font-weight:700;font-size:13px';var dArm=false;dl.onclick=async function(){if(!dArm){dArm=true;dl.textContent='⚠️ पक्का? फिर दबाएँ';dl.style.background='#b00020';dl.style.color='#fff';setTimeout(function(){if(dl.isConnected){dArm=false;dl.textContent='🗑 हटाएँ';dl.style.background='#fff';dl.style.color='#b00020'}},5000);return}dl.disabled=true;var r=await sb.from('studio_designs').delete().eq('id',x.id);if(r.error){dl.disabled=false;dl.textContent='नहीं हट पाया';return}MYSEL=null;loadList()};ndr.appendChild(dl)})();
 
   if(x.status==='published'&&x.slug){var r2=mk('div','');r2.style.cssText='display:flex;gap:8px;margin-top:8px';var u=location.origin+'/v/'+x.slug;
@@ -1499,6 +1503,14 @@ async function corpTile(){var box=$('c-corp');if(!box)return;try{var r=await sb.
   box.hidden=false;box.textContent='';box.style.cssText='background:linear-gradient(135deg,#1d3557,#457b9d);border:0;color:#fff;padding:10px 14px';
   var lbl='🏢 Digital Identity Platform (कंपनी बनाएँ)';try{var mo=await sb.rpc('corp_my_orgs');if(mo.data&&mo.data.length){lbl='🏢 '+mo.data[0].name+(mo.data.length>1?' +'+(mo.data.length-1):'')+' · '+(mo.data[0].role==='employee'?'मेरा पैनल':'Control Panel')}}catch(e){}
   var b=mk('button','',lbl);b.type='button';b.style.cssText='width:100%;background:#fff;color:#1d3557;border:0';b.onclick=function(){location.href='/studio/corporate/'};box.appendChild(b)}
+function qrPanel(u,holder){if(holder.firstChild){holder.textContent='';return}
+  var cv=document.createElement('canvas');try{window.StudioQR.draw(cv,u,900)}catch(e){holder.textContent='QR नहीं बन पाया';return}
+  cv.style.cssText='width:220px;height:220px;border:1px solid #e8d5ad;border-radius:8px;background:#fff;display:block;margin:8px auto 0';holder.appendChild(cv);
+  var rw=mk('div','');rw.style.cssText='display:flex;gap:8px;margin-top:8px';
+  function bt(t,fn){var b=mk('button','',t);b.type='button';b.style.cssText='flex:1;margin:0;padding:10px 6px;min-height:0;border-radius:12px;background:#fff;border:1.5px solid #d4141c;color:#d4141c;font-weight:700;font-size:13px';b.onclick=fn;return b}
+  rw.appendChild(bt('⬇️ डाउनलोड',function(){var a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='livecard-qr.png';document.body.appendChild(a);a.click();a.remove()}));
+  rw.appendChild(bt('🖨 प्रिंट',function(){var w=window.open('','_blank');if(!w){alert('पॉप-अप रोका गया है। अनुमति दें।');return}w.document.write('<!doctype html><title>LiveCard QR</title><body style="margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif"><img src="'+cv.toDataURL('image/png')+'" style="width:70vmin;max-width:520px"><p style="font-size:18px;margin:12px 0 0">स्कैन करें · livecard.in</p><script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body>');w.document.close()}));
+  holder.appendChild(rw)}
 function openGr(){location.href='/studio/greeting/'}
 async function addrTile(){
   var box=$('c-addr');if(!box)return;
