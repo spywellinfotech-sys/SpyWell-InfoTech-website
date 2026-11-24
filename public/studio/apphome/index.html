@@ -78,5 +78,5 @@ function mark(){d.forEach(function(x,j){x.className=j===i?'on':''})}
 c.addEventListener('scroll',function(){var k=Math.round(c.scrollLeft/(c.scrollWidth/n));if(k!==i&&k>=0&&k<n){i=k;mark()}});
 function run(){clearInterval(t);t=setInterval(function(){go(i+1)},3800)}
 c.addEventListener('touchstart',function(){clearInterval(t)},{passive:true});c.addEventListener('touchend',run,{passive:true});run()})();
-try{var au=localStorage.getItem('spywell-studio-auth');if(!au)document.getElementById('lg').textContent='लॉगिन'}catch(e){}
+try{var au=localStorage.getItem('spywell-studio-auth'),lg=document.getElementById('lg');if(au)lg.style.display='none';else lg.textContent='लॉगिन'}catch(e){}
 try{document.getElementById('back').onclick=function(){localStorage.setItem('lc_layout','classic')}}catch(e){}</script></body></html>
