@@ -15,7 +15,7 @@ const S = [
  lead:'LiveCard turns your business details into a clean, mobile-friendly card with its own link and QR code. Anyone can call, message you on WhatsApp, email you or open your location straight from the card.',
  feats:['Your own short link, for example livecard.in/v/yourname','Call, WhatsApp, email and Google Maps buttons','QR code you can download and print on shop boards, bills and packaging','Add products, services, photos, social links and a gallery','Change details any time: the same link always shows the latest card','Save to phone contacts in one tap','Works on every phone, no app needed to view'],
  steps:['Sign up with your mobile number','Pick a design and fill in your details','Publish and share the link or QR'],
- faq:[['Is the digital visiting card free?','Yes. You can create a live card with your own link for free and try every plan for 7 days. See the plans page for details.'],['Do people need to install an app to see my card?','No. The card opens in any phone browser from a link, QR code or NFC tap.'],['Can I change my details after publishing?','Yes. Edit the card any time and the same link and QR show the updated details immediately.'],['Can I print the QR code?','Yes. Open My card, tap the QR button, then download or print it.']],
+ faq:[['Is the digital visiting card free?','Yes. You can create a live card with your own link for free and try every plan for 7 days.'],['Do people need to install an app to see my card?','No. The card opens in any phone browser from a link, QR code or NFC tap.'],['Can I change my details after publishing?','Yes. Edit the card any time and the same link and QR show the updated details immediately.'],['Can I print the QR code?','Yes. Open My card, tap the QR button, then download or print it.']],
  rel:['mini-website','nfc-visiting-card','corporate-visiting-cards','how-it-works']},
 
 {slug:'mini-website',name:'Mini Website',
@@ -27,8 +27,8 @@ const S = [
  lead:'A mini website is a fast one-page site for local businesses. Show who you are, what you sell, where you are and how to reach you, without hiring a developer.',
  feats:['One page with about, products or services, gallery and contact','Call, WhatsApp and map buttons for instant enquiries','Loads fast on mobile data','Your own link and QR code for counters, vehicles and flyers','Edit text, photos and offers from your phone','Optional own domain on the website plan'],
  steps:['Open the Studio and choose Mini Website','Add your business details, photos and offers','Publish and share your link'],
- faq:[['What is a mini website?','It is a simple one-page website that carries your business details, offers and contact buttons, built to be shared by link or QR.'],['Do I need technical skills?','No. Everything is filled in from forms on your phone.'],['Can I use my own domain name?','Yes, the Full Website plan supports your own domain. Check the plans page.'],['Is it good for Google search?','Each site is a normal public page with your business name, so people searching your name can find it.']],
- rel:['digital-visiting-card','business-directory','corporate-visiting-cards','pricing']},
+ faq:[['What is a mini website?','It is a simple one-page website that carries your business details, offers and contact buttons, built to be shared by link or QR.'],['Do I need technical skills?','No. Everything is filled in from forms on your phone.'],['Can I use my own domain name?','Yes, your own domain is supported on the website plan.'],['Is it good for Google search?','Each site is a normal public page with your business name, so people searching your name can find it.']],
+ rel:['digital-visiting-card','business-directory','corporate-visiting-cards',]},
 
 {slug:'digital-invitation',name:'Digital Invitation Card',
  title:'Digital Wedding Invitation Card Maker – Online Invitation | LiveCard',
@@ -40,7 +40,7 @@ const S = [
  feats:['Designs for wedding, engagement, birthday, puja and other functions','Event schedule, venue and Google Maps link','Photo gallery and family names','Shows a proper preview when shared on WhatsApp','See how many guests opened the invitation','Edit date or venue later: guests always see the latest details'],
  steps:['Choose an invitation design','Add names, date, venue and photos','Publish and send the link on WhatsApp'],
  faq:[['Can I send the invitation on WhatsApp?','Yes. Each invitation has a link that shows a preview card in WhatsApp.'],['Can I change the venue or time after sending?','Yes. Edit the invitation and the same link shows the new details.'],['Which functions are supported?','Wedding, engagement, birthday, puja and other functions.'],['Can I see who opened my invitation?','Yes, the insights page shows how many times the invitation was opened.']],
- rel:['greeting-cards','digital-visiting-card','pricing','how-it-works']},
+ rel:['greeting-cards','digital-visiting-card','how-it-works']},
 
 {slug:'car-call-qr',name:'Car Call QR',
  title:'Car Call QR Sticker – Contact Owner Without Sharing Number | LiveCard',
@@ -52,7 +52,7 @@ const S = [
  feats:['One QR per vehicle with your vehicle number','Scanner gets a clear call button','Download and print the QR as a sticker','Works with any phone camera','Update your contact number without changing the sticker'],
  steps:['Open Car Call QR in the app','Enter vehicle number and contact','Download, print and stick the QR on your vehicle'],
  faq:[['Does the person scanning need an app?','No. Any phone camera opens the call page.'],['Can I change my phone number later?','Yes. The QR stays the same and the page shows your updated contact.'],['Is it only for cars?','No. Use it for bikes, autos, trucks and any vehicle.'],['Can I print it myself?','Yes. Download the QR and print it on a sticker or lamination.']],
- rel:['digital-visiting-card','nfc-visiting-card','how-it-works','pricing']},
+ rel:['digital-visiting-card','nfc-visiting-card','how-it-works',]},
 
 {slug:'business-directory',name:'Business Directory',
  title:'Business Directory India – List Your Business Free | LiveCard',
@@ -63,8 +63,8 @@ const S = [
  lead:'The LiveCard directory lists businesses by category and city. Your listing links to your live card or mini website so customers can call or message you straight away.',
  feats:['Listing by business category and city','Direct call and WhatsApp buttons','Links to your digital card or mini website','Search for businesses and save useful contacts','Update your details any time'],
  steps:['Create your digital card','Choose a category and city','Publish to appear in the directory'],
- faq:[['Is directory listing free?','Basic listing is available on the free plan. See plans for details.'],['How do customers find me?','They browse or search by category and city and open your card.'],['Can I edit my listing?','Yes, edit your card and the listing shows the latest details.'],['Do I need a website?','No. Your LiveCard is enough.']],
- rel:['digital-visiting-card','mini-website','my-network','pricing']},
+ faq:[['Is directory listing free?','Basic listing is free. '],['How do customers find me?','They browse or search by category and city and open your card.'],['Can I edit my listing?','Yes, edit your card and the listing shows the latest details.'],['Do I need a website?','No. Your LiveCard is enough.']],
+ rel:['digital-visiting-card','mini-website','my-network',]},
 
 {slug:'my-network',name:'My Network',
  title:'My Network – Save Business Cards and Contacts Digitally | LiveCard',
@@ -111,8 +111,8 @@ const S = [
  lead:'Give every employee a consistent, branded digital card while the company keeps control. Add or remove staff, update the brand once and manage everything from one panel.',
  feats:['Company-branded card for each employee','Company mini website','Control panel to add and manage employees','Each employee can share their own link, QR or NFC tap','Reports on views and activity'],
  steps:['Create the company profile','Add employees to the panel','Each employee shares their card'],
- faq:[['How many employees can I add?','The number depends on your plan. See the plans page or contact us for large teams.'],['Can an employee leave and the card be removed?','Yes. The company admin controls employee cards.'],['Do employees need separate accounts?','Each employee signs in with their own mobile number.'],['Can we use our own domain?','Company subdomain and own domain options are available. Contact us.']],
- rel:['digital-visiting-card','mini-website','nfc-visiting-card','pricing']},
+ faq:[['How many employees can I add?','The number depends on your plan. Contact us for large teams.'],['Can an employee leave and the card be removed?','Yes. The company admin controls employee cards.'],['Do employees need separate accounts?','Each employee signs in with their own mobile number.'],['Can we use our own domain?','Company subdomain and own domain options are available. Contact us.']],
+ rel:['digital-visiting-card','mini-website','nfc-visiting-card',]},
 
 {slug:'greeting-cards',name:'Greeting and Offer Cards',
  title:'Online Greeting and Festival Offer Cards for Business | LiveCard',
@@ -123,8 +123,8 @@ const S = [
  lead:'Turn festivals and sales into marketing. Make a greeting or offer card that shows your business name, contact buttons and link, and send it to customers on WhatsApp.',
  feats:['Festival greetings and shop offers','Your name, logo and contact on every card','Shareable link with WhatsApp preview','Edit text and offer details quickly'],
  steps:['Open Greeting / Offer in the Studio','Write your message and offer','Share the link with customers'],
- faq:[['Can I add my logo?','Yes, add your business name and logo to the card.'],['Can I use it for a sale announcement?','Yes. It works for offers, discounts and announcements.'],['Is it shareable on WhatsApp?','Yes, the link shows a preview card.'],['Is it free?','Basic use is free. See plans for limits.']],
- rel:['digital-invitation','digital-visiting-card','mini-website','pricing']},
+ faq:[['Can I add my logo?','Yes, add your business name and logo to the card.'],['Can I use it for a sale announcement?','Yes. It works for offers, discounts and announcements.'],['Is it shareable on WhatsApp?','Yes, the link shows a preview card.'],['Is it free?','Basic use is free.']],
+ rel:['digital-invitation','digital-visiting-card','mini-website',]},
 
 {slug:'how-it-works',name:'How LiveCard Works',
  title:'How LiveCard Works – Create, Share and Track Your Card | LiveCard',
@@ -135,11 +135,10 @@ const S = [
  lead:'LiveCard gives you one identity that works across a card, website, invitation and more. Here is the whole flow from sign-up to sharing and tracking.',
  feats:['Sign up with your mobile number','Pick a template and add your details','Publish to get your own link and QR','Share on WhatsApp, print the QR or write an NFC tag','See views, QR scans and NFC taps in insights','Save and manage contacts in My Network and FollowUp'],
  steps:['Sign up and choose what to make','Fill details and publish','Share and track'],
- faq:[['How long does it take to make a card?','Usually a few minutes.'],['What can I make with LiveCard?','Visiting cards, mini websites, invitations, greeting cards, address cards and car call QR.'],['Do I need to install an app?','You can use the web app or the Android app. People viewing your card need nothing.'],['Is there a free plan?','Yes. See the plans page.']],
- rel:['digital-visiting-card','mini-website','digital-invitation','pricing']},
+ faq:[['How long does it take to make a card?','Usually a few minutes.'],['What can I make with LiveCard?','Visiting cards, mini websites, invitations, greeting cards, address cards and car call QR.'],['Do I need to install an app?','You can use the web app or the Android app. People viewing your card need nothing.'],['Is there a free plan?','Yes, you can start free.']],
+ rel:['digital-visiting-card','mini-website','digital-invitation',]},
 ];
 const NAMES = Object.fromEntries(S.map(s => [s.slug, s.name]));
-NAMES.pricing = 'Plans and Pricing';
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
 const CSS = `:root{--r:#ED1C24;--rd:#b8121a;--k:#1a1a1a;--m:#6b6b6b;--l:#e6e8ec}*{box-sizing:border-box}body{margin:0;font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Devanagari',sans-serif;color:var(--k);background:#fff}header{background:var(--r);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px}header img{border-radius:50%;background:#fff}header a{color:#fff;text-decoration:none;font-weight:700}header .sp{margin-left:auto}main{max-width:860px;margin:0 auto;padding:18px 16px 40px}h1{font-size:28px;line-height:1.25;margin:8px 0;color:var(--rd)}h2{font-size:21px;margin:30px 0 8px;color:var(--rd)}.hi{background:#fff4f4;border:1px solid #f4c4c6;border-radius:12px;padding:12px 14px;margin:14px 0}.bc{font-size:13px;color:var(--m)}.bc a{color:var(--m)}ul.f{padding-left:20px}ul.f li{margin:7px 0}ol li{margin:7px 0}.cta{display:inline-block;background:var(--r);color:#fff;text-decoration:none;font-weight:800;padding:13px 28px;border-radius:999px;margin:10px 8px 0 0}.cta.o{background:#fff;color:var(--r);border:2px solid var(--r)}details{border:1px solid var(--l);border-radius:12px;padding:10px 14px;margin:8px 0}summary{font-weight:700;cursor:pointer}.rel{display:flex;flex-wrap:wrap;gap:8px}.rel a{border:1.5px solid var(--r);color:var(--r);text-decoration:none;border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px}footer{background:#111;color:#bbb;text-align:center;padding:18px 14px;font-size:13px}footer a{color:#fff;margin:0 6px}`;
@@ -168,7 +167,7 @@ function page(s) {
 <h1>${esc(s.h1)}</h1>
 <p>${esc(s.lead)}</p>
 <div class="hi" lang="hi">${esc(s.hi)}</div>
-<a class="cta" href="/studio/">Start free</a><a class="cta o" href="/dyname/plans/">See plans</a>
+<a class="cta" href="/studio/">Start free</a>
 <h2>What you get</h2>
 <ul class="f">${s.feats.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
 <h2>How to get started</h2>
@@ -176,9 +175,9 @@ function page(s) {
 <h2>Frequently asked questions</h2>
 ${s.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('\n')}
 <h2>Explore more LiveCard services</h2>
-<div class="rel">${s.rel.map(r => `<a href="/dyname/${r === 'pricing' ? 'plans' : r}/">${esc(NAMES[r])}</a>`).join('')}</div>
+<div class="rel">${s.rel.map(r => `<a href="/dyname/${r}/">${esc(NAMES[r])}</a>`).join('')}</div>
 </main>
-<footer><a href="/">Home</a><a href="/dyname/plans/">Plans</a><a href="/dyname/privacy/">Privacy</a><a href="/dyname/terms/">Terms</a><a href="/dyname/refund/">Refund</a><div style="margin-top:8px">© LiveCard by SpyWell InfoTech</div></footer>
+<footer><a href="/">Home</a><a href="/dyname/privacy/">Privacy</a><a href="/dyname/terms/">Terms</a><a href="/dyname/refund/">Refund</a><div style="margin-top:8px">© LiveCard by SpyWell InfoTech</div></footer>
 </body></html>`;
 }
 
