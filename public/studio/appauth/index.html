@@ -1,1 +1,12 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LiveCard</title></head><body style="font-family:system-ui;text-align:center;padding:40px">लॉगिन हो रहा है…<script>var q=new URLSearchParams(location.search).get('q');location.replace('/studio/'+(q?q:location.search+location.hash))</script></body></html>
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>LiveCard</title>
+<style>body{margin:0;font-family:system-ui,sans-serif;background:#faf5f4;color:#222;text-align:center;padding:36px 20px}h2{color:#b8121a}a.b{display:block;margin:16px auto;max-width:360px;padding:16px;border-radius:14px;font-weight:800;font-size:18px;text-decoration:none}a.p{background:#d4141c;color:#fff}a.s{background:#fff;color:#d4141c;border:2px solid #d4141c;font-size:15px}</style></head><body>
+<script>
+(function(){var S=location.search,H=location.hash,q=new URLSearchParams(S).get('q');
+ if(q){location.replace('/studio/'+q);return}
+ if(!/access_token=|[?&]code=/.test(S+H)){location.replace('/studio/'+S+H);return}
+ document.write('<h2>लॉगिन हो गया ✅</h2><p>अब LiveCard ऐप में वापस जाइए।</p>'
+ +'<a class="b p" id="op" href="intent://livecard.in/studio/appauth/?q='+encodeURIComponent(S+H)+'#Intent;scheme=https;package=com.spywell.vicard;S.browser_fallback_url='+encodeURIComponent(location.origin+'/studio/#stay')+';end">📲 LiveCard ऐप खोलें</a>'
+ +'<a class="b s" id="st" href="/studio/'+S+H.replace(/"/g,'')+'">यहीं ब्राउज़र में जारी रखें</a>');
+ document.getElementById('st').onclick=function(){try{sessionStorage.setItem('lc_stay','1')}catch(e){}};
+})();
+</script></body></html>
