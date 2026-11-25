@@ -186,6 +186,6 @@ for (const s of S) {
   fs.mkdirSync(ROOT + s.slug, {recursive: true});
   fs.writeFileSync(`${ROOT}${s.slug}/index.html`, page(s));
 }
-const urls = [['/',1.0,'weekly'],['/plans/',0.8,'monthly'],...S.map(s => [`/${s.slug}/`,0.8,'monthly']),['/privacy/',0.3,'yearly'],['/terms/',0.3,'yearly'],['/refund/',0.3,'yearly'],['/disclaimer/',0.3,'yearly']];
+const urls = [['/',1.0,'weekly'],...S.map(s => [`/${s.slug}/`,0.8,'monthly']),['/privacy/',0.3,'yearly'],['/terms/',0.3,'yearly'],['/refund/',0.3,'yearly'],['/disclaimer/',0.3,'yearly']];
 fs.writeFileSync(ROOT + 'sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` + urls.map(([p,pr,cf]) => `<url><loc>${O}${p}</loc><lastmod>${DATE}</lastmod><changefreq>${cf}</changefreq><priority>${pr}</priority></url>`).join('\n') + `\n</urlset>\n`);
 console.log('pages', S.length);
