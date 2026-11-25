@@ -1206,12 +1206,8 @@ function shareTools(x,url,shTx){
 function cardOpts(x){var w=mk('div','');w.style.cssText='margin-top:10px';
   var qh=mk('div',''),qb=mk('button','','▣ QR कोड देखें / प्रिंट करें');qb.type='button';qb.style.cssText='width:100%;margin:0;padding:11px 6px;min-height:0;border:1px solid rgba(255,255,255,.7);border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:14.5px';
   qb.onclick=function(){if(x.status!=='published'||!x.slug){alert('पहले कार्ड प्रकाशित करें, फिर QR बनेगा।');return}qrPanel(location.origin+'/v/'+x.slug+'?src=qr',qh)};w.appendChild(qb);w.appendChild(qh);
-  var gr=mk('div','');gr.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
-  var gl=mk('div','');gl.appendChild(mk('b','','⭐ डिफ़ॉल्ट कार्ड'));var gs=mk('div','');gs.style.cssText='font-size:12px;opacity:.9;margin-top:2px';gl.appendChild(gs);gl.style.flex='1';
-  var sw=mk('button','isw');sw.type='button';sw.setAttribute('aria-label','डिफ़ॉल्ट कार्ड');sw.appendChild(document.createElement('i'));var lb=mk('span','swl2','');
-  var paint=function(){var on=DEFID===x.id;sw.className='isw'+(on?' on':'');lb.textContent=on?'चालू':'बंद';gs.textContent=on?'यही कार्ड सबसे ऊपर और पहले दिखेगा':'चालू करें तो यही कार्ड सबसे ऊपर दिखेगा'};paint();
-  sw.onclick=async function(){await setDef(DEFID===x.id?'':x.id,sw);paint()};
-  var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:10px;width:100%';hd.appendChild(gl);hd.appendChild(lb);hd.appendChild(sw);gr.appendChild(hd);w.appendChild(gr);return w}
+  return w}
+function defCorner(x){var c=mk('div','');c.style.cssText='position:absolute;top:6px;right:8px;display:flex;align-items:center;gap:4px;font-size:11.5px;font-weight:800;color:#fff;z-index:2';c.appendChild(mk('span','','Default:'));var sw=mk('button','isw');sw.type='button';sw.setAttribute('aria-label','डिफ़ॉल्ट कार्ड');sw.appendChild(document.createElement('i'));sw.style.cssText='margin:0;transform:scale(.72);transform-origin:right center';var paint=function(){sw.className='isw'+(DEFID===x.id?' on':'')};paint();sw.onclick=async function(){await setDef(DEFID===x.id?'':x.id,sw);paint()};c.appendChild(sw);return c}
 function tplBtn(t,href,col){var q=mk('a','',t);q.href=href;q.style.cssText='display:block;text-align:center;margin-top:8px;background:rgba(255,255,255,.18);border:1.5px solid #fff;color:#fff;border-radius:12px;padding:9px 6px;text-decoration:none;font-weight:700;font-size:14px';return q}
 async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
   var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
@@ -1221,7 +1217,8 @@ async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
   if(vis.length>1){var cr=mk('div','');cr.style.cssText='display:flex;gap:6px;overflow-x:auto;margin:8px 0 2px;padding-bottom:2px';vis.forEach(function(v){var cn=((v.content_json&&v.content_json.fields&&v.content_json.fields.business)||v.title||'कार्ड').slice(0,22),on=v.id===x.id;var c=mk('button','','🏢 '+cn);c.type='button';c.style.cssText='flex:none;width:auto;margin:0;padding:7px 12px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap;border:1.5px solid #d4141c;'+(on?'background:#d4141c;color:#fff':'background:#fff;color:#d4141c');c.onclick=function(){MYSEL=v.id;myHome()};cr.appendChild(c)});box.appendChild(cr)}
   var hd=mk('div','k',(x.title||'बिना नाम')+' · '+STN[x.status]);hd.style.margin='4px 0 8px';box.appendChild(hd);
   (function(){var pub=x.status==='published'&&!!x.slug,nm=(x.title||'मेरा कार्ड');
-    var hero=mk('div','');hero.style.cssText='background:linear-gradient(135deg,#7a0a10,#d4141c);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(212,20,28,.28)';
+    var hero=mk('div','');hero.style.cssText='background:linear-gradient(135deg,#7a0a10,#d4141c);border-radius:18px;padding:14px;position:relative;color:#fff;box-shadow:0 6px 18px rgba(212,20,28,.28)';
+    hero.appendChild(defCorner(x));
     var row=mk('div','');row.style.cssText='display:flex;gap:12px;align-items:center';
     var cd=mk('div','');cd.style.cssText='flex:none;width:118px;background:#fff;border-radius:12px;padding:10px;transform:rotate(-4deg);box-shadow:0 4px 12px rgba(0,0,0,.3)';
     var ar=mk('div','');ar.style.cssText='display:flex;gap:6px;align-items:center';
