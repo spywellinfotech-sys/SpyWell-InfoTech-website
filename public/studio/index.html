@@ -722,8 +722,12 @@ $('ct-pk').onclick=async function(){var m=$('ct-pkm');m.textContent='';if(window
     var x=mk('button','','बंद करें');x.type='button';x.style.cssText='float:right;width:auto;margin:0;padding:4px 10px;min-height:0;background:#fff;color:#555;border:1px solid #ccc;font-size:12px';x.onclick=function(){ov.remove()};sh.appendChild(x);
     var hd=mk('b','','📞 Call log · तारीख़ वार');hd.style.fontSize='16px';sh.appendChild(hd);
     if(!L.length)sh.appendChild(mk('div','k','कोई कॉल नहीं मिली।'));
+    else{var dr=mk('div','');dr.style.cssText='display:flex;align-items:center;gap:8px;margin:10px 0 0';var dl=mk('span','','📅 तारीख़ चुनें:');dl.style.cssText='font-weight:700;font-size:13px';var di=document.createElement('input');di.type='date';di.style.cssText='flex:1;margin:0;padding:6px;min-height:0';var dm=mk('div','k','');
+      var mn=L[L.length-1].d,mx=L[0].d;try{di.min=new Date(Math.min(mn,mx)).toISOString().slice(0,10);di.max=new Date(Math.max(mn,mx)).toISOString().slice(0,10)}catch(e){}
+      di.onchange=function(){if(!di.value)return;var k=dayKey(new Date(di.value+'T00:00:00').getTime()),el=document.getElementById('cl-d'+k);if(!el){dm.textContent='उस तारीख़ की कोई कॉल नहीं मिली।';return}dm.textContent='';el.scrollIntoView({behavior:'smooth',block:'start'});el.style.background='#fde68a';setTimeout(function(){el.style.background='#f0fdfa'},1800)};
+      dr.appendChild(dl);dr.appendChild(di);sh.appendChild(dr);sh.appendChild(dm)}
     var last=null;
-    L.forEach(function(c){var k=dayKey(c.d);if(k!==last){last=k;var dh=mk('div','',dayLbl(k)+' · '+L.filter(function(z){return dayKey(z.d)===k}).length+' कॉल');dh.style.cssText='margin:14px 0 2px;padding:4px 8px;background:#f0fdfa;color:#0b4f4a;font-weight:800;font-size:13px;border-radius:8px';sh.appendChild(dh)}
+    L.forEach(function(c){var k=dayKey(c.d);if(k!==last){last=k;var dh=mk('div','',dayLbl(k)+' · '+L.filter(function(z){return dayKey(z.d)===k}).length+' कॉल');dh.id='cl-d'+k;dh.style.cssText='margin:14px 0 2px;padding:4px 8px;background:#f0fdfa;color:#0b4f4a;font-weight:800;font-size:13px;border-radius:8px';sh.appendChild(dh)}
       var nm=c.name||('+91 '+c.n),r=mk('div','');r.style.cssText='border:1px solid #cdeae6;border-radius:10px;padding:8px 10px;margin-top:6px';
       var t=mk('b','',nm);r.appendChild(t);var tm=new Date(c.d).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
       r.appendChild(mk('div','k',(TY[c.t]||'📞')+' · '+tm+(c.s?' · '+c.s+' सेकंड':'')+(c.name?' · +91 '+c.n:'')));
