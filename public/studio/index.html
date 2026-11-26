@@ -273,7 +273,7 @@ body{padding:0 0 24px 220px}
 <div id="fu-top"></div>
 <input id="ct-q" type="search" placeholder="🔍 नाम, नंबर या व्यवसाय (industry) से खोजें" style="margin-top:8px">
 <div class="chips" id="ct-flt"></div>
-<div style="display:flex;gap:8px;margin-top:10px"><button type="button" id="ct-scan" style="flex:1;background:#d4141c;color:#fff;border:0;padding:10px 6px;font-size:15px">📷 कार्ड की फ़ोटो</button><button type="button" id="ct-addb" style="flex:1;background:#fff;color:#9d0b12;border:1.5px solid #d4141c;padding:10px 6px;font-size:15px">➕ नया कॉन्टैक्ट</button></div><input id="ct-scanf" type="file" accept="image/*" hidden>
+<div style="display:flex;gap:8px;margin-top:10px"><button type="button" id="ct-scan" style="flex:1;background:#d4141c;color:#fff;border:0;padding:10px 6px;font-size:15px">📷 कार्ड की फ़ोटो</button><button type="button" id="ct-addb" style="flex:1;background:#fff;color:#9d0b12;border:1.5px solid #d4141c;padding:10px 6px;font-size:15px">➕ नया कॉन्टैक्ट</button></div><button type="button" id="ct-qr" style="display:block;width:100%;margin:8px 0 0;min-height:0;padding:10px 6px;border:1.5px solid #d4141c;background:#fff;color:#9d0b12;font-weight:800;font-size:15px;border-radius:12px">QR स्कैन करें — LiveCard कार्ड सेव करें</button><input id="ct-scanf" type="file" accept="image/*" hidden>
 <div class="k" id="ct-scanm" style="margin-top:6px"></div>
 <details id="ct-det" style="margin-top:10px"><summary style="display:none">➕ नया कॉन्टैक्ट जोड़ें</summary>
 <button type="button" id="ct-pk" style="display:block;width:100%;margin:0 0 6px;min-height:0;padding:9px 10px;border:1.5px dashed #d4141c;background:#fff;color:#d4141c;font-weight:700;border-radius:10px;font-size:14px">📇 फ़ोन के कॉन्टैक्ट से चुनें</button><div class="k" id="ct-pkm"></div><label>नाम</label><input id="ct-n" maxlength="80">
@@ -733,6 +733,26 @@ $('ct-pk').onclick=async function(){var m=$('ct-pkm');m.textContent='';if(window
       r.appendChild(ac);sh.appendChild(r)});
     ov.addEventListener('click',function(e){if(e.target===ov)ov.remove()});document.body.appendChild(ov)};
   b.onclick=function(){try{ViNative.recentCalls()}catch(e){alert('Call log नहीं खुल पाया।')}}})();
+(function(){var qb=$('ct-qr');if(!qb)return;
+function note(t){$('ct-scanm').textContent=t}
+async function got(tx){tx=String(tx||'').trim();if(!tx){return}if(tx==='ERR'){note('इस फ़ोन में स्कैनर नहीं चला। 📷 कार्ड की फ़ोटो से कोशिश करें।');return}
+var m=tx.match(/livecard\.in\/(v|web)\/([^\/?#\s]+)/i)||tx.match(/(?:^|\/\/)[a-z0-9-]+\.livecard\.in\/?(?:v\/)?([^\/?#\s]*)/i);
+if(!m){if(/^https?:\/\//i.test(tx)){if(confirm('यह लिंक खोलें?\n'+tx))window.open(tx,'_blank')}else note('यह LiveCard का QR नहीं है।');return}
+var slug=decodeURIComponent(m[2]||m[1]||'');if(!slug){note('QR समझ नहीं आया।');return}
+note('कार्ड सेव हो रहा है…');
+try{var r=await sb.rpc('studio_save_card',{p_type:'visiting',p_slug:slug});
+var mm={ok:'✅ कार्ड सेव हो गया (नीचे सेव किए कार्ड में देखें)',own:'यह आपका अपना कार्ड है।',missing:'कार्ड नहीं मिला।',limit:'सेव की सीमा पूरी हो गई।',login:'पहले लॉगिन करें।'};
+note(r.error?'सेव नहीं हो पाया। दोबारा कोशिश करें।':(mm[r.data]||'हो गया'));if(!r.error&&r.data==='ok'){try{loadSaved()}catch(e){}}}catch(e){note('सेव नहीं हो पाया।')}}
+window.__vcQr=function(t){got(t)};
+function camScan(){var BD=window.BarcodeDetector;if(!BD||!navigator.mediaDevices){note('इस ब्राउज़र में QR स्कैनर नहीं है। LiveCard ऐप में खोलें।');return}
+var det=new BD({formats:['qr_code']}),ov=mk('div');ov.style.cssText='position:fixed;inset:0;z-index:10001;background:#000;display:flex;flex-direction:column';
+var v=document.createElement('video');v.setAttribute('playsinline','');v.muted=true;v.style.cssText='flex:1;width:100%;object-fit:cover;min-height:0';
+var cb=mk('button','','✕ बंद करें');cb.type='button';cb.style.cssText='margin:0;padding:14px;border:0;border-radius:0;background:#d4141c;color:#fff;font-weight:800;font-size:16px';
+ov.appendChild(v);ov.appendChild(cb);document.body.appendChild(ov);var st=null,on=true;
+function stop(){on=false;try{st&&st.getTracks().forEach(function(t){t.stop()})}catch(e){}ov.remove()}cb.onclick=stop;
+navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(s){st=s;v.srcObject=s;v.play();
+(function lp(){if(!on)return;det.detect(v).then(function(a){if(a&&a.length){var t=a[0].rawValue;stop();got(t)}else setTimeout(lp,250)}).catch(function(){setTimeout(lp,400)})})()}).catch(function(){stop();note('कैमरा चालू नहीं हो पाया। अनुमति दें।')})}
+qb.onclick=function(){if(window.ViNative&&ViNative.scanQr){try{ViNative.scanQr()}catch(e){camScan()}}else camScan()}})();
 $('ct-addb').onclick=function(){var d=$('ct-det');d.open=!d.open;if(d.open){try{d.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}}};
 $('ct-scan').onclick=function(){$('ct-scanf').value='';$('ct-scanf').click()};
 $('ct-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;var msg=$('ct-scanm'),bt=$('ct-scan');msg.style.color='';msg.textContent='फ़ोटो तैयार हो रही है…';bt.disabled=true;
