@@ -743,14 +743,15 @@ $('ct-pk').onclick=async function(){var m=$('ct-pkm');m.textContent='';if(window
     ov.addEventListener('click',function(e){if(e.target===ov)ov.remove()});document.body.appendChild(ov)};
   b.onclick=function(){try{ViNative.recentCalls()}catch(e){alert('Call log नहीं खुल पाया।')}}})();
 (function(){var qb=$('ct-qr');if(!qb)return;
-function note(t){$('ct-scanm').textContent=t}
+function note(t){try{$('ct-scanm').textContent=t}catch(e){}
+  try{var o=document.getElementById('lc-toast');if(o)o.remove();var d=document.createElement('div');d.id='lc-toast';d.textContent=t;var ok=/^✅/.test(t);d.style.cssText='position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:10005;max-width:88vw;padding:14px 20px;border-radius:14px;background:'+(ok?'#15803d':'#222')+';color:#fff;font:700 15px system-ui,sans-serif;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35)';document.body.appendChild(d);setTimeout(function(){d.remove()},3500)}catch(e){}}
 async function got(tx){tx=String(tx||'').trim();if(!tx){return}if(tx==='ERR'){note('इस फ़ोन में स्कैनर नहीं चला। 📷 कार्ड की फ़ोटो से कोशिश करें।');return}
 var m=tx.match(/livecard\.in\/(v|web)\/([^\/?#\s]+)/i)||tx.match(/(?:^|\/\/)[a-z0-9-]+\.livecard\.in\/?(?:v\/)?([^\/?#\s]*)/i);
 if(!m){if(/^https?:\/\//i.test(tx)){if(confirm('यह लिंक खोलें?\n'+tx))window.open(tx,'_blank')}else note('यह LiveCard का QR नहीं है।');return}
 var slug=decodeURIComponent(m[2]||m[1]||'');if(!slug){note('QR समझ नहीं आया।');return}
 note('कार्ड सेव हो रहा है…');
 try{var r=await sb.rpc('studio_save_card',{p_type:'visiting',p_slug:slug});
-var mm={ok:'✅ कार्ड सेव हो गया (नीचे सेव किए कार्ड में देखें)',own:'यह आपका अपना कार्ड है।',missing:'कार्ड नहीं मिला।',limit:'सेव की सीमा पूरी हो गई।',login:'पहले लॉगिन करें।'};
+var mm={ok:'✅ कार्ड सेव हो गया! My network → सेव किए कार्ड में देखें',own:'यह आपका अपना कार्ड है।',missing:'कार्ड नहीं मिला।',limit:'सेव की सीमा पूरी हो गई।',login:'पहले लॉगिन करें।'};
 note(r.error?'सेव नहीं हो पाया। दोबारा कोशिश करें।':(mm[r.data]||'हो गया'));if(!r.error&&r.data==='ok'){try{loadSaved()}catch(e){}}}catch(e){note('सेव नहीं हो पाया।')}}
 window.__vcQr=function(t){got(t)};
 function camScan(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){note('इस ब्राउज़र में कैमरा उपलब्ध नहीं है।');return}
