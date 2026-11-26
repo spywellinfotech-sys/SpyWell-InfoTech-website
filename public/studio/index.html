@@ -749,14 +749,21 @@ try{var r=await sb.rpc('studio_save_card',{p_type:'visiting',p_slug:slug});
 var mm={ok:'✅ कार्ड सेव हो गया (नीचे सेव किए कार्ड में देखें)',own:'यह आपका अपना कार्ड है।',missing:'कार्ड नहीं मिला।',limit:'सेव की सीमा पूरी हो गई।',login:'पहले लॉगिन करें।'};
 note(r.error?'सेव नहीं हो पाया। दोबारा कोशिश करें।':(mm[r.data]||'हो गया'));if(!r.error&&r.data==='ok'){try{loadSaved()}catch(e){}}}catch(e){note('सेव नहीं हो पाया।')}}
 window.__vcQr=function(t){got(t)};
-function camScan(){var BD=window.BarcodeDetector;if(!BD||!navigator.mediaDevices){note('इस ब्राउज़र में QR स्कैनर नहीं है। LiveCard ऐप में खोलें।');return}
-var det=new BD({formats:['qr_code']}),ov=mk('div');ov.style.cssText='position:fixed;inset:0;z-index:10001;background:#000;display:flex;flex-direction:column';
+function camScan(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){note('इस ब्राउज़र में कैमरा उपलब्ध नहीं है।');return}
+var BD=window.BarcodeDetector,det=null;try{if(BD)det=new BD({formats:['qr_code']})}catch(e){det=null}
+function withJsqr(cb){if(window.jsQR)return cb();var sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';sc.onload=cb;sc.onerror=function(){note('स्कैनर लोड नहीं हो पाया। इंटरनेट जाँचें।')};document.head.appendChild(sc)}
+var ov=mk('div');ov.style.cssText='position:fixed;inset:0;z-index:10001;background:#000;display:flex;flex-direction:column';
 var v=document.createElement('video');v.setAttribute('playsinline','');v.muted=true;v.style.cssText='flex:1;width:100%;object-fit:cover;min-height:0';
+var hint=mk('div','','QR कोड को फ़्रेम में रखें');hint.style.cssText='position:absolute;top:14px;left:0;right:0;text-align:center;color:#fff;font-weight:700;text-shadow:0 1px 4px #000';
 var cb=mk('button','','✕ बंद करें');cb.type='button';cb.style.cssText='margin:0;padding:14px;border:0;border-radius:0;background:#d4141c;color:#fff;font-weight:800;font-size:16px';
-ov.appendChild(v);ov.appendChild(cb);document.body.appendChild(ov);var st=null,on=true;
+ov.appendChild(v);ov.appendChild(hint);ov.appendChild(cb);document.body.appendChild(ov);var st=null,on=true,cvs=document.createElement('canvas'),cx=cvs.getContext('2d',{willReadFrequently:true});
 function stop(){on=false;try{st&&st.getTracks().forEach(function(t){t.stop()})}catch(e){}ov.remove()}cb.onclick=stop;
-navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(s){st=s;v.srcObject=s;v.play();
-(function lp(){if(!on)return;det.detect(v).then(function(a){if(a&&a.length){var t=a[0].rawValue;stop();got(t)}else setTimeout(lp,250)}).catch(function(){setTimeout(lp,400)})})()}).catch(function(){stop();note('कैमरा चालू नहीं हो पाया। अनुमति दें।')})}
+function found(t){stop();got(t)}
+function loop(){if(!on)return;
+ if(det){det.detect(v).then(function(a){if(a&&a.length)found(a[0].rawValue);else setTimeout(loop,250)}).catch(function(){setTimeout(loop,400)});return}
+ try{if(v.videoWidth){var w=Math.min(640,v.videoWidth),h=Math.round(w*v.videoHeight/v.videoWidth);cvs.width=w;cvs.height=h;cx.drawImage(v,0,0,w,h);var im=cx.getImageData(0,0,w,h),r=window.jsQR(im.data,w,h,{inversionAttempts:'dontInvert'});if(r&&r.data){found(r.data);return}}}catch(e){}
+ setTimeout(loop,200)}
+navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(s){st=s;v.srcObject=s;v.play();if(det)loop();else withJsqr(function(){if(on)loop()})}).catch(function(){stop();note('कैमरा चालू नहीं हो पाया। अनुमति दें।')})}
 qb.onclick=function(){if(window.ViNative&&ViNative.scanQr){try{ViNative.scanQr()}catch(e){camScan()}}else camScan()}})();
 try{$('hscan').onclick=function(){var q=$('ct-qr');if(q&&q.onclick)q.onclick()}}catch(e){}
 $('ct-addb').onclick=function(){var d=$('ct-det');d.open=!d.open;if(d.open){try{d.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}}};
