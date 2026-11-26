@@ -109,7 +109,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   })()}catch(e){}
   document.title=window.StudioRender.title(t,cj)+' | LiveCard';
   try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
-  try{if(t==='invitation'){var ps=document.createElement('script');ps.src='/studio/promo-video.js';ps.onload=function(){window.LCPromo(document.body,document.getElementById('foot'))};document.head.appendChild(ps)}}catch(e){}
+  try{if(t==='invitation'||isSite){var ps=document.createElement('script');ps.src='/studio/promo-video.js';ps.onload=function(){window.LCPromo(document.body,document.getElementById('foot'),isSite?'6huq_tT-JT8':null)};document.head.appendChild(ps)}}catch(e){}
   document.getElementById('foot').hidden=false;
   try{(function(){var ab=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
     var f=document.getElementById('foot'),bt=document.createElement('button');bt.type='button';bt.textContent=(isSite?'💾 कार्ड सेव करें':'💾 कार्ड सेव करें');
