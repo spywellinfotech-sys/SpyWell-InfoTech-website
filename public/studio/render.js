@@ -629,7 +629,7 @@
     if (mpu) q2.appendChild(actA(link('pf-chat', '📍 ' + P('लोकेशन', 'Location'), mpu), 'location'));
     if (q2.children.length) bd.appendChild(q2);
     var shp = el('div', 'pf-sharep'); shp.hidden = true; var built = false;
-    var shb = el('button', 'pf-share', '🔗 ' + P('विज़िटिंग कार्ड शेयर करें', 'Share Visiting Card')); shb.type = 'button';
+    var shb = el('button', 'pf-share', '🔗 ' + P('LiveCard शेयर करें', 'Share LiveCard')); shb.type = 'button';
     shb.onclick = function () { if (!built) { built = true; var acts = el('div', 'sr-act'); acts.appendChild(saveCardBtn(root, f)); shp.appendChild(acts); shp.appendChild(shareBar(f, opts, root)); } shp.hidden = !shp.hidden; };
     bd.appendChild(shb); bd.appendChild(shp);
   }
