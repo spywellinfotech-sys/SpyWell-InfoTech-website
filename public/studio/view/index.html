@@ -117,7 +117,7 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
     bt.style.cssText='position:fixed;left:12px;bottom:14px;z-index:60;display:flex;align-items:center;gap:6px;margin:0;padding:12px 16px;border:0;border-radius:26px;background:#8b1a2b;color:#fff;font:700 14px system-ui,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.35);cursor:pointer';
     note.style.cssText='position:fixed;left:12px;right:12px;bottom:70px;z-index:60;margin:0;padding:8px 12px;border-radius:10px;background:rgba(30,30,30,.92);color:#fff;font:13px system-ui,sans-serif;text-align:center';
     var ns=document.createElement('style');ns.textContent='#foot div:empty,div.svnote:empty{display:none}';document.head.appendChild(ns);note.className='svnote';
-    document.body.appendChild(note);document.body.appendChild(bt);f.style.paddingBottom='84px';
+    document.body.appendChild(note);document.body.appendChild(bt);try{if(/Android/i.test(navigator.userAgent)&&!window.ViNative&&!window.Capacitor&&!/; wv\)/.test(navigator.userAgent)){var ia=document.createElement('a');ia.href='https://github.com/spywellinfotech-sys/livecard-app/releases/latest';ia.target='_blank';ia.rel='noopener';ia.textContent='📲 ऐप इंस्टॉल करें';ia.style.cssText='position:fixed;left:12px;bottom:68px;z-index:60;padding:9px 14px;border-radius:22px;background:#fff;color:#8b1a2b;border:1.5px solid #8b1a2b;font:700 13px system-ui,sans-serif;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.25)';note.style.bottom='116px';document.body.appendChild(ia);f.style.paddingBottom='130px'}}catch(e){}f.style.paddingBottom='84px';
 
     var IR=(t==='invitation')?(window.__INV_REM||[]):null;
     if(IR){bt.textContent='💾 Saved Invitations में सेव करें (reminder के लिए)';
