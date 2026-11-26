@@ -658,7 +658,12 @@ function fuInfo(box){
 function fuTools(box){
   if(!FUADM)return;var w=mk('div');w.style.cssText='display:flex;flex-wrap:wrap;gap:5px;margin-top:8px';
   function bt(t,fn,pri){var b=mk('button','',t);b.type='button';b.style.cssText='margin:0;width:auto;min-height:0;padding:5px 11px;font-size:13px;'+(pri?'background:#0f766e;color:#fff;border:0':'background:#fff;color:#0b4f4a;border:1px solid #0f766e');b.onclick=fn;w.appendChild(b)}
-  bt('📞 टेलीकॉलिंग',fuTele,1);if(window.ViNative&&ViNative.recentCalls)bt('📱 Call log',function(){try{ViNative.recentCalls()}catch(e){alert('Call log नहीं खुल पाया।')}},1);bt('⬇ CSV निकालें',fuExport);
+  bt('📞 टेलीकॉलिंग',fuTele,1);
+  bt('📱 Call log',function(){if(window.ViNative&&ViNative.recentCalls){try{ViNative.recentCalls()}catch(e){alert('Call log नहीं खुल पाया।')}}else alert('Call log सिर्फ़ LiveCard ऐप में खुलता है। ऐप में यह बटन दबाइए।')},1);
+  bt('📅 Calendar में जोड़ें',function(){var L=(FU||[]).filter(function(f){return f.due_at&&new Date(f.due_at)>=new Date(new Date().setHours(0,0,0,0))}).slice(0,60);
+    if(!L.length){alert('कैलेंडर में जोड़ने लायक कोई आगे का फ़ॉलो-अप नहीं है।');return}
+    var ev=L.map(function(f){var d=new Date(f.due_at),p=function(n){return (n<10?'0':'')+n};return {title:'📞 फ़ॉलो-अप: '+(f.title||f.name||'कॉल'),place:'',note:(f.note||''),fdate:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()),ftime:p(d.getHours())+':'+p(d.getMinutes())}});
+    if(!fnNative(ev))alert('Calendar में जोड़ना सिर्फ़ LiveCard ऐप में चलता है।')},1);bt('⬇ CSV निकालें',fuExport);
   var fi=mk('input');fi.type='file';fi.accept='.csv,text/csv';fi.hidden=true;var msg=mk('div','k');msg.style.cssText='flex-basis:100%;margin:2px 0 0';msg.textContent=window.FUMSG||'';fi.onchange=function(){if(fi.files&&fi.files[0]){msg.textContent='इम्पोर्ट हो रहा है…';fuImport(fi.files[0],msg)}fi.value=''};
   bt('⬆ CSV जोड़ें',function(){fi.click()});w.appendChild(fi);w.appendChild(msg);box.appendChild(w)}
 /* ===== /Telecalling + CSV ===== */
