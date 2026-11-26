@@ -1270,7 +1270,7 @@ function qrFull(x){var o=document.getElementById('qrfull');if(o)o.remove();var u
   var close=function(){o.remove();document.body.style.overflow=''};
   bar.appendChild(tb('🏠 Home',function(){close();try{setTab('home')}catch(e){}window.scrollTo(0,0)}));var tt=mk('b','','LiveCard QR');tt.style.fontSize='16px';bar.appendChild(tt);bar.style.justifyContent='flex-start';bar.style.gap='14px';o.appendChild(bar);
   var bd=mk('div');bd.style.cssText='flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px 16px;text-align:center';
-  var lg=document.createElement('img');lg.src='/studio/livecard-logo.png';lg.alt='LiveCard';lg.style.cssText='height:54px;width:auto;object-fit:contain';bd.appendChild(lg);
+  var lg=document.createElement('img');lg.src='/studio/livecard-logo.png';lg.alt='LiveCard';lg.style.cssText='height:54px;width:auto;object-fit:contain';bd.appendChild(lg);var tg=mk('div','','Visiting Card नहीं, अब LiveCard');tg.style.cssText='font-size:19px;font-weight:800;color:#d4141c;margin-top:-2px';bd.appendChild(tg);
   var nm=mk('b','',(!x.title||/^\s*(visiting\s*card|विज़िटिंग\s*कार्ड|विजिटिंग\s*कार्ड)\s*$/i.test(x.title)?'LiveCard':x.title));nm.style.cssText='font-size:22px;color:#7a0a10;line-height:1.3;max-width:90%';bd.appendChild(nm);
   var cv=document.createElement('canvas');try{window.StudioQR.draw(cv,u,900)}catch(e){}cv.style.cssText='width:min(78vw,380px);height:min(78vw,380px);background:#fff;border:6px solid #fff;border-radius:18px;box-shadow:0 8px 26px rgba(122,10,16,.25)';bd.appendChild(cv);
   var sc=mk('div','','📲 स्कैन करके कार्ड खोलें');sc.style.cssText='font-size:18px;font-weight:800;color:#222';bd.appendChild(sc);
