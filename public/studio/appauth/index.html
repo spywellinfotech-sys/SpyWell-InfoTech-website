@@ -7,7 +7,9 @@
  if(!/access_token=|[?&]code=/.test(S+H)){location.replace('/studio/'+S+H);return}
  document.write('<h2>लॉगिन हो गया ✅</h2><p>अब LiveCard ऐप में वापस जाइए।</p>'
  +'<a class="b p" id="op" href="intent://livecard.in/studio/appauth/?q='+encodeURIComponent(S+H)+'#Intent;scheme=https;package=com.spywell.vicard;S.browser_fallback_url='+encodeURIComponent(location.origin+'/studio/#stay')+';end">📲 LiveCard ऐप खोलें</a>'
- +'<a class="b s" id="st" href="/studio/'+S+H.replace(/"/g,'')+'">यहीं ब्राउज़र में जारी रखें</a>');
- document.getElementById('st').onclick=function(){try{sessionStorage.setItem('lc_stay','1')}catch(e){}};
+);
+ var op=document.getElementById('op');
+ try{if(navigator.userActivation&&navigator.userActivation.isActive)setTimeout(function(){location.href=op.href},150)}catch(e){}
+ setTimeout(function(){var d=document.createElement('a');d.href='/studio/'+S+H.replace(/"/g,'');d.textContent='ऐप नहीं खुला? यहीं जारी रखें';d.style.cssText='display:block;margin-top:22px;font-size:13px;color:#888';d.onclick=function(){try{sessionStorage.setItem('lc_stay','1')}catch(e){}};document.body.appendChild(d)},4000);
 })();
 </script></body></html>
