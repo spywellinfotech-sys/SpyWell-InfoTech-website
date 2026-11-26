@@ -1,0 +1,12 @@
+/* LiveCard promo video tile: window.LCPromo(parentEl, beforeEl?) */
+(function(){var ID='uRJILnLgIG0';
+window.LCPromo=function(parent,before){try{if(!parent||parent.querySelector('.lcpromo'))return;
+var w=document.createElement('div');w.className='lcpromo';w.style.cssText='max-width:440px;margin:18px auto 8px;padding:14px 12px;text-align:center;font-family:system-ui,sans-serif';
+var h=document.createElement('div');h.textContent='🎬 LiveCard से ऐसा कार्ड बनाएँ';h.style.cssText='font-weight:800;font-size:17px;color:#7a0a10;margin-bottom:10px';w.appendChild(h);
+var box=document.createElement('div');box.style.cssText='position:relative;width:min(62vw,260px);aspect-ratio:9/16;margin:0 auto;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,.3);cursor:pointer';
+var im=document.createElement('img');im.src='https://i.ytimg.com/vi/'+ID+'/hqdefault.jpg';im.alt='LiveCard video';im.style.cssText='width:100%;height:100%;object-fit:cover;opacity:.9';box.appendChild(im);
+var pl=document.createElement('div');pl.textContent='▶';pl.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:62px;height:62px;border-radius:50%;background:#d4141c;color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;padding-left:4px';box.appendChild(pl);
+box.onclick=function(){box.textContent='';var f=document.createElement('iframe');f.src='https://www.youtube.com/embed/'+ID+'?autoplay=1&playsinline=1&rel=0&modestbranding=1';f.allow='autoplay; encrypted-media; picture-in-picture';f.allowFullscreen=true;f.style.cssText='width:100%;height:100%;border:0';box.appendChild(f);box.style.cursor='default'};
+w.appendChild(box);
+var a=document.createElement('a');a.href='/studio/';a.textContent='🚀 अपना कार्ड बनाएँ';a.style.cssText='display:inline-block;margin-top:12px;padding:12px 22px;border-radius:26px;background:#d4141c;color:#fff;font-weight:800;font-size:15px;text-decoration:none';w.appendChild(a);
+if(before&&before.parentNode===parent)parent.insertBefore(w,before);else parent.appendChild(w)}catch(e){}}})();

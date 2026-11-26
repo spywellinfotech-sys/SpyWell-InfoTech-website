@@ -213,7 +213,7 @@ body{padding:0 0 24px 220px}
 <div id="pf-body" hidden>
 <div class="k" style="margin:4px 0 8px">यहाँ बदलने पर आपका विज़िटिंग कार्ड भी बदल जाएगा, और कार्ड एडिट करने पर यह प्रोफ़ाइल भी।</div>
 <div id="pf-sum" style="margin:6px 0"></div>
-<div id="pf-cardact"></div>
+<div id="pf-cardact"></div><div id="lcpromo-s"></div>
 <div id="pf-addrmgr"></div></div>
 <button type="button" id="pf-open" class="alt" style="width:100%;margin:6px 0 0">✏️ प्रोफ़ाइल एडिट करें</button>
 <div id="pf-edit" hidden>
@@ -1997,4 +1997,4 @@ var st=ios?['नीचे (या ऊपर) <b>Share</b> बटन ⬆️ द�
 c.innerHTML='<b style="font-size:18px;color:#d4141c">📲 होम स्क्रीन पर जोड़ें</b><div style="margin:6px 0 10px;color:#6e5b5b;font-size:14px">एक बार जोड़ने पर आइकन दबाते ही LiveCard खुल जाएगा, URL टाइप नहीं करना पड़ेगा।'+(ios?' (iPhone में यह <b>Safari</b> में ही होता है।)':'')+'</div><ol style="margin:0;padding-left:22px">'+st.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ol>';
 var x=document.createElement('button');x.type='button';x.textContent='ठीक है';x.style.cssText='width:100%;margin:14px 0 0;min-height:44px;background:#d4141c;color:#fff;border:0;border-radius:12px;font-size:16px;font-weight:700';x.onclick=function(){o.remove()};
 c.appendChild(x);o.appendChild(c);o.onclick=function(e){if(e.target===o)o.remove()};document.body.appendChild(o)}
-b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).catch(function(){})}else help()}})();</script><script src="/studio/qr.js"></script></body></html>
+b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).catch(function(){})}else help()}})();</script><script src="/studio/qr.js"></script><script src="/studio/promo-video.js"></script><script>try{window.LCPromo&&LCPromo(document.getElementById("lcpromo-s"))}catch(e){}</script></body></html>
