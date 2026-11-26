@@ -111,10 +111,14 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
   try{window.I18N&&window.I18N.setLang(sty.lang||'hi',true)}catch(e){}
   document.getElementById('foot').hidden=false;
   try{(function(){var ab=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-    var f=document.getElementById('foot'),bt=document.createElement('button');bt.type='button';bt.textContent='💾 यह कार्ड मेरे पास सेव करें';
+    var f=document.getElementById('foot'),bt=document.createElement('button');bt.type='button';bt.textContent=(isSite?'💾 कार्ड सेव करें':'💾 कार्ड सेव करें');
     bt.style.cssText='display:block;margin:0 auto 10px;padding:10px 18px;border:0;border-radius:22px;background:#8b1a2b;color:#fff;font:600 14px system-ui,sans-serif;cursor:pointer';
     var note=document.createElement('div');note.style.cssText='margin-bottom:8px;font-size:13px';
-    f.insertBefore(note,f.firstChild);if(!isSite)f.insertBefore(bt,f.firstChild);
+    bt.style.cssText='position:fixed;left:12px;bottom:14px;z-index:60;display:flex;align-items:center;gap:6px;margin:0;padding:12px 16px;border:0;border-radius:26px;background:#8b1a2b;color:#fff;font:700 14px system-ui,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.35);cursor:pointer';
+    note.style.cssText='position:fixed;left:12px;right:12px;bottom:70px;z-index:60;margin:0;padding:8px 12px;border-radius:10px;background:rgba(30,30,30,.92);color:#fff;font:13px system-ui,sans-serif;text-align:center';
+    var ns=document.createElement('style');ns.textContent='#foot div:empty,div.svnote:empty{display:none}';document.head.appendChild(ns);note.className='svnote';
+    document.body.appendChild(note);document.body.appendChild(bt);f.style.paddingBottom='84px';
+
     var IR=(t==='invitation')?(window.__INV_REM||[]):null;
     if(IR){bt.textContent='💾 Saved Invitations में सेव करें (reminder के लिए)';
       bt.onclick=function(){
