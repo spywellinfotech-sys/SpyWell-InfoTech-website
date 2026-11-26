@@ -578,7 +578,7 @@ function fuAsk(o){
   var er=mk('div','err');sh.appendChild(er);
   var bar=mk('div');bar.style.cssText='display:flex;gap:8px;margin-top:10px';var sv=mk('button','','सेव करें'),cn=mk('button','','रद्द करें');sv.type=cn.type='button';cn.style.cssText='background:#fff;color:#555;border:1px solid #ccc';bar.appendChild(sv);bar.appendChild(cn);sh.appendChild(bar);
   cn.onclick=function(){ov.remove();if(o.onCancel)o.onCancel()};
-  sv.onclick=async function(){var d=due;if(d==='x'){if(!dt.value){er.textContent='तारीख़ और समय चुनें';return}d=new Date(dt.value)}if(o.results&&!res&&!d&&!ni.value.trim()){er.textContent='नतीजा या फ़ॉलो-अप चुनें';return}if(!o.results&&!d){er.textContent='फ़ॉलो-अप की तारीख़ चुनें';return}sv.disabled=true;try{await o.save({outcome:res,note:ni.value.trim(),due:d})}catch(e){er.textContent='सेव नहीं हुआ, दोबारा कोशिश करें';sv.disabled=false;return}ov.remove();if(window._tcAdv){var f=window._tcAdv;window._tcAdv=null;f()}loadSaved()};
+  sv.onclick=async function(){var d=due;if(d==='x'){if(!dt.value){er.textContent='तारीख़ और समय चुनें';return}d=new Date(dt.value)}if(o.results&&!res&&!d&&!ni.value.trim()){er.textContent='नतीजा या फ़ॉलो-अप चुनें';return}if(!o.results&&!d){er.textContent='फ़ॉलो-अप की तारीख़ चुनें';return}sv.disabled=true;try{await o.save({outcome:res,note:ni.value.trim(),due:d})}catch(e){er.textContent='सेव नहीं हुआ: '+((e&&(e.message||e.details))||'दोबारा कोशिश करें');sv.disabled=false;return}ov.remove();if(window._tcAdv){var f=window._tcAdv;window._tcAdv=null;f()}loadSaved()};
   ov.addEventListener('click',function(e){if(e.target===ov)cn.onclick()});document.body.appendChild(ov)}
 function fuSaveTask(src,id,name,mob,v){return sb.from('studio_followups').insert({ref_src:src,ref_id:id,name:name,mobile:mob,kind:'task',due_at:v.due.toISOString(),note:v.note||null})}
 function fuAfterCall(){
@@ -710,14 +710,15 @@ $('ct-pk').onclick=async function(){var m=$('ct-pkm');m.textContent='';if(window
   var TY={1:'📥 आया',2:'📤 गया',3:'❌ मिस्ड',5:'🚫 रिजेक्ट',6:'🚫 ब्लॉक'};
   function dayKey(t){var d=new Date(t);d.setHours(0,0,0,0);return d.getTime()}
   function dayLbl(k){var n=dayKey(Date.now());if(k===n)return 'आज';if(k===n-864e5)return 'कल';return new Date(k).toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})}
+  async function clContact(c){if(!/^[6-9][0-9]{9}$/.test(c.n))return null;var q=await sb.from('studio_contacts').select('id').eq('mobile',c.n).maybeSingle();if(q.data&&q.data.id)return q.data.id;var r=await sb.from('studio_contacts').insert({user_id:ME.id,name:(c.name||('+91 '+c.n)).slice(0,80),mobile:c.n,src:'manual',note:'Call log से'}).select('id').single();return r.error?null:r.data.id}
   window.__vcCalls=async function(js){var ov=document.getElementById('cl-ov');if(ov)ov.remove();if(js==='denied'){alert('Call log की अनुमति नहीं मिली। फ़ोन Settings → Apps → LiveCard → Permissions में Call logs चालू करें।');return}var L=[];try{L=JSON.parse(js)}catch(e){}
-    try{await fuLoad()}catch(e){}var OUT={};try{var qq=await sb.from('studio_followups').select('mobile,outcome,note,done_at').eq('kind','call').eq('ref_src','calllog').order('done_at',{ascending:false}).limit(500);(qq.data||[]).forEach(function(z){if(z.mobile&&!OUT[z.mobile])OUT[z.mobile]=z})}catch(e){}
+    try{await fuLoad()}catch(e){}var OUT={};try{var qq=await sb.from('studio_followups').select('mobile,outcome,note,done_at').eq('kind','call').order('done_at',{ascending:false}).limit(1000);(qq.data||[]).forEach(function(z){if(z.mobile&&!OUT[z.mobile])OUT[z.mobile]=z})}catch(e){}
     ov=mk('div');ov.id='cl-ov';ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;display:flex;align-items:flex-end;justify-content:center';var sh=mk('div');sh.style.cssText='background:#fff;width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:14px;max-height:88vh;overflow:auto';ov.appendChild(sh);
     var x=mk('button','','बंद करें');x.type='button';x.style.cssText='float:right;width:auto;margin:0;padding:4px 10px;min-height:0;background:#fff;color:#555;border:1px solid #ccc;font-size:12px';x.onclick=function(){ov.remove()};sh.appendChild(x);
     var hd=mk('b','','📞 Call log · तारीख़ वार');hd.style.fontSize='16px';sh.appendChild(hd);
     if(!L.length)sh.appendChild(mk('div','k','कोई कॉल नहीं मिली।'));
     var last=null;
-    L.forEach(function(c){var k=dayKey(c.d);if(k!==last){last=k;var dh=mk('div','',dayLbl(k));dh.style.cssText='margin:14px 0 2px;padding:4px 8px;background:#f0fdfa;color:#0b4f4a;font-weight:800;font-size:13px;border-radius:8px';sh.appendChild(dh)}
+    L.forEach(function(c){var k=dayKey(c.d);if(k!==last){last=k;var dh=mk('div','',dayLbl(k)+' · '+L.filter(function(z){return dayKey(z.d)===k}).length+' कॉल');dh.style.cssText='margin:14px 0 2px;padding:4px 8px;background:#f0fdfa;color:#0b4f4a;font-weight:800;font-size:13px;border-radius:8px';sh.appendChild(dh)}
       var nm=c.name||('+91 '+c.n),r=mk('div','');r.style.cssText='border:1px solid #cdeae6;border-radius:10px;padding:8px 10px;margin-top:6px';
       var t=mk('b','',nm);r.appendChild(t);var tm=new Date(c.d).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
       r.appendChild(mk('div','k',(TY[c.t]||'📞')+' · '+tm+(c.s?' · '+c.s+' सेकंड':'')+(c.name?' · +91 '+c.n:'')));
@@ -726,8 +727,8 @@ $('ct-pk').onclick=async function(){var m=$('ct-pkm');m.textContent='';if(window
       var ac=mk('div','acts');ac.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:6px';
       function bt(txt,fn,alt){var q=mk('button','',txt);q.type='button';q.style.cssText='margin:0;padding:6px 10px;min-height:0;width:auto;font-size:13px;border-radius:8px;'+(alt?'background:#fff;color:#555;border:1px solid #ccc':'');q.onclick=fn;ac.appendChild(q);return q}
       var ca=mk('a','','📞 कॉल');ca.href='tel:+91'+c.n;ca.style.cssText='padding:6px 10px;font-size:13px;border-radius:8px;background:#0f766e;color:#fff;text-decoration:none;font-weight:700';ca.onclick=function(){fuNote({ref_src:'calllog',ref_id:null,name:nm,mobile:c.n})};ac.appendChild(ca);
-      var wa=mk('a','','WhatsApp');wa.href='https://wa.me/91'+c.n;wa.target='_blank';wa.rel='noopener';wa.style.cssText='padding:6px 10px;font-size:13px;border-radius:8px;background:#25d366;color:#fff;text-decoration:none;font-weight:700';ac.appendChild(wa);
-      bt('⏰ फ़ॉलो-अप',function(){fuAsk({title:'⏰ फ़ॉलो-अप जोड़ें',name:nm+' · +91 '+c.n,results:['रुचि है','बाद में कॉल','व्यस्त था','रुचि नहीं','फ़ोन नहीं उठा'],save:async function(v){var q=await sb.from('studio_followups').insert({ref_src:'calllog',ref_id:null,name:c.name||('+91 '+c.n),mobile:c.n,kind:'call',status:'done',outcome:v.outcome||null,note:v.note||null,done_at:new Date().toISOString()});if(q.error)throw q.error;if(v.due){var q2=await fuSaveTask('calllog',null,c.name||('+91 '+c.n),c.n,v);if(q2.error)throw q2.error}try{loadSaved()}catch(e){}ov.remove();ViNative.recentCalls()}})});
+      var wa=mk('a','','WhatsApp');wa.href='https://wa.me/91'+c.n;wa.hidden=!/^[6-9][0-9]{9}$/.test(c.n);wa.target='_blank';wa.rel='noopener';wa.style.cssText='padding:6px 10px;font-size:13px;border-radius:8px;background:#25d366;color:#fff;text-decoration:none;font-weight:700';ac.appendChild(wa);
+      bt('⏰ फ़ॉलो-अप',function(){fuAsk({title:'⏰ फ़ॉलो-अप जोड़ें',name:nm+' · +91 '+c.n,results:['रुचि है','बाद में कॉल','व्यस्त था','रुचि नहीं','फ़ोन नहीं उठा'],save:async function(v){var cid=await clContact(c),rs=cid?'man':'calllog';var q=await sb.from('studio_followups').insert({ref_src:rs,ref_id:cid,name:c.name||('+91 '+c.n),mobile:c.n,kind:'call',status:'done',outcome:v.outcome||null,note:v.note||null,done_at:new Date().toISOString()});if(q.error)throw q.error;if(v.due){var q2=await fuSaveTask(rs,cid,c.name||('+91 '+c.n),c.n,v);if(q2.error)throw q2.error}try{loadSaved()}catch(e){}ov.remove();ViNative.recentCalls()}})});
       if(tk){bt('✓ हो गया',async function(){await sb.from('studio_followups').update({status:'done',done_at:new Date().toISOString()}).eq('id',tk.id);try{loadSaved()}catch(e){}ov.remove();ViNative.recentCalls()},true);bt('+1 दिन',async function(){var n=new Date(tk.due_at);n.setDate(n.getDate()+1);if(n<new Date()){n=new Date();n.setDate(n.getDate()+1);n.setHours(10,0,0,0)}await sb.from('studio_followups').update({due_at:n.toISOString()}).eq('id',tk.id);try{loadSaved()}catch(e){}ov.remove();ViNative.recentCalls()},true)}
       r.appendChild(ac);sh.appendChild(r)});
     ov.addEventListener('click',function(e){if(e.target===ov)ov.remove()});document.body.appendChild(ov)};
@@ -818,7 +819,7 @@ function pickOcc(){
     var b=mk('button','tile');b.type='button';b.appendChild(mk('b','',O[k].name));b.appendChild(mk('span','',n+' टेम्पलेट'));
     b.onclick=function(){OCCSEL=k;pick('invitation')};g.appendChild(b)});
 }
-var MYSEL=null,NEWCO=false;
+var MYSEL=null,NEWCO=false,INVAR={};
 function pick(type){
   if(type==='invitation'&&!OCCSEL){pickOcc();return}
   $('c-new').hidden=true;$('c-pick').hidden=false;$('pk-err').textContent='';$('pk-title').textContent=(type==='invitation'?R.OCCASIONS[OCCSEL].name+' · ':TYN[type]+' · ')+'टेम्पलेट चुनें';
@@ -980,8 +981,10 @@ async function invHome(){
   var box=$('c-inv');if(!box)return;var iv0=LIST.filter(function(x){return x.product_type==='invitation'&&x.status==='published'});
   var AR={};try{var ai=await sb.rpc('studio_inv_archive_info');(ai.data||[]).forEach(function(z){AR[z.design_id]=z})}catch(e){}
   var iv=iv0.filter(function(x){return !(AR[x.id]&&AR[x.id].archived)}),arch=iv0.filter(function(x){return AR[x.id]&&AR[x.id].archived});
-  if(!iv0.length){box.hidden=true;return}
-  box.hidden=false;box.textContent='';box.appendChild(mk('b','','💌 मेरे इनविटेशन कार्ड'));var IDEST=$('c-insinv');if(IDEST){IDEST.textContent='';IDEST.hidden=!iv.length;if(iv.length)IDEST.appendChild(mk('b','','📊 इनविटेशन की इनसाइट'))}
+  INVAR=AR;var hasVis=LIST.some(function(z){return z.product_type==='visiting'});var sid=MYSEL||((!hasVis&&iv[0])?iv[0].id:null);
+  iv=iv.filter(function(z){return z.id===sid});
+  if(!iv.length){box.hidden=true;var I0=$('c-insinv');if(I0){I0.textContent='';I0.hidden=true}return}
+  box.hidden=false;box.textContent='';box.appendChild(mk('b','','💌 मेरा इनविटेशन कार्ड'));var IDEST=$('c-insinv');if(IDEST){IDEST.textContent='';IDEST.hidden=!iv.length;if(iv.length)IDEST.appendChild(mk('b','','📊 इनविटेशन की इनसाइट'))}
   for(var i=0;i<iv.length;i++){(function(x){
     var hero=mk('div','');hero.style.cssText='margin-top:12px;background:linear-gradient(135deg,#0b3d2e,#145a43 55%,#b8860b);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(11,61,46,.35)';
     var row=mk('div','');row.style.cssText='display:flex;gap:12px;align-items:center';
@@ -1238,10 +1241,16 @@ function defCorner(x){var c=mk('div','');c.style.cssText='position:absolute;top:
 function tplBtn(t,href,col){var q=mk('a','',t);q.href=href;q.style.cssText='display:block;text-align:center;margin-top:8px;background:rgba(255,255,255,.18);border:1.5px solid #fff;color:#fff;border-radius:12px;padding:9px 6px;text-decoration:none;font-weight:700;font-size:14px';return q}
 async function myHome(){try{$('pf-cardact').textContent=''}catch(e){}
   var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
+  var AR0={};try{var ai0=await sb.rpc('studio_inv_archive_info');(ai0.data||[]).forEach(function(z){AR0[z.design_id]=z})}catch(e){}
+  var invs=LIST.filter(function(z){return z.product_type==='invitation'&&z.status==='published'&&!(AR0[z.id]&&AR0[z.id].archived)});
+  if(!vis.length&&!invs.length){box.hidden=true;return}
+  var isel=invs.filter(function(z){return z.id===MYSEL})[0]||(!vis.length?invs[0]:null);
+  if(isel){box.hidden=false;box.textContent='';box.appendChild(mk('b','','🪪 मेरे कार्ड'));
+    var cr2=mk('div','');cr2.style.cssText='display:flex;gap:6px;overflow-x:auto;margin:8px 0 2px;padding-bottom:2px';vis.concat(invs).forEach(function(v){var inv=v.product_type==='invitation',cn=inv?(v.title||'इनविटेशन').slice(0,22):((v.content_json&&v.content_json.fields&&v.content_json.fields.business)||v.title||'कार्ड').slice(0,22),on=v.id===isel.id;var c=mk('button','',(inv?'💌 ':'🏢 ')+cn);c.type='button';c.style.cssText='flex:none;width:auto;margin:0;padding:7px 12px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap;border:1.5px solid #d4141c;'+(on?'background:#d4141c;color:#fff':'background:#fff;color:#d4141c');c.onclick=function(){MYSEL=v.id;myHome();invHome()};cr2.appendChild(c)});box.appendChild(cr2);return}
   if(!vis.length){box.hidden=true;return}
   var x=vis.filter(function(v){return v.id===MYSEL})[0]||vis.filter(function(v){return v.id===DEFID})[0]||vis.filter(function(v){return v.status==='published'})[0]||vis[0];box.hidden=false;box.textContent='';
   box.appendChild(mk('b','','🪪 मेरा कार्ड'));
-  if(vis.length>1){var cr=mk('div','');cr.style.cssText='display:flex;gap:6px;overflow-x:auto;margin:8px 0 2px;padding-bottom:2px';vis.forEach(function(v){var cn=((v.content_json&&v.content_json.fields&&v.content_json.fields.business)||v.title||'कार्ड').slice(0,22),on=v.id===x.id;var c=mk('button','','🏢 '+cn);c.type='button';c.style.cssText='flex:none;width:auto;margin:0;padding:7px 12px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap;border:1.5px solid #d4141c;'+(on?'background:#d4141c;color:#fff':'background:#fff;color:#d4141c');c.onclick=function(){MYSEL=v.id;myHome()};cr.appendChild(c)});box.appendChild(cr)}
+  if(vis.length+invs.length>1){var cr=mk('div','');cr.style.cssText='display:flex;gap:6px;overflow-x:auto;margin:8px 0 2px;padding-bottom:2px';vis.concat(invs).forEach(function(v){var inv=v.product_type==='invitation',cn=inv?(v.title||'इनविटेशन').slice(0,22):((v.content_json&&v.content_json.fields&&v.content_json.fields.business)||v.title||'कार्ड').slice(0,22),on=v.id===x.id;var c=mk('button','',(inv?'💌 ':'🏢 ')+cn);c.type='button';c.style.cssText='flex:none;width:auto;margin:0;padding:7px 12px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap;border:1.5px solid #d4141c;'+(on?'background:#d4141c;color:#fff':'background:#fff;color:#d4141c');c.onclick=function(){MYSEL=v.id;myHome();invHome()};cr.appendChild(c)});box.appendChild(cr)}
   var hd=mk('div','k',(x.title||'बिना नाम')+' · '+STN[x.status]);hd.style.margin='4px 0 8px';box.appendChild(hd);
   (function(){var pub=x.status==='published'&&!!x.slug,nm=(x.title||'मेरा कार्ड');
     var hero=mk('div','');hero.style.cssText='background:linear-gradient(135deg,#7a0a10,#d4141c);border-radius:18px;padding:14px;position:relative;color:#fff;box-shadow:0 6px 18px rgba(212,20,28,.28)';
