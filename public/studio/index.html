@@ -1516,6 +1516,7 @@ async function dash(user){
 try{if(/[?&]email=1/.test(location.search)){$('li-em').hidden=false;$('li-e').required=true;$('li-p').required=true}}catch(e){}
 $('rf').onclick=function(){var b=this;b.style.transition='transform .6s';b.style.transform='rotate(360deg)';setTimeout(function(){location.reload()},250)};
 $('g-btn').onclick=async function(){$('li-err').textContent='';
+  if(window.ViNative&&ViNative.openAuth){try{var ra=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:HERE,skipBrowserRedirect:true}});if(ra.data&&ra.data.url){ViNative.openAuth(ra.data.url);return}}catch(e){}}
   var r=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:HERE}});
   if(r.error)$('li-err').textContent='Google लॉगिन अभी चालू नहीं है। ईमेल और पासवर्ड से लॉगिन करें।'};
 $('v-login').onsubmit=async function(e){e.preventDefault();$('li-err').textContent='';busy(this,true);
