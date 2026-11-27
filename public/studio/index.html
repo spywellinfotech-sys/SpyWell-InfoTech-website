@@ -2035,58 +2035,5 @@ var st=ios?['नीचे (या ऊपर) <b>Share</b> बटन ⬆️ द�
 c.innerHTML='<b style="font-size:18px;color:#d4141c">📲 होम स्क्रीन पर जोड़ें</b><div style="margin:6px 0 10px;color:#6e5b5b;font-size:14px">एक बार जोड़ने पर आइकन दबाते ही LiveCard खुल जाएगा, URL टाइप नहीं करना पड़ेगा।'+(ios?' (iPhone में यह <b>Safari</b> में ही होता है।)':'')+'</div><ol style="margin:0;padding-left:22px">'+st.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ol>';
 var x=document.createElement('button');x.type='button';x.textContent='ठीक है';x.style.cssText='width:100%;margin:14px 0 0;min-height:44px;background:#d4141c;color:#fff;border:0;border-radius:12px;font-size:16px;font-weight:700';x.onclick=function(){o.remove()};
 c.appendChild(x);o.appendChild(c);o.onclick=function(e){if(e.target===o)o.remove()};document.body.appendChild(o)}
-b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).catch(function(){})}else help()}})();</script><script src="/studio/qr.js"></script><script src="/studio/promo-video.js"></script><script>try{window.LCPromo&&LCPromo(document.getElementById("lcpromo-s"))}catch(e){}</script><style>.lcz{max-height:118px!important;overflow:hidden!important;-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}.lc-empty{display:none!important}
-#v-dash:not([hidden]){display:flex;flex-wrap:wrap;column-gap:10px;align-items:flex-start;align-content:flex-start}#v-dash>*{flex:0 0 100%;max-width:100%;min-width:0;box-sizing:border-box}
-#v-dash>.lct{flex:0 0 calc(50% - 5px)!important;max-width:calc(50% - 5px)!important;height:86px!important;min-height:0!important;overflow:hidden!important;cursor:pointer;position:relative;padding:12px!important;display:flex!important;flex-direction:column;justify-content:space-between}
-#v-dash>.lct>*{display:none!important}#v-dash>.lct::before{content:attr(data-t);font:800 15px/1.25 system-ui,sans-serif;white-space:pre-line}#v-dash>.lct::after{content:'›';font:700 12px system-ui,sans-serif;opacity:.85}
-#v-dash>.lct button,#v-dash>.lct a,#v-dash>.lct input{pointer-events:none}
-.lcz-b{display:block;width:100%;margin:-8px 0 12px!important;background:none!important;border:0!important;box-shadow:none!important;color:#d4141c!important;font-weight:800;font-size:13px;min-height:0!important;padding:4px!important}
-#lc-jump{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;padding:7px 2px;scrollbar-width:none;position:sticky;top:56px;z-index:40;background:rgba(250,245,244,.97);box-shadow:0 6px 10px -8px rgba(122,10,16,.35)}#lc-jump button.on{background:#d4141c;color:#fff;border-color:#d4141c}body.lc-c #c-lay{display:none!important}body.lc-c.lc-lay #c-lay{display:flex!important}#lc-jump::-webkit-scrollbar{display:none}
-.lc-g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:10px}.lc-g2>*{margin:0!important;min-width:0;box-sizing:border-box}.lc-g2>.lc-full{grid-column:1/-1}
-.lc-g2>.lc-tog{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:6px!important;padding:10px!important;border-radius:12px}.lc-g2>.lc-tog>div:first-child{flex:1 1 100%!important}.lc-g2>.lc-tog>div:first-child>:not(b){display:none!important}.lc-g2>.lc-tog b{font-size:13.5px!important;line-height:1.25!important}
-.lc-g2>.lc-b{display:flex;flex-direction:column}.lc-g2>.lc-b button,.lc-g2>.lc-b>div:first-child{width:100%;flex:1;min-height:54px;height:auto!important;margin:0!important;padding:8px 10px!important;font-size:14px!important;line-height:1.25!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center;white-space:normal!important;box-sizing:border-box}.lc-g2 .lc-b svg{width:18px!important;height:18px!important;flex:none}
-#lc-jump button{flex:none;margin:0;width:auto;min-height:0;padding:7px 12px;border-radius:99px;background:#fff;color:#7a0a10;border:1.5px solid #f0c9c9;font-weight:700;font-size:13px;box-shadow:none}</style>
-<script>(function(){try{if(localStorage.getItem('lc_compact')==='0')return}catch(e){}
-var SEC=[['c-my','🪪 मेरा कार्ड',0],['c-plan','📋 आज',1,'📋|आज का प्लान'],['c-enq','📥 पूछताछ',0],['c-greet','🎉 ग्रीटिंग',1,'🎉|Greeting / Offer'],['c-corp','🏢 कंपनी',1,'🏢|कंपनी पैनल'],['c-uns','📲 Unsaved',1,'📲|Unsaved Contacts'],['c-chat','💬 चैट',1,'💬|चैट'],['c-sendaddr','🏠 Address',0],['c-bill','🏦 Billing',1,'🏦|Billing & Bank'],['c-fn','💌 Saved Invitations',1,'💌|Saved Invitations'],['c-loc','📍 Locations',0],['c-inv','💌 इनविटेशन',1,'💌|मेरे Invitation'],['c-insall','📊 Insights',1,'📊|Insights'],['c-ref','🎁 Refer',1,'🎁|Refer & Earn'],['c-lb','🏆 टॉप व्यू',1,'🏆|टॉप लिंक व्यू']];
-function $(i){return document.getElementById(i)}
-function vis(el){return el&&!el.hidden&&el.style.display!=='none'&&!el.classList.contains('tab-h')&&!el.classList.contains('lc-empty')}
-var OPN={};try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('lcz_')===0)localStorage.removeItem(k)})}catch(e){}
-function isOpen(id){return OPN[id]===1}
-function setOpen(id,v){OPN[id]=v?1:0}
-var sig='';document.body.classList.add('lc-c');
-function topItem(n,root){while(n.parentNode&&n.parentNode!==root&&n.parentNode.children.length<4)n=n.parentNode;return n}
-function halves(){var root=$('c-my');if(!root)return;var items=[];
-  [].forEach.call(root.querySelectorAll('.isw'),function(sw){var row=sw.parentNode;if(!row||row===root)return;var it=topItem(row,root);it.classList.add('lc-tog');
-    var b=it.querySelector('b');if(b&&/देखने से पहले नाम/.test(b.textContent))b.textContent='📱 नाम-मोबाइल पूछें';items.push(it)});
-  [].forEach.call(root.querySelectorAll('button'),function(b){if(/QR (कोड )?देखें/.test(b.textContent||'')){[].forEach.call(b.childNodes,function(n){if(n.nodeType===3&&/QR कोड देखें/.test(n.nodeValue))n.nodeValue=n.nodeValue.replace('QR कोड देखें','QR देखें')});var it=topItem(b,root);it.classList.add('lc-b');items.push(it)}});
-  [].forEach.call(root.querySelectorAll('div'),function(d){if(d.children.length===0&&/^📲 (Send to Unsaved|Unsaved भेजें)/.test(d.textContent||'')){
-    var mo=d.nextElementSibling,open=mo&&!mo.hidden;var t=open?'📲 Unsaved भेजें ▴':'📲 Unsaved भेजें ▾';if(d.textContent!==t)d.textContent=t;
-    var it=topItem(d,root);it.classList.add('lc-b');it.classList.toggle('lc-full',!!open);items.push(it);
-    if(!d.getAttribute('data-lch')){d.setAttribute('data-lch','1');d.addEventListener('click',function(){setTimeout(function(){try{halves()}catch(e){}},60)})}}});
-  items.sort(function(a,b){return a===b?0:(a.compareDocumentPosition(b)&2?1:-1)});
-  var groups=[];items.forEach(function(it){var p=it.parentNode;if(!p)return;if(p.classList.contains('lc-g2'))p=p.parentNode;var g=groups.filter(function(x){return x.p===p})[0];if(!g){g={p:p,a:[]};groups.push(g)}if(g.a.indexOf(it)<0)g.a.push(it)});
-  groups.forEach(function(g){if(g.a.length<2)return;var w=null;for(var k=0;k<g.a.length;k++){if(g.a[k].parentNode.classList.contains('lc-g2')){w=g.a[k].parentNode;break}}
-    if(!w){w=document.createElement('div');w.className='lc-g2';g.p.insertBefore(w,g.a[0])}
-    g.a.forEach(function(it){if(it.parentNode!==w)w.appendChild(it)})})}
-function spy(){var bar=$('lc-jump');if(!bar||bar.hidden)return;var cur='';[].forEach.call(bar.querySelectorAll('button[data-id]'),function(b){var el=$(b.getAttribute('data-id'));if(el&&el.getBoundingClientRect().top<150)cur=b.getAttribute('data-id')});[].forEach.call(bar.querySelectorAll('button[data-id]'),function(b){var on=b.getAttribute('data-id')===cur;if(on!==b.classList.contains('on')){b.classList.toggle('on',on);if(on)try{b.scrollIntoView({inline:'center',block:'nearest'})}catch(e){}}})}
-window.addEventListener('scroll',function(){clearTimeout(spy.t);spy.t=setTimeout(spy,80)},{passive:true});
-function tick(){var dt=document.body.getAttribute('data-tab');var home=!dt||dt==='home';
-  var p=$('c-plan');if(p){var e=/कोई function या follow-up नहीं/.test(p.textContent||'');p.classList.toggle('lc-empty',e)}
-  var list=[];
-  SEC.forEach(function(s){var el=$(s[0]);if(!el)return;var v=home&&vis(el);var b=el.nextElementSibling;if(!(b&&b.classList&&b.classList.contains('lcz-b')&&b.getAttribute('data-for')===s[0]))b=null;
-    if(v)list.push(s);
-    if(!s[2]){if(b)b.remove();return}
-    if(!el.getAttribute('data-lct')){el.setAttribute('data-lct','1');el.addEventListener('click',function(ev){if(!el.classList.contains('lct'))return;ev.preventDefault();ev.stopPropagation();var all=el.querySelectorAll('*'),t=null;for(var i=0;i<all.length;i++){var x=all[i];if(x.tagName==='BUTTON'||(x.tagName==='A'&&x.getAttribute('href'))||x.onclick||x.getAttribute('onclick')||x.style.cursor==='pointer'){t=x;break}}if(t&&(t.tagName==='BUTTON'||t.tagName==='A')&&!/[▾▼▴]/.test(t.textContent||'')){t.click();return}setOpen(s[0],true);tick();setTimeout(function(){if(t&&!/▴/.test(t.textContent||''))t.click();el.scrollIntoView({behavior:'smooth',block:'start'})},40)},true)}
-    var open=isOpen(s[0]);if(!v){if(b)b.hidden=true;return}
-    if(s[3]&&el.getAttribute('data-t')!==s[3].split('|').join('\n'))el.setAttribute('data-t',s[3].split('|').join('\n'));
-    el.classList.toggle('lct',!open);el.classList.remove('lcz');
-    if(!open){if(b)b.remove();return}
-    if(!b){b=document.createElement('button');b.type='button';b.className='lcz-b';b.setAttribute('data-for',s[0]);b.textContent='▴ छोटा करें';b.onclick=function(){setOpen(s[0],false);tick();el.scrollIntoView({block:'nearest'})};el.parentNode.insertBefore(b,el.nextSibling)}
-    b.hidden=false});
-  try{halves()}catch(e){}
-  var bar=$('lc-jump'),h=$('c-hello');
-  if(!bar&&h){bar=document.createElement('div');bar.id='lc-jump';h.parentNode.insertBefore(bar,h.nextSibling)}
-  if(!bar)return;bar.hidden=!home||list.length<3;var ns=list.map(function(s){return s[0]}).join(',');if(ns===sig)return;sig=ns;bar.textContent='';
-  list.forEach(function(s){var b=document.createElement('button');b.type='button';b.setAttribute('data-id',s[0]);b.textContent=s[1];b.onclick=function(){var el=$(s[0]);if(s[2])setOpen(s[0],true);tick();if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};bar.appendChild(b)});if($('c-lay')){var lb=document.createElement('button');lb.type='button';lb.textContent='🎨 लेआउट';lb.onclick=function(){document.body.classList.toggle('lc-lay');var c=$('c-lay');if(document.body.classList.contains('lc-lay')&&c)c.scrollIntoView({behavior:'smooth',block:'center'})};bar.appendChild(lb)}spy()}
-setInterval(function(){try{tick()}catch(e){}},1200);setTimeout(function(){try{tick()}catch(e){}},300)})();</script>
+b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).catch(function(){})}else help()}})();</script><script src="/studio/qr.js"></script><script src="/studio/promo-video.js"></script><script>try{window.LCPromo&&LCPromo(document.getElementById("lcpromo-s"))}catch(e){}</script>
 </body></html>
