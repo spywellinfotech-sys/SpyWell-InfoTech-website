@@ -1298,7 +1298,7 @@ function qrFull(x){var o=document.getElementById('qrfull');if(o)o.remove();var u
   var dl=tb('⬇️ QR डाउनलोड',function(){var a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='livecard-qr.png';document.body.appendChild(a);a.click();a.remove()});dl.style.cssText+=';background:#fff;color:#d4141c;border:1.5px solid #d4141c;margin-top:4px';bd.appendChild(dl);var cw=mk('div','','Created with LiveCard.in');cw.style.cssText='font-size:15px;font-weight:800;color:#7a0a10;letter-spacing:.3px;margin:6px 0 14px';bd.appendChild(cw);
   o.appendChild(bd);document.body.style.overflow='hidden';document.body.appendChild(o)}
 function hqrInit(){var b=$('hqr');if(!b)return;b.hidden=!qrCard();b.onclick=function(){var x=qrCard();if(!x){alert('पहले कार्ड प्रकाशित करें।');return}qrFull(x)}}
-async function myHome(){try{hqrInit()}catch(e){}try{$('pf-cardact').textContent=''}catch(e){}
+async function myHome(){try{hqrInit()}catch(e){}try{pfPlan()}catch(e){}try{$('pf-cardact').textContent=''}catch(e){}
   var box=$('c-my');var vis=LIST.filter(function(x){return x.product_type==='visiting'});
   if(!vis.length){box.hidden=true;return}
   var x=vis.filter(function(v){return v.id===MYSEL})[0]||vis.filter(function(v){return v.id===DEFID})[0]||vis.filter(function(v){return v.status==='published'})[0]||vis[0];box.hidden=false;box.textContent='';
