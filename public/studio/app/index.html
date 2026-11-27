@@ -161,10 +161,10 @@ var SV=[
  ['website','🌐','Mini Website','linear-gradient(135deg,#2f6fde,#0b2a6b)',function(){return PRIM?WED+PRIM.id+'&tab=info':'#create'}],
  ['invitation','💌','Invitation','linear-gradient(135deg,#e43b5c,#8e0b12)','#create/invitation'],
  ['carqr','🚗','Car Call QR','linear-gradient(135deg,#1fb36b,#0b6b45)','/studio/carqr/'],
- ['greeting','🎉','ग्रीटिंग / ऑफ़र','linear-gradient(135deg,#ff8a00,#e43b1c)','/studio/?app=1&go=greeting'],
- ['address','🏠','Address Cards','linear-gradient(135deg,#7a3cc8,#2b1b6b)','/studio/?app=1&go=address'],
+ ['greeting','🎉','ग्रीटिंग / ऑफ़र','linear-gradient(135deg,#ff8a00,#e43b1c)','/studio/greeting/'],
+ ['address','🏠','Address Cards','linear-gradient(135deg,#7a3cc8,#2b1b6b)','/studio/address/'],
  ['places','📍','Saved Locations','linear-gradient(135deg,#0b4f6c,#0f9d8a)','/studio/places/'],
- ['directory','📖','Directory','linear-gradient(135deg,#2f6fde,#7a3cc8)','/studio/?app=1&go=dir'],
+ ['directory','📖','Directory','linear-gradient(135deg,#2f6fde,#7a3cc8)','/studio/directory/'],
  ['discover','🔍','Discover','linear-gradient(135deg,#0f9d8a,#2f6fde)','/studio/?app=1&go=disc'],
  ['inbox','📥','Inbox','linear-gradient(135deg,#d4141c,#ff6b35)','#inbox'],
  ['leads','🎯','Leads','linear-gradient(135deg,#7a0a10,#d4141c)','/studio/leads/'],
@@ -223,7 +223,7 @@ SCR.home=function(){var c=(STATS&&STATS.card)||{},cl=clicks(),pub=PRIM&&PRIM.sta
   H('<b class="t" style="font-size:19px;display:block;margin:4px 2px 10px">क्या बनाना है?</b>'+feats());
   if(ADMIN)H('<a class="feat" href="#admin" style="background:linear-gradient(135deg,#2a2222,#7a0a10)"><div class="art">👑</div><div><h3>Admin Panel</h3><p>पेमेंट, कीमतें, ग्राहक, मैन्युअल भुगतान</p></div></a>');
   bindAll();on('h-main',function(){if(pub)location.href=shortUrl(PRIM.slug);else if(PRIM)nav('prev/'+PRIM.id);else nav('create')});on('h-share',function(){shareSheet(PRIM)})};
-function feats(){return [['#create/visiting','Visiting Card','कॉल · WhatsApp · Mini Website','linear-gradient(135deg,#7a3cc8,#3b1f9c)','📇'],['#create/invitation','Invitation Card','शादी, जन्मदिन, पूजा','linear-gradient(135deg,#e43b5c,#8e0b12)','💌'],['/studio/carqr/','Car Call QR','कार पर QR, स्कैन से कॉल · फ़्री','linear-gradient(135deg,#1fb36b,#0b6b45)','🚗'],['/studio/?app=1&go=greeting','ग्रीटिंग / ऑफ़र','शुभकामना या ऑफ़र · फ़्री','linear-gradient(135deg,#ff8a00,#e43b1c)','🎉']].map(function(f){return '<a class="feat" style="background:'+f[3]+'" href="'+f[0]+'"><div class="art">'+f[4]+'</div><div><h3>'+f[1]+'</h3><p>'+f[2]+'</p></div></a>'}).join('')}
+function feats(){return [['#create/visiting','Visiting Card','कॉल · WhatsApp · Mini Website','linear-gradient(135deg,#7a3cc8,#3b1f9c)','📇'],['#create/invitation','Invitation Card','शादी, जन्मदिन, पूजा','linear-gradient(135deg,#e43b5c,#8e0b12)','💌'],['/studio/carqr/','Car Call QR','कार पर QR, स्कैन से कॉल · फ़्री','linear-gradient(135deg,#1fb36b,#0b6b45)','🚗'],['/studio/greeting/','ग्रीटिंग / ऑफ़र','शुभकामना या ऑफ़र · फ़्री','linear-gradient(135deg,#ff8a00,#e43b1c)','🎉']].map(function(f){return '<a class="feat" style="background:'+f[3]+'" href="'+f[0]+'"><div class="art">'+f[4]+'</div><div><h3>'+f[1]+'</h3><p>'+f[2]+'</p></div></a>'}).join('')}
 
 SCR.cards=function(){var flt=window.__cf||'all';
   H('<div class="chips" style="margin-bottom:12px">'+[['all','सभी'],['visiting','विज़िटिंग'],['invitation','इनविटेशन']].map(function(c){return '<button class="chip '+(flt===c[0]?'on':'')+'" data-cf="'+c[0]+'">'+c[1]+'</button>'}).join('')+'</div>');
@@ -288,7 +288,7 @@ SCR.prev=async function(id){var d=DES.filter(function(x){return x.id===id})[0];i
   else H('<a class="btn" href="'+ED+d.id+'&tab=pub">🚀 प्रकाशित करें</a><p class="mut" style="text-align:center">लिंक चुनें और (अगर प्लान ज़रूरी हो) Razorpay से भुगतान करें</p><a class="btn alt" href="#edit/'+d.id+'">✏️ वापस एडिट</a>');
   previewInto($('ppv'),d,620,d.status!=='published');var pvx=$('ppv');pvx.style.maxHeight='none';on('p-sh',function(){shareSheet(d)});on('p-qr',function(){qrSheet(d)})};
 
-SCR.network=async function(){H('<input id="n-q" placeholder="🔍 नाम, नंबर या बिज़नेस खोजें" aria-label="खोजें"><div class="g2" style="margin-bottom:10px"><button class="btn" id="n-scan">📷 QR स्कैन</button><button class="btn alt" id="n-add">➕ कॉन्टैक्ट</button></div><div class="chips" style="margin-bottom:10px"><a class="chip" href="#followup">⏰ FollowUp</a><a class="chip" href="#calls">📋 कॉल लॉग</a><a class="chip" href="/studio/?app=1&go=dir">📖 Directory</a><a class="chip" href="/studio/?app=1&go=disc">🔍 Discover</a><a class="chip" href="/studio/?app=1&go=saved">📣 Broadcast / CSV</a></div><div id="n-ch" class="chips" style="margin-bottom:8px"></div><div class="card" id="n-l"><div class="load">लोड हो रहा है…</div></div>');
+SCR.network=async function(){H('<input id="n-q" placeholder="🔍 नाम, नंबर या बिज़नेस खोजें" aria-label="खोजें"><div class="g2" style="margin-bottom:10px"><button class="btn" id="n-scan">📷 QR स्कैन</button><button class="btn alt" id="n-add">➕ कॉन्टैक्ट</button></div><div class="chips" style="margin-bottom:10px"><a class="chip" href="#followup">⏰ FollowUp</a><a class="chip" href="#calls">📋 कॉल लॉग</a><a class="chip" href="/studio/directory/">📖 Directory</a><a class="chip" href="/studio/?app=1&go=disc">🔍 Discover</a><a class="chip" href="/studio/?app=1&go=saved">📣 Broadcast / CSV</a></div><div id="n-ch" class="chips" style="margin-bottom:8px"></div><div class="card" id="n-l"><div class="load">लोड हो रहा है…</div></div>');
   on('n-scan',scanQr);on('n-add',addContact);if(!NET)await loadNet();var flt='',q='';
   var inds={};NET.forEach(function(x){if(x.ind)inds[x.ind]=(inds[x.ind]||0)+1});
   function chips(){$('n-ch').innerHTML='<button class="chip '+(flt?'':'on')+'" data-i="">सभी ('+NET.length+')</button>'+Object.keys(inds).sort(function(a,b){return inds[b]-inds[a]}).slice(0,12).map(function(k){return '<button class="chip '+(flt===k?'on':'')+'" data-i="'+esc(k)+'">'+esc(k)+' ('+inds[k]+')</button>'}).join('');
