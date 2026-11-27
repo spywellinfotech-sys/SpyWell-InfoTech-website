@@ -150,6 +150,7 @@ if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
 (async function(){
   var sb=window.GSB=supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}}),ss=await sb.auth.getSession(),u=ss.data&&ss.data.session&&ss.data.session.user;
   if(!u){location.href='/studio/';return}
+  try{var ad=await sb.rpc('studio_is_admin');if(!(ad&&ad.data===true)){for(var oi=OC.length-1;oi>=0;oi--)if(OC[oi].admin)OC.splice(oi,1);S.o=Math.min(S.o,OC.length-1);$('g-msg').value=$('g-msg').value;build();draw()}}catch(e){}
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',u.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};
   var d=await sb.from('studio_designs').select('slug,content_json').eq('user_id',u.id).eq('product_type','visiting').order('created_at',{ascending:true}).limit(1);
   var dd=(d.data||[])[0];
