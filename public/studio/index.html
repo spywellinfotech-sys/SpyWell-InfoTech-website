@@ -2037,14 +2037,14 @@ var x=document.createElement('button');x.type='button';x.textContent='ठीक 
 c.appendChild(x);o.appendChild(c);o.onclick=function(e){if(e.target===o)o.remove()};document.body.appendChild(o)}
 b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).catch(function(){})}else help()}})();</script><script src="/studio/qr.js"></script><script src="/studio/promo-video.js"></script><script>try{window.LCPromo&&LCPromo(document.getElementById("lcpromo-s"))}catch(e){}</script><style>.lcz{max-height:118px!important;overflow:hidden!important;-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}.lc-empty{display:none!important}
 #v-dash:not([hidden]){display:flex;flex-wrap:wrap;column-gap:10px;align-items:flex-start;align-content:flex-start}#v-dash>*{flex:0 0 100%;max-width:100%;min-width:0;box-sizing:border-box}
-#v-dash>.lct{flex:0 0 calc(50% - 5px)!important;max-width:calc(50% - 5px)!important;height:118px!important;max-height:118px!important;overflow:hidden!important;cursor:pointer;position:relative;padding:10px 11px!important;font-size:13px}
-#v-dash>.lct::after{content:'▾ खोलें';position:absolute;left:0;right:0;bottom:0;padding:20px 0 6px;text-align:center;background:linear-gradient(rgba(255,255,255,0),#fff 62%);color:#d4141c;font:800 12px system-ui,sans-serif;pointer-events:none}
+#v-dash>.lct{flex:0 0 calc(50% - 5px)!important;max-width:calc(50% - 5px)!important;height:86px!important;min-height:0!important;overflow:hidden!important;cursor:pointer;position:relative;padding:12px!important;display:flex!important;flex-direction:column;justify-content:space-between}
+#v-dash>.lct>*{display:none!important}#v-dash>.lct::before{content:attr(data-t);font:800 15px/1.25 system-ui,sans-serif;white-space:pre-line}#v-dash>.lct::after{content:'खोलें ›';font:700 12px system-ui,sans-serif;opacity:.85}
 #v-dash>.lct button,#v-dash>.lct a,#v-dash>.lct input{pointer-events:none}
 .lcz-b{display:block;width:100%;margin:-8px 0 12px!important;background:none!important;border:0!important;box-shadow:none!important;color:#d4141c!important;font-weight:800;font-size:13px;min-height:0!important;padding:4px!important}
 #lc-jump{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;padding:7px 2px;scrollbar-width:none;position:sticky;top:56px;z-index:40;background:rgba(250,245,244,.97);box-shadow:0 6px 10px -8px rgba(122,10,16,.35)}#lc-jump button.on{background:#d4141c;color:#fff;border-color:#d4141c}body.lc-c #c-lay{display:none!important}body.lc-c.lc-lay #c-lay{display:flex!important}#lc-jump::-webkit-scrollbar{display:none}
 #lc-jump button{flex:none;margin:0;width:auto;min-height:0;padding:7px 12px;border-radius:99px;background:#fff;color:#7a0a10;border:1.5px solid #f0c9c9;font-weight:700;font-size:13px;box-shadow:none}</style>
 <script>(function(){try{if(localStorage.getItem('lc_compact')==='0')return}catch(e){}
-var SEC=[['c-my','🪪 मेरा कार्ड',0],['c-plan','📋 आज',1],['c-enq','📥 पूछताछ',1],['c-greet','🎉 ग्रीटिंग',1],['c-corp','🏢 कंपनी',1],['c-uns','📲 Unsaved',1],['c-chat','💬 चैट',1],['c-sendaddr','🏠 Address',0],['c-bill','🧾 Billing',1],['c-fn','🎉 Functions',1],['c-loc','📍 Locations',1],['c-inv','💌 इनविटेशन',1],['c-insall','📊 Insights',1],['c-ref','🎁 Refer',1],['c-lb','🏆 टॉप व्यू',1]];
+var SEC=[['c-my','🪪 मेरा कार्ड',0],['c-plan','📋 आज',1,'📋|आज का प्लान'],['c-enq','📥 पूछताछ',0],['c-greet','🎉 ग्रीटिंग',1,'🎉|Greeting / Offer'],['c-corp','🏢 कंपनी',1,'🏢|कंपनी पैनल'],['c-uns','📲 Unsaved',0],['c-chat','💬 चैट',1,'💬|चैट'],['c-sendaddr','🏠 Address',0],['c-bill','🏦 Billing',1,'🏦|Billing & Bank'],['c-fn','💌 Saved Invitations',1,'💌|Saved Invitations'],['c-loc','📍 Locations',0],['c-inv','💌 इनविटेशन',1,'💌|मेरे Invitation'],['c-insall','📊 Insights',0],['c-ref','🎁 Refer',1,'🎁|Refer & Earn'],['c-lb','🏆 टॉप व्यू',1,'🏆|टॉप लिंक व्यू']];
 function $(i){return document.getElementById(i)}
 function vis(el){return el&&!el.hidden&&el.style.display!=='none'&&!el.classList.contains('tab-h')&&!el.classList.contains('lc-empty')}
 function isOpen(id){try{return localStorage.getItem('lcz_'+id)==='1'}catch(e){return false}}
@@ -2060,6 +2060,7 @@ function tick(){var dt=document.body.getAttribute('data-tab');var home=!dt||dt==
     if(!s[2]){if(b)b.remove();return}
     if(!el.getAttribute('data-lct')){el.setAttribute('data-lct','1');el.addEventListener('click',function(ev){if(!el.classList.contains('lct'))return;ev.preventDefault();ev.stopPropagation();setOpen(s[0],true);tick()},true)}
     var open=isOpen(s[0]);if(!v){if(b)b.hidden=true;return}
+    if(s[3]&&el.getAttribute('data-t')!==s[3].split('|').join('\n'))el.setAttribute('data-t',s[3].split('|').join('\n'));
     el.classList.toggle('lct',!open);el.classList.remove('lcz');
     if(!open){if(b)b.remove();return}
     if(!b){b=document.createElement('button');b.type='button';b.className='lcz-b';b.setAttribute('data-for',s[0]);b.textContent='▴ छोटा करें';b.onclick=function(){setOpen(s[0],false);tick();el.scrollIntoView({block:'nearest'})};el.parentNode.insertBefore(b,el.nextSibling)}
