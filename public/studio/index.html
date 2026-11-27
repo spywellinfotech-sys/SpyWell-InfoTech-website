@@ -2050,7 +2050,7 @@ function vis(el){return el&&!el.hidden&&el.style.display!=='none'&&!el.classList
 function isOpen(id){try{return localStorage.getItem('lcz_'+id)==='1'}catch(e){return false}}
 function setOpen(id,v){try{localStorage.setItem('lcz_'+id,v?'1':'0')}catch(e){}}
 var sig='';
-function tick(){var home=document.body.getAttribute('data-tab')==='home';
+function tick(){var dt=document.body.getAttribute('data-tab');var home=!dt||dt==='home';
   var p=$('c-plan');if(p){var e=/कोई function या follow-up नहीं/.test(p.textContent||'');p.classList.toggle('lc-empty',e)}
   var list=[];
   SEC.forEach(function(s){var el=$(s[0]);if(!el)return;var v=home&&vis(el);var b=el.nextElementSibling;if(!(b&&b.classList&&b.classList.contains('lcz-b')&&b.getAttribute('data-for')===s[0]))b=null;
