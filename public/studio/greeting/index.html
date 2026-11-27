@@ -59,7 +59,7 @@ button{padding:9px;font-size:14px;margin-top:6px;border-radius:10px}
 <div id="oth" hidden><label id="oth-l">मौक़े का नाम / शीर्षक</label><input id="g-h" maxlength="60" placeholder="जैसे: नई दुकान की बधाई / गृह प्रवेश / रिटायरमेंट"><label>चिह्न (emoji)</label><div class="chips" id="g-em"></div></div>
 <div class="rowl"><label>रंग</label><div class="th" id="th"></div></div>
 <label>संदेश</label><div class="chips" id="msgs"></div>
-<textarea id="g-msg" rows="2" maxlength="200" placeholder="अपना संदेश भी लिख सकते हैं"></textarea>
+<textarea id="g-msg" rows="2" maxlength="200" placeholder="अपना संदेश भी लिख सकते हैं"></textarea><button type="button" id="g-sv" class="alt" style="margin-top:6px;padding:9px;font-size:14px">💾 मेरा संदेश सेव करें</button><div id="g-svm" class="k" style="margin:4px 0"></div><div id="g-my" class="chips" style="flex-wrap:wrap"></div>
 <div id="tow"><label>किसके लिए (खाली छोड़ सकते हैं)</label><input id="g-to" maxlength="30" placeholder="जैसे: रमेश जी / सभी ग्राहकों"></div>
 </div>
 <div class="card">
@@ -152,6 +152,14 @@ if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
   if(!u){location.href='/studio/';return}
   try{var ad=await sb.rpc('studio_is_admin');if(!(ad&&ad.data===true)){for(var oi=OC.length-1;oi>=0;oi--)if(OC[oi].admin)OC.splice(oi,1);S.o=Math.min(S.o,OC.length-1);$('g-msg').value=$('g-msg').value;build();draw()}}catch(e){}
   var p=await sb.from('studio_profiles').select('full_name,phone,card_json').eq('id',u.id).maybeSingle(),pd=p.data||{},cj=pd.card_json||{};
+  var MY=Array.isArray(cj.gmsgs)?cj.gmsgs.filter(function(x){return typeof x==='string'}).slice(0,20):[];
+  function myDraw(){var b=$('g-my');b.textContent='';if(MY.length){var t=document.createElement('div');t.className='k';t.style.cssText='width:100%;font-weight:700';t.textContent='📌 मेरे सेव किए संदेश (दबाकर लगाएँ)';b.appendChild(t)}
+    MY.forEach(function(m,i){var c=document.createElement('span');c.className='chip';c.style.cssText='max-width:100%;white-space:normal;text-align:left';c.textContent=m.length>60?m.slice(0,60)+'…':m;c.onclick=function(){$('g-msg').value=m;draw()};
+      var x=document.createElement('b');x.textContent='  ✕';x.style.color='#b00020';x.onclick=async function(ev){ev.stopPropagation();MY.splice(i,1);await persist();myDraw()};c.appendChild(x);b.appendChild(c)})}
+  async function persist(){var cur=await sb.from('studio_profiles').select('card_json').eq('id',u.id).maybeSingle();var c2=Object.assign({},(cur.data&&cur.data.card_json)||{},{gmsgs:MY.slice(0,20)});var r=await sb.from('studio_profiles').update({card_json:c2}).eq('id',u.id);return r}
+  $('g-sv').onclick=async function(){var t=$('g-msg').value.trim().slice(0,200),m=$('g-svm');if(!t){m.textContent='पहले संदेश लिखें।';return}if(MY.indexOf(t)>=0){m.textContent='यह संदेश पहले से सेव है।';return}if(MY.length>=20){m.textContent='20 संदेश हो गए। पहले कोई हटाएँ (✕)।';return}
+    MY.unshift(t);var r=await persist();if(r.error){MY.shift();m.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।';return}m.textContent='✅ आपका संदेश सेव हो गया';myDraw();setTimeout(function(){m.textContent=''},2500)};
+  myDraw();
   var d=await sb.from('studio_designs').select('slug,content_json').eq('user_id',u.id).eq('product_type','visiting').order('created_at',{ascending:true}).limit(1);
   var dd=(d.data||[])[0];
   var f=(dd&&dd.content_json&&dd.content_json.fields)||{};
