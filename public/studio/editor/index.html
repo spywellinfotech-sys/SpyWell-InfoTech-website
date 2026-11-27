@@ -177,12 +177,23 @@ function hoursPicker(p,d){
 function pInfo(p){
   var bad=R.invalid(D.product_type,C);
   if(D.product_type==='visiting')urlBox(p);
-  var root=p,more=h('details',{style:'margin-top:12px'}),vis=D.product_type==='visiting',ESS={name:1,designation:1,business:1,mobile:1,whatsapp:1,industry:1,industry_other:1,city:1,address:1};
+  var KD=(C.style&&C.style.kind)||'',PF=D.product_type==='visiting'&&KD!=='';
+  if(D.product_type==='visiting'){
+    p.appendChild(h('div',{class:'k',style:'font-weight:700;margin-top:8px',text:'आप कौन हैं?'}));
+    var kr=h('div',{class:'chips',style:'margin-bottom:8px'});
+    [['','🏢 बिज़नेस (Mini Website)'],['portfolio','💼 नौकरी (Portfolio Page)'],['student','🎓 पढ़ाई (Portfolio Page)']].forEach(function(o){
+      kr.appendChild(h('button',{type:'button',class:((C.style.kind||'')===o[0])?'on':'',text:o[1],onclick:function(){C.style.kind=o[0];tabs();panel();changed()}}))});
+    p.appendChild(kr)}
+  var PFONLY={skills:1,experience:1,education:1,resume:1,github:1},BIZONLY={industry:1,industry_other:1,dealsin:1,hours:1,since:1},PFL=KD==='student'?{business:'स्कूल / कॉलेज का नाम',designation:'कक्षा / कोर्स, जैसे B.Tech 2nd Year',about:'अपने बारे में (छोटा परिचय)',tagline:'एक लाइन परिचय',address:'शहर / पता (वैकल्पिक)',skills:'रुचियाँ / स्किल्स (कॉमा , से अलग करें)',experience:'उपलब्धियाँ / प्रोजेक्ट / इंटर्नशिप',education:'पिछली पढ़ाई और रिज़ल्ट',resume:'रिज़्यूमे / CV का लिंक (हो तो)'}:{business:'कंपनी / संस्था का नाम (हो तो)',designation:'आपका पद / प्रोफ़ेशन, जैसे Software Engineer',about:'अपने बारे में (छोटा परिचय)',tagline:'एक लाइन परिचय',address:'शहर / पता (वैकल्पिक)',skills:'मेरी स्किल्स (कॉमा , से अलग करें)',experience:'अनुभव: कहाँ, कौन सा पद, कितने साल',education:'पढ़ाई / योग्यता',resume:'रिज़्यूमे / CV का लिंक'};
+  var root=p,more=h('details',{style:'margin-top:12px'}),vis=D.product_type==='visiting',ESS=PF?{name:1,designation:1,business:1,mobile:1,whatsapp:1,skills:1,about:1,experience:1,education:1,resume:1}:{name:1,designation:1,business:1,mobile:1,whatsapp:1,industry:1,industry_other:1,city:1,address:1};
   more.appendChild(h('summary',{text:'➕ और जानकारी भरें (वैकल्पिक)',style:'font-weight:700;cursor:pointer;padding:8px 0'}));
   if(window.__mOpen)more.open=true;more.ontoggle=function(){window.__mOpen=more.open};
   var WEBONLY={about:1,tagline:1,hours:1,since:1},cardOnly=vis;
   R.fieldsFor(D.product_type,cfg()).forEach(function(d){
-    if(cardOnly&&WEBONLY[d[0]])return;
+    if(cardOnly&&(WEBONLY[d[0]]||PFONLY[d[0]]))return;
+    if(vis&&PF&&BIZONLY[d[0]])return;
+    if(vis&&!PF&&PFONLY[d[0]])return;
+    if(PF&&PFL[d[0]])d=[d[0],PFL[d[0]],d[2],d[3]];
     p=(vis&&!ESS[d[0]])?more:root;
     var k=d[0],typ=d[2],inp;
     if(k==='hours'){hoursPicker(p,d);return}

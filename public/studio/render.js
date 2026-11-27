@@ -199,7 +199,7 @@
       weight: [400, 500, 600, 700].indexOf(+s.weight) >= 0 ? +s.weight : 0, align: ['left', 'center', 'right'].indexOf(s.align) >= 0 ? s.align : '',
       fg: col(s.fg, ''), bg: col(s.bg, ''), ac: col(s.ac, ''),
       anim: ['rich', 'soft', 'none'].indexOf(s.anim) >= 0 ? s.anim : '', petal: PETALS.indexOf(s.petal) >= 0 ? s.petal : '',
-      kind: s.kind === 'portfolio' ? 'portfolio' : '', lang: CLANGS.indexOf(s.lang) >= 0 ? s.lang : '', layout: LAYOUTS.indexOf(s.layout) >= 0 ? s.layout : '', ornament: ORNAMENTS.indexOf(s.ornament) >= 0 ? s.ornament : '' };
+      kind: (s.kind === 'portfolio' || s.kind === 'student') ? s.kind : '', lang: CLANGS.indexOf(s.lang) >= 0 ? s.lang : '', layout: LAYOUTS.indexOf(s.layout) >= 0 ? s.layout : '', ornament: ORNAMENTS.indexOf(s.ornament) >= 0 ? s.ornament : '' };
     var im = c.images && typeof c.images === 'object' ? c.images : {};
     (IMAGES[type] || []).forEach(function (d) { var x = im[d[0]] && typeof im[d[0]] === 'object' ? im[d[0]] : {}; var u = img(x.url); if (u) out.images[d[0]] = { url: u, size: num(x.size, 40, 340, d[2]), pos: num(x.pos, 0, 100, 50) }; });
     return out;
@@ -811,7 +811,7 @@
   function site(mount, tplConfig, content, opts) {
     ensureAssets(); opts = opts || {};
     var t = tplConfig && typeof tplConfig === 'object' ? tplConfig : {}, pal = t.palette || {};
-    var d = normalize('visiting', content), s = d.style, f = d.fields, PF = s.kind === 'portfolio'; CARDL = s.lang || 'hi';
+    var d = normalize('visiting', content), s = d.style, f = d.fields, PF = s.kind === 'portfolio' || s.kind === 'student', ST = s.kind === 'student'; CARDL = s.lang || 'hi';
     var bg = s.bg || col(pal.bg, '#ffffff'), fg = s.fg || col(pal.fg, '#222222'), ac = s.ac || col(pal.ac, '#8b1a2b');
     var root = el('div', 'sr sr-site'), st = root.style; root.setAttribute('dir', CARDL === 'ur' ? 'rtl' : 'ltr'); root.setAttribute('lang', CARDL);
     st.setProperty('--bg', bg); st.setProperty('--fg', fg); st.setProperty('--ac', ac);
@@ -843,8 +843,8 @@
     if (PF) {
       var sk = String(f.skills || '').split(/[,\n]/).map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 30);
       if (sk.length) { var ski = sec('स्किल्स'), skw = el('div', 'ws-grid ws-hl'); sk.forEach(function (x) { var c = el('div', 'ws-card ws-hi'); c.appendChild(el('div', 'ws-ic ws-ic2', '★')); c.appendChild(el('span', '', x)); skw.appendChild(c); }); ski.appendChild(skw); }
-      if (f.experience) { var exi = sec('अनुभव'); exi.appendChild(el('p', 'ws-about', f.experience)); exi.lastChild.style.whiteSpace = 'pre-line'; }
-      if (f.education) { var edi = sec('पढ़ाई / योग्यता'); edi.appendChild(el('p', 'ws-about', f.education)); edi.lastChild.style.whiteSpace = 'pre-line'; }
+      if (f.experience) { var exi = sec(ST ? 'उपलब्धियाँ / प्रोजेक्ट' : 'अनुभव'); exi.appendChild(el('p', 'ws-about', f.experience)); exi.lastChild.style.whiteSpace = 'pre-line'; }
+      if (f.education) { var edi = sec(ST ? 'पढ़ाई और रिज़ल्ट' : 'पढ़ाई / योग्यता'); edi.appendChild(el('p', 'ws-about', f.education)); edi.lastChild.style.whiteSpace = 'pre-line'; }
       if (V.url(f.github)) { var gli = sec('काम के नमूने'); gli.appendChild(actA(link('sr-call', '🔗 मेरा काम देखें', V.url(f.github)), 'website')); }
     }
     if (d.services.length) { var si = sec(PF ? 'प्रोजेक्ट / काम के नमूने' : T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { var c = el('div', 'ws-card ws-sv'), p2 = svParts(x); c.appendChild(el('div', 'ws-ic', svIcon(p2[0], g.children.length))); c.appendChild(el('em', 'ws-no', String(g.children.length + 1))); c.appendChild(el('b', '', p2[0])); if (p2[1]) { c.appendChild(el('p', 'ws-sd', p2[1])); c.style.cursor = 'pointer'; c.onclick = function () { c.classList.toggle('open'); }; } g.appendChild(c); }); si.appendChild(g); }

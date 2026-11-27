@@ -125,7 +125,7 @@ var TABS=[['info','1 · जानकारी'],['list',''],['photo','2 · फ�
 var HINT={info:['अपनी जानकारी भरें','नाम, मोबाइल नंबर और व्यवसाय लिखें। बाकी खाने बाद में भी भर सकते हैं। ऊपर कार्ड का नमूना साथ-साथ बदलता दिखेगा।'],list:['सेवाएँ / कार्यक्रम जोड़ें','जो सेवाएँ देते हैं वे जोड़ें। नहीं हैं तो सीधे "अगला" दबाएँ।'],photo:['फ़ोटो और लोगो','अपनी फ़ोटो और लोगो लगाएँ। यह ज़रूरी नहीं है।'],design:['रंग और अक्षर','पसंद का रंग चुनें।'],design:['रंग, स्टाइल और प्रकाशन','रंग और अक्षर बदलें (वैकल्पिक), फिर नीचे से प्रकाशित करें।'],tpl:['टेम्पलेट बदलें','कार्ड का दूसरा डिज़ाइन चुनना हो तो यहाँ से चुनें।'],ai:['AI की मदद लें','AI आपके व्यवसाय के बारे में लिखकर दे सकता है।'],pub:['प्रकाशित करें और शेयर करें','कार्ड लाइव करें, लिंक और QR पाएँ, WhatsApp पर भेजें।'],ins:['इनसाइट','कितने लोगों ने कार्ड देखा।']};
 var ORDER=['info','list','photo','tpl','design'];
 function hideSvc(){return D.product_type==='visiting'&&!webMode&&!(C.style&&C.style.site===true)}
-function tabs(){var w=$('tabs');w.textContent='';try{$('ttl').textContent=D.product_type==='visiting'?(webMode?(C&&C.style&&C.style.kind==='portfolio'?'💼 पोर्टफोलियो पेज एडिटर':'🌐 मिनी वेबसाइट एडिटर'):'📇 कार्ड एडिटर'):'💌 इनविटेशन एडिटर'}catch(x){}var ab=$('aibtn');ab.hidden=false;ab.className='aib'+(tab==='ai'?' on':'');ab.textContent='';ab.appendChild(document.createTextNode(D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से AI भरें':'🤖 AI से भरें'));ab.onclick=function(){tab='ai';tabs();panel()};var wb=$('wzbtn');if(wb){wb.hidden=!window.SWWizard;wb.onclick=function(){SWWizard.open({mode:'fill',type:D.product_type,occ:(cfg().occasion||'wedding'),fields:C.fields||{},done:function(f){C.fields=C.fields||{};for(var k in f)C.fields[k]=f[k];tab='info';tabs();panel();changed()}})}};TABS.forEach(function(t){if(t[0]==='ai')return;if(t[0]==='pub'||t[0]==='ins')return;if(t[0]==='list'&&hideSvc())return;var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
+function tabs(){var w=$('tabs');w.textContent='';try{$('ttl').textContent=D.product_type==='visiting'?(webMode?(C&&C.style&&C.style.kind?'💼 पोर्टफोलियो पेज एडिटर':'🌐 मिनी वेबसाइट एडिटर'):'📇 कार्ड एडिटर'):'💌 इनविटेशन एडिटर'}catch(x){}var ab=$('aibtn');ab.hidden=false;ab.className='aib'+(tab==='ai'?' on':'');ab.textContent='';ab.appendChild(document.createTextNode(D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से AI भरें':'🤖 AI से भरें'));ab.onclick=function(){tab='ai';tabs();panel()};var wb=$('wzbtn');if(wb){wb.hidden=!window.SWWizard;wb.onclick=function(){SWWizard.open({mode:'fill',type:D.product_type,occ:(cfg().occasion||'wedding'),fields:C.fields||{},done:function(f){C.fields=C.fields||{};for(var k in f)C.fields[k]=f[k];tab='info';tabs();panel();changed()}})}};TABS.forEach(function(t){if(t[0]==='ai')return;if(t[0]==='pub'||t[0]==='ins')return;if(t[0]==='list'&&hideSvc())return;var name=t[0]==='list'?(D.product_type==='invitation'?'कार्यक्रम':'सेवाएँ'):t[0]==='ai'&&D.product_type==='visiting'?'📷 प्रिंटेड कार्ड से':t[1];
   w.appendChild(h('button',{class:tab===t[0]?'on':'',text:name,onclick:function(){tab=t[0];tabs();panel();draw()}}))})}
 function panel(){var p=$('panel');p.textContent='';resetArmed=false;
   var hn=HINT[tab];if(hn)p.appendChild(h('div',{class:'step'},[h('b',{text:hn[0]}),document.createTextNode(hn[1])]));
@@ -177,20 +177,20 @@ function hoursPicker(p,d){
 function pInfo(p){
   var bad=R.invalid(D.product_type,C);
   if(D.product_type==='visiting')urlBox(p);
-  var PF=D.product_type==='visiting'&&C.style&&C.style.kind==='portfolio';
-  if(D.product_type==='visiting'&&webMode){
+  var KD=(C.style&&C.style.kind)||'',PF=D.product_type==='visiting'&&KD!=='';
+  if(D.product_type==='visiting'){
     p.appendChild(h('div',{class:'k',style:'font-weight:700;margin-top:8px',text:'आप कौन हैं?'}));
     var kr=h('div',{class:'chips',style:'margin-bottom:8px'});
-    [['','🏢 बिज़नेस वाले (Mini Website)'],['portfolio','💼 नौकरी / प्रोफ़ेशनल (Portfolio Page)']].forEach(function(o){
+    [['','🏢 बिज़नेस (Mini Website)'],['portfolio','💼 नौकरी (Portfolio Page)'],['student','🎓 पढ़ाई (Portfolio Page)']].forEach(function(o){
       kr.appendChild(h('button',{type:'button',class:((C.style.kind||'')===o[0])?'on':'',text:o[1],onclick:function(){C.style.kind=o[0];tabs();panel();changed()}}))});
     p.appendChild(kr)}
-  var PFONLY={skills:1,experience:1,education:1,resume:1,github:1},BIZONLY={industry:1,industry_other:1,dealsin:1,hours:1,since:1},PFL={business:'कंपनी / संस्था का नाम (हो तो)',designation:'आपका पद / प्रोफ़ेशन, जैसे Software Engineer',about:'अपने बारे में (छोटा परिचय)',tagline:'एक लाइन परिचय',address:'शहर / पता (वैकल्पिक)'};
+  var PFONLY={skills:1,experience:1,education:1,resume:1,github:1},BIZONLY={industry:1,industry_other:1,dealsin:1,hours:1,since:1},PFL=KD==='student'?{business:'स्कूल / कॉलेज का नाम',designation:'कक्षा / कोर्स, जैसे B.Tech 2nd Year',about:'अपने बारे में (छोटा परिचय)',tagline:'एक लाइन परिचय',address:'शहर / पता (वैकल्पिक)',skills:'रुचियाँ / स्किल्स (कॉमा , से अलग करें)',experience:'उपलब्धियाँ / प्रोजेक्ट / इंटर्नशिप',education:'पिछली पढ़ाई और रिज़ल्ट',resume:'रिज़्यूमे / CV का लिंक (हो तो)'}:{business:'कंपनी / संस्था का नाम (हो तो)',designation:'आपका पद / प्रोफ़ेशन, जैसे Software Engineer',about:'अपने बारे में (छोटा परिचय)',tagline:'एक लाइन परिचय',address:'शहर / पता (वैकल्पिक)',skills:'मेरी स्किल्स (कॉमा , से अलग करें)',experience:'अनुभव: कहाँ, कौन सा पद, कितने साल',education:'पढ़ाई / योग्यता',resume:'रिज़्यूमे / CV का लिंक'};
   var root=p,more=h('details',{style:'margin-top:12px'}),vis=D.product_type==='visiting',ESS=PF?{name:1,designation:1,business:1,mobile:1,whatsapp:1,skills:1,about:1,experience:1,education:1,resume:1}:{name:1,designation:1,business:1,mobile:1,whatsapp:1,industry:1,industry_other:1,city:1,address:1};
   more.appendChild(h('summary',{text:'➕ और जानकारी भरें (वैकल्पिक)',style:'font-weight:700;cursor:pointer;padding:8px 0'}));
   if(window.__mOpen)more.open=true;more.ontoggle=function(){window.__mOpen=more.open};
   var WEBONLY={about:1,tagline:1,hours:1,since:1},cardOnly=vis&&!webMode&&!(C.style&&C.style.site===true);
   R.fieldsFor(D.product_type,cfg()).forEach(function(d){
-    if(cardOnly&&WEBONLY[d[0]])return;
+    if(cardOnly&&(WEBONLY[d[0]]||PFONLY[d[0]]))return;
     if(vis&&PF&&BIZONLY[d[0]])return;
     if(vis&&!PF&&PFONLY[d[0]])return;
     if(PF&&PFL[d[0]])d=[d[0],PFL[d[0]],d[2],d[3]];
@@ -228,7 +228,7 @@ function pList(p){
       p.appendChild(h('button',{class:'btn alt',text:'+ दूसरा कार्यक्रम जोड़ें',onclick:function(){C.events.push({title:'',date:'',time:'',place:''});panel();changed()}}));
     }
   }else{
-    p.appendChild(h('div',{class:'k',text:(C.style&&C.style.kind==='portfolio'?'अपने प्रोजेक्ट या काम के नमूने एक-एक करके लिखें और हर एक का छोटा विवरण दें। अधिकतम ':'आप जो सेवाएँ या सामान देते हैं, एक-एक करके लिखें और हर एक का छोटा विवरण भी दें। अधिकतम ')+R.MAX_SERVICES+'।'}));
+    p.appendChild(h('div',{class:'k',text:(C.style&&C.style.kind?'अपने प्रोजेक्ट या काम के नमूने एक-एक करके लिखें और हर एक का छोटा विवरण दें। अधिकतम ':'आप जो सेवाएँ या सामान देते हैं, एक-एक करके लिखें और हर एक का छोटा विवरण भी दें। अधिकतम ')+R.MAX_SERVICES+'।'}));
     C.services.forEach(function(s,i){
       var pr=R.svParts(s),nm=h('input',{type:'text',maxlength:60,placeholder:'सेवा / प्रोडक्ट का नाम'}),ds=h('textarea',{maxlength:100,rows:2,placeholder:'छोटा विवरण (मिनी वेबसाइट पर नाम के नीचे दिखेगा)'});nm.value=pr[0];ds.value=pr[1];ds.style.marginTop='6px';
       function sv(){C.services[i]=nm.value.replace(/\|/g,' ')+(ds.value.trim()?' | '+ds.value.replace(/\|/g,' ').trim():'');changed()}nm.oninput=sv;ds.oninput=sv;
@@ -237,7 +237,7 @@ function pList(p){
     if(C.services.length<R.MAX_SERVICES)p.appendChild(h('button',{class:'btn alt',text:'+ सेवा जोड़ें',onclick:function(){C.services.push('');panel();changed()}}));
     if(C.style.site===true){
       if(!C.highlights)C.highlights=[];
-      p.appendChild(h('div',{class:'k',style:'margin-top:14px;font-weight:700',text:(C.style&&C.style.kind==='portfolio'?'✔ मेरी खूबियाँ / उपलब्धियाँ':'✔ हमें क्यों चुनें (मिनी वेबसाइट)')}));
+      p.appendChild(h('div',{class:'k',style:'margin-top:14px;font-weight:700',text:(C.style&&C.style.kind?'✔ मेरी खूबियाँ / उपलब्धियाँ':'✔ हमें क्यों चुनें (मिनी वेबसाइट)')}));
       p.appendChild(h('div',{class:'k',text:'अपनी खूबियाँ छोटे वाक्यों में लिखें, जैसे: "सीधे फ़ैक्ट्री से सप्लाई", "समय पर डिलीवरी", "10 साल का अनुभव"। अधिकतम '+R.MAX_HIGH+'।'}));
       C.highlights.forEach(function(s,i){
         var inp=h('input',{type:'text',maxlength:80});inp.value=s||'';inp.oninput=function(){C.highlights[i]=inp.value;changed()};
