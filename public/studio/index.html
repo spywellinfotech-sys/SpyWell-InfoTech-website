@@ -2050,8 +2050,9 @@ b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).
 var SEC=[['c-my','🪪 मेरा कार्ड',0],['c-plan','📋 आज',1,'📋|आज का प्लान'],['c-enq','📥 पूछताछ',0],['c-greet','🎉 ग्रीटिंग',1,'🎉|Greeting / Offer'],['c-corp','🏢 कंपनी',1,'🏢|कंपनी पैनल'],['c-uns','📲 Unsaved',0],['c-chat','💬 चैट',1,'💬|चैट'],['c-sendaddr','🏠 Address',0],['c-bill','🏦 Billing',1,'🏦|Billing & Bank'],['c-fn','💌 Saved Invitations',1,'💌|Saved Invitations'],['c-loc','📍 Locations',0],['c-inv','💌 इनविटेशन',1,'💌|मेरे Invitation'],['c-insall','📊 Insights',0],['c-ref','🎁 Refer',1,'🎁|Refer & Earn'],['c-lb','🏆 टॉप व्यू',1,'🏆|टॉप लिंक व्यू']];
 function $(i){return document.getElementById(i)}
 function vis(el){return el&&!el.hidden&&el.style.display!=='none'&&!el.classList.contains('tab-h')&&!el.classList.contains('lc-empty')}
-function isOpen(id){try{return localStorage.getItem('lcz_'+id)==='1'}catch(e){return false}}
-function setOpen(id,v){try{localStorage.setItem('lcz_'+id,v?'1':'0')}catch(e){}}
+var OPN={};try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('lcz_')===0)localStorage.removeItem(k)})}catch(e){}
+function isOpen(id){return OPN[id]===1}
+function setOpen(id,v){OPN[id]=v?1:0}
 var sig='';document.body.classList.add('lc-c');
 function mark(el,cls){if(!el||!el.parentNode)return;el.classList.add('lc-half');if(cls)el.classList.add(cls);el.parentNode.classList.add('lc-hgrid')}
 function unmark(el){if(el)el.classList.remove('lc-half')}
