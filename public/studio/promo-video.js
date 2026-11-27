@@ -1,6 +1,18 @@
 /* LiveCard promo video tile: window.LCPromo(parentEl, beforeEl?) */
 (function(){var ID='uRJILnLgIG0';
-window.LCPromo=function(parent,before,vid){var ID2=vid||ID;try{if(!parent||parent.querySelector('.lcpromo'))return;
+function mp4Promo(parent,before,src){try{if(!parent||parent.querySelector('.lcpromo'))return;
+var w=document.createElement('div');w.className='lcpromo';w.style.cssText='max-width:440px;margin:18px auto 8px;padding:14px 12px;text-align:center;font-family:system-ui,sans-serif';
+var h=document.createElement('div');h.textContent='🎬 LiveCard से ऐसा कार्ड बनाएँ';h.style.cssText='font-weight:800;font-size:17px;color:#7a0a10;margin-bottom:10px';w.appendChild(h);
+var box=document.createElement('div');box.style.cssText='position:relative;width:min(92vw,400px);aspect-ratio:16/9;margin:0 auto;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,.3)';
+var v=document.createElement('video');v.src=src;v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.preload='metadata';v.controls=false;v.style.cssText='width:100%;height:100%;object-fit:contain;display:block;background:#000';box.appendChild(v);
+var ub=document.createElement('button');ub.type='button';ub.textContent='🔊 आवाज़ चालू करें';ub.style.cssText='position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:5;padding:9px 14px;border:0;border-radius:22px;background:rgba(0,0,0,.78);color:#fff;font:700 13px system-ui,sans-serif;white-space:nowrap';
+ub.onclick=function(e){e.stopPropagation();v.muted=false;v.currentTime=0;v.play().catch(function(){});ub.remove()};box.appendChild(ub);
+v.onclick=function(){if(v.paused)v.play().catch(function(){});else v.pause()};
+w.appendChild(box);
+try{if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&e.intersectionRatio>=0.5){v.play().catch(function(){})}else{v.pause()}})},{threshold:[0.5]});io.observe(box)}else{v.play().catch(function(){})}}catch(e){}
+var a=document.createElement('a');a.href='/studio/';a.textContent='🚀 अपना कार्ड बनाएँ';a.style.cssText='display:inline-block;margin-top:12px;padding:12px 22px;border-radius:26px;background:#d4141c;color:#fff;font-weight:800;font-size:15px;text-decoration:none';w.appendChild(a);
+if(before&&before.parentNode===parent)parent.insertBefore(w,before);else parent.appendChild(w)}catch(e){}}
+window.LCPromo=function(parent,before,vid){var ID2=vid||ID;if(/\.mp4$/i.test(ID2))return mp4Promo(parent,before,ID2);try{if(!parent||parent.querySelector('.lcpromo'))return;
 var w=document.createElement('div');w.className='lcpromo';w.style.cssText='max-width:440px;margin:18px auto 8px;padding:14px 12px;text-align:center;font-family:system-ui,sans-serif';
 var h=document.createElement('div');h.textContent='🎬 LiveCard से ऐसा कार्ड बनाएँ';h.style.cssText='font-weight:800;font-size:17px;color:#7a0a10;margin-bottom:10px';w.appendChild(h);
 var box=document.createElement('div');box.style.cssText='position:relative;width:min(62vw,260px);aspect-ratio:9/16;margin:0 auto;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,.3);cursor:pointer';
