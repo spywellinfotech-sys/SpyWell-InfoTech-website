@@ -213,7 +213,7 @@ body{padding:0 0 24px 220px}
 <div id="pf-body" hidden>
 <div class="k" style="margin:4px 0 8px">यहाँ बदलने पर आपका विज़िटिंग कार्ड भी बदल जाएगा, और कार्ड एडिट करने पर यह प्रोफ़ाइल भी।</div>
 <div id="pf-sum" style="margin:6px 0"></div>
-<div id="pf-cardact"></div><div id="lcpromo-s"></div>
+<div id="pf-plan"></div><div id="pf-cardact"></div><div id="lcpromo-s"></div>
 <div id="pf-addrmgr"></div></div>
 <button type="button" id="pf-open" class="alt" style="width:100%;margin:6px 0 0">✏️ प्रोफ़ाइल एडिट करें</button>
 <div id="pf-edit" hidden>
@@ -1971,6 +1971,21 @@ async function pfLoad(){
     i.id='pf-'+d[0];i.maxLength=d[3];if(d[2]==='tel')i.setAttribute('inputmode','numeric');if(d[2]==='email')i.type='email';if(d[2]==='url')i.setAttribute('inputmode','url');i.value=f[d[0]]||'';box.appendChild(l);box.appendChild(i)});
   var nm=(f.name||'').trim();if(nm)$('d-name').textContent=nm;pfSum()}
 function pfSum(){var f=PFV||{},b=$('pf-sum');b.textContent='';[['👤',f.name],['🏢',f.business],['🛍',f.dealsin&&'Deals in: '+f.dealsin],['📞',f.mobile&&'+91 '+f.mobile],['✉️',f.email],['📍',[f.address,f.city].filter(Boolean).join(', ')]].forEach(function(r){if(!r[1])return;var d=mk('div','',r[0]+'  '+r[1]);d.style.cssText='padding:4px 0;border-bottom:1px dashed var(--line)';b.appendChild(d)});if(!b.children.length)b.appendChild(mk('div','k','अभी प्रोफ़ाइल खाली है।'))}
+var _pfSum0=pfSum;pfSum=function(){_pfSum0();try{pfPlan()}catch(e){}};
+async function pfPlan(){var box=$('pf-plan');if(!box)return;box.textContent='';
+  var u=await sb.auth.getUser();var uid=u&&u.data&&u.data.user&&u.data.user.id;if(!uid)return;
+  var r=await sb.from('studio_designs').select('id,title').eq('user_id',uid).eq('product_type','visiting').order('created_at',{ascending:false}).limit(3);
+  var L=(r&&r.data)||[];if(!L.length)return;
+  var PN={card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'वेबसाइट + डोमेन'};
+  for(var k=0;k<L.length;k++){var x=L[k];var q=await sb.rpc('studio_sub_info',{p_id:x.id});var s=q&&q.data;if(!s||!s.enabled||!s.required)continue;
+    var c=mk('div','');c.style.cssText='margin:8px 0;background:#fff7e0;border:1.5px solid #f0c24b;border-radius:12px;padding:10px 12px';
+    if(s.is_admin){c.appendChild(mk('b','','👑 सुपर एडमिन · सब कुछ बिना भुगतान'));box.appendChild(c);continue}
+    var d=s.paid_until?new Date(s.paid_until).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'';
+    c.appendChild(mk('b','','🗓️ मेरा प्लान'+(L.length>1?' · '+(x.title||''):'')));
+    var t=mk('div','',s.plan?(PN[s.plan]||s.plan)+' · '+d+' तक':'अभी कोई चालू प्लान नहीं');t.style.cssText='margin-top:4px;font-size:14px';
+    if(s.state==='grace')t.textContent+=' · ⚠️ अवधि पूरी, छूट चल रही है';if(s.state==='expired')t.textContent+=' · ❌ ख़त्म';
+    c.appendChild(t);var a=mk('a','','🔁 रिन्यू / ⬆️ अपग्रेड करें');a.href='/studio/editor/?v=20261128&id='+x.id+'&upg=1';
+    a.style.cssText='display:block;text-align:center;margin-top:8px;background:#d4141c;color:#fff;border-radius:10px;padding:9px;text-decoration:none;font-weight:700';c.appendChild(a);box.appendChild(c)}}
 function pfEdit(on){$('pf-edit').hidden=!on;$('pf-open').hidden=on;$('pf-sum').hidden=on;if(on){$('pf-err').textContent='';$('pf-ok').textContent=''}}
 $('pf-scan').onclick=function(){$('pf-scanf').value='';$('pf-scanf').click()};
 $('pf-scanf').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;var msg=$('pf-scanm'),bt=$('pf-scan');msg.style.color='';msg.textContent='कार्ड पढ़ा जा रहा है… 10-20 सेकंड';bt.disabled=true;
