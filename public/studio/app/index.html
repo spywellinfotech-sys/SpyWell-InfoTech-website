@@ -92,7 +92,7 @@ var $=function(s){return document.getElementById(s)};
 var esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var main=$('main');
 if(!window.supabase){main.innerHTML='<div class="empty">लोड नहीं हो पाया। इंटरनेट जाँचकर दोबारा खोलें।<br><br><button class="btn" onclick="location.reload()">फिर कोशिश करें</button></div>';return}
-var sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});
+var sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth',detectSessionInUrl:false}});
 var R=window.StudioRender||null,ED='/studio/editor/?v=20261128&id=',WED='/studio/webeditor/?v=20261128&id=';
 var APP=!!(window.ViNative||window.Capacitor||/; wv\)/.test(navigator.userAgent));
 var I={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',cards:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M6 10h6M6 14h9"/>',plus:'<path d="M12 5v14M5 12h14"/>',net:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.5a5 5 0 0 1 5.5 5"/>',me:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',scan:'<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/>',qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M17 20h4v-3"/>',bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',chat:'<path d="M4 5h16v11H8l-4 4z"/>'};
@@ -394,7 +394,13 @@ async function start(session){if(!session){ME=null;loginView();return}
   if(/access_token|refresh_token/.test(location.hash)){try{history.replaceState(null,'',location.pathname+'#home')}catch(e){}}
   route()}
 sb.auth.onAuthStateChange(function(ev,s){if(ev==='SIGNED_OUT'){ME=null;loginView();return}if(s&&(ev==='SIGNED_IN'||ev==='INITIAL_SESSION'||ev==='TOKEN_REFRESHED'))start(s)});
-sb.auth.getSession().then(function(r){start(r.data&&r.data.session)},function(){loginView()});
+(async function(){var h=location.hash.replace(/^#/,''),q=new URLSearchParams(location.search),err='';
+  try{var hp=new URLSearchParams(h);
+    if(hp.get('access_token')&&hp.get('refresh_token')){var r1=await sb.auth.setSession({access_token:hp.get('access_token'),refresh_token:hp.get('refresh_token')});if(r1.error)err='लॉगिन पूरा नहीं हुआ: '+r1.error.message}
+    else if(q.get('code')){var r2=await sb.auth.exchangeCodeForSession(q.get('code'));if(r2.error)err='लॉगिन पूरा नहीं हुआ: '+r2.error.message}
+    else if(hp.get('error_description')||q.get('error_description'))err='Google लॉगिन रद्द/फ़ेल: '+(hp.get('error_description')||q.get('error_description'))}catch(e){err='लॉगिन पूरा नहीं हुआ।'}
+  if(/access_token|refresh_token|error_description/.test(h)||q.get('code')){try{history.replaceState(null,'',location.pathname+'#home')}catch(e){}}
+  var r=await sb.auth.getSession();var s=r.data&&r.data.session;if(!s&&err){ME=null;loginView(err);return}start(s)})().catch(function(){loginView()});
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&ME){loadCore().then(function(){var p=parts().name;if(p==='home'||p==='profile')route()}).catch(function(){})}});
 })();
 </script>
