@@ -69,6 +69,7 @@ label{font-size:14px;font-weight:600;color:var(--mut)}
 .login input{background:#fff;color:#1c1414;border:0}.login label{color:#fff}.login .err{color:#ffd6d6;min-height:22px;font-size:14px}
 .tog{width:50px;height:28px;border-radius:99px;border:0;background:#d9cfc8;position:relative;flex:none}.tog::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s}
 .tog.on{background:var(--teal)}.tog.on::after{left:25px}
+.nr{padding:12px 0;border-bottom:1px solid var(--line)}.nr:last-child{border:0}.nr b{word-break:break-word}.na{display:flex;gap:6px;margin:8px 0 0 54px;flex-wrap:wrap}.na a,.na button{border:1.5px solid var(--line);background:var(--surf);color:var(--ink);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;text-decoration:none;min-height:34px;display:inline-flex;align-items:center}
 .empty{text-align:center;padding:26px 10px;color:var(--mut)}
 .load{text-align:center;padding:40px 0;color:var(--mut)}
 .plan{background:linear-gradient(135deg,#fff7e0,#ffe9c2);border-color:#f0c24b;color:#3a2400}
@@ -182,7 +183,8 @@ function svGrid(ids){var L=SV.filter(function(x){return (ids?ids.indexOf(x[0])>=
   return '<div class="sg">'+L.map(function(x){return '<a href="'+esc(svHref(x))+'"><i style="background:'+x[3]+'">'+x[1]+'</i>'+esc(x[2])+'</a>'}).join('')+'</div>'}
 function previewInto(el,d,maxH,live){if(!el)return;el.className='pv';el.innerHTML='';
   if(!live&&d.status==='published'&&d.slug){var f=document.createElement('iframe');f.src='/studio/view/?t='+(d.product_type==='invitation'?'i':'v')+'&pv=1&s='+encodeURIComponent(d.slug);f.loading='lazy';f.tabIndex=-1;f.setAttribute('aria-hidden','true');f.title='कार्ड प्रीव्यू';
-    f.style.cssText='display:block;border:0;width:100%;height:'+(maxH||620)+'px;pointer-events:none;background:#fff';el.appendChild(f);return}
+    f.style.cssText='display:block;border:0;width:100%;height:'+(maxH||620)+'px;pointer-events:none;background:#fff';el.appendChild(f);
+    var clean=function(){try{var dd=f.contentDocument;if(!dd||!dd.body)return;[].forEach.call(dd.body.querySelectorAll('*'),function(z){var p=dd.defaultView.getComputedStyle(z).position;if(p==='fixed'||p==='sticky')z.style.display='none'})}catch(e){}};f.onload=function(){clean();setTimeout(clean,800);setTimeout(clean,2500)};return}
   if(!R){el.textContent='प्रीव्यू नहीं बन पाया';return}var t=TPL.filter(function(z){return z.id===d.template_id})[0];
   var inn=document.createElement('div');el.appendChild(inn);el.style.maxHeight=(maxH?maxH+'px':'40vh');el.style.overflow=live?'auto':'hidden';
   try{R.render(inn,d.product_type,t?t.config:{},d.content_json||{},{demo:true})}catch(e){inn.textContent='प्रीव्यू नहीं बन पाया'}}
@@ -232,7 +234,7 @@ SCR.cards=function(){var flt=window.__cf||'all';
       (pub?'<button class="btn" data-sh="'+i+'">📤 शेयर</button>':'<a class="btn" href="'+ED+x.id+'&tab=pub">🚀 प्रकाशित करें</a>')+
       (x.product_type==='visiting'?'<a class="btn alt" href="#edit/'+x.id+'">✏️ एडिट</a>':'<a class="btn alt" href="'+ED+x.id+'">✏️ एडिट</a>')+'</div><div class="chips" style="margin-top:10px">'+
       (pub?'<a class="chip" href="'+esc(dUrl(x))+'">👁️ देखें</a><button class="chip" data-qr="'+i+'">▦ QR</button>':'')+(x.product_type==='visiting'?'<a class="chip" href="'+WED+x.id+'&tab=info">🌐 वेबसाइट</a><a class="chip" href="'+ED+x.id+'&upg=1">💎 प्लान</a>':'')+'<a class="chip" href="'+ED+x.id+'">🎨 पूरा एडिटर</a></div></div>');
-    previewInto($('pv'+i),x,300)});
+    previewInto($('pv'+i),x,230)});
     [].forEach.call(main.querySelectorAll('[data-sh]'),function(b){b.onclick=function(){shareSheet(L[+b.getAttribute('data-sh')])}});
     [].forEach.call(main.querySelectorAll('[data-qr]'),function(b){b.onclick=function(){qrSheet(L[+b.getAttribute('data-qr')])}})});
   [].forEach.call(main.querySelectorAll('[data-cf]'),function(b){b.onclick=function(){window.__cf=b.getAttribute('data-cf');route()}})};
@@ -293,8 +295,8 @@ SCR.network=async function(){H('<input id="n-q" placeholder="🔍 नाम, न
     [].forEach.call($('n-ch').querySelectorAll('[data-i]'),function(b){b.onclick=function(){flt=b.getAttribute('data-i');chips();list()}})}
   function list(){var ql=q.toLowerCase(),L=NET.filter(function(x){return (!flt||x.ind===flt)&&(!ql||(x.name+' '+x.sub+' '+x.mob+' '+x.ind).toLowerCase().indexOf(ql)>=0)});var box=$('n-l');
     if(!L.length){box.innerHTML='<div class="empty">'+(NET.length?'कोई नहीं मिला':'अभी नेटवर्क खाली है। QR स्कैन करें या कॉन्टैक्ट जोड़ें।')+'</div>';return}
-    box.innerHTML=L.slice(0,200).map(function(x,i){return '<div class="li"><div class="av" style="background:'+col(x.name)+'">'+esc((x.name||'?').charAt(0).toUpperCase())+'</div><div class="grow"><b>'+esc(x.name||'—')+'</b>'+(x.src==='card'?' <span class="tag ok">LiveCard</span>':'')+'<div class="mut">'+esc([x.sub,x.ind].filter(Boolean).join(' · ')||('+91 '+x.mob))+'</div></div>'+
-      (x.mob?'<a class="chip" href="tel:'+esc(tel(x.mob))+'" aria-label="कॉल">📞</a><button class="chip" data-w="'+i+'" aria-label="WhatsApp">💬</button>':'')+(x.slug?'<a class="chip" href="/v/'+esc(x.slug)+'" aria-label="कार्ड">📇</a>':'')+'<button class="chip" data-f="'+i+'" aria-label="FollowUp">⏰</button></div>'}).join('')+(L.length>200?'<p class="mut">पहले 200 दिखाए — खोजकर ढूँढें</p>':'');
+    box.innerHTML=L.slice(0,200).map(function(x,i){return '<div class="nr"><div class="row"><div class="av" style="background:'+col(x.name)+'">'+esc((x.name||'?').charAt(0).toUpperCase())+'</div><div class="grow"><b>'+esc(x.name||'—')+'</b>'+(x.src==='card'?' <span class="tag ok">LiveCard</span>':'')+'<div class="mut">'+esc([x.sub,x.ind].filter(Boolean).join(' · ')||('+91 '+x.mob))+'</div></div></div><div class="na">'+
+      (x.mob?'<a href="tel:'+esc(tel(x.mob))+'">📞 कॉल</a><button data-w="'+i+'">💬 WhatsApp</button>':'')+(x.slug?'<a href="/v/'+esc(x.slug)+'">📇 कार्ड</a>':'')+'<button data-f="'+i+'">⏰</button></div></div>'}).join('')+(L.length>200?'<p class="mut">पहले 200 दिखाए — खोजकर ढूँढें</p>':'');
     [].forEach.call(box.querySelectorAll('[data-w]'),function(b){b.onclick=function(){wa(L[+b.getAttribute('data-w')].mob,'नमस्ते')}});
     [].forEach.call(box.querySelectorAll('[data-f]'),function(b){b.onclick=function(){fuAdd(L[+b.getAttribute('data-f')])}})}
   chips();list();$('n-q').oninput=function(){q=this.value;list()}};
