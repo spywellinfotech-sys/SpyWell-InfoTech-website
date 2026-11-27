@@ -57,10 +57,10 @@ label{font-size:14px;font-weight:600;color:var(--mut)}
 .fig{position:relative;height:170px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
 .steps{display:flex;gap:6px;margin:2px 0 10px}.steps i{flex:1;height:6px;border-radius:9px;background:var(--line)}.steps i.on{background:var(--red)}
 .tg{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.mini{width:104px;border:3px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;padding:0;text-align:left;color:var(--ink)}
-.mini .box{height:150px;overflow:hidden}.mini .in2{width:360px;transform:scale(.2778);transform-origin:0 0;pointer-events:none}
+.mini{width:106px;border:2px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;padding:0;text-align:left;color:var(--ink)}
+.mini .box{height:152px;overflow:hidden}.mini .in2{width:360px;transform:scale(.2861);transform-origin:0 0;pointer-events:none}
 .mini .cap{font-size:11px;padding:3px 5px;line-height:1.25;border-top:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pv{overflow:hidden;border-radius:16px;box-shadow:0 12px 28px rgba(0,0,0,.18);background:#fff;margin:0 auto}.pv>div{width:360px;transform-origin:0 0;pointer-events:none}
+.pv{background:#fff;border:1px solid #eadcc0;border-radius:20px;box-shadow:0 8px 24px rgba(122,10,16,.22);overflow:hidden;max-width:340px;margin:0 auto}
 .sheet{position:fixed;inset:0;background:rgba(20,5,5,.5);display:none;align-items:flex-end;z-index:50}.sheet.on{display:flex}
 .sheet .in{background:var(--surf);width:100%;max-width:640px;margin:0 auto;border-radius:26px 26px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
 #toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#1c1414;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;z-index:60;max-width:88vw;text-align:center}
@@ -180,10 +180,12 @@ var SV=[
 function svHref(x){var h=typeof x[4]==='function'?x[4]():x[4];return h}
 function svGrid(ids){var L=SV.filter(function(x){return (ids?ids.indexOf(x[0])>=0:true)&&(x[0]!=='admin'||ADMIN)});
   return '<div class="sg">'+L.map(function(x){return '<a href="'+esc(svHref(x))+'"><i style="background:'+x[3]+'">'+x[1]+'</i>'+esc(x[2])+'</a>'}).join('')+'</div>'}
-function previewInto(el,d,wid,maxH){if(!R||!el)return;var t=TPL.filter(function(z){return z.id===d.template_id})[0];var cfg=t?t.config:{};
-  var w=wid||el.clientWidth||Math.min(window.innerWidth-28,600);var sc=w/360;var inn=document.createElement('div');inn.style.transform='scale('+sc+')';el.innerHTML='';el.appendChild(inn);el.style.width=w+'px';
-  try{R.render(inn,d.product_type,cfg,d.content_json||{},{demo:false})}catch(e){inn.textContent='प्रीव्यू नहीं बन पाया'}
-  var fit=function(){var hh=Math.ceil(inn.scrollHeight*sc);el.style.height=(maxH?Math.min(hh,maxH):hh)+'px'};fit();setTimeout(fit,400);setTimeout(fit,1500)}
+function previewInto(el,d,maxH,live){if(!el)return;el.className='pv';el.innerHTML='';
+  if(!live&&d.status==='published'&&d.slug){var f=document.createElement('iframe');f.src='/studio/view/?t='+(d.product_type==='invitation'?'i':'v')+'&pv=1&s='+encodeURIComponent(d.slug);f.loading='lazy';f.tabIndex=-1;f.setAttribute('aria-hidden','true');f.title='कार्ड प्रीव्यू';
+    f.style.cssText='display:block;border:0;width:100%;height:'+(maxH||620)+'px;pointer-events:none;background:#fff';el.appendChild(f);return}
+  if(!R){el.textContent='प्रीव्यू नहीं बन पाया';return}var t=TPL.filter(function(z){return z.id===d.template_id})[0];
+  var inn=document.createElement('div');el.appendChild(inn);el.style.maxHeight=(maxH?maxH+'px':'40vh');el.style.overflow=live?'auto':'hidden';
+  try{R.render(inn,d.product_type,t?t.config:{},d.content_json||{},{demo:true})}catch(e){inn.textContent='प्रीव्यू नहीं बन पाया'}}
 function lineChart(el,data,labels,color){if(!el)return;var draw=function(){var W=el.clientWidth,Hh=el.clientHeight,p=22,mx=Math.max.apply(null,data.concat([4]))*1.18,st=(W-p*2)/Math.max(1,data.length-1);
   var pts=data.map(function(v,i){return [p+i*st,Hh-p-(v/mx)*(Hh-p*2)]});var d=pts.map(function(q,i){return (i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)}).join(' ');
   el.innerHTML='<svg viewBox="0 0 '+W+' '+Hh+'"><defs><linearGradient id="lg'+color.slice(1)+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+color+'" stop-opacity=".35"/><stop offset="1" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs><path d="'+d+' L'+pts[pts.length-1][0]+' '+(Hh-p)+' L'+p+' '+(Hh-p)+'Z" fill="url(#lg'+color.slice(1)+')"/><path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+
@@ -230,7 +232,7 @@ SCR.cards=function(){var flt=window.__cf||'all';
       (pub?'<button class="btn" data-sh="'+i+'">📤 शेयर</button>':'<a class="btn" href="'+ED+x.id+'&tab=pub">🚀 प्रकाशित करें</a>')+
       (x.product_type==='visiting'?'<a class="btn alt" href="#edit/'+x.id+'">✏️ एडिट</a>':'<a class="btn alt" href="'+ED+x.id+'">✏️ एडिट</a>')+'</div><div class="chips" style="margin-top:10px">'+
       (pub?'<a class="chip" href="'+esc(dUrl(x))+'">👁️ देखें</a><button class="chip" data-qr="'+i+'">▦ QR</button>':'')+(x.product_type==='visiting'?'<a class="chip" href="'+WED+x.id+'&tab=info">🌐 वेबसाइट</a><a class="chip" href="'+ED+x.id+'&upg=1">💎 प्लान</a>':'')+'<a class="chip" href="'+ED+x.id+'">🎨 पूरा एडिटर</a></div></div>');
-    previewInto($('pv'+i),x,Math.min(main.clientWidth-58,360),250)});
+    previewInto($('pv'+i),x,300)});
     [].forEach.call(main.querySelectorAll('[data-sh]'),function(b){b.onclick=function(){shareSheet(L[+b.getAttribute('data-sh')])}});
     [].forEach.call(main.querySelectorAll('[data-qr]'),function(b){b.onclick=function(){qrSheet(L[+b.getAttribute('data-qr')])}})});
   [].forEach.call(main.querySelectorAll('[data-cf]'),function(b){b.onclick=function(){window.__cf=b.getAttribute('data-cf');route()}})};
@@ -265,7 +267,7 @@ SCR.edit=async function(id){var d=DES.filter(function(x){return x.id===id})[0];i
   H('<div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div><div class="pv" id="epv"></div><p class="mut" style="text-align:center;margin:6px 0 10px">लिखते ही कार्ड बदलता है</p>');
   H('<div class="card"><b class="t">आप कौन हैं?</b><div class="chips" style="margin:8px 0 10px">'+Object.keys(KIND).map(function(k){return '<button class="chip '+(kd===k?'on':'')+'" data-k="'+k+'">'+KIND[k][0]+'</button>'}).join('')+'</div><div id="ef"></div></div>');
   H('<div class="g2"><a class="btn alt" href="'+ED+d.id+'">🎨 फ़ोटो / डिज़ाइन</a><button class="btn" id="e-save">सेव करें, आगे →</button></div><p class="mut sm" style="text-align:center;margin-top:10px">फ़ोटो, लोगो, सेवाएँ और रंग "फ़ोटो / डिज़ाइन" में</p>');
-  var pv=$('epv');function redraw(){d.content_json=cj;previewInto(pv,d,Math.min(main.clientWidth-28,420),330)}
+  var pv=$('epv');function redraw(){d.content_json=cj;previewInto(pv,d,0,true)}
   function fields(){var box=$('ef');box.innerHTML='';(EF[kd]||EF['']).forEach(function(k){var f=FL[k]||[k,k,'text',80];var lab=(LBL[kd]&&LBL[kd][k])||f[1];
     var isA=f[2]==='area'||k==='experience'||k==='education';var el=document.createElement(isA?'textarea':'input');if(isA)el.rows=2;el.id='f-'+k;el.maxLength=f[3]||200;if(f[2]==='tel')el.inputMode='numeric';if(f[2]==='email')el.type='email';el.value=cj.fields[k]||'';
     var l=document.createElement('label');l.htmlFor=el.id;l.textContent=lab;box.appendChild(l);box.appendChild(el);
@@ -282,7 +284,7 @@ SCR.prev=async function(id){var d=DES.filter(function(x){return x.id===id})[0];i
   else H('<div style="height:12px"></div>');
   if(pub)H('<button class="btn teal" id="p-sh">📤 शेयर करें</button><div class="g2" style="margin-top:10px"><a class="btn alt" href="#edit/'+d.id+'">✏️ एडिट</a><button class="btn alt" id="p-qr">▦ QR</button></div>');
   else H('<a class="btn" href="'+ED+d.id+'&tab=pub">🚀 प्रकाशित करें</a><p class="mut" style="text-align:center">लिंक चुनें और (अगर प्लान ज़रूरी हो) Razorpay से भुगतान करें</p><a class="btn alt" href="#edit/'+d.id+'">✏️ वापस एडिट</a>');
-  previewInto($('ppv'),d,Math.min(main.clientWidth-28,420));on('p-sh',function(){shareSheet(d)});on('p-qr',function(){qrSheet(d)})};
+  previewInto($('ppv'),d,620,d.status!=='published');var pvx=$('ppv');pvx.style.maxHeight='none';on('p-sh',function(){shareSheet(d)});on('p-qr',function(){qrSheet(d)})};
 
 SCR.network=async function(){H('<input id="n-q" placeholder="🔍 नाम, नंबर या बिज़नेस खोजें" aria-label="खोजें"><div class="g2" style="margin-bottom:10px"><button class="btn" id="n-scan">📷 QR स्कैन</button><button class="btn alt" id="n-add">➕ कॉन्टैक्ट</button></div><div class="chips" style="margin-bottom:10px"><a class="chip" href="#followup">⏰ FollowUp</a><a class="chip" href="#calls">📋 कॉल लॉग</a><a class="chip" href="/studio/?app=1&go=dir">📖 Directory</a><a class="chip" href="/studio/?app=1&go=disc">🔍 Discover</a><a class="chip" href="/studio/?app=1&go=saved">📣 Broadcast / CSV</a></div><div id="n-ch" class="chips" style="margin-bottom:8px"></div><div class="card" id="n-l"><div class="load">लोड हो रहा है…</div></div>');
   on('n-scan',scanQr);on('n-add',addContact);if(!NET)await loadNet();var flt='',q='';
