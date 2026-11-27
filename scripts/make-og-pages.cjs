@@ -36,7 +36,7 @@ function page(kind, slug, d) {
   img = img || FALLBACK;
   if (!inv && THUMB[slug]) img = THUMB[slug];
   const t = kind === 'inv' || kind === 'i' ? 'i' : kind === 'web' ? 'w' : 'v';
-  const url = ORIGIN + '/' + (kind === 'i' ? 'inv' : kind) + '/' + slug;
+  const url = kind === 's' ? ORIGIN + '/' + slug : ORIGIN + '/' + (kind === 'i' ? 'inv' : kind) + '/' + slug;
   const to = '/studio/view/?t=' + t + '&s=' + slug + '&b=' + Date.now().toString(36);
   const big = inv && img !== FALLBACK;
   return '<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
@@ -79,8 +79,10 @@ function page(kind, slug, d) {
     const slug = String(d.slug || '').toLowerCase();
     if (!/^[a-z0-9-]{1,60}$/.test(slug)) continue;
     const kinds = d.product_type === 'invitation' ? ['inv', 'i'] : ['v', 'web'];
+    // short link livecard.in/<slug> as a real page (HTTP 200), so it opens everywhere and shows a preview
+    if (d.product_type !== 'invitation' && /^[a-z0-9-]{3,40}$/.test(slug) && !/^(about|services|products|portfolio|industries|contact|privacy|terms|refund|studio|plans|g|c|i|v|web|inv|card|apps|og|assets|dyname|admin|app|api|static|images|img|public|favicon|robots|sitemap|index)$/.test(slug)) kinds.push('s');
     for (const k of kinds) {
-      const dir = path.join('dist', k, slug);
+      const dir = k === 's' ? path.join('dist', slug) : path.join('dist', k, slug);
       if (fs.existsSync(path.join(dir, 'index.html'))) continue; // never overwrite a real page
       fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, 'index.html'), page(k, slug, d)); n++;
