@@ -1,4 +1,4 @@
-// Link previews that look like the real card: screenshots every published visiting card (/v) and mini website (/web)
+// Link previews that look like the real card: screenshots every published visiting card (/v) and portfolio page (/web)
 // from the built site, puts the picture on a 1200x630 canvas, and points og:image of the preview pages at it.
 // Needs playwright + chromium (installed by the workflow). Any failure just leaves the old small photo preview in place.
 const fs = require('fs'), path = require('path'), http = require('http');

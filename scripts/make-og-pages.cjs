@@ -24,7 +24,7 @@ function page(kind, slug, d) {
     img = okImg(im.couple && im.couple.url) || okImg(im.family && im.family.url) || okImg(im.bg && im.bg.url); // the person / couple first, then family, then background
   } else {
     const isWeb = kind === 'web', nm = f.name || f.business || d.title || 'डिजिटल कार्ड';
-    if (isWeb) { // mini website: the shop / business name leads
+    if (isWeb) { // portfolio page: the shop / business name leads
       title = clip((d.content_json && d.content_json.demo === true ? 'DEMO · ' : '') + (f.business || nm), 90);
       desc = clip([f.dealsin || f.about, f.city, 'कॉल, WhatsApp, लोकेशन और सब जानकारी एक जगह'].filter(Boolean).join(' · '), 160);
     } else { // visiting card: the person's name leads
