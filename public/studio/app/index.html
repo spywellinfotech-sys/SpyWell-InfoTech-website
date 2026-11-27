@@ -104,7 +104,7 @@ var ME=null,ADMIN=false,DES=[],TPL=[],PF={},PRIM=null,STATS=null,DET=null,FU=[],
 var KIND={'':['🏢 बिज़नेस','Mini Website'],portfolio:['💼 नौकरी','Portfolio Page'],student:['🎓 पढ़ाई','Portfolio Page']};
 var PAL=['#d4141c','#0f9d8a','#2f6fde','#7a3cc8','#ff8a00','#1fb36b','#8e0b12'];
 function col(s){var h=0;s=String(s||'');for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return PAL[h%PAL.length]}
-function shortUrl(slug){return 'https://livecard.in'+((/^[a-z0-9-]{3,40}$/.test(slug)&&!/^(about|services|products|portfolio|industries|contact|privacy|terms|refund|studio|plans|g|c|i|v|web|inv|card|apps)$/.test(slug))?'/'+slug:'/v/'+slug)}
+function shortUrl(slug){return 'https://livecard.in/v/'+slug}
 function dUrl(x){return x.product_type==='invitation'?'https://livecard.in/inv/'+x.slug:shortUrl(x.slug)}
 function fmtD(s){try{return new Date(s).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}}
 function toast(t){var e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},2200)}
