@@ -2041,7 +2041,7 @@ b.onclick=function(){if(dp){dp.prompt();dp.userChoice.then(function(){dp=null}).
 #v-dash>.lct::after{content:'▾ खोलें';position:absolute;left:0;right:0;bottom:0;padding:20px 0 6px;text-align:center;background:linear-gradient(rgba(255,255,255,0),#fff 62%);color:#d4141c;font:800 12px system-ui,sans-serif;pointer-events:none}
 #v-dash>.lct button,#v-dash>.lct a,#v-dash>.lct input{pointer-events:none}
 .lcz-b{display:block;width:100%;margin:-8px 0 12px!important;background:none!important;border:0!important;box-shadow:none!important;color:#d4141c!important;font-weight:800;font-size:13px;min-height:0!important;padding:4px!important}
-#lc-jump{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;padding:2px 0 4px;scrollbar-width:none}#lc-jump::-webkit-scrollbar{display:none}
+#lc-jump{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;padding:7px 2px;scrollbar-width:none;position:sticky;top:56px;z-index:40;background:rgba(250,245,244,.97);box-shadow:0 6px 10px -8px rgba(122,10,16,.35)}#lc-jump button.on{background:#d4141c;color:#fff;border-color:#d4141c}body.lc-c #c-lay{display:none!important}body.lc-c.lc-lay #c-lay{display:flex!important}#lc-jump::-webkit-scrollbar{display:none}
 #lc-jump button{flex:none;margin:0;width:auto;min-height:0;padding:7px 12px;border-radius:99px;background:#fff;color:#7a0a10;border:1.5px solid #f0c9c9;font-weight:700;font-size:13px;box-shadow:none}</style>
 <script>(function(){try{if(localStorage.getItem('lc_compact')==='0')return}catch(e){}
 var SEC=[['c-my','🪪 मेरा कार्ड',0],['c-plan','📋 आज',1],['c-enq','📥 पूछताछ',1],['c-greet','🎉 ग्रीटिंग',1],['c-corp','🏢 कंपनी',1],['c-uns','📲 Unsaved',1],['c-chat','💬 चैट',1],['c-sendaddr','🏠 Address',0],['c-bill','🧾 Billing',1],['c-fn','🎉 Functions',1],['c-loc','📍 Locations',1],['c-inv','💌 इनविटेशन',1],['c-insall','📊 Insights',1],['c-ref','🎁 Refer',1],['c-lb','🏆 टॉप व्यू',1]];
@@ -2049,7 +2049,9 @@ function $(i){return document.getElementById(i)}
 function vis(el){return el&&!el.hidden&&el.style.display!=='none'&&!el.classList.contains('tab-h')&&!el.classList.contains('lc-empty')}
 function isOpen(id){try{return localStorage.getItem('lcz_'+id)==='1'}catch(e){return false}}
 function setOpen(id,v){try{localStorage.setItem('lcz_'+id,v?'1':'0')}catch(e){}}
-var sig='';
+var sig='';document.body.classList.add('lc-c');
+function spy(){var bar=$('lc-jump');if(!bar||bar.hidden)return;var cur='';[].forEach.call(bar.querySelectorAll('button[data-id]'),function(b){var el=$(b.getAttribute('data-id'));if(el&&el.getBoundingClientRect().top<150)cur=b.getAttribute('data-id')});[].forEach.call(bar.querySelectorAll('button[data-id]'),function(b){var on=b.getAttribute('data-id')===cur;if(on!==b.classList.contains('on')){b.classList.toggle('on',on);if(on)try{b.scrollIntoView({inline:'center',block:'nearest'})}catch(e){}}})}
+window.addEventListener('scroll',function(){clearTimeout(spy.t);spy.t=setTimeout(spy,80)},{passive:true});
 function tick(){var dt=document.body.getAttribute('data-tab');var home=!dt||dt==='home';
   var p=$('c-plan');if(p){var e=/कोई function या follow-up नहीं/.test(p.textContent||'');p.classList.toggle('lc-empty',e)}
   var list=[];
@@ -2065,6 +2067,6 @@ function tick(){var dt=document.body.getAttribute('data-tab');var home=!dt||dt==
   var bar=$('lc-jump'),h=$('c-hello');
   if(!bar&&h){bar=document.createElement('div');bar.id='lc-jump';h.parentNode.insertBefore(bar,h.nextSibling)}
   if(!bar)return;bar.hidden=!home||list.length<3;var ns=list.map(function(s){return s[0]}).join(',');if(ns===sig)return;sig=ns;bar.textContent='';
-  list.forEach(function(s){var b=document.createElement('button');b.type='button';b.textContent=s[1];b.onclick=function(){var el=$(s[0]);if(s[2])setOpen(s[0],true);tick();if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};bar.appendChild(b)})}
+  list.forEach(function(s){var b=document.createElement('button');b.type='button';b.setAttribute('data-id',s[0]);b.textContent=s[1];b.onclick=function(){var el=$(s[0]);if(s[2])setOpen(s[0],true);tick();if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};bar.appendChild(b)});if($('c-lay')){var lb=document.createElement('button');lb.type='button';lb.textContent='🎨 लेआउट';lb.onclick=function(){document.body.classList.toggle('lc-lay');var c=$('c-lay');if(document.body.classList.contains('lc-lay')&&c)c.scrollIntoView({behavior:'smooth',block:'center'})};bar.appendChild(lb)}spy()}
 setInterval(function(){try{tick()}catch(e){}},1200);setTimeout(function(){try{tick()}catch(e){}},300)})();</script>
 </body></html>
