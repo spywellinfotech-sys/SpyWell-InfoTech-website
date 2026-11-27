@@ -57,6 +57,11 @@
       ['tagline', 'टैगलाइन: एक लाइन (मिनी वेबसाइट)', 'text', 120],
       ['hours', 'खुलने का समय (मिनी वेबसाइट)', 'text', 100],
       ['since', 'स्थापना वर्ष, जैसे 2015 (मिनी वेबसाइट)', 'text', 4],
+      ['skills', 'मेरी स्किल्स (कॉमा , से अलग करें) (पोर्टफोलियो)', 'area', 300],
+      ['experience', 'अनुभव: कहाँ, कौन सा पद, कितने साल (पोर्टफोलियो)', 'area', 500],
+      ['education', 'पढ़ाई / योग्यता (पोर्टफोलियो)', 'area', 300],
+      ['resume', 'रिज़्यूमे / CV का लिंक (पोर्टफोलियो)', 'url', 300],
+      ['github', 'काम के नमूनों का लिंक: GitHub / Behance आदि (पोर्टफोलियो)', 'url', 300],
       ['facebook', 'Facebook लिंक', 'url', 200],
       ['instagram', 'Instagram लिंक', 'url', 200],
       ['youtube', 'YouTube लिंक', 'url', 200],
@@ -194,7 +199,7 @@
       weight: [400, 500, 600, 700].indexOf(+s.weight) >= 0 ? +s.weight : 0, align: ['left', 'center', 'right'].indexOf(s.align) >= 0 ? s.align : '',
       fg: col(s.fg, ''), bg: col(s.bg, ''), ac: col(s.ac, ''),
       anim: ['rich', 'soft', 'none'].indexOf(s.anim) >= 0 ? s.anim : '', petal: PETALS.indexOf(s.petal) >= 0 ? s.petal : '',
-      lang: CLANGS.indexOf(s.lang) >= 0 ? s.lang : '', layout: LAYOUTS.indexOf(s.layout) >= 0 ? s.layout : '', ornament: ORNAMENTS.indexOf(s.ornament) >= 0 ? s.ornament : '' };
+      kind: s.kind === 'portfolio' ? 'portfolio' : '', lang: CLANGS.indexOf(s.lang) >= 0 ? s.lang : '', layout: LAYOUTS.indexOf(s.layout) >= 0 ? s.layout : '', ornament: ORNAMENTS.indexOf(s.ornament) >= 0 ? s.ornament : '' };
     var im = c.images && typeof c.images === 'object' ? c.images : {};
     (IMAGES[type] || []).forEach(function (d) { var x = im[d[0]] && typeof im[d[0]] === 'object' ? im[d[0]] : {}; var u = img(x.url); if (u) out.images[d[0]] = { url: u, size: num(x.size, 40, 340, d[2]), pos: num(x.pos, 0, 100, 50) }; });
     return out;
@@ -806,7 +811,7 @@
   function site(mount, tplConfig, content, opts) {
     ensureAssets(); opts = opts || {};
     var t = tplConfig && typeof tplConfig === 'object' ? tplConfig : {}, pal = t.palette || {};
-    var d = normalize('visiting', content), s = d.style, f = d.fields; CARDL = s.lang || 'hi';
+    var d = normalize('visiting', content), s = d.style, f = d.fields, PF = s.kind === 'portfolio'; CARDL = s.lang || 'hi';
     var bg = s.bg || col(pal.bg, '#ffffff'), fg = s.fg || col(pal.fg, '#222222'), ac = s.ac || col(pal.ac, '#8b1a2b');
     var root = el('div', 'sr sr-site'), st = root.style; root.setAttribute('dir', CARDL === 'ur' ? 'rtl' : 'ltr'); root.setAttribute('lang', CARDL);
     st.setProperty('--bg', bg); st.setProperty('--fg', fg); st.setProperty('--ac', ac);
@@ -814,32 +819,41 @@
     st.setProperty('--soft', rgba(fg, 0.1)); st.fontSize = (16 * s.size) + 'px'; if (s.weight) st.fontWeight = s.weight;
     var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), em = V.email(f.email), web = V.url(f.website);
     var mapUrl = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.address, f.city, f.state, f.pin].filter(Boolean).join(', ').replace(/\s*\n\s*/g, ', '))) : '';
-    var nav = el('div', 'ws-nav'); nav.appendChild(el('b', '', f.business || f.name || 'LiveCard'));
+    var nav = el('div', 'ws-nav'); nav.appendChild(el('b', '', (PF ? f.name : f.business || f.name) || 'LiveCard'));
     if (tel) nav.appendChild(actA(link('ws-navbtn', T('📞 कॉल'), 'tel:+91' + tel), 'call'));
     root.appendChild(nav);
     var hero = el('div', 'ws-hero'), hin = el('div', 'ws-in');
     if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hin.appendChild(lg); }
-    if (f.business || f.name) hin.appendChild(el('h1', 'sr-nm', f.business || f.name));
-    if (f.tagline) hin.appendChild(el('p', 'ws-tag', f.tagline));
+    if (PF && d.images.photo) { var pfp = picture('ph', d.images.photo, 'circle'); hin.appendChild(pfp); }
+    if (f.business || f.name) hin.appendChild(el('h1', 'sr-nm', (PF ? f.name : f.business || f.name)));
+    var tgl = f.tagline || (PF ? [f.designation, f.business].filter(Boolean).join(' · ') : ''); if (tgl) hin.appendChild(el('p', 'ws-tag', tgl));
     var act = el('div', 'sr-act ws-act');
     if (tel) act.appendChild(actA(link('sr-call', T('📞 कॉल करें'), 'tel:+91' + tel), 'call'));
     if (wa) act.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (mapUrl) act.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map'));
+    if (PF && V.url(f.resume)) act.appendChild(actA(link('', '📄 रिज़्यूमे', V.url(f.resume)), 'website'));
     if (f.about) { var hab = el('p', 'ws-tag ws-habout', f.about.length > 200 ? f.about.slice(0, 197) + '…' : f.about); hin.appendChild(hab); }
     hero.appendChild(hin); hero.appendChild(waveEl()); var smo = t.motif ? txt(t.motif, 8) : ''; if (smo) hero.insertBefore(motifStrip(smo), hero.firstChild); root.appendChild(hero);
     function drop(i) { if (i && i.parentNode && i.parentNode.parentNode) i.parentNode.parentNode.removeChild(i.parentNode); }
     function sec(title) { var x = el('div', 'ws-sec'), i = el('div', 'ws-in'); i.appendChild(el('h2', '', title)); i.appendChild(el('div', 'ws-bar')); x.appendChild(i); root.appendChild(x); return i; }
     var yr = /^\d{4}$/.test(f.since || '') ? f.since : '';
-    if (yr || f.hours || d.services.length) { var stt = el('div', 'ws-stats'); if (yr) { var a1 = el('div', 'ws-stat'); a1.appendChild(el('i', 'ws-si', '🏆')); a1.appendChild(el('b', '', String(Math.max(1, new Date().getFullYear() - (+yr)) ) + '+')); a1.appendChild(el('small', '', T('साल का अनुभव'))); stt.appendChild(a1); } if (d.services.length) { var a2 = el('div', 'ws-stat'); a2.appendChild(el('i', 'ws-si', '🧰')); a2.appendChild(el('b', '', String(d.services.length))); a2.appendChild(el('small', '', T('सेवाएँ'))); stt.appendChild(a2); } if (f.hours) { var a3 = el('div', 'ws-stat'); a3.appendChild(el('i', 'ws-si', '🕘')); a3.appendChild(el('b', 'ws-hrs', T('खुलने का समय'))); a3.appendChild(el('small', '', f.hours)); stt.appendChild(a3); } root.appendChild(stt); }
-    if (f.about || f.dealsin) { var abx = sec(T('हमारे बारे में')); if (f.about) abx.appendChild(el('p', 'ws-about', f.about)); if (f.dealsin) abx.appendChild(el('p', 'ws-about sr-deal', 'Deals in: ' + f.dealsin)); }
-    if (d.services.length) { var si = sec(T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { var c = el('div', 'ws-card ws-sv'), p2 = svParts(x); c.appendChild(el('div', 'ws-ic', svIcon(p2[0], g.children.length))); c.appendChild(el('em', 'ws-no', String(g.children.length + 1))); c.appendChild(el('b', '', p2[0])); if (p2[1]) { c.appendChild(el('p', 'ws-sd', p2[1])); c.style.cursor = 'pointer'; c.onclick = function () { c.classList.toggle('open'); }; } g.appendChild(c); }); si.appendChild(g); }
-    if (d.highlights.length) { var hi = sec(T('हमें क्यों चुनें')), hg = el('div', 'ws-grid ws-hl'); d.highlights.forEach(function (x) { var c = el('div', 'ws-card ws-hi'); c.appendChild(el('div', 'ws-ic ws-ic2', '✔')); c.appendChild(el('span', '', x)); hg.appendChild(c); }); hi.appendChild(hg); }
+    if (!PF && (yr || f.hours || d.services.length)) { var stt = el('div', 'ws-stats'); if (yr) { var a1 = el('div', 'ws-stat'); a1.appendChild(el('i', 'ws-si', '🏆')); a1.appendChild(el('b', '', String(Math.max(1, new Date().getFullYear() - (+yr)) ) + '+')); a1.appendChild(el('small', '', T('साल का अनुभव'))); stt.appendChild(a1); } if (d.services.length) { var a2 = el('div', 'ws-stat'); a2.appendChild(el('i', 'ws-si', '🧰')); a2.appendChild(el('b', '', String(d.services.length))); a2.appendChild(el('small', '', T('सेवाएँ'))); stt.appendChild(a2); } if (f.hours) { var a3 = el('div', 'ws-stat'); a3.appendChild(el('i', 'ws-si', '🕘')); a3.appendChild(el('b', 'ws-hrs', T('खुलने का समय'))); a3.appendChild(el('small', '', f.hours)); stt.appendChild(a3); } root.appendChild(stt); }
+    if (f.about || f.dealsin) { var abx = sec(PF ? 'मेरे बारे में' : T('हमारे बारे में')); if (f.about) abx.appendChild(el('p', 'ws-about', f.about)); if (f.dealsin) abx.appendChild(el('p', 'ws-about sr-deal', 'Deals in: ' + f.dealsin)); }
+    if (PF) {
+      var sk = String(f.skills || '').split(/[,\n]/).map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 30);
+      if (sk.length) { var ski = sec('स्किल्स'), skw = el('div', 'ws-grid ws-hl'); sk.forEach(function (x) { var c = el('div', 'ws-card ws-hi'); c.appendChild(el('div', 'ws-ic ws-ic2', '★')); c.appendChild(el('span', '', x)); skw.appendChild(c); }); ski.appendChild(skw); }
+      if (f.experience) { var exi = sec('अनुभव'); exi.appendChild(el('p', 'ws-about', f.experience)); exi.lastChild.style.whiteSpace = 'pre-line'; }
+      if (f.education) { var edi = sec('पढ़ाई / योग्यता'); edi.appendChild(el('p', 'ws-about', f.education)); edi.lastChild.style.whiteSpace = 'pre-line'; }
+      if (V.url(f.github)) { var gli = sec('काम के नमूने'); gli.appendChild(actA(link('sr-call', '🔗 मेरा काम देखें', V.url(f.github)), 'website')); }
+    }
+    if (d.services.length) { var si = sec(PF ? 'प्रोजेक्ट / काम के नमूने' : T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { var c = el('div', 'ws-card ws-sv'), p2 = svParts(x); c.appendChild(el('div', 'ws-ic', svIcon(p2[0], g.children.length))); c.appendChild(el('em', 'ws-no', String(g.children.length + 1))); c.appendChild(el('b', '', p2[0])); if (p2[1]) { c.appendChild(el('p', 'ws-sd', p2[1])); c.style.cursor = 'pointer'; c.onclick = function () { c.classList.toggle('open'); }; } g.appendChild(c); }); si.appendChild(g); }
+    if (d.highlights.length) { var hi = sec(PF ? 'मेरी खूबियाँ' : T('हमें क्यों चुनें')), hg = el('div', 'ws-grid ws-hl'); d.highlights.forEach(function (x) { var c = el('div', 'ws-card ws-hi'); c.appendChild(el('div', 'ws-ic ws-ic2', '✔')); c.appendChild(el('span', '', x)); hg.appendChild(c); }); hi.appendChild(hg); }
     var gk = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6'].filter(function (k) { return d.images[k]; });
     if (gk.length) { var gi = sec(T('गैलरी')), gg = el('div', 'ws-gal'); var urls = gk.map(function (k) { return d.images[k].url; });
       gk.forEach(function (k, ix) { var im = picture('ws-gp', d.images[k], 'gallery'); im.style.width = '100%'; im.style.cursor = 'zoom-in'; im.onclick = function () { openLightbox(urls, ix); }; gg.appendChild(im); }); gi.appendChild(gg); }
     if (mapUrl) { var mi = sec(T('हमें यहाँ खोजें')); if (f.address) mi.appendChild(el('p', 'ws-about', f.address)); if (!opts.demo && f.address) { var fr = el('iframe', 'ws-map'); fr.setAttribute('loading', 'lazy'); fr.setAttribute('title', 'map'); fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade'); fr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent([f.address, f.city, f.state, f.pin].filter(Boolean).join(', ').replace(/\s*\n\s*/g, ', ')) + '&output=embed'; mi.appendChild(fr); } var mb = actA(link('ws-navbtn ws-mapbtn', T('🧭 रास्ता देखें'), mapUrl), 'map'); mi.appendChild(mb); }
-    if (f.business && (f.name || d.images.photo)) { var ow = sec(T('मालिक / संपर्क व्यक्ति')), ob = el('div', 'ws-owner'); ob.style.cssText = 'text-align:center'; if (d.images.photo) ob.appendChild(picture('ph', d.images.photo, 'circle')); if (f.name) ob.appendChild(el('div', 'sr-nm', f.name)); if (f.designation) ob.appendChild(el('div', 'sr-des', f.designation)); if (opts.cardUrl) { var vcb = link('sr-call', T('📇 विज़िटिंग कार्ड देखें'), opts.cardUrl); vcb.style.cssText = 'display:inline-block;margin-top:10px'; ob.appendChild(vcb); } ow.appendChild(ob); drop(ow); }
+    if (!PF && f.business && (f.name || d.images.photo)) { var ow = sec(T('मालिक / संपर्क व्यक्ति')), ob = el('div', 'ws-owner'); ob.style.cssText = 'text-align:center'; if (d.images.photo) ob.appendChild(picture('ph', d.images.photo, 'circle')); if (f.name) ob.appendChild(el('div', 'sr-nm', f.name)); if (f.designation) ob.appendChild(el('div', 'sr-des', f.designation)); if (opts.cardUrl) { var vcb = link('sr-call', T('📇 विज़िटिंग कार्ड देखें'), opts.cardUrl); vcb.style.cssText = 'display:inline-block;margin-top:10px'; ob.appendChild(vcb); } ow.appendChild(ob); drop(ow); }
     var ci = sec(T('संपर्क करें')), cg = el('div', 'ws-grid');
     [['मोबाइल', tel && ('+91 ' + tel), tel && 'tel:+91' + tel, 'call'], ['ईमेल', em, em && 'mailto:' + em, 'email'], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, ''), web, 'website']].forEach(function (r) {
       if (!r[1]) return; var c = el('div', 'ws-card ws-ct'); c.appendChild(el('div', 'ws-ic ws-ic2', ({call: '📞', email: '✉️', map: '📍', website: '🌐'})[r[3]] || '•')); c.appendChild(el('small', '', T(r[0]))); if (r[2]) c.appendChild(actA(link('', r[1], r[2]), r[3])); else c.appendChild(el('div', '', r[1])); cg.appendChild(c);
