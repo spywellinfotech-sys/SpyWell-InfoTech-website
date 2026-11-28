@@ -7,7 +7,7 @@ function fit(ctx,txt,max,size,weight){var s=size;do{ctx.font=weight+' '+s+'px "B
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
 function nameOf(c){var t=String(c.title||'').trim();return (!t||/^(visiting\s*card|विज़िटिंग\s*कार्ड|विजिटिंग\s*कार्ड)$/i.test(t))?'LiveCard':t}
 async function draw(c){var cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d');
-  var url='https://livecard.in/v/'+c.slug;
+  var url=c.url||('https://livecard.in/v/'+c.slug),lnk=c.link||('https://livecard.in/v/'+c.slug);
   var bg=await img('/studio/livecard-card-front.jpg?v=3');
   if(bg)x.drawImage(bg,0,0,W,H);else{x.fillStyle='#fff';x.fillRect(0,0,W,H)}
   x.textAlign='center';x.textBaseline='middle';
@@ -16,7 +16,7 @@ async function draw(c){var cv=document.createElement('canvas');cv.width=W;cv.hei
   for(var yy=0;yy<q.height&&!fx;yy++){for(var xx=0;xx<q.width;xx++){if(qd[(yy*q.width+xx)*4]<128){fx=xx;mid=yy;break}}}
   var qz=fx||Math.round(q.width*4/41),inner=q.width-2*qz;
   x.imageSmoothingEnabled=false;var qs=292;x.drawImage(q,qz,qz,inner,inner,(W-qs)/2,541-qs/2,qs,qs);x.imageSmoothingEnabled=true;
-  var ln=url.replace(/^https?:\/\//,'');fit(x,ln,370,31,'700');x.fillStyle='#333';x.fillText(ln,W/2,757);
+  var ln=lnk.replace(/^https?:\/\//,'');fit(x,ln,370,31,'700');x.fillStyle='#333';x.fillText(ln,W/2,757);
   if(c.nfc){var cx=580,cy=500,r=30;x.fillStyle='#e8141c';x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.fill();
     x.strokeStyle='#fff';x.lineCap='round';x.lineWidth=5;x.beginPath();x.arc(cx+9,cy,22,Math.PI*0.68,Math.PI*1.32);x.stroke();x.beginPath();x.arc(cx+9,cy,12,Math.PI*0.66,Math.PI*1.34);x.stroke();
     x.fillStyle='#fff';x.beginPath();x.arc(cx+9,cy,4.5,0,Math.PI*2);x.fill();

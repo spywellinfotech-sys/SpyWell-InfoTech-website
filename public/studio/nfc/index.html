@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>NFC · LiveCard Admin</title><link rel="icon" href="/studio/vicard-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Hind:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6ff;color:#151a2e;font:16px/1.5 Hind,system-ui,sans-serif}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(135deg,#1e1b4b,#4338ca 60%,#0ea5e9);color:#fff}
+.bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.7);border-radius:99px;padding:7px 14px;font-weight:700}
+.bar b{font:800 19px "Baloo 2",sans-serif;flex:1}
+main{max-width:680px;margin:0 auto;padding:12px 12px 50px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:2px 0 10px}.tab{flex:none;border:1.5px solid #c7cdf5;background:#fff;color:#151a2e;border-radius:99px;padding:7px 13px;font:700 14px Hind,sans-serif;min-height:38px;cursor:pointer}.tab.on{background:#4338ca;border-color:#4338ca;color:#fff}
+.box{background:#fff;border:1px solid #dde1f7;border-radius:14px;padding:12px;margin-bottom:10px}
+.box h3{margin:0 0 8px;font:800 16px "Baloo 2",sans-serif}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kp div{background:#eef0ff;border-radius:12px;padding:8px;text-align:center}.kp b{display:block;font-size:22px;color:#4338ca;line-height:1.1}.kp span{font-size:12px;color:#555}
+.r{display:flex;align-items:center;gap:6px;padding:9px 0;border-top:1px solid #eef0f8}.r:first-of-type{border-top:0}
+.r .t{flex:1;min-width:0}.r b{display:block;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.r .m{font-size:12px;color:#5b6078;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ib{flex:none;border:0;background:#eef0ff;border-radius:10px;min-width:36px;height:36px;font-size:15px;cursor:pointer;padding:0 6px}
+.st{flex:none;font-size:11px;font-weight:800;border-radius:99px;padding:2px 8px;color:#fff;background:#0f9d58}.st.blocked{background:#b00020}.st.replaced{background:#888}
+input,select,textarea{width:100%;font:16px Hind,sans-serif;padding:9px 11px;border-radius:10px;border:1.5px solid #d3d8f3;margin:3px 0 7px;background:#fff}
+button.main{width:100%;font:700 15px Hind,sans-serif;border-radius:10px;border:0;padding:11px 12px;cursor:pointer;background:#4338ca;color:#fff;min-height:44px}button:disabled{opacity:.6}
+.mut{color:#5b6078;font-size:13.5px}.ok{color:#0a7a2f;font-weight:700}.bad{color:#b00020;font-weight:700}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+</style></head><body>
+<div class="bar"><a href="/studio/admin/">← Admin</a><b>📲 LiveCard NFC</b></div>
+<main id="m"><p class="mut">लोड हो रहा है…</p></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/studio/qr.js"></script><script src="/studio/printcard.js?v=11"></script>
+<script>
+(async function(){
+var $=function(i){return document.getElementById(i)},m=$('m');
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});
+var a=await sb.rpc('studio_is_admin');if(!a||a.data!==true){m.innerHTML='<p>यह हिस्सा सिर्फ़ एडमिन के लिए है। <a href="/studio/">लॉगिन करें</a></p>';return}
+var ORIGIN='https://livecard.in';function tl(t){return ORIGIN+'/n/'+t}
+var ST={placed:'🆕 ऑर्डर आया',paid:'💰 भुगतान हुआ',design_ok:'🎨 डिज़ाइन OK',mfg:'🏭 बन रहा है',encode:'📲 NFC लिखना',qr_ok:'🔳 QR जाँचा',qc:'✅ QC',packed:'📦 पैक',dispatched:'🚚 भेजा',delivered:'🏠 पहुँचा',activated:'⚡ चालू',cancelled:'❌ रद्द',refunded:'↩️ रिफ़ंड'};
+var P=[],C=[],D=[],O=[],EV={},TAB='home';
+function sd(t){try{return new Date(t).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'2-digit'})}catch(e){return ''}}
+async function load(){
+  var rs=await Promise.all([sb.from('nfc_products').select('*').order('sort'),sb.from('nfc_cards').select('*').order('created_at',{ascending:false}).limit(500),sb.rpc('studio_admin_link_report'),sb.from('nfc_orders').select('*,nfc_order_items(*)').order('created_at',{ascending:false}).limit(200),sb.from('nfc_events').select('card_id,src,created_at').order('created_at',{ascending:false}).limit(5000)]);
+  P=(rs[0].data||[]);C=(rs[1].data||[]);D=((rs[2].data)||[]).filter(function(x){return x.product_type==='visiting'&&x.status==='published'&&x.slug});O=(rs[3].data||[]);
+  EV={};(rs[4].data||[]).forEach(function(e){var k=EV[e.card_id]=EV[e.card_id]||{nfc:0,qr:0,link:0,last:null};k[e.src]=(k[e.src]||0)+1;if(!k.last)k.last=e.created_at});EV._all=rs[4].data||[]}
+function dz(id){return D.filter(function(x){return x.design_id===id})[0]||{}}
+function pz(id){return P.filter(function(x){return x.id===id})[0]||{}}
+function draw(){
+  var T=[['home','📊 सार'],['cards','💳 NFC कार्ड'],['orders','🛒 ऑर्डर'],['prod','🏷️ प्रोडक्ट'],['stock','📦 स्टॉक']];
+  m.innerHTML='<div class="tabs">'+T.map(function(t){return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>'}).join('')+'</div><div id="v"></div>';
+  [].forEach.call(m.querySelectorAll('.tab'),function(b){b.onclick=function(){TAB=b.dataset.t;draw()}});
+  ({home:vHome,cards:vCards,orders:vOrders,prod:vProd,stock:vStock})[TAB]()}
+function vHome(){var all=EV._all||[],td=new Date().toDateString(),tod=all.filter(function(e){return new Date(e.created_at).toDateString()===td}).length;
+  var by={nfc:0,qr:0,link:0};all.forEach(function(e){by[e.src]++});
+  var act=C.filter(function(c){return c.status==='active'}).length,pend=O.filter(function(o){return ['delivered','activated','cancelled','refunded'].indexOf(o.status)<0}).length,rev=O.filter(function(o){return o.paid_at}).reduce(function(s,o){return s+(o.amount_inr||0)},0);
+  $('v').innerHTML='<div class="box"><h3>📊 एक नज़र में</h3><div class="kp"><div><b>'+C.length+'</b><span>कुल कार्ड</span></div><div><b>'+act+'</b><span>चालू</span></div><div><b>'+tod+'</b><span>आज के टैप/स्कैन</span></div><div><b>'+by.nfc+'</b><span>📲 NFC टैप</span></div><div><b>'+by.qr+'</b><span>🔳 QR स्कैन</span></div><div><b>'+by.link+'</b><span>🔗 लिंक</span></div><div><b>'+O.length+'</b><span>ऑर्डर</span></div><div><b>'+pend+'</b><span>बाकी ऑर्डर</span></div><div><b>₹'+rev+'</b><span>बिक्री</span></div></div></div>'+
+  '<div class="box mut">यह हिस्सा अभी सिर्फ़ एडमिन को दिखता है। हर NFC कार्ड का अपना सुरक्षित लिंक है (livecard.in/n/…)। चिप में सिर्फ़ यही लिंक लिखा जाता है, कोई निजी जानकारी नहीं। कार्ड खोने पर ⛔ से बंद करें या 🔁 से नया कार्ड बनाएँ। लाइफ़टाइम: कोई सालाना फ़ीस नहीं।</div>'}
+function vCards(){
+  var h='<div class="box"><h3>➕ नया NFC कार्ड बनाएँ</h3><input id="cq" placeholder="ग्राहक का नाम या मोबाइल खोजें"><select id="cd"></select><select id="cp">'+P.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+' · ₹'+p.price_inr+'</option>'}).join('')+'</select><input id="cl" placeholder="नोट (जैसे: ऑफ़िस वाला कार्ड) — ज़रूरी नहीं"><button class="main" id="cgo">💳 टोकन बनाएँ</button><div id="cm" class="mut"></div></div>';
+  h+='<div class="box"><h3>💳 सभी NFC कार्ड ('+C.length+')</h3><input id="lq" placeholder="🔍 खोजें"><div id="cl2"></div></div>';$('v').innerHTML=h;
+  function fill(){var q=$('cq').value.trim().toLowerCase();var L=D.filter(function(x){return !q||[x.title,x.slug,x.email].join(' ').toLowerCase().indexOf(q)>=0}).slice(0,60);$('cd').innerHTML=L.map(function(x){return '<option value="'+x.design_id+'">'+esc(x.title||x.slug)+' · '+esc(x.slug)+'</option>'}).join('')||'<option value="">कोई प्रकाशित कार्ड नहीं</option>'}
+  $('cq').oninput=fill;fill();
+  $('cgo').onclick=async function(){var d=$('cd').value;if(!d){$('cm').textContent='पहले ग्राहक का कार्ड चुनें';return}this.disabled=true;var r=await sb.rpc('nfc_admin_issue',{p_design:d,p_product:$('cp').value,p_label:$('cl').value.trim()||null});this.disabled=false;
+    if(r.error){$('cm').innerHTML='<span class="bad">नहीं बना: '+esc(r.error.message)+'</span>';return}$('cm').innerHTML='<span class="ok">✅ बन गया: '+esc(tl(r.data.token))+'</span>';await load();draw()};
+  function list(){var q=($('lq').value||'').trim().toLowerCase();var L=C.filter(function(c){var d=dz(c.design_id);return !q||[d.title,d.slug,c.token,c.label].join(' ').toLowerCase().indexOf(q)>=0});
+    $('cl2').innerHTML=L.map(function(c){var d=dz(c.design_id),e=EV[c.id]||{nfc:0,qr:0,link:0};var act=c.status==='active';
+      return '<div class="r"><div class="t"><b>'+esc(d.title||c.label||'—')+' <span class="st '+c.status+'">'+({active:'चालू',blocked:'बंद',replaced:'बदला',unassigned:'खाली'}[c.status]||c.status)+'</span></b><div class="m">'+esc(pz(c.product_id).name||'')+(c.label?' · '+esc(c.label):'')+' · /n/'+esc(c.token)+'</div><div class="m">📲 '+e.nfc+' · 🔳 '+e.qr+' · 🔗 '+e.link+(c.written_at?' · ✍️ '+sd(c.written_at):'')+'</div></div>'+
+      (act?'<button class="ib" data-w="'+c.id+'" title="NFC में लिखें">✍️</button><button class="ib" data-p="'+c.id+'" title="PDF">🖨️</button>':'')+'<button class="ib" data-c="'+c.id+'" title="लिंक कॉपी">🔗</button>'+
+      (c.status!=='replaced'?'<button class="ib" data-b="'+c.id+'" title="'+(act?'बंद करें':'चालू करें')+'">'+(act?'⛔':'✅')+'</button><button class="ib" data-r="'+c.id+'" title="नया कार्ड (रिप्लेस)">🔁</button>':'')+'</div><div class="mut" id="cmsg'+c.id+'"></div>'}).join('')||'<p class="mut">अभी कोई NFC कार्ड नहीं।</p>';
+    var cz=function(id){return C.filter(function(c){return c.id===id})[0]};
+    [].forEach.call($('cl2').querySelectorAll('[data-c]'),function(b){b.onclick=async function(){var u=tl(cz(b.dataset.c).token);try{await navigator.clipboard.writeText(u);b.textContent='✓'}catch(e){window.prompt('लिंक',u)}setTimeout(function(){b.textContent='🔗'},1500)}});
+    [].forEach.call($('cl2').querySelectorAll('[data-b]'),function(b){b.onclick=async function(){var c=cz(b.dataset.b);var ns=c.status==='active'?'blocked':'active';if(ns==='blocked'&&!confirm('यह कार्ड बंद करें? टैप करने पर कार्ड नहीं खुलेगा।'))return;b.disabled=true;await sb.from('nfc_cards').update({status:ns}).eq('id',c.id);await load();list()}});
+    [].forEach.call($('cl2').querySelectorAll('[data-r]'),function(b){b.onclick=async function(){var why=prompt('नया कार्ड क्यों? (खोया / ख़राब / दूसरा)','खोया');if(why===null)return;b.disabled=true;var r=await sb.rpc('nfc_admin_replace',{p_card:b.dataset.r,p_reason:why});if(r.error){alert('नहीं हुआ: '+r.error.message);b.disabled=false;return}alert('✅ नया टोकन बना। पुराना कार्ड अब नहीं खुलेगा।\n'+tl(r.data.token));await load();list()}});
+    [].forEach.call($('cl2').querySelectorAll('[data-w]'),function(b){b.onclick=function(){var c=cz(b.dataset.w);writeNfc(c,function(t){$('cmsg'+c.id).textContent=t})}});
+    [].forEach.call($('cl2').querySelectorAll('[data-p]'),function(b){b.onclick=function(){var c=cz(b.dataset.p),d=dz(c.design_id);var box=$('cmsg'+c.id);if(!d.slug){box.textContent='कार्ड प्रकाशित नहीं है';return}LCPrint.save([{title:d.title,slug:d.slug,nfc:true,url:tl(c.token)+'?q',link:ORIGIN+'/v/'+d.slug}],box,'LiveCard-NFC-'+(d.slug||c.token))}})}
+  $('lq').oninput=list;list()}
+var NM={ok:'✅ NFC में लिख गया!',readonly:'❌ यह NFC टैग लॉक है।',small:'❌ टैग में जगह कम है।',unsupported:'❌ यह टैग सपोर्ट नहीं करता।',error:'❌ लिखा नहीं जा सका, फिर से छुआएँ।'};
+async function writeNfc(c,pm){var u=tl(c.token);
+  var done=async function(r){pm(NM[r]||NM.error);if(r==='ok'){await sb.from('nfc_cards').update({written_at:new Date().toISOString()}).eq('id',c.id);c.written_at=new Date().toISOString();if(c.design_id){var cur=await sb.from('studio_card_prints').select('*').eq('design_id',c.design_id).maybeSingle();var row=Object.assign({design_id:c.design_id},cur.data||{});row.nfc_at=new Date().toISOString();row.updated_at=row.nfc_at;await sb.from('studio_card_prints').upsert(row,{onConflict:'design_id'})}}};
+  if(window.ViNative&&ViNative.writeNfc){var s0='';try{s0=ViNative.nfcState()}catch(e){}if(s0==='none'){pm('इस फ़ोन में NFC नहीं है।');return}if(s0==='off'){pm('फ़ोन की Settings में NFC चालू करें।');return}
+    window.__vcNfc=function(r){done(r)};var ok=false;try{ok=ViNative.writeNfc(u)}catch(e){}if(!ok){pm('NFC शुरू नहीं हो पाया।');return}pm('📲 अब NFC कार्ड को फ़ोन के पीछे छुआएँ…');return}
+  if('NDEFReader' in window){pm('📲 अब NFC कार्ड को फ़ोन के पीछे छुआएँ…');try{var rd=new NDEFReader();await rd.write({records:[{recordType:'url',data:u}]});done('ok')}catch(e){done('error')}return}
+  pm('NFC के लिए LiveCard ऐप या Android Chrome चाहिए।')}
+function vOrders(){
+  var h='<div class="box"><h3>➕ नया ऑर्डर (फ़ोन/दुकान से)</h3><div class="row2"><input id="on" placeholder="ग्राहक का नाम"><input id="op" inputmode="numeric" maxlength="10" placeholder="मोबाइल"></div><textarea id="oa" rows="2" placeholder="पता और पिन कोड"></textarea><div class="row2"><select id="opr">'+P.map(function(p){return '<option value="'+p.id+'" data-p="'+p.price_inr+'">'+esc(p.name)+'</option>'}).join('')+'</select><input id="oq" type="number" min="1" value="1" style="max-width:80px"></div><div class="row2"><input id="oam" type="number" placeholder="कुल रकम ₹"><select id="opd"><option value="paid">💰 भुगतान हो गया</option><option value="placed">⏳ भुगतान बाकी</option></select></div><button class="main" id="ogo">🛒 ऑर्डर जोड़ें</button><div id="om" class="mut"></div></div>';
+  h+='<div class="box"><h3>🛒 ऑर्डर ('+O.length+')</h3>'+(O.map(function(o){var it=(o.nfc_order_items||[]).map(function(i){return esc(pz(i.product_id).name||'')+' ×'+i.qty}).join(', ');
+    return '<div class="r" style="flex-wrap:wrap"><div class="t"><b>'+esc(o.cust_name||'—')+' · ₹'+(o.amount_inr||0)+'</b><div class="m">'+it+' · '+sd(o.created_at)+(o.cust_phone?' · '+esc(o.cust_phone):'')+'</div>'+(o.ship_address?'<div class="m">📍 '+esc(o.ship_address)+'</div>':'')+'</div><select data-o="'+o.id+'" style="width:100%;margin:4px 0 0">'+Object.keys(ST).map(function(k){return '<option value="'+k+'"'+(o.status===k?' selected':'')+'>'+ST[k]+'</option>'}).join('')+'</select><div class="row2" style="width:100%"><input data-cr="'+o.id+'" placeholder="कूरियर" value="'+esc(o.courier||'')+'"><input data-tr="'+o.id+'" placeholder="ट्रैकिंग नंबर" value="'+esc(o.tracking_no||'')+'"></div></div>'}).join('')||'<p class="mut">अभी कोई ऑर्डर नहीं।</p>')+'</div>';
+  $('v').innerHTML=h;
+  var sp=function(){var o=$('opr').selectedOptions[0];$('oam').value=(+o.dataset.p||0)*(+$('oq').value||1)};$('opr').onchange=sp;$('oq').oninput=sp;sp();
+  $('ogo').onclick=async function(){var n=$('on').value.trim(),ph=$('op').value.replace(/\D/g,'');if(!n||!/^[6-9]\d{9}$/.test(ph)){$('om').innerHTML='<span class="bad">नाम और सही 10 अंक का मोबाइल डालें</span>';return}this.disabled=true;
+    var pd=$('opd').value==='paid',r=await sb.from('nfc_orders').insert({cust_name:n,cust_phone:ph,ship_address:$('oa').value.trim()||null,amount_inr:+$('oam').value||0,status:pd?'paid':'placed',paid_at:pd?new Date().toISOString():null}).select('id').single();
+    if(r.error){this.disabled=false;$('om').innerHTML='<span class="bad">नहीं जुड़ा: '+esc(r.error.message)+'</span>';return}
+    var q=Math.max(1,+$('oq').value||1);await sb.from('nfc_order_items').insert({order_id:r.data.id,product_id:$('opr').value,qty:q,unit_price:Math.round((+$('oam').value||0)/q)});await load();draw()};
+  [].forEach.call($('v').querySelectorAll('[data-o]'),function(s){s.onchange=async function(){s.disabled=true;var up={status:s.value,updated_at:new Date().toISOString()};if(s.value==='paid')up.paid_at=new Date().toISOString();var r=await sb.from('nfc_orders').update(up).eq('id',s.dataset.o);s.disabled=false;if(r.error)alert('सेव नहीं हुआ')}});
+  [].forEach.call($('v').querySelectorAll('[data-cr],[data-tr]'),function(i){i.onchange=async function(){var id=i.dataset.cr||i.dataset.tr,k=i.dataset.cr?'courier':'tracking_no',up={updated_at:new Date().toISOString()};up[k]=i.value.trim()||null;await sb.from('nfc_orders').update(up).eq('id',id)}})}
+function vProd(){
+  $('v').innerHTML='<div class="box"><h3>🏷️ प्रोडक्ट और दाम</h3><p class="mut">दाम बदलकर ✓ दबाएँ। बंद प्रोडक्ट स्टोर में नहीं दिखेगा।</p>'+P.map(function(p){return '<div class="r"><div class="t"><b>'+esc(p.name)+'</b><div class="m">'+esc(p.description||'')+'</div></div><input data-pr="'+p.id+'" type="number" value="'+p.price_inr+'" style="width:86px;margin:0"><button class="ib" data-ps="'+p.id+'">✓</button><button class="ib" data-pa="'+p.id+'">'+(p.active?'🟢':'⚪')+'</button></div>'}).join('')+'</div>';
+  [].forEach.call($('v').querySelectorAll('[data-ps]'),function(b){b.onclick=async function(){var v=+$('v').querySelector('[data-pr="'+b.dataset.ps+'"]').value;if(!(v>=0))return;var r=await sb.from('nfc_products').update({price_inr:Math.round(v)}).eq('id',b.dataset.ps);b.textContent=r.error?'✗':'✅';await load()}});
+  [].forEach.call($('v').querySelectorAll('[data-pa]'),function(b){b.onclick=async function(){var p=pz(b.dataset.pa);await sb.from('nfc_products').update({active:!p.active}).eq('id',p.id);await load();vProd()}})}
+async function vStock(){$('v').innerHTML='<p class="mut">लोड हो रहा है…</p>';
+  var rs=await Promise.all([sb.from('nfc_inventory').select('*').order('item'),sb.from('nfc_suppliers').select('*').order('name')]);var I=rs[0].data||[],S=rs[1].data||[];
+  $('v').innerHTML='<div class="box"><h3>📦 स्टॉक</h3>'+(I.map(function(i){return '<div class="r"><div class="t"><b>'+esc(i.item)+'</b><div class="m">'+esc(i.chip||'')+(i.unit_cost?' · ₹'+i.unit_cost+' प्रति':'')+'</div></div><input data-iq="'+i.id+'" type="number" value="'+i.qty+'" style="width:80px;margin:0"><button class="ib" data-is="'+i.id+'">✓</button></div>'}).join('')||'<p class="mut">अभी कुछ नहीं।</p>')+
+    '<div class="row2" style="margin-top:8px"><input id="ii" placeholder="चीज़ (जैसे खाली PVC कार्ड)"><input id="ic" placeholder="चिप (NTAG213)"></div><div class="row2"><input id="in" type="number" placeholder="गिनती"><input id="iu" type="number" placeholder="₹ प्रति पीस"></div><button class="main" id="igo">➕ स्टॉक जोड़ें</button></div>'+
+    '<div class="box"><h3>🏭 सप्लायर</h3>'+(S.map(function(s){return '<div class="r"><div class="t"><b>'+esc(s.name)+'</b><div class="m">'+esc([s.phone,s.email,s.notes].filter(Boolean).join(' · '))+'</div></div>'+(s.phone?'<a class="ib" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="tel:'+esc(s.phone)+'">📞</a>':'')+'</div>'}).join('')||'<p class="mut">अभी कोई सप्लायर नहीं।</p>')+
+    '<input id="sn" placeholder="सप्लायर का नाम"><div class="row2"><input id="sp" inputmode="tel" placeholder="मोबाइल"><input id="se" placeholder="ईमेल"></div><input id="sx" placeholder="नोट (दाम, कितने दिन में देता है)"><button class="main" id="sgo">➕ सप्लायर जोड़ें</button></div>';
+  [].forEach.call($('v').querySelectorAll('[data-is]'),function(b){b.onclick=async function(){var v=+$('v').querySelector('[data-iq="'+b.dataset.is+'"]').value||0;var r=await sb.from('nfc_inventory').update({qty:v,updated_at:new Date().toISOString()}).eq('id',b.dataset.is);b.textContent=r.error?'✗':'✅'}});
+  $('igo').onclick=async function(){var it=$('ii').value.trim();if(!it)return;this.disabled=true;await sb.from('nfc_inventory').insert({item:it,chip:$('ic').value.trim()||null,qty:+$('in').value||0,unit_cost:+$('iu').value||null});vStock()};
+  $('sgo').onclick=async function(){var n=$('sn').value.trim();if(!n)return;this.disabled=true;await sb.from('nfc_suppliers').insert({name:n,phone:$('sp').value.trim()||null,email:$('se').value.trim()||null,notes:$('sx').value.trim()||null});vStock()}}
+await load();draw();
+})();
+</script></body></html>

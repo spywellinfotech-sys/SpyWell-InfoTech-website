@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>LiveCard</title><link rel="icon" href="/studio/vicard-icon.png">
+<style>body{margin:0;background:#fff7ec;display:flex;min-height:100vh;align-items:center;justify-content:center;font:600 16px system-ui,sans-serif;color:#8b1a2b;text-align:center;padding:20px}img{display:block;margin:0 auto 14px;animation:s 1.2s ease-in-out infinite}@keyframes s{50%{transform:scale(1.08);opacity:.75}}a{color:#d4141c}</style></head>
+<body><div><img src="/studio/livecard-logo.png" width="110" alt="LiveCard"><div id="t">LiveCard खुल रहा है…</div></div>
+<script>
+(function(){var q=new URLSearchParams(location.search),t=(q.get('t')||'').toLowerCase().replace(/[^a-z0-9]/g,''),src=q.has('q')?'qr':q.has('l')?'link':'nfc',el=document.getElementById('t');
+function msg(h){el.innerHTML=h;document.querySelector('img').style.animation='none'}
+if(!t){msg('कार्ड नहीं मिला।<br><a href="/">LiveCard.in</a>');return}
+fetch('https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/rpc/nfc_resolve',{method:'POST',headers:{'content-type':'application/json',apikey:'sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',authorization:'Bearer sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d'},body:JSON.stringify({p_token:t,p_src:src})})
+.then(function(r){return r.json()}).then(function(u){
+  if(typeof u==='string'&&u.charAt(0)==='/'){location.replace(u+'?src='+src);return}
+  if(u==='blocked'){msg('यह NFC कार्ड बंद कर दिया गया है।<br><a href="/">LiveCard.in</a>');return}
+  if(u==='pending'){msg('यह कार्ड अभी चालू नहीं हुआ है।<br><a href="/">LiveCard.in</a>');return}
+  msg('कार्ड नहीं मिला।<br><a href="/">LiveCard.in</a>')}).catch(function(){msg('इंटरनेट जाँचें और फिर से टैप करें।')})})();
+</script></body></html>
