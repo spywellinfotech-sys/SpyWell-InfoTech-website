@@ -15,6 +15,7 @@ button{font:700 14px Hind,sans-serif;border-radius:10px;border:0;padding:9px 12p
 button.alt{background:#fff;color:#d4141c;border:1.5px solid #d4141c}button:disabled{opacity:.6}
 .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.mut{color:#6d6060;font-size:14px}
 #pv{position:fixed;inset:0;background:rgba(20,5,5,.6);display:none;align-items:center;justify-content:center;z-index:9;padding:20px}#pv.on{display:flex}#pv img{max-height:80vh;max-width:90vw;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+button.nfc{background:#0b3d5c}.acts{display:flex;gap:6px;flex-wrap:wrap;width:100%;padding-left:32px}.acts button{flex:1 1 auto;min-height:38px;padding:7px 10px}
 input[type=checkbox]{width:22px;height:22px;margin:0;flex:none}
 </style></head><body>
 <div class="bar"><a href="/studio/admin/">← Admin</a><b>🖨️ Print Card</b></div>
@@ -31,16 +32,28 @@ var a=await sb.rpc('studio_is_admin');if(!a||a.data!==true){m.innerHTML='<p>य�
 var r=await sb.rpc('studio_admin_link_report');var L=((r&&r.data)||[]).filter(function(x){return x.product_type==='visiting'&&x.status==='published'&&x.slug});
 L.sort(function(p,q){return String(q.published_at||'').localeCompare(String(p.published_at||''))});
 var SEL={};
-m.innerHTML='<p class="mut">हर कार्ड का QR, डेबिट कार्ड साइज़ (54 × 86 mm) PDF में। कुल '+L.length+' प्रकाशित कार्ड।</p><input id="q" placeholder="🔍 नाम, ईमेल या लिंक खोजें" aria-label="खोजें"><div class="top"><button id="all" class="alt">☑ सब चुनें</button><button id="go" disabled>📄 चुने हुए का PDF (0)</button></div><p class="mut" id="msg"></p><div id="l"></div>';
+m.innerHTML='<p class="mut">हर कार्ड का QR PDF (डेबिट कार्ड साइज़ 54 × 86 mm), NFC में लिंक लिखना और URL कॉपी। कुल '+L.length+' प्रकाशित कार्ड।</p><input id="q" placeholder="🔍 नाम, ईमेल या लिंक खोजें" aria-label="खोजें"><div class="top"><button id="all" class="alt">☑ सब चुनें</button><button id="go" disabled>📄 चुने हुए का PDF (0)</button></div><p class="mut" id="msg"></p><div id="l"></div>';
 function msg(t){$('msg').textContent=t}
 function cnt(){var n=Object.keys(SEL).length;$('go').textContent='📄 चुने हुए का PDF ('+n+')';$('go').disabled=!n}
 function list(){var q=$('q').value.trim().toLowerCase();var F=L.filter(function(x){return !q||((x.title||'')+' '+(x.email||'')+' '+x.slug).toLowerCase().indexOf(q)>=0});
-  $('l').innerHTML=F.slice(0,300).map(function(x,i){return '<div class="row"><input type="checkbox" data-c="'+esc(x.design_id)+'"'+(SEL[x.design_id]?' checked':'')+' aria-label="चुनें"><div class="t"><b>'+esc(x.title||'—')+'</b><div class="m">livecard.in/v/'+esc(x.slug)+' · '+esc(x.email||'')+'</div></div><button class="alt" data-v="'+i+'">👁️</button><button data-p="'+i+'">📄 PDF</button></div>'}).join('')||'<p class="mut">कोई कार्ड नहीं मिला</p>';
+  $('l').innerHTML=F.slice(0,300).map(function(x,i){return '<div class="row" style="flex-wrap:wrap"><input type="checkbox" data-c="'+esc(x.design_id)+'"'+(SEL[x.design_id]?' checked':'')+' aria-label="चुनें"><div class="t"><b>'+esc(x.title||'—')+'</b><div class="m">livecard.in/v/'+esc(x.slug)+' · '+esc(x.email||'')+'</div></div><div class="acts"><button class="alt" data-v="'+i+'">👁️ देखें</button><button data-p="'+i+'">📄 PDF</button><button class="nfc" data-n="'+i+'">📲 NFC</button><button class="alt" data-u="'+i+'">🔗 URL कॉपी</button></div></div>'}).join('')||'<p class="mut">कोई कार्ड नहीं मिला</p>';
+  [].forEach.call($('l').querySelectorAll('[data-n]'),function(b){b.onclick=function(){nfc(F[+b.getAttribute('data-n')])}});
+  [].forEach.call($('l').querySelectorAll('[data-u]'),function(b){b.onclick=async function(){var u='https://livecard.in/v/'+F[+b.getAttribute('data-u')].slug;try{await navigator.clipboard.writeText(u);b.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('URL',u)}setTimeout(function(){b.textContent='🔗 URL कॉपी'},2000)}});
   [].forEach.call($('l').querySelectorAll('[data-c]'),function(c){c.onchange=function(){var x=L.filter(function(z){return z.design_id===c.getAttribute('data-c')})[0];if(c.checked)SEL[x.design_id]=x;else delete SEL[x.design_id];cnt()}});
   [].forEach.call($('l').querySelectorAll('[data-v]'),function(b){b.onclick=async function(){var x=F[+b.getAttribute('data-v')];var cv=await LCPrint.draw(x);var p=$('pv');p.innerHTML='<img alt="QR कार्ड प्रीव्यू" src="'+cv.toDataURL('image/png')+'">';p.classList.add('on')}});
   [].forEach.call($('l').querySelectorAll('[data-p]'),function(b){b.onclick=async function(){var x=F[+b.getAttribute('data-p')];b.disabled=true;b.textContent='⏳';await run([x],'livecard-'+x.slug);b.disabled=false;b.textContent='📄 PDF'}})}
+function nsheet(h){var p=$('pv');p.innerHTML='<div style="background:#fff;border-radius:18px;padding:20px;max-width:340px;text-align:center">'+h+'<button id="nx" class="alt" style="margin-top:14px;width:100%">बंद करें</button></div>';p.classList.add('on');$('nx').onclick=function(e){e.stopPropagation();try{window.ViNative&&ViNative.cancelNfc&&ViNative.cancelNfc()}catch(x){}p.classList.remove('on')}}
+var NM={ok:'✅ NFC में लिख गया! अब कार्ड को किसी फ़ोन से छुआकर जाँचें।',readonly:'❌ यह NFC टैग लॉक है, इसमें लिखा नहीं जा सकता।',small:'❌ टैग में जगह कम है।',unsupported:'❌ यह टैग सपोर्ट नहीं करता।',error:'❌ लिखा नहीं जा सका, कार्ड को फिर से छुआएँ।'};
+async function nfc(x){var u='https://livecard.in/v/'+x.slug+'?src=nfc';var t='<b style="font-size:18px">📲 '+esc(x.title||'')+'</b><p class="mut" style="word-break:break-all">'+esc(u)+'</p>';
+  if(window.ViNative&&ViNative.writeNfc){var st='';try{st=ViNative.nfcState()}catch(e){}
+    if(st==='none'){nsheet(t+'<p>इस फ़ोन में NFC नहीं है।</p>');return}if(st==='off'){nsheet(t+'<p>फ़ोन की Settings में NFC चालू करें, फिर दोबारा दबाएँ।</p>');return}
+    window.__vcNfc=function(r){var p=$('pv');if(p.classList.contains('on'))nsheet(t+'<p style="font-size:17px">'+(NM[r]||NM.error)+'</p>')};
+    var ok=false;try{ok=ViNative.writeNfc(u)}catch(e){}if(!ok){nsheet(t+'<p>NFC शुरू नहीं हो पाया।</p>');return}
+    nsheet(t+'<p style="font-size:17px">📲 अब NFC कार्ड को फ़ोन के पीछे छुआएँ…</p>');return}
+  if('NDEFReader' in window){nsheet(t+'<p style="font-size:17px">📲 अब NFC कार्ड को फ़ोन के पीछे छुआएँ…</p>');try{var rd=new NDEFReader();await rd.write({records:[{recordType:'url',data:u}]});nsheet(t+'<p style="font-size:17px">'+NM.ok+'</p>')}catch(e){nsheet(t+'<p>'+NM.error+'</p>')}return}
+  nsheet(t+'<p>NFC लिखने के लिए LiveCard का नया ऐप (1.0.111+) या Android Chrome चाहिए।</p>')}
 async function run(cards,name){msg('PDF बन रहा है…');try{var r=await LCPrint.pdf(cards,name);msg(r==='saved'?'✅ PDF डाउनलोड/Downloads में सेव हुआ':r==='png'?'✅ ऐप में PDF की जगह फ़ोटो गैलरी में सेव हुई (PDF के लिए नया ऐप या Chrome)':'❌ सेव नहीं हो पाया')}catch(e){msg('❌ PDF नहीं बन पाया')}}
-$('pv').onclick=function(){this.classList.remove('on')};$('q').oninput=list;
+$('pv').onclick=function(e){if(e.target===this){try{window.ViNative&&ViNative.cancelNfc&&ViNative.cancelNfc()}catch(x){}this.classList.remove('on')}};$('q').oninput=list;
 $('all').onclick=function(){var q=$('q').value.trim().toLowerCase();L.forEach(function(x){if(!q||((x.title||'')+' '+(x.email||'')+' '+x.slug).toLowerCase().indexOf(q)>=0)SEL[x.design_id]=x});cnt();list()};
 $('go').onclick=async function(){var C=Object.keys(SEL).map(function(k){return SEL[k]});this.disabled=true;await run(C,'livecard-qr-cards-'+C.length);this.disabled=false};
 list();
