@@ -1036,21 +1036,21 @@ async function invHome(){
   box.hidden=false;box.textContent='';box.appendChild(mk('b','','💌 मेरे इनविटेशन कार्ड'));
   if(ivAll.length>1){var cr3=mk('div','');cr3.style.cssText='display:flex;gap:6px;overflow-x:auto;margin:8px 0 2px;padding-bottom:2px';ivAll.forEach(function(v){var on=isel&&v.id===isel.id,c=mk('button','','💌 '+(v.title||'इनविटेशन').slice(0,22));c.type='button';c.style.cssText='flex:none;width:auto;margin:0;padding:7px 12px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap;border:1.5px solid #145a43;'+(on?'background:#145a43;color:#fff':'background:#fff;color:#145a43');c.onclick=function(){INVSEL=v.id;invHome()};cr3.appendChild(c)});box.appendChild(cr3)};var IDEST=$('c-insinv');if(IDEST){IDEST.textContent='';IDEST.hidden=!iv.length;if(iv.length)IDEST.appendChild(mk('b','','📊 इनविटेशन की इनसाइट'))}
   for(var i=0;i<iv.length;i++){(function(x){
-    var hero=mk('div','');hero.style.cssText='margin-top:12px;background:linear-gradient(135deg,#0b3d2e,#145a43 55%,#b8860b);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(11,61,46,.35)';
+    var hero=mk('div','');hero.style.cssText='margin-top:12px;background:linear-gradient(135deg,#0b3d2e,#145a43 55%,#b8860b);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(11,61,46,.35);position:relative';
     var row=mk('div','');row.style.cssText='display:flex;gap:12px;align-items:center';
     var pv=mk('div','');pv.style.cssText='flex:none;width:104px;height:149px;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.4);position:relative;border:2px solid #f5d77a;transform:rotate(-3deg)';
     var pf=lcThumb('inv',x.slug,360,512,.2889,x.updated_at);
     var ov=mk('a','');ov.href='/inv/'+x.slug;ov.target='_blank';ov.rel='noopener';ov.style.cssText='position:absolute;inset:0';pv.appendChild(pf);pv.appendChild(ov);
     var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';
-    var t1=mk('b','',x.title||'इनविटेशन');t1.style.cssText='display:block;font-size:18px;line-height:1.3';tx.appendChild(t1);
+    var t1=mk('b','',x.title||'इनविटेशन');t1.style.cssText='display:block;font-size:16px;line-height:1.3;padding-right:64px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical';tx.appendChild(t1);
     var t2=mk('div','','आपका कार्ड लाइव है ✅');t2.style.cssText='font-size:13px;margin-top:4px;opacity:.95';tx.appendChild(t2);
     var pd=x.published_at?new Date(x.published_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'';
     var chips=mk('div','');chips.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:8px';
     var cv=mk('span','','👁 …');cv.style.cssText='background:rgba(255,255,255,.2);border-radius:99px;padding:4px 10px;font-size:12px;font-weight:700';chips.appendChild(cv);
-    var cv2=mk('span','','🗓️ लिंक हमेशा चालू');cv2.style.cssText='background:rgba(255,255,255,.2);border-radius:99px;padding:4px 10px;font-size:12px;font-weight:700';chips.appendChild(cv2);
-    tx.appendChild(chips);if(pd){var t3=mk('div','','प्रकाशित: '+pd+' · एक बार का शुल्क');t3.style.cssText='font-size:11px;opacity:.85;margin-top:6px';tx.appendChild(t3)}
+    var cv2=mk('span','','🗓️ लिंक हमेशा चालू');cv2.style.cssText='background:rgba(255,255,255,.2);border-radius:99px;padding:4px 10px;font-size:12px;font-weight:700';
+    tx.appendChild(chips);
     row.appendChild(pv);row.appendChild(tx);hero.appendChild(row);
-    var vc=mk('a','','👁️ मेरा कार्ड देखें');vc.href='/inv/'+x.slug;vc.target='_blank';vc.rel='noopener';vc.style.cssText='display:block;text-align:center;margin-top:10px;background:#ffc21a;color:#3d2a00;font-size:16px;font-weight:800;border-radius:12px;padding:11px 10px;text-decoration:none;box-shadow:0 3px 0 #c98d00';hero.appendChild(vc);
+    var vc=mk('a','','👁️ मेरा कार्ड देखें');vc.href='/inv/'+x.slug;vc.target='_blank';vc.rel='noopener';vc.textContent='👁️ View Card';vc.style.cssText='display:block;text-align:center;margin-top:8px;background:#ffc21a;color:#3d2a00;font-size:15px;font-weight:800;border-radius:12px;padding:9px 6px;text-decoration:none;box-shadow:0 3px 0 #c98d00';tx.appendChild(vc);
     var shUrl=location.origin+'/inv/'+x.slug,shTx=(x.title||'इनविटेशन')+'\nआप सादर आमंत्रित हैं। कार्ड देखें:\n'+shUrl;
     var shr=mk('div','');shr.style.cssText='display:flex;gap:8px;margin-top:12px';
     var sh1=mk('button','','📤 शेयर करें');sh1.type='button';sh1.style.cssText='margin:0;flex:2;padding:13px 6px;border:0;border-radius:12px;background:#25d366;color:#fff;font-weight:800;font-size:15px';
@@ -1072,7 +1072,7 @@ async function invHome(){
     var ed=mk('a','','✏️ Edit');ed.href='/studio/editor/?v=20261129&id='+x.id;ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d2e;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:800';
     var dl2=mk('button','','🗑 Delete');dl2.type='button';dl2.style.cssText='margin:0;flex:1;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:12px;padding:12px 6px;font-weight:800';
     dl2.onclick=function(){if(!confirm('यह इनविटेशन कार्ड हमेशा के लिए मिट जाएगा। पक्का मिटाएँ?'))return;del(x.id,dl2)};
-    shr.style.marginTop='8px';hero.appendChild(shr);sh1.onclick=function(){shSheet(x,shUrl,shTx,{mh:mh,more:more},'inv')};dl2.textContent='🗑 हटाएँ';dl2.style.cssText='margin:8px 0 0;width:auto;min-height:0;padding:4px 8px;background:none;border:0;color:#fff;opacity:.75;font-size:13px;text-decoration:underline';hero.appendChild(dl2);
+    shr.style.marginTop='6px';sh1.style.padding='9px 6px';tx.appendChild(shr);sh1.onclick=function(){shSheet(x,shUrl,shTx,{mh:mh,more:more},'inv')};dl2.textContent='🗑 हटाएँ';dl2.style.cssText='position:absolute;top:10px;right:10px;margin:0;width:auto;min-height:0;padding:4px 9px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.5);border-radius:99px;color:#fff;font-size:12px;font-weight:700';hero.appendChild(dl2);
     if(nrMore)more.appendChild(nrMore);var gw=mk('div','');var iset=mk('div','');iset.style.cssText='margin:8px 0;background:linear-gradient(135deg,#0b3d2e,#145a43);color:#fff;border-radius:12px;padding:10px 12px';iset.appendChild(mk('b','','💌 '+(x.title||'इनविटेशन')+' · सेटिंग'));iset.appendChild(gw);try{$('pf-invsett').appendChild(iset)}catch(e){}
     mh.textContent='📲 Send to Unsaved WhatsApp no.  ▼';mh.style.cssText='margin-top:10px;padding:0 14px;height:46px;box-sizing:border-box;display:flex;align-items:center;border-radius:12px;background:#ffc21a;color:#5a0509;font-weight:800;cursor:pointer;font-size:15px';
 
