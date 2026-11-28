@@ -1047,7 +1047,7 @@ async function invHome(){
     var pd=x.published_at?new Date(x.published_at).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'}):'';
     var chips=mk('div','');chips.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:8px';
     var cv=mk('span','','👁 …');cv.style.cssText='background:rgba(255,255,255,.2);border-radius:99px;padding:4px 10px;font-size:12px;font-weight:700';chips.appendChild(cv);
-    (function(){var ar=AR[x.id],vt,ln;if(ar&&ar.end_date){var ed=new Date(ar.end_date+'T00:00:00');var dl=Math.round((ed-new Date(new Date().toDateString()))/864e5);vt=ed.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'});ln='🗓️ '+vt+' तक चालू'+(dl>=0&&dl<=10?' · '+dl+' दिन बाकी':'')}else ln='🗓️ Validity: function की तारीख़ डालें';
+    (function(){var ar=AR[x.id],vt,ln;if(ar&&ar.end_date){var ed=new Date(ar.end_date+'T00:00:00');ed.setDate(ed.getDate()+1);var dl=Math.round((ed-new Date(new Date().toDateString()))/864e5);vt=ed.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'});ln='🗓️ '+vt+' तक चालू'+(dl>=0&&dl<=10?' · '+dl+' दिन बाकी':'')}else ln='🗓️ Validity: function की तारीख़ डालें';
       var vc2=mk('span','',ln);vc2.style.cssText='background:'+(ar&&ar.end_date?'rgba(255,255,255,.2)':'rgba(255,194,26,.35)')+';border-radius:99px;padding:4px 10px;font-size:12px;font-weight:700';chips.appendChild(vc2)})();
     var cv2=mk('span','','🗓️ लिंक हमेशा चालू');cv2.style.cssText='background:rgba(255,255,255,.2);border-radius:99px;padding:4px 10px;font-size:12px;font-weight:700';
     tx.appendChild(chips);
