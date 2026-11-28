@@ -1140,6 +1140,6 @@
     if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
   })();
 
-  window.StudioRender = { FLIPTH: FLIPTH, uiKeys: uiKeys, shareInvite: shareInvite, fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
+  window.StudioRender = { saveVcard: saveVcard, FLIPTH: FLIPTH, uiKeys: uiKeys, shareInvite: shareInvite, fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
     FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, MAX_HIGH: MAX_HIGH, svParts: svParts, BUCKET: BUCKET };
 })();

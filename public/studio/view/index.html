@@ -14,7 +14,7 @@
 <div class="foot" id="foot" hidden><img src="/dyname/logo.png" alt="LiveCard" width="18" height="18" style="vertical-align:middle;margin-right:4px">LiveCard.in से बनाया गया<a class="mk" href="/studio/" id="mkb">अपना कार्ड बनाएँ</a><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/disclaimer/">Disclaimer</a></div>
 <link rel="preconnect" href="https://cdn.jsdelivr.net"><link rel="preconnect" href="https://rxhanrtoaplwphmwpgqg.supabase.co">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/qr.js"></script><script src="/studio/render.js?v=20261128w"></script>
+<script src="/studio/qr.js"></script><script src="/studio/render.js?v=20261128x"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -149,8 +149,8 @@ var sb=window.supabase.createClient(B,K,{auth:{persistSession:false,autoRefreshT
             var ins=out.filter(function(x){return !have[x.d+'|'+x.t]}).map(function(x){return{user_id:uid,title:x.t,fdate:x.d,ftime:x.m||null,place:x.p||null,link:x.l}});
             if(ins.length){var q=await ab.from('studio_functions').insert(ins);if(q.error)throw q.error}
             ov.remove();note.textContent='सेव हो गया ✓ — Studio के Home में "Saved Invitations" खोलकर 📅 दबाएँ और reminder लगाएँ';bt.textContent='✓ सेव हो गया'}catch(e){ok.disabled=false;er.textContent='सेव नहीं हो पाया। दोबारा कोशिश करें।'}}}}
-    else bt.onclick=async function(){bt.disabled=true;var ss=await ab.auth.getSession();
-      if(!ss.data||!ss.data.session){try{localStorage.setItem('sp_pending_save',t+'|'+s)}catch(e){}location.href='/studio/';return}
+    else bt.onclick=async function(){if(t==='visiting'&&!bt.__vc){bt.__vc=1;try{var nf=window.StudioRender.normalize('visiting',cj).fields;window.StudioRender.saveVcard(nf);try{track&&track('savecontact')}catch(e){}}catch(e){}}bt.disabled=true;var ss=await ab.auth.getSession();
+      if(!ss.data||!ss.data.session){try{localStorage.setItem('sp_pending_save',t+'|'+s)}catch(e){}if(t==='visiting'){note.textContent='📇 कॉन्टैक्ट सेव हो रहा है… फिर कार्ड सेव करने के लिए लॉगिन करें';setTimeout(function(){location.href='/studio/'},1800)}else location.href='/studio/';return}
       var r2=await ab.rpc('studio_save_card',{p_type:t,p_slug:s});bt.disabled=false;
       var m={ok:'सेव हो गया ✓ (Studio में "सेव किए कार्ड" में देखें)',own:'यह आपका अपना कार्ड है।',missing:'कार्ड नहीं मिला।',limit:'सेव की सीमा पूरी हो गई।',login:'पहले लॉगिन करें।'};
       note.textContent=r2.error?'सेव नहीं हो पाया। दोबारा कोशिश करें।':(m[r2.data]||'हो गया');if(!r2.error&&r2.data==='ok')bt.textContent='✓ सेव हो गया'}})()}catch(e){}
