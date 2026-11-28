@@ -110,6 +110,7 @@ body{padding:0 0 24px 220px}
 .grid.ig{grid-template-columns:repeat(3,1fr)}
 .card>button,.card>.err+button{max-width:640px}
 }#c-lay{display:none!important}.lc-pair{display:flex;flex-wrap:wrap;gap:0 10px;align-items:flex-start}.lc-pair>.card{flex:1 1 0;min-width:0;padding:6px!important}.lc-pair>.card.lc-wide{flex:1 1 100%}.lc-pair>.card:not(.lc-wide) *{font-size:15px!important}.lc-pair>.card:not(.lc-wide)>*{padding-top:12px!important;padding-bottom:12px!important;min-height:0!important}#ic-body>.card{margin-left:0;margin-right:0}
+#pf-invd:has(#pf-invsett:empty){display:none}#pf-invd summary::-webkit-details-marker{display:none}
 </style><script>(function(){try{var j=new URLSearchParams(location.search).get("join");if(j&&/^[a-f0-9]{16,40}$/.test(j)){localStorage.setItem("lc_join",j);history.replaceState(null,"",location.pathname);fetch("https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/rpc/corp_invite_info",{method:"POST",headers:{apikey:"sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d","Content-Type":"application/json"},body:JSON.stringify({p_token:j})}).then(function(r){return r.json()}).then(function(d){if(d&&d.state==="ok"){document.addEventListener("DOMContentLoaded",function(){var b=document.createElement("div");b.textContent="🏢 "+d.company+" आपको अपनी टीम में जोड़ना चाहता है"+(d.name?" ("+d.name+")":"")+"। Login करें, आप अपने-आप जुड़ जाएँगे।";b.style.cssText="background:#1d3557;color:#fff;padding:10px 14px;text-align:center;font-size:14px;font-weight:600";document.body.insertBefore(b,document.body.firstChild)})}}).catch(function(){})}}catch(e){}})()</script><script>(function(){try{var q=new URLSearchParams(location.search).get("saveinv");if(q){localStorage.setItem("lc_pending_inv",q);history.replaceState(null,"",location.pathname)}}catch(e){}})()</script><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script>(function(){try{if(!window.Capacitor&&!window.ViNative&&!/; wv\)/.test(navigator.userAgent)&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)&&!sessionStorage.getItem('lc_stay')){location.replace('/studio/appauth/'+location.search+location.hash);return}
   if(!window.Capacitor&&!window.ViNative&&!/; wv\)/.test(navigator.userAgent)&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){var H0=location.search+location.hash,HH=location.hash;
   document.addEventListener('DOMContentLoaded',function(){var go=function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#7a0a10;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
@@ -210,7 +211,7 @@ body{padding:0 0 24px 220px}
 <button type="button" class="alt" id="pk-back">वापस</button>
 </div>
 <form class="card" id="v-prof">
-<div id="pf-plan"></div><div id="pf-sett"></div><div id="pf-invsett"></div>
+<div id="pf-plan"></div><div id="pf-sett"></div><details id="pf-invd" style="margin:8px 0"><summary style="cursor:pointer;list-style:none;padding:10px 12px;border-radius:12px;background:#145a43;color:#fff;font-weight:800;font-size:14.5px">💌 Invitation सेटिंग (नाम-मोबाइल, शगुन) ▾</summary><div id="pf-invsett"></div></details>
 <div id="pf-th" style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('pf-body');q.hidden=!q.hidden;document.getElementById('pf-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">👤 मेरी प्रोफ़ाइल</b><span id="pf-ar" style="font-size:16px">▾</span></div>
 <div id="pf-body" hidden>
 <div class="k" style="margin:4px 0 8px">यहाँ बदलने पर आपका विज़िटिंग कार्ड भी बदल जाएगा, और कार्ड एडिट करने पर यह प्रोफ़ाइल भी।</div>
@@ -2022,7 +2023,8 @@ var _psSeq=0;async function pfSett(){var box=$('pf-sett');if(!box)return;var my=
   var L=(r&&r.data)||[];box.textContent='';
   var c=mk('div','');c.style.cssText='margin:8px 0;background:#fff;border:1.5px solid #f0d6d6;border-radius:12px;padding:10px 12px';c.appendChild(mk('b','','⚙️ कार्ड सेटिंग और एडिट'));
   L.forEach(function(x){var st=(x.content_json&&x.content_json.style)||{};var PN=(st.kind==='portfolio'||st.kind==='student')?'Portfolio Page':'Mini website';
-    if(L.length>1){var t=mk('div','',x.title||'कार्ड');t.style.cssText='font-weight:700;font-size:13px;color:#7a0a10;margin-top:10px';c.appendChild(t)}
+    var tgt=mk('div','');tgt.hidden=L.length>1;var t=mk('button','','🪪 '+(x.title||'कार्ड')+(st.site===true?'  · 🌐':'')+(L.length>1?'  ▾':''));t.type='button';t.style.cssText='display:block;width:100%;text-align:left;margin:10px 0 0;padding:10px 12px;min-height:0;border-radius:10px;border:1.5px solid #f0c9c9;background:#fff7f6;color:#7a0a10;font-weight:800;font-size:14.5px';
+    t.onclick=function(){tgt.hidden=!tgt.hidden;t.textContent=t.textContent.replace(/[▾▴]$/,tgt.hidden?'▾':'▴')};c.appendChild(t);c.appendChild(tgt);
     function row(lbl,key,hint){var on=st[key]===true;var rw=mk('div','');rw.style.cssText='display:flex;align-items:center;gap:10px;margin-top:8px';
       var gl=mk('div','');gl.style.flex='1';gl.appendChild(mk('div','',lbl)).style.cssText='font-weight:700;font-size:14px';var gs=mk('div','',hint);gs.style.cssText='font-size:12px;color:#666';gl.appendChild(gs);
       var lb=mk('span','swl2','');lb.style.color='#333';var sw=mk('button','isw');sw.type='button';sw.setAttribute('aria-label',lbl);sw.appendChild(document.createElement('i'));
@@ -2030,14 +2032,15 @@ var _psSeq=0;async function pfSett(){var box=$('pf-sett');if(!box)return;var my=
       sw.onclick=async function(){sw.disabled=true;var q=await sb.from('studio_designs').select('content_json').eq('id',x.id).maybeSingle();if(q.error||!q.data){sw.disabled=false;gs.textContent='बदला नहीं जा सका';return}
         var cj=q.data.content_json||{};cj.style=(cj.style&&typeof cj.style==='object')?cj.style:{};if(!on)cj.style[key]=true;else delete cj.style[key];
         var w=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sw.disabled=false;if(w.error||!w.data||!w.data.length){gs.textContent='बदला नहीं जा सका';return}on=!on;st[key]=on;paint();try{loadList()}catch(e){}};
-      rw.appendChild(gl);rw.appendChild(lb);rw.appendChild(sw);c.appendChild(rw)}
+      rw.appendChild(gl);rw.appendChild(lb);rw.appendChild(sw);tgt.appendChild(rw)}
     row('🌐 '+PN,'site','कार्ड पर '+PN+' का बटन');row('📱 नाम-मोबाइल पूछें','gate','कार्ड/वेबसाइट देखने से पहले');
     var er=mk('div','');er.style.cssText='display:flex;gap:6px;margin-top:8px';
     function eb(t,h2){var a=mk('a','',t);a.href=h2;a.style.cssText='flex:1;text-align:center;background:#fff1f0;color:#7a0a10;border:1.5px solid #f0c9c9;border-radius:10px;padding:9px 4px;font-weight:700;font-size:13.5px;text-decoration:none';er.appendChild(a)}
-    eb('✏️ कार्ड एडिट','/studio/editor/?v=20261129&id='+x.id);eb('🌐 '+PN+' एडिट','/studio/webeditor/?v=20261129&id='+x.id+'&tab=info');c.appendChild(er)});
+    eb('✏️ कार्ड एडिट','/studio/editor/?v=20261129&id='+x.id);eb('🌐 '+PN+' एडिट','/studio/webeditor/?v=20261129&id='+x.id+'&tab=info');tgt.appendChild(er)});
   var iv=await sb.from('studio_designs').select('id,title').eq('user_id',uid).eq('product_type','invitation').order('updated_at',{ascending:false}).limit(6);if(my!==_psSeq)return;
-  ((iv&&iv.data)||[]).forEach(function(x){var r2=mk('div','');r2.style.cssText='display:flex;align-items:center;gap:8px;margin-top:8px';var t2=mk('div','','💌 '+(x.title||'इनविटेशन'));t2.style.cssText='flex:1;min-width:0;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';r2.appendChild(t2);
-    var a2=mk('a','','✏️ एडिट');a2.href='/studio/editor/?v=20261129&id='+x.id;a2.style.cssText='flex:none;background:#fff1f0;color:#7a0a10;border:1.5px solid #f0c9c9;border-radius:10px;padding:7px 12px;font-weight:700;font-size:13.5px;text-decoration:none';r2.appendChild(a2);c.appendChild(r2)});
+  var IVL=(iv&&iv.data)||[],ivb=mk('div','');ivb.hidden=true;if(IVL.length){var ivh=mk('button','','💌 Invitation card ('+IVL.length+')  ▾');ivh.type='button';ivh.style.cssText='display:block;width:100%;text-align:left;margin:10px 0 0;padding:10px 12px;min-height:0;border-radius:10px;border:1.5px solid #f0c9c9;background:#fff7f6;color:#7a0a10;font-weight:800;font-size:14.5px';ivh.onclick=function(){ivb.hidden=!ivb.hidden;ivh.textContent=ivh.textContent.replace(/[▾▴]$/,ivb.hidden?'▾':'▴')};c.appendChild(ivh);c.appendChild(ivb)}
+  IVL.forEach(function(x){var r2=mk('div','');r2.style.cssText='display:flex;align-items:center;gap:8px;margin-top:8px';var t2=mk('div','','💌 '+(x.title||'इनविटेशन'));t2.style.cssText='flex:1;min-width:0;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';r2.appendChild(t2);
+    var a2=mk('a','','✏️ एडिट');a2.href='/studio/editor/?v=20261129&id='+x.id;a2.style.cssText='flex:none;background:#fff1f0;color:#7a0a10;border:1.5px solid #f0c9c9;border-radius:10px;padding:7px 12px;font-weight:700;font-size:13.5px;text-decoration:none';r2.appendChild(a2);ivb.appendChild(r2)});
   box.appendChild(c)}
 var _pfSeq=0;async function pfPlan(){var box=$('pf-plan');if(!box)return;var my=++_pfSeq;
   var u=await sb.auth.getUser();var uid=u&&u.data&&u.data.user&&u.data.user.id;if(!uid)return;
