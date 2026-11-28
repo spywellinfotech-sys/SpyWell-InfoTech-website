@@ -1686,8 +1686,10 @@ async function planTile(){
       ff.forEach(function(x){var dd=new Date(x.due_at),ds=fnYmd(dd),b=fnBadge(ds),r1=mk('div','pl-r'),d=mk('div','');var tt=mk('b','','📞 '+(x.name||x.mobile||'Follow-up'));var sp=mk('span','fnb',b[0]);sp.style.background=b[1];tt.appendChild(sp);d.appendChild(tt);d.appendChild(mk('div','','📆 '+fnDate(ds)+(x.note?' · '+x.note:'')));r1.appendChild(d);
         if(x.mobile){var a=mk('a','','📞');a.href='tel:+91'+String(x.mobile).replace(/\D/g,'').slice(-10);a.setAttribute('aria-label','कॉल');r1.appendChild(a)}fut.appendChild(r1)})}
     else{var e1=mk('div','pl-r');e1.appendChild(mk('div','','आगे कोई function या task नहीं है।'));fut.appendChild(e1)}
+    var nfn=(FN||[]).filter(function(e){return fnDiff(e.fdate)>=0}).length;var hint=mk('button','','🎊 Saved Invitations'+(nfn?' ('+nfn+' आगे)':'')+' · Invitation सेव करें ▾');hint.type='button';hint.style.cssText='display:block;width:100%;margin:10px 0 0;padding:9px 10px;min-height:0;border-radius:12px;border:1px dashed rgba(255,255,255,.75);background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:14px;text-align:left';hint.hidden=PLOPEN;
+    hint.onclick=function(ev){ev.stopPropagation();h.onclick();if(cfn)setTimeout(function(){cfn.scrollIntoView({behavior:'smooth',block:'start'})},60)};box.appendChild(hint);
     box.appendChild(fut);if(cfn){cfn.style.margin='12px 0 0';fut.appendChild(cfn)}
-    h.onclick=function(){PLOPEN=!PLOPEN;fut.hidden=!PLOPEN;hr.textContent=W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]+'  '+(PLOPEN?'▴':'▾')};
+    h.onclick=function(){PLOPEN=!PLOPEN;fut.hidden=!PLOPEN;hint.hidden=PLOPEN;hr.textContent=W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]+'  '+(PLOPEN?'▴':'▾')};
     box.hidden=false}catch(e){box.hidden=true}
 }
 var FN=null,FNOPEN=false,FNED=null,FNPHOTO=null,FNURL={};
