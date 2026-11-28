@@ -346,6 +346,11 @@ window.addEventListener('pageshow',heal);document.addEventListener('visibilitych
 setInterval(heal,1200);
 if(!window.supabase){$('v-load').textContent='लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।';return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
+/* light read cache: same read-only RPC with same args within 30s is served from memory (fewer network calls) */
+(function(){var RO={studio_is_admin:1,studio_sub_info:1,studio_my_stats:1,studio_my_stats_detail:1,studio_ref_me:1,studio_lb_board:1,studio_inv_archive_info:1,studio_sub_enabled:1},C={},orig=sb.rpc.bind(sb);
+  sb.rpc=function(fn,args){if(!RO[fn])return orig(fn,args);var k=fn+'|'+JSON.stringify(args||{}),c=C[k],now=Date.now();if(c&&now-c.t<30000)return c.p;
+    var p=Promise.resolve(orig(fn,args)).then(function(r){if(r&&r.error)delete C[k];return r},function(e){delete C[k];throw e});C[k]={t:now,p:p};return p};
+  sb.__rpcFlush=function(){C={}}})();
 var HERE=location.origin+'/studio/';
 var recovering=false;
 function msg(e){
