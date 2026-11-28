@@ -717,7 +717,7 @@
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd'), biz = / l-biz\b/.test(' ' + root.className), pf = / bzv-7\b/.test(' ' + root.className);
     if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hd.appendChild(lg); }
     if (f.business) hd.appendChild(el('div', 'sr-biz', f.business));
-    if (biz && pf && opts && opts.flip) { flipCard(root, d, opts); return; }
+    if (biz && pf && !(opts && opts.flip === false) && !/[?&]flip=0/.test(location.search)) { flipCard(root, d, opts); return; }
     if (biz) { if (pf) profileCard(root, d); else bizCards(root, d, root.style.getPropertyValue('--ac')); bd.className += ' noph'; if (pf) { pfBody(root, d, opts, bd); root.appendChild(bd); return; } } else {
     root.appendChild(hd);
     if (d.images.photo) bd.appendChild(picture('ph', d.images.photo, 'circle')); else bd.className += ' noph';
