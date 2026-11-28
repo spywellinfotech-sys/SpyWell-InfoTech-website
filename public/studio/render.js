@@ -52,6 +52,7 @@
       ['state', 'राज्य', 'text', 40],
       ['pin', 'पिन कोड', 'tel', 6],
       ['maplink', 'लोकेशन लिंक (Google Maps)', 'url', 300],
+      ['gbiz', 'Google Business प्रोफ़ाइल / Review लिंक', 'url', 300],
       ['website', 'अपनी फुल वेबसाइट का लिंक (हो तो)', 'url', 150],
       ['about', 'व्यवसाय के बारे में', 'area', 400],
       ['tagline', 'टैगलाइन: एक लाइन (मिनी वेबसाइट)', 'text', 120],
@@ -632,6 +633,7 @@
     var q2 = el('div', 'pf-2');
     var mpu = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address, f.city].filter(Boolean).join(', '))) : '';
     if (mpu) q2.appendChild(actA(link('pf-chat', '📍 ' + P('लोकेशन', 'Location'), mpu), 'location'));
+    if (V.url(f.gbiz)) { var gbl = actA(link('pf-chat', '⭐ ' + P('Google पर देखें / Review दें', 'Google Business / Review'), V.url(f.gbiz)), 'gbiz'); gbl.style.background = '#fff'; gbl.style.color = '#1a73e8'; gbl.style.border = '2px solid #1a73e8'; gbl.style.marginTop = '8px'; q2.appendChild(gbl); }
     if (q2.children.length) bd.appendChild(q2);
     var shp = el('div', 'pf-sharep'); shp.hidden = true; var built = false;
     var shb = el('button', 'pf-share', '🔗 ' + P('LiveCard शेयर करें', 'Share LiveCard')); shb.type = 'button';
@@ -655,6 +657,7 @@
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('💬 मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (em) act.appendChild(actA(link('', T('ईमेल'), 'mailto:' + em), 'email'));
     if (mini) act.appendChild(actA(link('', T('🌐 मिनी वेबसाइट'), mini), 'miniweb')); else if (web) act.appendChild(actA(link('', T('वेबसाइट'), web), 'website'));
+    if (V.url(f.gbiz)) act.appendChild(actA(link('', '⭐ Google Review', V.url(f.gbiz)), 'gbiz'));
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('\uD83D\uDCC7 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; act.appendChild(sv0); }
     act.appendChild(saveCardBtn(root, f));
     if (act.children.length) bd.appendChild(act);
@@ -832,6 +835,7 @@
     if (wa) act.appendChild(actA(link('', T('💬 WhatsApp'), 'https://wa.me/91' + wa), 'whatsapp'));
     if (V.tel(f.sms)) act.appendChild(actA(link('', T('✉️ मैसेज'), 'sms:+91' + V.tel(f.sms)), 'sms'));
     if (mapUrl) act.appendChild(actA(link('', T('📍 लोकेशन'), mapUrl), 'map'));
+    if (V.url(f.gbiz)) act.appendChild(actA(link('', '⭐ Google Review', V.url(f.gbiz)), 'gbiz'));
     if (PF && V.url(f.resume)) act.appendChild(actA(link('', '📄 रिज़्यूमे', V.url(f.resume)), 'website'));
     if (f.about) { var hab = el('p', 'ws-tag ws-habout', f.about.length > 200 ? f.about.slice(0, 197) + '…' : f.about); hin.appendChild(hab); }
     hero.appendChild(hin); hero.appendChild(waveEl()); var smo = t.motif ? txt(t.motif, 8) : ''; if (smo) hero.insertBefore(motifStrip(smo), hero.firstChild); root.appendChild(hero);

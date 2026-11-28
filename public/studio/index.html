@@ -336,7 +336,7 @@ var b=document.createElement('a');b.textContent=a[4]?'⬇️ APK':'देखे�
 <div class="k" style="margin:10px 0 0;font-size:11px;line-height:1.8"><a href="/dyname/privacy/">Privacy</a> · <a href="/dyname/terms/">Terms</a> · <a href="/dyname/disclaimer/">Disclaimer</a> · <a href="/dyname/refund/">Refund</a></div></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/render.js?v=20261127a"></script>
+<script src="/studio/render.js?v=20261128g"></script>
 <script>
 (function(){
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
@@ -981,7 +981,7 @@ function ring(p,sz,txt,sub){p=Math.max(0,Math.min(100,p||0));var w=mk('div','');
   var i=mk('div','');i.style.cssText='width:'+(sz-18)+'px;height:'+(sz-18)+'px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center';var b=mk('b','',txt);b.style.cssText='font-size:'+Math.round(sz/5)+'px;color:#b30e15;line-height:1';i.appendChild(b);if(sub){var u=mk('span','',sub);u.style.cssText='font-size:9px;color:var(--mut)';i.appendChild(u)}w.appendChild(i);return w}
 function hbar(box,label,val,mx,col){var r=mk('div','');r.style.cssText='margin:6px 0';var t=mk('div','');t.style.cssText='display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px';t.appendChild(mk('span','',label));t.appendChild(mk('b','',String(val)));r.appendChild(t);
   var tr=mk('div','');tr.style.cssText='height:9px;border-radius:6px;background:'+RTR+';overflow:hidden';var f=mk('div','');f.style.cssText='height:100%;border-radius:6px;background:'+(col||'linear-gradient(90deg,#b30e15,#ef3b34)')+';width:'+Math.max(4,Math.round(val/Math.max(mx,1)*100))+'%';tr.appendChild(f);r.appendChild(tr);box.appendChild(r)}
-var CLK={call:'📞 कॉल',whatsapp:'💬 WhatsApp',savecontact:'📇 कॉन्टैक्ट सेव',website:'🌐 वेबसाइट',miniweb:'🌐 मिनी वेबसाइट',email:'✉️ ईमेल',map:'📍 लोकेशन','share-wa':'↗ WhatsApp शेयर','share-tg':'↗ Telegram शेयर','share-sms':'↗ SMS शेयर','share-mail':'↗ ईमेल शेयर','share-fb':'↗ Facebook शेयर','share-copy':'🔗 लिंक कॉपी','share-native':'📤 शेयर','share-wab':'💼 WhatsApp Business',share:'↗ शेयर',savecard:'💾 कार्ड सेव'};
+var CLK={gbiz:'⭐ Google Business',call:'📞 कॉल',whatsapp:'💬 WhatsApp',savecontact:'📇 कॉन्टैक्ट सेव',website:'🌐 वेबसाइट',miniweb:'🌐 मिनी वेबसाइट',email:'✉️ ईमेल',map:'📍 लोकेशन','share-wa':'↗ WhatsApp शेयर','share-tg':'↗ Telegram शेयर','share-sms':'↗ SMS शेयर','share-mail':'↗ ईमेल शेयर','share-fb':'↗ Facebook शेयर','share-copy':'🔗 लिंक कॉपी','share-native':'📤 शेयर','share-wab':'💼 WhatsApp Business',share:'↗ शेयर',savecard:'💾 कार्ड सेव'};
 function drawIns(box,st,dd){box.textContent='';var root=box;
   function sec(t){box=mk('div','');box.style.cssText='margin-top:12px;padding:10px;border:1px solid #f0d6d4;border-radius:16px;background:#fff;box-shadow:0 3px 10px rgba(212,20,28,.08)';box.setAttribute('data-k',t.indexOf('🌐')===0?'site':'card');root.appendChild(box);var h=mk('b','',t);h.style.cssText='display:block;margin:0 0 8px;color:#9d0b12;font-size:15px;border-left:4px solid #d4141c;padding-left:8px';box.appendChild(h)}
   function grid(items){var g=mk('div','');g.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px';items.forEach(function(i){g.appendChild(mtile(i[0],i[1],i[2]))});box.appendChild(g)}
