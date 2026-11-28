@@ -25,11 +25,11 @@ const clip = (v: unknown, n: number) => String(v ?? "").trim().slice(0, n);
 const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
 async function settings() {
-  const { data } = await sb.from("studio_settings").select("k,v").in("k", ["ai_price_inr", "ai_pack_credits", "pub_price_invitation", "pub_price_visiting", "pay_bypass"]);
+  const { data } = await sb.from("studio_settings").select("k,v").in("k", ["ai_price_inr", "ai_pack_credits", "pub_price_invitation", "pub_price_visiting", "pay_bypass", "nfc_price_inr"]);
   const m: Record<string, string> = {}; (data || []).forEach((r: any) => (m[r.k] = r.v));
   const price = parseInt(m.ai_price_inr || "0") || 0, credits = parseInt(m.ai_pack_credits || "0") || 0;
   const pub: Record<string, number> = { invitation: parseInt(m.pub_price_invitation || "0") || 0, visiting: parseInt(m.pub_price_visiting || "0") || 0 };
-  return { price, credits, pub, bypass: m.pay_bypass === "1" };
+  return { price, credits, pub, bypass: m.pay_bypass === "1", nfc: parseInt(m.nfc_price_inr || "0") || 0 };
 }
 
 // Mark an order paid exactly once: yearly plan (studio_subs) or one-time publish fee (studio_pub_paid).
@@ -45,7 +45,10 @@ async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> 
   }
   const o = claim.data[0] as any;
   let err: unknown = null;
-  if (o.plan === "premium") {
+  if (o.plan === "nfc") {
+    const now = new Date().toISOString();
+    err = (await sb.from("studio_card_prints").upsert({ design_id: o.design_id, nfc_paid_at: now, nfc_at: now, updated_at: now }, { onConflict: "design_id" })).error;
+  } else if (o.plan === "premium") {
     err = (await sb.from("studio_prem_paid").upsert({ design_id: o.design_id, template_id: o.template_id || "", amount: Math.round((o.amount_paise || 0) / 100) + (o.wallet_used || 0), source: "paid" }, { onConflict: "design_id,template_id", ignoreDuplicates: true })).error;
   } else if (o.plan) {
     const { data: cur } = await sb.from("studio_subs").select("plan,paid_until").eq("design_id", o.design_id).maybeSingle();
@@ -125,7 +128,12 @@ Deno.serve(async (req) => {
       let price = st.pub[d.product_type] || 0, plan: string | null = null, newUntil: string | null = null;
       if (st.bypass) return json({ code: "free" }, 400);
       let tplId: string | null = null;
-      if (clip(b.plan, 10) === "premium") {
+      if (clip(b.plan, 10) === "nfc") {
+        if (d.product_type !== "visiting" || st.nfc < 1) return json({ code: "bad_plan" }, 400);
+        const { data: np } = await sb.from("studio_card_prints").select("nfc_paid_at").eq("design_id", did).maybeSingle();
+        if (np?.nfc_paid_at) return json({ code: "already_paid" }, 400);
+        price = st.nfc; plan = "nfc";
+      } else if (clip(b.plan, 10) === "premium") {
         const due = ((await sb.rpc("studio_prem_due", { p_design: did, p_tpl: d.template_id })).data as number) || 0;
         if (due < 1) return json({ code: "free" }, 400);
         price = due; plan = "premium"; tplId = d.template_id;

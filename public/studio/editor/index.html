@@ -573,7 +573,7 @@ function pExtra(p){
 }
 
 var DOMERR={bad_domain:'डोमेन सही नहीं है। ऐसे लिखें: aapkanaam.com',domain_taken:'यह डोमेन किसी और के नाम से जुड़ चुका है।',forbidden:'यह कार्ड आपका नहीं है।'};
-var PLN={premium:'प्रीमियम थीम',card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'फ़ुल वेबसाइट + अपना डोमेन'};
+var PLN={nfc:'NFC कार्ड (छपा हुआ)',premium:'प्रीमियम थीम',card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'फ़ुल वेबसाइट + अपना डोमेन'};
 function fmtD(x){try{return new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi-IN'),{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}}
 var MANERR={bad_utr:'UTR/ट्रांज़ैक्शन नंबर सही नहीं है (8 से 30 अक्षर/अंक)।',utr_used:'यह UTR पहले इस्तेमाल हो चुका है।',already_pending:'इस कार्ड का भुगतान पहले से जाँच में है।',bad_plan:'प्लान सही नहीं है।',free:'इसके लिए भुगतान की ज़रूरत नहीं है।',premium_required:'इस प्रीमियम थीम का भुगतान ज़रूरी है।'};
 async function manualPay(plan,amount){
@@ -610,7 +610,7 @@ async function payPlan(plan,amount){
     var mp=await manualPay(plan,amount);if(mp!==null){if(mp)panel();return false}
     var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await lr;
     await new Promise(function(res,rej){
-      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:PLN[plan]+' (1 साल)',
+      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:PLN[plan]+(plan==='nfc'||plan==='premium'?'':' (1 साल)'),
         handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
         modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
@@ -623,9 +623,18 @@ function upgPage(){
   var w=document.querySelector('.wrap'),box=h('div',{id:'upgpg',style:'max-width:560px;margin:0 auto;padding:6px 0 30px'});
   box.appendChild(h('div',{class:'k',style:'margin:4px 0 10px',text:'अपना प्लान चुनें या रिन्यू करें। कार्ड एडिट करने के लिए ऊपर ← से वापस जाएँ।'}));
   w.appendChild(box);
-  if(D.product_type==='visiting'){planBox(box);if(C&&C.style&&C.style.site===true)domainBox(box)}
+  if(D.product_type==='visiting'){planBox(box);if(C&&C.style&&C.style.site===true)domainBox(box);nfcBox(box)}
   else box.appendChild(h('div',{class:'k',text:'इस कार्ड के लिए प्लान की ज़रूरत नहीं है।'}));
   var eb=h('a',{href:'/studio/editor/?id='+encodeURIComponent(ID),style:'display:block;text-align:center;margin-top:14px;color:#d4141c;font-weight:700',text:'✏️ कार्ड एडिट करें'});box.appendChild(eb)}
+function nfcBox(p){
+  var box=h('div',{class:'item',style:'margin-top:10px;border:1.5px solid #0a7a5a;background:#effaf5'});
+  sb.rpc('studio_nfc_info',{p_id:D.id}).then(function(r){var s=r&&r.data;if(!s||!(s.price>=1))return;p.appendChild(box);if(location.hash==='#nfc')setTimeout(function(){box.scrollIntoView({behavior:'smooth',block:'center'})},300);
+    box.appendChild(h('b',{text:'📲 NFC कार्ड · ₹'+s.price}));
+    box.appendChild(h('div',{class:'k',style:'margin-top:6px',text:'असली प्लास्टिक कार्ड (डेबिट कार्ड साइज़), आपके डिज़ाइन और QR के साथ छपा हुआ। फ़ोन को कार्ड से छूते ही आपका LiveCard खुल जाएगा। एक बार का भुगतान।'}));
+    if(s.paid_at){box.appendChild(h('div',{style:'margin-top:8px;font-weight:700;color:#0a7a2f',text:'✅ ऑर्डर हो गया ('+fmtD(s.paid_at)+')। कार्ड तैयार होते ही आप तक पहुँचाया जाएगा।'}));return}
+    var b=h('button',{class:'btn',style:'margin-top:8px;background:#0a7a5a',text:'📲 NFC कार्ड मँगाएँ · ₹'+s.price});box.appendChild(b);
+    b.onclick=async function(){b.disabled=true;var ok=await payPlan('nfc',s.price);b.disabled=false;
+      if(ok){toast('✅ NFC कार्ड का ऑर्डर हो गया!','ok');box.textContent='';nfcBox(p);box.remove()}}})}
 function planBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
   sb.rpc('studio_sub_info',{p_id:D.id}).then(function(r){var s=r&&r.data;if(!s||!s.enabled||!s.required)return;

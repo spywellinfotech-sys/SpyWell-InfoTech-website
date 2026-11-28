@@ -579,7 +579,7 @@ function pExtra(p){
 }
 
 var DOMERR={bad_domain:'डोमेन सही नहीं है। ऐसे लिखें: aapkanaam.com',domain_taken:'यह डोमेन किसी और के नाम से जुड़ चुका है।',forbidden:'यह कार्ड आपका नहीं है।'};
-var PLN={premium:'प्रीमियम थीम',card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'फ़ुल वेबसाइट + अपना डोमेन'};
+var PLN={nfc:'NFC कार्ड (छपा हुआ)',premium:'प्रीमियम थीम',card:'विज़िटिंग कार्ड',site:'मिनी वेबसाइट',domain:'फ़ुल वेबसाइट + अपना डोमेन'};
 function fmtD(x){try{return new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi-IN'),{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}}
 var MANERR={bad_utr:'UTR/ट्रांज़ैक्शन नंबर सही नहीं है (8 से 30 अक्षर/अंक)।',utr_used:'यह UTR पहले इस्तेमाल हो चुका है।',already_pending:'इस कार्ड का भुगतान पहले से जाँच में है।',bad_plan:'प्लान सही नहीं है।',free:'इसके लिए भुगतान की ज़रूरत नहीं है।',premium_required:'इस प्रीमियम थीम का भुगतान ज़रूरी है।'};
 async function manualPay(plan,amount){
@@ -616,7 +616,7 @@ async function payPlan(plan,amount){
     var mp=await manualPay(plan,amount);if(mp!==null){if(mp)panel();return false}
     var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await lr;
     await new Promise(function(res,rej){
-      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:PLN[plan]+' (1 साल)',
+      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:PLN[plan]+(plan==='nfc'||plan==='premium'?'':' (1 साल)'),
         handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
         modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
