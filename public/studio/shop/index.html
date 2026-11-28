@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>प्रोडक्ट और सेवाएँ · LiveCard</title><link rel="icon" href="/studio/vicard-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Hind:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff7f4;color:#1c1414;font:16px/1.5 Hind,system-ui,sans-serif;padding-bottom:110px}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff}
+.bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.7);border-radius:99px;padding:7px 14px;font-weight:700}
+.bar b{font:800 19px "Baloo 2",sans-serif;flex:1}
+main{max-width:620px;margin:0 auto;padding:12px}
+.p{background:#fff;border:1.5px solid #f0d6d6;border-radius:16px;padding:14px;margin-bottom:12px}
+.p .top{display:flex;gap:12px;align-items:center}.p .ic{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex:none;color:#fff}
+.p b.n{font:800 17px "Baloo 2",sans-serif;display:block}.pr{font-weight:800;color:#d4141c}.k{color:#6d6060;font-size:14px}
+select,button{font:700 15px Hind,sans-serif}select{width:100%;padding:10px;border-radius:10px;border:1.5px solid #ecd3cf;margin:10px 0 0;background:#fff}
+button.add{width:100%;margin-top:8px;padding:11px;border:0;border-radius:12px;background:#d4141c;color:#fff;cursor:pointer}button.add.in{background:#0a7a2f}
+.cartbar{position:fixed;left:0;right:0;bottom:0;z-index:9;background:#fff;box-shadow:0 -6px 20px rgba(0,0,0,.15);padding:12px 14px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px}
+.cartbar .t{flex:1}.cartbar button{padding:12px 18px;border:0;border-radius:14px;background:#d4141c;color:#fff;cursor:pointer}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center}.sheet>div{background:#fff;width:100%;max-width:620px;max-height:90vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px}
+.ci{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #f3e6e3}.ci .x{border:0;background:#f6eeee;border-radius:10px;width:34px;height:34px;cursor:pointer}
+.err{color:#b00020;font-weight:700}.ok{color:#0a7a2f;font-weight:800}
+</style></head><body>
+<div class="bar"><a href="/studio/">←</a><b>🛍️ प्रोडक्ट और सेवाएँ</b></div>
+<main id="m"><p class="k">लोड हो रहा है…</p></main>
+<div class="cartbar" id="cb" hidden><div class="t"><b id="cbn">🛒 0 चीज़ें</b><div class="k" id="cbt"></div></div><button type="button" id="cbo">कार्ट देखें →</button></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function(){
+var $=function(i){return document.getElementById(i)},m=$('m');
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
+var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
+var ss=await sb.auth.getSession();if(!ss.data.session){m.innerHTML='<div class="p">पहले लॉगिन करें। <a href="/studio/">लॉगिन →</a></div>';return}
+var uid=ss.data.session.user.id;
+async function fn(body){var s2=await sb.auth.getSession();var r=await fetch(B+'/functions/v1/studio-pay',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+s2.data.session.access_token},body:JSON.stringify(body)});var j=await r.json().catch(function(){return{}});if(!r.ok){var e=new Error(j.code||'err');e.code=j.code;throw e}return j}
+var rs=await Promise.all([sb.from('studio_designs').select('id,title,product_type,slug,status').eq('user_id',uid).in('product_type',['visiting','invitation']).order('created_at',{ascending:false}),sb.from('studio_settings').select('k,v').in('k',['sub_price_card','sub_price_site','sub_price_domain','nfc_price_inr','pub_price_invitation'])]);
+var DS=(rs[0].data||[]),S={};(rs[1].data||[]).forEach(function(r){S[r.k]=+r.v||0});
+var VIS=DS.filter(function(d){return d.product_type==='visiting'}),INV=DS.filter(function(d){return d.product_type==='invitation'});
+var P=[
+ {k:'card',ic:'🪪',c:'#d4141c',n:'विज़िटिंग कार्ड प्लान',pr:(S.sub_price_card||600),u:'/ साल',d:'डिजिटल कार्ड का लिंक, QR, कॉल/WhatsApp बटन, कॉन्टैक्ट सेव, इनसाइट।',t:'v'},
+ {k:'site',ic:'🌐',c:'#1a56db',n:'मिनी वेबसाइट प्लान',pr:(S.sub_price_site||1200),u:'/ साल',d:'विज़िटिंग कार्ड + पूरी वेबसाइट: सेवाएँ, गैलरी, वीडियो, पूछताछ फ़ॉर्म, एड्रेस कार्ड।',t:'v'},
+ {k:'domain',ic:'🔗',c:'#7e22ce',n:'फ़ुल वेबसाइट + अपना डोमेन',pr:(S.sub_price_domain||6000),u:'/ साल',d:'मिनी वेबसाइट आपके अपने डोमेन (जैसे www.aapkanaam.com) पर।',t:'v'},
+ {k:'nfc',ic:'📲',c:'#0a7a5a',n:'NFC कार्ड (छपा हुआ)',pr:(S.nfc_price_inr||699),u:'एक बार',d:'असली प्लास्टिक कार्ड, फ़ोन से छूते ही आपका LiveCard खुले। कार्ड प्लान चालू न हो तो वह भी साथ जुड़ जाएगा।',t:'v'},
+ {k:'inv',ic:'💌',c:'#c2185b',n:'इनविटेशन कार्ड',pr:(S.pub_price_invitation||999),u:'एक बार',d:'शादी/function का डिजिटल निमंत्रण, function तक लिंक चालू।',t:'i'}];
+var CART=[];try{CART=JSON.parse(localStorage.getItem('lc_cart')||'[]')||[]}catch(e){}
+CART=CART.filter(function(c){return DS.some(function(d){return d.id===c.design_id})});
+function saveC(){try{localStorage.setItem('lc_cart',JSON.stringify(CART))}catch(e){}bar()}
+function inC(k,id){return CART.some(function(c){return c.kind===k&&c.design_id===id})}
+function draw(){
+  var h='<p class="k" style="margin:2px 0 12px">जो चाहिए उसे कार्ट में डालें, फिर एक साथ भुगतान करें।</p>';
+  P.forEach(function(p,i){var L=p.t==='v'?VIS:INV;
+    h+='<div class="p"><div class="top"><div class="ic" style="background:'+p.c+'">'+p.ic+'</div><div style="flex:1"><b class="n">'+esc(p.n)+'</b><span class="pr">₹'+p.pr+'</span> <span class="k">'+p.u+'</span></div></div><div class="k" style="margin-top:8px">'+esc(p.d)+'</div>';
+    if(!L.length)h+='<div class="k" style="margin-top:10px">पहले '+(p.t==='v'?'विज़िटिंग कार्ड':'इनविटेशन कार्ड')+' बनाएँ, फिर यहाँ से खरीदें।</div>';
+    else{h+=(L.length>1?'<select data-s="'+i+'">'+L.map(function(d){return '<option value="'+d.id+'">'+esc(d.title||d.slug||'कार्ड')+'</option>'}).join('')+'</select>':'<input type="hidden" data-s="'+i+'" value="'+L[0].id+'">');
+      h+='<button type="button" class="add" data-a="'+i+'"></button>'}
+    h+='</div>'});
+  m.innerHTML=h;
+  [].forEach.call(m.querySelectorAll('[data-a]'),function(b){var i=+b.dataset.a,p=P[i],sel=m.querySelector('[data-s="'+i+'"]');
+    function paint(){var on=inC(p.k,sel.value);b.textContent=on?'✓ कार्ट में है · हटाएँ':'🛒 कार्ट में डालें';b.className='add'+(on?' in':'')}
+    paint();if(sel.tagName==='SELECT')sel.onchange=paint;
+    b.onclick=function(){var id=sel.value;if(inC(p.k,id))CART=CART.filter(function(c){return !(c.kind===p.k&&c.design_id===id)});else CART.push({kind:p.k,design_id:id});saveC();paint()}});
+  bar()}
+function bar(){var cb=$('cb');cb.hidden=!CART.length;$('cbn').textContent='🛒 '+CART.length+' चीज़ें';var t=0;CART.forEach(function(c){var p=P.filter(function(x){return x.k===c.kind})[0];if(p)t+=p.pr});$('cbt').textContent='लगभग ₹'+t+' · असली रकम अगले पेज पर'}
+var KN={card:'विज़िटिंग कार्ड प्लान',site:'मिनी वेबसाइट प्लान',domain:'फ़ुल वेबसाइट + डोमेन',nfc:'NFC कार्ड',inv:'इनविटेशन कार्ड'};
+$('cbo').onclick=async function(){var o=document.createElement('div');o.className='sheet';var bx=document.createElement('div');o.appendChild(bx);document.body.appendChild(o);o.onclick=function(e){if(e.target===o)o.remove()};
+  bx.innerHTML='<b style="font-size:18px">🛒 आपका कार्ट</b><p class="k">हिसाब लगाया जा रहा है…</p>';
+  var q;try{q=await fn({action:'cart_quote',items:CART})}catch(e){bx.innerHTML='<p class="err">कार्ट नहीं खुल पाया। दोबारा कोशिश करें।</p>';return}
+  var h='<div style="display:flex;align-items:center"><b style="font-size:18px;flex:1">🛒 आपका कार्ट</b><button type="button" id="sx" style="border:0;background:#f6eeee;border-radius:10px;padding:6px 12px">✕</button></div>';
+  (q.items||[]).forEach(function(it){var d=DS.filter(function(x){return x.id===it.design_id})[0]||{};h+='<div class="ci"><div style="flex:1"><b>'+esc(KN[it.kind]||it.kind)+'</b><div class="k">'+esc(d.title||it.title||'')+(it.until&&it.kind!=='nfc'&&it.kind!=='inv'?' · '+new Date(it.until).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})+' तक':'')+'</div></div><b>₹'+it.amount+'</b>'+(CART.some(function(c){return c.kind===it.kind&&c.design_id===it.design_id})?'<button type="button" class="x" data-r="'+it.kind+'|'+it.design_id+'">✕</button>':'<span class="k" style="font-size:11px;width:34px;text-align:center">साथ में</span>')+'</div>'});
+  if((q.skipped||[]).length)h+='<p class="k">ℹ️ '+q.skipped.length+' चीज़ पहले से चालू है या दूसरे प्लान में शामिल है, इसलिए नहीं जोड़ी।</p>';
+  h+='<div class="ci" style="font-size:18px"><b style="flex:1">कुल</b><b>₹'+(q.total||0)+'</b></div><p class="k" id="sm"></p>';
+  h+=(q.total>0?'<button type="button" id="spay" style="width:100%;padding:14px;border:0;border-radius:14px;background:#d4141c;color:#fff;font-size:17px">💳 ₹'+q.total+' भुगतान करें</button>':'<p class="k">कार्ट में खरीदने लायक कुछ नहीं बचा।</p>');
+  bx.innerHTML=h;$('sx').onclick=function(){o.remove()};
+  [].forEach.call(bx.querySelectorAll('[data-r]'),function(b){b.onclick=function(){var a=b.dataset.r.split('|');CART=CART.filter(function(c){return !(c.kind===a[0]&&c.design_id===a[1])});saveC();o.remove();draw();if(CART.length)$('cbo').onclick()}});
+  var pb=$('spay');if(pb)pb.onclick=async function(){pb.disabled=true;$('sm').textContent='भुगतान खुल रहा है…';
+    try{var lr=new Promise(function(res,rej){if(window.Razorpay)return res();var sc=document.createElement('script');sc.src='https://checkout.razorpay.com/v1/checkout.js';sc.onload=res;sc.onerror=rej;document.head.appendChild(sc)});
+      var od=await fn({action:'cart_create',items:CART});await lr;
+      await new Promise(function(res,rej){var rz=new window.Razorpay({key:od.key_id,amount:od.amount,currency:'INR',order_id:od.order_id,name:'LiveCard',description:'LiveCard प्रोडक्ट और सेवाएँ',
+        handler:async function(r){try{await fn({action:'cart_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},modal:{ondismiss:function(){rej(new Error('dismiss'))}}});rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
+      CART=[];saveC();bx.innerHTML='<p class="ok" style="font-size:20px">✅ भुगतान हो गया!</p><p>आपके प्लान और सेवाएँ चालू हो गईं। NFC कार्ड हो तो हमारी टीम छापकर आप तक भेजेगी।</p><a href="/studio/" style="display:block;text-align:center;padding:13px;border-radius:14px;background:#d4141c;color:#fff;font-weight:800;text-decoration:none">← Studio पर जाएँ</a>';draw()}
+    catch(e){pb.disabled=false;$('sm').innerHTML='<span class="err">'+(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है।':'भुगतान पूरा नहीं हुआ। पैसे कटे हों तो पेज दोबारा खोलें, अपने-आप जुड़ जाएगा।')+'</span>'}}};
+try{fn({action:'cart_sync'})}catch(e){}
+draw();
+})();
+</script></body></html>

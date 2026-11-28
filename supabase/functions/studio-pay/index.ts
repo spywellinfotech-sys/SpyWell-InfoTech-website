@@ -69,6 +69,70 @@ async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> 
   return true;
 }
 
+// ---- cart: several packages in one payment ----
+type CartItem = { kind: string; design_id: string; amount: number; until?: string | null; title?: string };
+async function cartQuote(userId: string, raw: any[], st: any): Promise<{ items: CartItem[]; total: number; skipped: string[] }> {
+  const out: CartItem[] = [], skipped: string[] = [], seen = new Set<string>();
+  const list = (Array.isArray(raw) ? raw : []).slice(0, 20);
+  const subPlan: Record<string, string> = {};
+  for (const r of list) { const k = clip(r?.kind, 10), did = clip(r?.design_id, 60); if (RANK[k]) { if (!subPlan[did] || RANK[k] > RANK[subPlan[did]]) subPlan[did] = k; } }
+  for (const r of list) {
+    const k = clip(r?.kind, 10), did = clip(r?.design_id, 60), key = k + "|" + did;
+    if (!did || seen.has(key)) continue; seen.add(key);
+    if (RANK[k] && subPlan[did] !== k) { skipped.push(key); continue; }
+    const { data: d } = await sb.from("studio_designs").select("user_id,product_type,title").eq("id", did).maybeSingle();
+    if (!d || d.user_id !== userId) { skipped.push(key); continue; }
+    if (RANK[k]) {
+      if (d.product_type !== "visiting") { skipped.push(key); continue; }
+      const q = (await sb.rpc("studio_sub_quote", { p_id: did, p_target: k })).data as any;
+      if (!q || q.kind === "none" || !(q.amount >= 1)) { skipped.push(key); continue; }
+      out.push({ kind: k, design_id: did, amount: q.amount, until: q.until, title: d.title });
+    } else if (k === "nfc") {
+      if (d.product_type !== "visiting" || st.nfc < 1) { skipped.push(key); continue; }
+      const { data: np } = await sb.from("studio_card_prints").select("nfc_paid_at").eq("design_id", did).maybeSingle();
+      if (np?.nfc_paid_at) { skipped.push(key); continue; }
+      out.push({ kind: "nfc", design_id: did, amount: st.nfc, title: d.title });
+      if (!subPlan[did]) { const { data: cs } = await sb.from("studio_subs").select("paid_until").eq("design_id", did).maybeSingle();
+        if (!cs || new Date(cs.paid_until) < new Date()) { const q = (await sb.rpc("studio_sub_quote", { p_id: did, p_target: "card" })).data as any;
+          if (q && q.amount >= 1) { out.push({ kind: "card", design_id: did, amount: q.amount, until: q.until, title: d.title }); subPlan[did] = "card"; } } }
+    } else if (k === "inv") {
+      if (d.product_type !== "invitation" || !(st.pub.invitation >= 1)) { skipped.push(key); continue; }
+      const { data: paid } = await sb.from("studio_pub_paid").select("design_id").eq("design_id", did).maybeSingle();
+      if (paid) { skipped.push(key); continue; }
+      out.push({ kind: "inv", design_id: did, amount: st.pub.invitation, title: d.title });
+    } else skipped.push(key);
+  }
+  return { items: out, total: out.reduce((a, b) => a + b.amount, 0), skipped };
+}
+async function fulfillCart(orderId: string, paymentId: string): Promise<boolean> {
+  const claim = await sb.from("studio_cart_orders").update({ status: "paid", rzp_payment_id: paymentId, paid_at: new Date().toISOString() })
+    .eq("rzp_order_id", orderId).eq("status", "created").select("user_id,items,amount_paise,wallet_used");
+  if (claim.error) return false;
+  if (!claim.data || claim.data.length === 0) { const { data: o } = await sb.from("studio_cart_orders").select("status").eq("rzp_order_id", orderId).maybeSingle(); return o?.status === "paid"; }
+  const o = claim.data[0] as any, now = new Date().toISOString(); let bad = false;
+  for (const it of (o.items || []) as CartItem[]) {
+    try {
+      if (RANK[it.kind]) {
+        const { data: cur } = await sb.from("studio_subs").select("plan,paid_until").eq("design_id", it.design_id).maybeSingle();
+        const plan = cur && (RANK[cur.plan] || 0) > RANK[it.kind] ? cur.plan : it.kind;
+        const until = cur && it.until && new Date(cur.paid_until) > new Date(it.until) ? cur.paid_until : (it.until || cur?.paid_until);
+        const e = (await sb.from("studio_subs").upsert({ design_id: it.design_id, plan, paid_until: until, updated_at: now }, { onConflict: "design_id" })).error; if (e) bad = true;
+        if (RANK[it.kind] >= 2) { try { const { data: dz } = await sb.from("studio_designs").select("content_json").eq("id", it.design_id).maybeSingle(); const cj = (dz?.content_json || {}) as any; cj.style = cj.style && typeof cj.style === "object" ? cj.style : {}; if (cj.style.site !== true) { cj.style.site = true; await sb.from("studio_designs").update({ content_json: cj }).eq("id", it.design_id); } } catch { /* ignore */ } }
+      } else if (it.kind === "nfc") {
+        const e = (await sb.from("studio_card_prints").upsert({ design_id: it.design_id, nfc_paid_at: now, nfc_at: now, updated_at: now }, { onConflict: "design_id" })).error; if (e) bad = true;
+        try { await sb.rpc("nfc_issue_paid", { p_design: it.design_id, p_amount: it.amount, p_ref: orderId + ":" + it.design_id }); } catch { /* ignore */ }
+      } else if (it.kind === "inv") {
+        const e = (await sb.from("studio_pub_paid").upsert({ design_id: it.design_id, source: "paid" }, { onConflict: "design_id", ignoreDuplicates: true })).error; if (e) bad = true;
+      }
+    } catch { bad = true; }
+  }
+  try {
+    if (o.wallet_used > 0) await sb.rpc("studio_wallet_spend", { p_user: o.user_id, p_amt: o.wallet_used, p_note: "कार्ट भुगतान में उपयोग" });
+    await sb.rpc("studio_ref_reward", { p_user: o.user_id, p_paid: Math.round((o.amount_paise || 0) / 100) });
+  } catch { /* ignore */ }
+  return !bad;
+}
+
 // Add the credits for a paid order exactly once.
 async function fulfill(orderId: string, paymentId: string): Promise<{ ok: boolean; balance?: number; error?: string }> {
   const claim = await sb.from("studio_ai_orders")
@@ -103,7 +167,7 @@ Deno.serve(async (req) => {
       const ev = JSON.parse(raw);
       if (ev.event === "payment.captured" || ev.event === "order.paid") {
         const p = ev.payload?.payment?.entity;
-        if (p?.order_id) { const f = await fulfill(p.order_id, p.id); if (!f.ok) await fulfillPub(p.order_id, p.id); }
+        if (p?.order_id) { const f = await fulfill(p.order_id, p.id); if (!f.ok) { const ok = await fulfillPub(p.order_id, p.id); if (!ok) await fulfillCart(p.order_id, p.id); } }
       }
     } catch { /* ignore */ }
     return json({ ok: true });
@@ -121,6 +185,39 @@ Deno.serve(async (req) => {
   const configured = !!(keyId && keySecret) && st.price >= 1 && st.credits >= 1;
 
   if (b.action === "info") return json({ configured, price: st.price, credits: st.credits });
+
+  // ---- cart ----
+  if (b.action === "cart_quote") { const q = await cartQuote(user.id, b.items, st); return json(q); }
+  if (b.action === "cart_create") {
+    if (!keyId || !keySecret) return json({ code: "not_configured" }, 503);
+    const q = await cartQuote(user.id, b.items, st);
+    if (!q.items.length || q.total < 1) return json({ code: "empty", skipped: q.skipped }, 400);
+    const wu = ((await sb.rpc("studio_wallet_use", { p_user: user.id, p_amount: q.total })).data as number) || 0;
+    const amount = (q.total - wu) * 100;
+    const r = await fetch("https://api.razorpay.com/v1/orders", { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Basic " + btoa(`${keyId}:${keySecret}`) },
+      body: JSON.stringify({ amount, currency: "INR", receipt: "scart_" + crypto.randomUUID().slice(0, 8), notes: { user: user.id, cart: String(q.items.length) } }) });
+    const ro = await r.json();
+    if (!r.ok || !ro.id) return json({ code: "order_failed" }, 502);
+    const ins = await sb.from("studio_cart_orders").insert({ rzp_order_id: ro.id, user_id: user.id, items: q.items, amount_paise: amount, wallet_used: wu });
+    if (ins.error) return json({ code: "db" }, 500);
+    return json({ order_id: ro.id, key_id: keyId, amount, wallet_used: wu, items: q.items, total: q.total });
+  }
+  if (b.action === "cart_verify") {
+    const oid = clip(b.order_id, 60), pid = clip(b.payment_id, 60), sig = clip(b.signature, 100);
+    if (!oid || !pid || !sig || !keySecret) return json({ code: "bad_request" }, 400);
+    const { data: own } = await sb.from("studio_cart_orders").select("user_id").eq("rzp_order_id", oid).maybeSingle();
+    if (!own || own.user_id !== user.id) return json({ code: "order_not_found" }, 404);
+    if (!same(await hmac(keySecret, `${oid}|${pid}`), sig)) return json({ code: "not_verified" }, 400);
+    if (!(await fulfillCart(oid, pid))) return json({ code: "fulfill_failed" }, 500);
+    return json({ ok: true });
+  }
+  if (b.action === "cart_sync") {
+    if (!keyId || !keySecret) return json({ ok: true });
+    const { data: pend } = await sb.from("studio_cart_orders").select("rzp_order_id").eq("user_id", user.id).eq("status", "created").gte("created_at", new Date(Date.now() - 3 * 86400000).toISOString()).limit(5);
+    for (const o of pend || []) { const r = await fetch(`https://api.razorpay.com/v1/orders/${o.rzp_order_id}/payments`, { headers: { Authorization: "Basic " + btoa(`${keyId}:${keySecret}`) } }); if (!r.ok) continue;
+      const cap = ((await r.json()).items || []).find((p: any) => p.status === "captured"); if (cap) await fulfillCart(o.rzp_order_id, cap.id); }
+    return json({ ok: true });
+  }
 
   // ---- paid publishing ----
   if (b.action === "pub_create" || b.action === "pub_verify") {
