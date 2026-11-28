@@ -635,11 +635,11 @@ function upgPage(){
 function nfcBox(p){
   var box=h('div',{class:'item',style:'margin-top:10px;border:1.5px solid #0a7a5a;background:#effaf5'});
   sb.rpc('studio_nfc_info',{p_id:D.id}).then(function(r){var s=r&&r.data;if(!s||!(s.price>=1))return;p.appendChild(box);if(location.hash==='#nfc')setTimeout(function(){box.scrollIntoView({behavior:'smooth',block:'center'})},300);
-    box.appendChild(h('b',{text:'📲 NFC कार्ड · ₹'+s.price}));
-    box.appendChild(h('div',{class:'k',style:'margin-top:6px',text:'असली प्लास्टिक कार्ड (डेबिट कार्ड साइज़), आपके डिज़ाइन और QR के साथ छपा हुआ। फ़ोन को कार्ड से छूते ही आपका LiveCard खुल जाएगा। एक बार का भुगतान।'}));
+    var tot=s.price+(s.sub_live?0:(s.card_price||0));box.appendChild(h('b',{text:'📲 NFC कार्ड · ₹'+s.price+' + ₹'+(s.card_price||600)+'/साल'}));
+    box.appendChild(h('div',{class:'k',style:'margin-top:6px',text:'असली प्लास्टिक कार्ड (डेबिट कार्ड साइज़), आपके डिज़ाइन और QR के साथ छपा हुआ। फ़ोन को कार्ड से छूते ही आपका LiveCard खुल जाएगा। कार्ड ₹'+s.price+' एक बार + विज़िटिंग कार्ड प्लान ₹'+(s.card_price||600)+'/साल (कार्ड लिंक चालू रखने के लिए)।'+(s.sub_live?' ✅ आपका प्लान चालू है, अभी सिर्फ़ ₹'+s.price+' देने हैं।':' अभी कुल ₹'+tot+' (₹'+s.price+' कार्ड + ₹'+(s.card_price||600)+' पहला साल)।')}));
     if(s.paid_at){box.appendChild(h('div',{style:'margin-top:8px;font-weight:700;color:#0a7a2f',text:'✅ ऑर्डर हो गया ('+fmtD(s.paid_at)+')। कार्ड तैयार होते ही आप तक पहुँचाया जाएगा।'}));return}
-    var b=h('button',{class:'btn',style:'margin-top:8px;background:#0a7a5a',text:'📲 NFC कार्ड मँगाएँ · ₹'+s.price});box.appendChild(b);
-    b.onclick=async function(){b.disabled=true;var ok=await payPlan('nfc',s.price);b.disabled=false;
+    var b=h('button',{class:'btn',style:'margin-top:8px;background:#0a7a5a',text:'📲 NFC कार्ड मँगाएँ · ₹'+tot});box.appendChild(b);
+    b.onclick=async function(){b.disabled=true;var ok=await payPlan('nfc',tot);b.disabled=false;
       if(ok){toast('✅ NFC कार्ड का ऑर्डर हो गया!','ok');box.textContent='';nfcBox(p);box.remove()}}})}
 function planBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);

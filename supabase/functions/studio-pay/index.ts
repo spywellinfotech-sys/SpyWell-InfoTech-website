@@ -48,6 +48,8 @@ async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> 
   if (o.plan === "nfc") {
     const now = new Date().toISOString();
     err = (await sb.from("studio_card_prints").upsert({ design_id: o.design_id, nfc_paid_at: now, nfc_at: now, updated_at: now }, { onConflict: "design_id" })).error;
+    if (!err && o.new_until) { const { data: cur } = await sb.from("studio_subs").select("plan,paid_until").eq("design_id", o.design_id).maybeSingle();
+      if (!cur || new Date(cur.paid_until) < new Date()) err = (await sb.from("studio_subs").upsert({ design_id: o.design_id, plan: cur && (RANK[cur.plan] || 0) > 1 ? cur.plan : "card", paid_until: o.new_until, updated_at: now }, { onConflict: "design_id" })).error; }
     if (!err) { try { await sb.rpc("nfc_issue_paid", { p_design: o.design_id, p_amount: Math.round((o.amount_paise || 0) / 100) + (o.wallet_used || 0), p_ref: orderId }); } catch { /* NFC record must never break a paid order */ } }
   } else if (o.plan === "premium") {
     err = (await sb.from("studio_prem_paid").upsert({ design_id: o.design_id, template_id: o.template_id || "", amount: Math.round((o.amount_paise || 0) / 100) + (o.wallet_used || 0), source: "paid" }, { onConflict: "design_id,template_id", ignoreDuplicates: true })).error;
@@ -134,6 +136,8 @@ Deno.serve(async (req) => {
         const { data: np } = await sb.from("studio_card_prints").select("nfc_paid_at").eq("design_id", did).maybeSingle();
         if (np?.nfc_paid_at) return json({ code: "already_paid" }, 400);
         price = st.nfc; plan = "nfc";
+        const { data: cs } = await sb.from("studio_subs").select("paid_until").eq("design_id", did).maybeSingle();
+        if (!cs || new Date(cs.paid_until) < new Date()) { const cp = ((await sb.rpc("studio_sub_price", { p: "card" })).data as number) || 0; price += cp; newUntil = new Date(Date.now() + 365 * 86400000).toISOString(); }
       } else if (clip(b.plan, 10) === "premium") {
         const due = ((await sb.rpc("studio_prem_due", { p_design: did, p_tpl: d.template_id })).data as number) || 0;
         if (due < 1) return json({ code: "free" }, 400);
