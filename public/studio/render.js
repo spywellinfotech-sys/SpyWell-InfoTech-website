@@ -656,14 +656,14 @@
     w.appendChild(sc); var hint = el('div', 'fl-hint', '👆 ' + P('कार्ड टैप करें, पलटेगा', 'Tap the card to flip')); w.appendChild(hint);
     var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), emx = V.email(f.email), row = el('div', 'fl-ics');
     var mpu = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address, f.city].filter(Boolean).join(', '))) : '';
-    function ic(lbl, href, key, bg, sym, fg) { if (!href) return; var a = actA(link('', '', href), key); a.setAttribute('aria-label', lbl); var b = el('span', '', sym); b.style.cssText = 'width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 20px system-ui,sans-serif;color:' + (fg || '#fff') + ';background:' + bg + ';box-shadow:0 3px 8px rgba(0,0,0,.3)'; a.appendChild(b); a.appendChild(el('small', '', lbl)); a.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:3px;color:#fff;text-decoration:none;font-size:11px;font-weight:700;width:58px'; row.appendChild(a); }
+    function ic(lbl, href, key, bg, sym, fg) { if (!href) return; var a = actA(link('', '', href), key); a.setAttribute('aria-label', lbl); var b = el('span', '', SOCSVG[sym] ? '' : sym); if (SOCSVG[sym]) b.innerHTML = SOCSVG[sym].replace(/width="22" height="22"/, 'width="26" height="26"'); b.style.cssText = 'width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 20px system-ui,sans-serif;color:' + (fg || '#fff') + ';background:' + bg + ';box-shadow:0 3px 8px rgba(0,0,0,.3)'; a.appendChild(b); a.appendChild(el('small', '', lbl)); a.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:3px;color:#fff;text-decoration:none;font-size:11px;font-weight:700;width:58px'; row.appendChild(a); }
     ic(P('कॉल', 'Call'), tel && 'tel:+91' + tel, 'call', '#0f9d58', '📞');
     ic('WhatsApp', wa && 'https://wa.me/91' + wa, 'whatsapp', '#25d366', '💬');
     ic(P('लोकेशन', 'Location'), mpu, 'location', '#1a73e8', '📍');
     ic(P('ईमेल', 'Email'), emx && 'mailto:' + emx, 'email', '#ea4335', '✉️');
-    ic('Instagram', V.url(f.instagram), 'social', 'linear-gradient(45deg,#f9a03a,#e1306c,#7a3fd1)', 'IG');
-    ic('Facebook', V.url(f.facebook), 'social', '#1877f2', 'f');
-    ic('YouTube', V.url(f.youtube), 'social', '#e00', '▶');
+    ic('Instagram', V.url(f.instagram), 'social', 'linear-gradient(45deg,#f9a03a,#e1306c,#7a3fd1)', 'ig');
+    ic('Facebook', V.url(f.facebook), 'social', '#1877f2', 'fb');
+    ic('YouTube', V.url(f.youtube), 'social', '#e00', 'yt');
     ic('LinkedIn', V.url(f.linkedin), 'social', '#0a66c2', 'in');
     ic('Google ⭐', V.url(f.gbiz), 'gbiz', '#fff', 'G', '#1a73e8');
     if (row.children.length) { row.style.cssText = 'display:flex;justify-content:center;flex-wrap:wrap;gap:12px 6px;margin:12px 0 2px'; w.appendChild(row); }
