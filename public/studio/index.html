@@ -1668,6 +1668,7 @@ async function planTile(){
     var sod=new Date(now.getFullYear(),now.getMonth(),now.getDate()),eod=new Date(sod.getTime()+864e5-1000);var fa=[];
     try{var r=await sb.from('studio_followups').select('id,name,mobile,due_at,note').eq('status','open').eq('kind','task').order('due_at',{ascending:true}).limit(150);if(r&&!r.error)fa=r.data||[]}catch(e){}
     var fu=fa.filter(function(x){return new Date(x.due_at)<=eod}),ff=fa.filter(function(x){return new Date(x.due_at)>eod});
+    var cfn=$('c-fn');if(cfn&&box.contains(cfn))box.parentNode.insertBefore(cfn,box.nextSibling);
     box.textContent='';
     var h=mk('div','pl-h');h.style.cursor='pointer';h.appendChild(mk('b','','📋 आज का प्लान'));var hr=mk('span','',W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]+'  '+(PLOPEN?'▴':'▾'));h.appendChild(hr);box.appendChild(h);
     var n=0;
@@ -1685,7 +1686,7 @@ async function planTile(){
       ff.forEach(function(x){var dd=new Date(x.due_at),ds=fnYmd(dd),b=fnBadge(ds),r1=mk('div','pl-r'),d=mk('div','');var tt=mk('b','','📞 '+(x.name||x.mobile||'Follow-up'));var sp=mk('span','fnb',b[0]);sp.style.background=b[1];tt.appendChild(sp);d.appendChild(tt);d.appendChild(mk('div','','📆 '+fnDate(ds)+(x.note?' · '+x.note:'')));r1.appendChild(d);
         if(x.mobile){var a=mk('a','','📞');a.href='tel:+91'+String(x.mobile).replace(/\D/g,'').slice(-10);a.setAttribute('aria-label','कॉल');r1.appendChild(a)}fut.appendChild(r1)})}
     else{var e1=mk('div','pl-r');e1.appendChild(mk('div','','आगे कोई function या task नहीं है।'));fut.appendChild(e1)}
-    box.appendChild(fut);
+    box.appendChild(fut);if(cfn){cfn.style.margin='12px 0 0';fut.appendChild(cfn)}
     h.onclick=function(){PLOPEN=!PLOPEN;fut.hidden=!PLOPEN;hr.textContent=W[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()]+'  '+(PLOPEN?'▴':'▾')};
     box.hidden=false}catch(e){box.hidden=true}
 }
