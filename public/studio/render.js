@@ -53,6 +53,7 @@
       ['pin', 'पिन कोड', 'tel', 6],
       ['maplink', 'लोकेशन लिंक (Google Maps)', 'url', 300],
       ['gbiz', 'Google Business प्रोफ़ाइल / Review लिंक', 'url', 300],
+      ['ytvideo', 'YouTube वीडियो लिंक (कार्ड पर वीडियो दिखेगा)', 'url', 200],
       ['website', 'अपनी फुल वेबसाइट का लिंक (हो तो)', 'url', 150],
       ['about', 'व्यवसाय के बारे में', 'area', 400],
       ['tagline', 'टैगलाइन: एक लाइन (मिनी वेबसाइट)', 'text', 120],
@@ -603,6 +604,18 @@
     root.appendChild(pw);
   }
   /* Compact body for the profile layout: 3 action buttons, save contact, About/Services tiles, info box, follow icons, quote/chat, share toggle. */
+  /* Owner's YouTube video on the card: thumbnail first, the player loads only on tap. */
+  function ytId(u) { u = String(u || '').trim(); var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{11})/); return m ? m[1] : ''; }
+  function ytBox(f, title) {
+    var id = ytId(f.ytvideo); if (!id) return null; var sh = /\/shorts\//.test(String(f.ytvideo));
+    var w = el('div', 'yt-own'); w.style.cssText = 'margin:14px auto 0;max-width:' + (sh ? '260px' : '100%') + ';text-align:center';
+    if (title) { var h = el('div', '', '▶️ ' + title); h.style.cssText = 'font-weight:800;font-size:15px;margin-bottom:8px'; w.appendChild(h); }
+    var bx = el('div', ''); bx.style.cssText = 'position:relative;width:100%;aspect-ratio:' + (sh ? '9/16' : '16/9') + ';border-radius:14px;overflow:hidden;background:#000 url(https://i.ytimg.com/vi/' + id + '/hqdefault.jpg) center/cover;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.35)';
+    var pl = el('div', '', '▶'); pl.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:46px;border-radius:12px;background:#e00;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.4)';
+    bx.appendChild(pl);
+    bx.onclick = function (e) { e.stopPropagation(); var fr = document.createElement('iframe'); fr.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1'; fr.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; fr.allowFullscreen = true; fr.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0'; bx.textContent = ''; bx.appendChild(fr); try { if (window.__lcAct) window.__lcAct('video'); } catch (x) {} };
+    w.appendChild(bx); return w;
+  }
   /* Flip card layout (preview): debit-card style front, details on the back, actions below. */
   function flipCard(root, d, opts) {
     var f = d.fields, L = (CARDL === 'hi' || !CARDL) ? 0 : 1;
@@ -644,6 +657,7 @@
     var mpu = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address, f.city].filter(Boolean).join(', '))) : '';
     if (mpu) row.appendChild(actA(link('', '📍 ' + P('लोकेशन', 'Location'), mpu), 'location'));
     if (row.children.length) w.appendChild(row);
+    var yv = ytBox(f, P('मेरा वीडियो', 'My Video')); if (yv) w.appendChild(yv);
     if (vcardText(f, false)) { var sv0 = el('button', 'fl-bt', '👤 ' + P('कॉन्टैक्ट सेव करें', 'Save Contact')); sv0.type = 'button'; sv0.style.background = '#fff'; sv0.style.color = '#4a0000'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; w.appendChild(sv0); }
     if (mini) { var mb = actA(link('fl-bt', '🌐 ' + P('मिनी वेबसाइट देखें', 'Mini Website'), mini), 'miniweb'); mb.style.background = 'transparent'; mb.style.color = '#fff'; mb.style.border = '2px solid #fff'; w.appendChild(mb); }
     if (V.url(f.gbiz)) { var gb = actA(link('fl-bt', '⭐ ' + P('Google पर देखें / Review दें', 'Google Business / Review'), V.url(f.gbiz)), 'gbiz'); gb.style.background = '#fff'; gb.style.color = '#1a73e8'; w.appendChild(gb); }
@@ -684,6 +698,7 @@
     if (mpu) q2.appendChild(actA(link('pf-chat', '📍 ' + P('लोकेशन', 'Location'), mpu), 'location'));
     if (V.url(f.gbiz)) { var gbl = actA(link('pf-chat', '⭐ ' + P('Google पर देखें / Review दें', 'Google Business / Review'), V.url(f.gbiz)), 'gbiz'); gbl.style.background = '#fff'; gbl.style.color = '#1a73e8'; gbl.style.border = '2px solid #1a73e8'; gbl.style.marginTop = '8px'; q2.appendChild(gbl); }
     if (q2.children.length) bd.appendChild(q2);
+    var yv2 = ytBox(f, P('मेरा वीडियो', 'My Video')); if (yv2) bd.appendChild(yv2);
     var shp = el('div', 'pf-sharep'); shp.hidden = true; var built = false;
     var shb = el('button', 'pf-share', '🔗 ' + P('LiveCard शेयर करें', 'Share LiveCard')); shb.type = 'button';
     shb.onclick = function () { if (!built) { built = true; var acts = el('div', 'sr-act'); acts.appendChild(saveCardBtn(root, f)); shp.appendChild(acts); shp.appendChild(shareBar(f, opts, root)); } shp.hidden = !shp.hidden; };
@@ -711,6 +726,7 @@
     if (vcardText(f, false)) { var sv0 = el('button', 'sr-save', T('\uD83D\uDCC7 कॉन्टैक्ट सेव करें')); sv0.type = 'button'; sv0.setAttribute('data-act', 'savecontact'); sv0.onclick = function () { saveVcard(f); }; act.appendChild(sv0); }
     act.appendChild(saveCardBtn(root, f));
     if (act.children.length) bd.appendChild(act);
+    var yv3 = ytBox(f, T('मेरा वीडियो')); if (yv3) bd.appendChild(yv3);
     if (d.services.length) { var sv = el('div', 'sr-svs'); sv.appendChild(el('div', 'sr-sub', T('सेवाएँ'))); d.services.forEach(function (s) { sv.appendChild(el('span', 'sr-chip', svName(s))); }); bd.appendChild(sv); }
     if (!biz) [['मोबाइल', tel && ('+91 ' + tel)], ['ईमेल', em], ['पता', f.address], ['वेबसाइट', web && web.replace(/^https?:\/\//, '').replace(/\/$/, '')], ['मिनी वेबसाइट', mini && mini.replace(/^https?:\/\//, '').replace(/\/$/, '')]].forEach(function (r) {
       if (!r[1]) return; var row = el('div', 'sr-row'); row.appendChild(el('small', '', T(r[0]))); if (r[0] === 'मोबाइल') row.appendChild(actA(link('', r[1], 'tel:+91' + tel), 'call')); else if (r[0] === 'मिनी वेबसाइट') row.appendChild(actA(link('', r[1], mini), 'miniweb')); else row.appendChild(el('div', '', r[1])); bd.appendChild(row);
@@ -903,6 +919,7 @@
     }
     if (d.services.length) { var si = sec(PF ? 'प्रोजेक्ट / काम के नमूने' : T('सेवाएँ')), g = el('div', 'ws-grid'); d.services.forEach(function (x) { var c = el('div', 'ws-card ws-sv'), p2 = svParts(x); c.appendChild(el('div', 'ws-ic', svIcon(p2[0], g.children.length))); c.appendChild(el('em', 'ws-no', String(g.children.length + 1))); c.appendChild(el('b', '', p2[0])); if (p2[1]) { c.appendChild(el('p', 'ws-sd', p2[1])); c.style.cursor = 'pointer'; c.onclick = function () { c.classList.toggle('open'); }; } g.appendChild(c); }); si.appendChild(g); }
     if (d.highlights.length) { var hi = sec(PF ? 'मेरी खूबियाँ' : T('हमें क्यों चुनें')), hg = el('div', 'ws-grid ws-hl'); d.highlights.forEach(function (x) { var c = el('div', 'ws-card ws-hi'); c.appendChild(el('div', 'ws-ic ws-ic2', '✔')); c.appendChild(el('span', '', x)); hg.appendChild(c); }); hi.appendChild(hg); }
+    var yvs = ytBox(f, ''); if (yvs) { var yvi = sec(T('वीडियो')); yvs.style.maxWidth = /\/shorts\//.test(String(f.ytvideo)) ? '300px' : '640px'; yvi.appendChild(yvs); }
     var gk = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6'].filter(function (k) { return d.images[k]; });
     if (gk.length) { var gi = sec(T('गैलरी')), gg = el('div', 'ws-gal'); var urls = gk.map(function (k) { return d.images[k].url; });
       gk.forEach(function (k, ix) { var im = picture('ws-gp', d.images[k], 'gallery'); im.style.width = '100%'; im.style.cursor = 'zoom-in'; im.onclick = function () { openLightbox(urls, ix); }; gg.appendChild(im); }); gi.appendChild(gg); }
