@@ -51,6 +51,7 @@ function dt(x){return x?new Date(x).toLocaleDateString((window.spLoc?spLoc():'hi
   var g3=grp('🌐 डायरेक्टरी, डोमेन और इंडस्ट्री','बिज़नेस डायरेक्टरी · डोमेन अनुरोध · Industry-wise कार्ड');put(g3,dirPanel);put(g3,domPanel);put(g3,indPanel);
   var g4=grp('📜 एडमिन लॉग','Admin के कामों का लॉग');put(g4,auditPanel);
   Array.prototype.forEach.call(app.querySelectorAll('.gb>div'),function(el){if(!el.className)compact(el)});
+  (function(){var pc=document.createElement('a');pc.href='/studio/printcard/';pc.textContent='🖨️ Print Card — सभी कार्ड का QR PDF (डेबिट कार्ड साइज़)';pc.style.cssText='display:block;margin:10px 0;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff;font-weight:800;text-decoration:none;text-align:center';app.appendChild(pc)})();
   tabs=h('div');app.appendChild(tabs);body=h('div');app.appendChild(body);tab=(['cust','tpl','promo'].indexOf(ST.tab)>=0?ST.tab:'cust');SVF=ST.f||'all';sel=tab==='cust'?(ST.s||null):null;
   function draw(){tabs.textContent='';body.textContent='';saveSt();
     if(tab==='cust'){if(sel){cardsView();return}filterBar();custView();return}

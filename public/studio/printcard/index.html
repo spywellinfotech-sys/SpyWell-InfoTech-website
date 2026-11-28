@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Print Card · LiveCard Admin</title><link rel="icon" href="/studio/vicard-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Hind:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff7f4;color:#1c1414;font:16px/1.5 Hind,system-ui,sans-serif}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff}
+.bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.7);border-radius:99px;padding:7px 14px;font-weight:700}
+.bar b{font:800 19px "Baloo 2",sans-serif;flex:1}
+main{max-width:640px;margin:0 auto;padding:12px 14px 40px}
+input{width:100%;font:16px Hind,sans-serif;padding:11px 12px;border-radius:12px;border:1.5px solid #ecd3cf;margin:6px 0 10px}
+.row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #f0dcd8;border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.row .t{flex:1;min-width:0}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.row .m{font-size:13px;color:#6d6060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+button{font:700 14px Hind,sans-serif;border-radius:10px;border:0;padding:9px 12px;cursor:pointer;background:#d4141c;color:#fff;min-height:40px}
+button.alt{background:#fff;color:#d4141c;border:1.5px solid #d4141c}button:disabled{opacity:.6}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.mut{color:#6d6060;font-size:14px}
+#pv{position:fixed;inset:0;background:rgba(20,5,5,.6);display:none;align-items:center;justify-content:center;z-index:9;padding:20px}#pv.on{display:flex}#pv img{max-height:80vh;max-width:90vw;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+input[type=checkbox]{width:22px;height:22px;margin:0;flex:none}
+</style></head><body>
+<div class="bar"><a href="/studio/admin/">← Admin</a><b>🖨️ Print Card</b></div>
+<main id="m"><p class="mut">लोड हो रहा है…</p></main>
+<div id="pv"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/studio/qr.js"></script><script src="/studio/printcard.js?v=1"></script>
+<script>
+(async function(){
+var $=function(i){return document.getElementById(i)},m=$('m');
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});
+var a=await sb.rpc('studio_is_admin');if(!a||a.data!==true){m.innerHTML='<p>यह पेज सिर्फ़ एडमिन के लिए है। <a href="/studio/">लॉगिन करें</a></p>';return}
+var r=await sb.rpc('studio_admin_link_report');var L=((r&&r.data)||[]).filter(function(x){return x.product_type==='visiting'&&x.status==='published'&&x.slug});
+L.sort(function(p,q){return String(q.published_at||'').localeCompare(String(p.published_at||''))});
+var SEL={};
+m.innerHTML='<p class="mut">हर कार्ड का QR, डेबिट कार्ड साइज़ (54 × 86 mm) PDF में। कुल '+L.length+' प्रकाशित कार्ड।</p><input id="q" placeholder="🔍 नाम, ईमेल या लिंक खोजें" aria-label="खोजें"><div class="top"><button id="all" class="alt">☑ सब चुनें</button><button id="go" disabled>📄 चुने हुए का PDF (0)</button></div><p class="mut" id="msg"></p><div id="l"></div>';
+function msg(t){$('msg').textContent=t}
+function cnt(){var n=Object.keys(SEL).length;$('go').textContent='📄 चुने हुए का PDF ('+n+')';$('go').disabled=!n}
+function list(){var q=$('q').value.trim().toLowerCase();var F=L.filter(function(x){return !q||((x.title||'')+' '+(x.email||'')+' '+x.slug).toLowerCase().indexOf(q)>=0});
+  $('l').innerHTML=F.slice(0,300).map(function(x,i){return '<div class="row"><input type="checkbox" data-c="'+esc(x.design_id)+'"'+(SEL[x.design_id]?' checked':'')+' aria-label="चुनें"><div class="t"><b>'+esc(x.title||'—')+'</b><div class="m">livecard.in/v/'+esc(x.slug)+' · '+esc(x.email||'')+'</div></div><button class="alt" data-v="'+i+'">👁️</button><button data-p="'+i+'">📄 PDF</button></div>'}).join('')||'<p class="mut">कोई कार्ड नहीं मिला</p>';
+  [].forEach.call($('l').querySelectorAll('[data-c]'),function(c){c.onchange=function(){var x=L.filter(function(z){return z.design_id===c.getAttribute('data-c')})[0];if(c.checked)SEL[x.design_id]=x;else delete SEL[x.design_id];cnt()}});
+  [].forEach.call($('l').querySelectorAll('[data-v]'),function(b){b.onclick=async function(){var x=F[+b.getAttribute('data-v')];var cv=await LCPrint.draw(x);var p=$('pv');p.innerHTML='<img alt="QR कार्ड प्रीव्यू" src="'+cv.toDataURL('image/png')+'">';p.classList.add('on')}});
+  [].forEach.call($('l').querySelectorAll('[data-p]'),function(b){b.onclick=async function(){var x=F[+b.getAttribute('data-p')];b.disabled=true;b.textContent='⏳';await run([x],'livecard-'+x.slug);b.disabled=false;b.textContent='📄 PDF'}})}
+async function run(cards,name){msg('PDF बन रहा है…');try{var r=await LCPrint.pdf(cards,name);msg(r==='saved'?'✅ PDF डाउनलोड/Downloads में सेव हुआ':r==='png'?'✅ ऐप में PDF की जगह फ़ोटो गैलरी में सेव हुई (PDF के लिए नया ऐप या Chrome)':'❌ सेव नहीं हो पाया')}catch(e){msg('❌ PDF नहीं बन पाया')}}
+$('pv').onclick=function(){this.classList.remove('on')};$('q').oninput=list;
+$('all').onclick=function(){var q=$('q').value.trim().toLowerCase();L.forEach(function(x){if(!q||((x.title||'')+' '+(x.email||'')+' '+x.slug).toLowerCase().indexOf(q)>=0)SEL[x.design_id]=x});cnt();list()};
+$('go').onclick=async function(){var C=Object.keys(SEL).map(function(k){return SEL[k]});this.disabled=true;await run(C,'livecard-qr-cards-'+C.length);this.disabled=false};
+list();
+})();
+</script></body></html>
