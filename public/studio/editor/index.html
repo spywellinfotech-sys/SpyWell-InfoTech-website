@@ -71,7 +71,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 <div id="pubbar" hidden><div class="pbrow"><button type="button" id="pubbtn">🚀 प्रकाशित करें</button><button type="button" id="pinbtn" hidden>🔑 PIN</button></div></div>
 <div id="full" hidden><button class="x" id="fullx">बंद करें ✕</button><div class="sheet" id="fullpv"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/render.js?v=20261128u"></script>
+<script src="/studio/render.js?v=20261128v"></script>
 <script src="/studio/qr.js"></script>
 <script>
 (function(){
@@ -296,6 +296,10 @@ async function upload(k,file,defSize,msg){
 }
 function pDesign(p){
   var s=C.style,t=cfg(),pal=t.palette||{};
+  if(D.product_type==='visiting'&&R.FLIPTH){var fw=h('div',{class:'item',style:'margin-bottom:12px'});fw.appendChild(h('b',{text:'💳 कार्ड की थीम (रंग)'}));var fg=h('div',{style:'display:flex;flex-wrap:wrap;gap:10px;margin-top:8px'});
+    Object.keys(R.FLIPTH).forEach(function(k){var on=(s.flip||'red')===k,b=h('button',{type:'button',title:R.FLIPTH[k][0],style:'margin:0;width:auto;min-height:0;padding:0;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#333;cursor:pointer'});
+      var sw=h('span',{style:'display:block;width:58px;height:38px;border-radius:8px;background:'+R.FLIPTH[k][1]+';box-shadow:0 2px 6px rgba(0,0,0,.25);outline:'+(on?'3px solid #d4141c':'0')+';outline-offset:2px'});b.appendChild(sw);b.appendChild(h('span',{text:R.FLIPTH[k][0]}));
+      b.onclick=function(){s.flip=k;changed();panel()};fg.appendChild(b)});fw.appendChild(fg);p.appendChild(fw)}
   function sel(label,key,opts,cur){var e=h('select');opts.forEach(function(o){var op=h('option',{value:o[0],text:o[1]});if(String(o[0])===String(cur))op.selected=true;e.appendChild(op)});
     e.onchange=function(){s[key]=key==='weight'?+e.value:e.value;changed()};return h('div',{},[h('label',{text:label}),e])}
   var fonts=Object.keys(R.FONTS).map(function(k){return[k,R.FONTS[k][0]]});

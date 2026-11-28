@@ -201,7 +201,7 @@
       weight: [400, 500, 600, 700].indexOf(+s.weight) >= 0 ? +s.weight : 0, align: ['left', 'center', 'right'].indexOf(s.align) >= 0 ? s.align : '',
       fg: col(s.fg, ''), bg: col(s.bg, ''), ac: col(s.ac, ''),
       anim: ['rich', 'soft', 'none'].indexOf(s.anim) >= 0 ? s.anim : '', petal: PETALS.indexOf(s.petal) >= 0 ? s.petal : '',
-      kind: (s.kind === 'portfolio' || s.kind === 'student') ? s.kind : '', lang: CLANGS.indexOf(s.lang) >= 0 ? s.lang : '', layout: LAYOUTS.indexOf(s.layout) >= 0 ? s.layout : '', ornament: ORNAMENTS.indexOf(s.ornament) >= 0 ? s.ornament : '' };
+      kind: (s.kind === 'portfolio' || s.kind === 'student') ? s.kind : '', lang: CLANGS.indexOf(s.lang) >= 0 ? s.lang : '', layout: LAYOUTS.indexOf(s.layout) >= 0 ? s.layout : '', ornament: ORNAMENTS.indexOf(s.ornament) >= 0 ? s.ornament : '', flip: FLIPTH[s.flip] ? s.flip : '' };
     var im = c.images && typeof c.images === 'object' ? c.images : {};
     (IMAGES[type] || []).forEach(function (d) { var x = im[d[0]] && typeof im[d[0]] === 'object' ? im[d[0]] : {}; var u = img(x.url); if (u) out.images[d[0]] = { url: u, size: num(x.size, 40, 340, d[2]), pos: num(x.pos, 0, 100, 50) }; });
     return out;
@@ -604,6 +604,16 @@
     root.appendChild(pw);
   }
   /* Compact body for the profile layout: 3 action buttons, save contact, About/Services tiles, info box, follow icons, quote/chat, share toggle. */
+  var FLIPTH = {
+    red: ['लाल', 'linear-gradient(135deg,#7a0a10,#d4141c 60%,#ff6a3d)'],
+    blue: ['नीला', 'linear-gradient(135deg,#0b2a6b,#1a56db 60%,#38bdf8)'],
+    black: ['काला-गोल्ड', 'linear-gradient(135deg,#0d0d0d,#262626 55%,#5c4a14)'],
+    green: ['हरा', 'linear-gradient(135deg,#064e3b,#059669 60%,#34d399)'],
+    purple: ['बैंगनी', 'linear-gradient(135deg,#3b0764,#7e22ce 60%,#c084fc)'],
+    orange: ['नारंगी', 'linear-gradient(135deg,#7c2d12,#ea580c 60%,#fbbf24)'],
+    pink: ['गुलाबी', 'linear-gradient(135deg,#831843,#db2777 60%,#f9a8d4)'],
+    silver: ['सिल्वर', 'linear-gradient(135deg,#1f2937,#6b7280 55%,#d1d5db)']
+  };
   /* Owner's YouTube video on the card: thumbnail first, the player loads only on tap. */
   function ytId(u) { u = String(u || '').trim(); var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{11})/); return m ? m[1] : ''; }
   function ytBox(f, title) {
@@ -633,6 +643,7 @@
       '.fl-bt{display:block;width:100%;text-align:center;margin-top:10px;padding:12px;border-radius:14px;font-weight:800;font-size:15px;text-decoration:none;border:0;cursor:pointer;font-family:inherit;box-sizing:border-box}';
       document.head.appendChild(cs); }
     var w = el('div', 'fl-wrap'), sc = el('div', 'fl-sc'), inn = el('div', 'fl-in'), fr = el('div', 'fl-f'), bk = el('div', 'fl-b');
+    var fth = FLIPTH[(d.style && d.style.flip) || 'red'] || FLIPTH.red; fr.style.background = fth[1]; if (d.style && d.style.flip === 'black') fr.style.border = '1.5px solid #c9a646';
     if (d.images.logo) { var lg = picture('fl-lg', d.images.logo, 'logo'); lg.style.width = 'auto'; fr.appendChild(lg); } else fr.appendChild(el('span', 'fl-chip'));
     fr.appendChild(el('span', 'fl-nfc', '📶'));
     if (d.images.photo) { var ph = picture('pf-ph', d.images.photo, 'circle'); fr.appendChild(ph); }
@@ -649,7 +660,7 @@
     inn.appendChild(fr); inn.appendChild(bk); sc.appendChild(inn); var auto = true, vis = true, flipT = null;
     function setHint() { hint.textContent = sc.classList.contains('on') ? '👆 ' + P('फिर टैप करें, सामने आएगा', 'Tap again to flip back') : '👆 ' + P('कार्ड टैप करें, पलटेगा', 'Tap the card to flip'); }
     function loop() { flipT = setTimeout(function () { if (!auto || !sc.isConnected) return; if (vis && !document.hidden) { sc.classList.toggle('on'); setHint(); } loop(); }, sc.classList.contains('on') ? 4500 : 3500); }
-    loop(); try { new IntersectionObserver(function (es) { vis = es[0].isIntersecting; }).observe(sc); } catch (x) {}
+    if (!navigator.webdriver && !/[?&]nt=1/.test(location.search)) loop(); try { new IntersectionObserver(function (es) { vis = es[0].isIntersecting; }).observe(sc); } catch (x) {}
     sc.onclick = function () { auto = false; clearTimeout(flipT); sc.classList.toggle('on'); hint.textContent = sc.classList.contains('on') ? '👆 ' + P('फिर टैप करें, सामने आएगा', 'Tap again to flip back') : '👆 ' + P('कार्ड टैप करें, पलटेगा', 'Tap the card to flip'); };
     function fitBk() { if (!bk.isConnected || !bk.clientHeight) return; var fs = 13; bk.style.fontSize = fs + 'px'; Array.prototype.forEach.call(bk.querySelectorAll('.fl-sv'), function (x) { x.style.fontSize = ''; }); while (bk.scrollHeight > bk.clientHeight + 1 && fs > 8.5) { fs -= 0.5; bk.style.fontSize = fs + 'px'; Array.prototype.forEach.call(bk.querySelectorAll('.fl-sv'), function (x) { x.style.fontSize = (fs - 1.5) + 'px'; }); } }
     setTimeout(fitBk, 60); setTimeout(fitBk, 700); try { window.addEventListener('resize', fitBk); } catch (x) {}
@@ -715,9 +726,9 @@
   }
   function buildVisiting(root, d, opts) {
     var f = d.fields, hd = el('div', 'hd'), bd = el('div', 'bd'), biz = / l-biz\b/.test(' ' + root.className), pf = / bzv-7\b/.test(' ' + root.className);
+    if (!(opts && opts.flip === false) && !/[?&]flip=0/.test(location.search)) { root.className += ' sr-flipon'; flipCard(root, d, opts); return; }
     if (d.images.logo) { var lg = picture('sr-lg', d.images.logo, 'logo'); lg.style.maxHeight = d.images.logo.size + 'px'; lg.style.width = 'auto'; hd.appendChild(lg); }
     if (f.business) hd.appendChild(el('div', 'sr-biz', f.business));
-    if (biz && pf && !(opts && opts.flip === false) && !/[?&]flip=0/.test(location.search)) { flipCard(root, d, opts); return; }
     if (biz) { if (pf) profileCard(root, d); else bizCards(root, d, root.style.getPropertyValue('--ac')); bd.className += ' noph'; if (pf) { pfBody(root, d, opts, bd); root.appendChild(bd); return; } } else {
     root.appendChild(hd);
     if (d.images.photo) bd.appendChild(picture('ph', d.images.photo, 'circle')); else bd.className += ' noph';
@@ -1129,6 +1140,6 @@
     if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
   })();
 
-  window.StudioRender = { uiKeys: uiKeys, shareInvite: shareInvite, fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
+  window.StudioRender = { FLIPTH: FLIPTH, uiKeys: uiKeys, shareInvite: shareInvite, fieldsFor: fieldsFor, presetsFor: presetsFor, OCCASIONS: OCCASIONS, render: render, site: site, CLANGS: CLANGS, normalize: normalize, invalid: invalid, title: title, isEmpty: isEmpty, V: V,
     FIELDS: FIELDS, IMAGES: IMAGES, FONTS: FONTS, SAMPLE: SAMPLE, EVENT_PRESETS: EVENT_PRESETS, MAX_EVENTS: MAX_EVENTS, MAX_SERVICES: MAX_SERVICES, MAX_HIGH: MAX_HIGH, svParts: svParts, BUCKET: BUCKET };
 })();
