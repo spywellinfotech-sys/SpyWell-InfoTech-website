@@ -17,6 +17,11 @@ async function draw(c){var cv=document.createElement('canvas');cv.width=W;cv.hei
   var qz=fx||Math.round(q.width*4/41),inner=q.width-2*qz;
   x.imageSmoothingEnabled=false;var qs=292;x.drawImage(q,qz,qz,inner,inner,(W-qs)/2,541-qs/2,qs,qs);x.imageSmoothingEnabled=true;
   var ln=url.replace(/^https?:\/\//,'');fit(x,ln,370,31,'700');x.fillStyle='#333';x.fillText(ln,W/2,757);
+  if(c.nfc){var cx=580,cy=500,r=30;x.fillStyle='#e8141c';x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.fill();
+    x.strokeStyle='#fff';x.lineCap='round';x.lineWidth=5;x.beginPath();x.arc(cx+9,cy,22,Math.PI*0.68,Math.PI*1.32);x.stroke();x.beginPath();x.arc(cx+9,cy,12,Math.PI*0.66,Math.PI*1.34);x.stroke();
+    x.fillStyle='#fff';x.beginPath();x.arc(cx+9,cy,4.5,0,Math.PI*2);x.fill();
+    x.fillStyle='#0b2a4a';x.font='900 24px system-ui,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('NFC',cx,cy+50);
+    x.font='600 13px system-ui,Arial,sans-serif';x.fillStyle='#555';x.fillText('Tap',cx,cy+72)}
   return cv}
 var _bk=null;async function back(){if(_bk)return _bk;var b=await img('/studio/livecard-card-back.jpg?v=3');if(!b)return null;var cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d');
   x.translate(W/2,H/2);x.rotate(-Math.PI/2);x.drawImage(b,-H/2,-W/2,H,W);_bk=cv.toDataURL('image/jpeg',0.95);return _bk}
