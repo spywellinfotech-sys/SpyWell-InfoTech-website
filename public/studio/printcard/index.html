@@ -27,7 +27,7 @@ input[type=checkbox]{width:22px;height:22px;margin:0;flex:none}
 <div class="bar"><a href="/studio/admin/">← Admin</a><b>🖨️ Print Card</b></div>
 <main id="m"><p class="mut">लोड हो रहा है…</p></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/qr.js"></script><script src="/studio/printcard.js?v=7"></script>
+<script src="/studio/qr.js"></script><script src="/studio/printcard.js?v=8"></script>
 <script>
 (async function(){
 var $=function(i){return document.getElementById(i)},m=$('m');
@@ -39,9 +39,9 @@ var L=((rs[0]&&rs[0].data)||[]).filter(function(x){return x.product_type==='visi
 L.sort(function(p,q){return String(q.published_at||'').localeCompare(String(p.published_at||''))});
 var PR={};((rs[1]&&rs[1].data)||[]).forEach(function(r){PR[r.design_id]=r});
 var SEL={},OPEN=null,FLT='todo';
-m.innerHTML='<p class="mut">नाम दबाएँ: प्रीव्यू, PDF (आगे-पीछे, 54 × 86 mm), NFC, URL और "प्रिंट हो गया" का निशान।</p><input type="search" id="q" placeholder="🔍 नाम, ईमेल या लिंक खोजें" aria-label="खोजें"><div class="chips" id="ch"></div><div class="top"><button id="all" class="alt">☑ दिख रहे सब चुनें</button><button id="go" disabled>📄 चुने हुए का PDF (0)</button><button id="gm" class="nfc" disabled>🖨️ चुने हुए प्रिंटर को भेजें</button></div><p class="mut" id="msg"></p><div id="l"></div>';
+m.innerHTML='<p class="mut">नाम दबाएँ: प्रीव्यू, PDF (आगे-पीछे, 54 × 86 mm), NFC, URL और "प्रिंट हो गया" का निशान।</p><div id="prn" style="margin-bottom:10px"></div><input type="search" id="q" placeholder="🔍 नाम, ईमेल या लिंक खोजें" aria-label="खोजें"><div class="chips" id="ch"></div><div class="top"><button id="all" class="alt">☑ दिख रहे सब चुनें</button><button id="go" disabled>📄 चुने हुए का PDF (0)</button><button id="gm" class="ok" disabled>✅ OK — PDF बनाएँ (0)</button></div><p class="mut" id="msg"></p><div id="l"></div>';
 function msg(t){$('msg').textContent=t}
-function cnt(){var n=Object.keys(SEL).length;$('go').textContent='📄 चुने हुए का PDF ('+n+')';$('go').disabled=!n;$('gm').disabled=!n}
+function cnt(){var n=Object.keys(SEL).length;$('go').textContent='📄 चुने हुए का PDF ('+n+')';$('go').disabled=!n;$('gm').disabled=!n;$('gm').textContent='✅ OK — PDF बनाएँ ('+n+')'}
 function vis(){var q=$('q').value.trim().toLowerCase();return L.filter(function(x){var pr=PR[x.design_id]&&PR[x.design_id].printed_at;if(FLT==='todo'&&pr)return false;if(FLT==='done'&&!pr)return false;return !q||((x.title||'')+' '+(x.email||'')+' '+x.slug).toLowerCase().indexOf(q)>=0})}
 function chips(){var d=L.filter(function(x){return PR[x.design_id]&&PR[x.design_id].printed_at}).length;
   $('ch').innerHTML=[['todo','⏳ बाकी ('+(L.length-d)+')'],['done','✅ प्रिंट हुए ('+d+')'],['all','सभी ('+L.length+')']].map(function(c){return '<button class="chip'+(FLT===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</button>'}).join('');
@@ -54,14 +54,14 @@ function list(){var F=vis();
 async function mark(x,k,v){var row={design_id:x.design_id,updated_at:new Date().toISOString()};var cur=PR[x.design_id]||{};row.printed_at=k==='printed_at'?v:(cur.printed_at||null);row.nfc_at=k==='nfc_at'?v:(cur.nfc_at||null);
   var r=await sb.from('studio_card_prints').upsert(row,{onConflict:'design_id'});if(r.error)return false;PR[x.design_id]=row;return true}
 async function panel(x){var p=$('pn');if(!p)return;var pr=PR[x.design_id]||{};var u='https://livecard.in/v/'+x.slug;
-  p.innerHTML='<div class="pv" id="pvi"><span class="mut">प्रीव्यू बन रहा है…</span></div><div class="acts"><button id="b-pdf">📄 PDF</button><button class="nfc" id="b-nfc">📲 NFC लिखें</button><button class="nfc" id="b-mail" style="grid-column:1/-1;background:#1a73e8">🖨️ प्रिंटर को भेजें (WhatsApp/मेल)</button><button class="alt" id="b-url">🔗 URL कॉपी</button><button class="'+(pr.printed_at?'alt':'ok')+'" id="b-pr">'+(pr.printed_at?'↩ प्रिंट हटाएँ':'✅ प्रिंट हो गया')+'</button></div><div class="msg" id="pm"></div>';
+  p.innerHTML='<div class="pv" id="pvi"><span class="mut">प्रीव्यू बन रहा है…</span></div><div class="acts"><button id="b-pdf">📄 PDF</button><button class="nfc" id="b-nfc">📲 NFC लिखें</button><button class="nfc" id="b-mail" style="grid-column:1/-1;background:#1a73e8">🖨️ प्रिंटर को भेजें / PDF शेयर</button><button class="alt" id="b-url">🔗 URL कॉपी</button><button class="'+(pr.printed_at?'alt':'ok')+'" id="b-pr">'+(pr.printed_at?'↩ प्रिंट हटाएँ':'✅ प्रिंट हो गया')+'</button></div><div class="msg" id="pm"></div>';
   var pm=function(t){var e=$('pm');if(e)e.textContent=t};
   try{var cv=await LCPrint.draw(x),bk=await LCPrint.back();var pv=$('pvi');if(pv)pv.innerHTML='<img alt="आगे" src="'+cv.toDataURL('image/png')+'">'+(bk?'<img alt="पीछे" src="'+bk+'">':'')}catch(e){}
   $('b-pdf').onclick=async function(){var b=this;b.disabled=true;pm('PDF बन रहा है…');pm(await run([x],'livecard-'+x.slug));b.disabled=false};
   $('b-url').onclick=async function(){var b=this;try{await navigator.clipboard.writeText(u);b.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('URL',u)}setTimeout(function(){b.textContent='🔗 URL कॉपी'},2000)};
   $('b-pr').onclick=async function(){var b=this;b.disabled=true;var on=!(PR[x.design_id]&&PR[x.design_id].printed_at);var ok=await mark(x,'printed_at',on?new Date().toISOString():null);b.disabled=false;if(!ok){pm('❌ सेव नहीं हुआ');return}chips();list();if(OPEN)panel(x)};
   $('b-nfc').onclick=function(){nfc(x,pm)};
-  $('b-mail').onclick=function(){LCPrint.send(sb,[x],$('pm'))}}
+  $('b-mail').onclick=function(){LCPrint.send(sb,[x],$('pm'),PRN)}}
 var NM={ok:'✅ NFC में लिख गया! किसी फ़ोन से छुआकर जाँचें।',readonly:'❌ यह NFC टैग लॉक है।',small:'❌ टैग में जगह कम है।',unsupported:'❌ यह टैग सपोर्ट नहीं करता।',error:'❌ लिखा नहीं जा सका, फिर से छुआएँ।'};
 async function nfc(x,pm){var u='https://livecard.in/v/'+x.slug+'?src=nfc';
   var done=async function(r){pm(NM[r]||NM.error);if(r==='ok'){await mark(x,'nfc_at',new Date().toISOString());var b=$('b-nfc');if(b)b.textContent='📲 NFC लिखें'}};
@@ -82,7 +82,11 @@ async function mail(cards,name,label){var to=pmail();if(!/^[^@\s]+@[^@\s]+\.[^@\
   var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=LCPrint.last.name;document.body.appendChild(a);a.click();a.remove();location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);return '📧 PDF डाउनलोड हुआ, मेल में उसे अटैच करें'}
 async function run(cards,name){try{var r=await LCPrint.pdf(cards,name);return r==='saved'?'✅ PDF सेव हुआ (Download/LiveCard)':r==='png'?'✅ फ़ोटो गैलरी में सेव हुई (PDF के लिए नया ऐप)':'❌ सेव नहीं हो पाया'}catch(e){return '❌ PDF नहीं बन पाया'}}
 $('q').oninput=function(){OPEN=null;list()};
-$('gm').onclick=function(){var C=Object.keys(SEL).map(function(k){return SEL[k]});LCPrint.send(sb,C,$('msg'))};
+$('gm').onclick=function(){var C=Object.keys(SEL).map(function(k){return SEL[k]});if(!PRN){prnBar(true);window.scrollTo(0,0);return}LCPrint.send(sb,C,$('msg'),PRN)};
+var PRN=null;function pick(p){PRN=p;try{localStorage.setItem('lc_prn',p.id)}catch(e){}prnBar(false)}
+async function prnBar(edit){var b=$('prn');if(edit||!PRN){LCPrint.manage(sb,b,pick,PRN&&PRN.id);return}
+  b.innerHTML='<div style="display:flex;align-items:center;gap:8px;background:#fff7e0;border:1.5px solid #f0c24b;border-radius:12px;padding:9px 12px"><div style="flex:1;min-width:0"><b>🖨️ प्रिंटर: '+esc(PRN.name)+'</b><div class="mut" style="font-size:12px">'+esc([PRN.mobile,PRN.email].filter(Boolean).join(' · '))+'</div></div><button class="alt" id="pch">बदलें</button></div><p class="mut" style="margin:6px 2px 0">अब ग्राहक चुनें ☑ और नीचे "✅ OK" दबाएँ।</p>';$('pch').onclick=function(){prnBar(true)}}
+(async function(){var L=await LCPrint.printers(sb);var id='';try{id=localStorage.getItem('lc_prn')||''}catch(e){}PRN=L.filter(function(p){return p.id===id})[0]||(L.length===1?L[0]:null);prnBar(false)})();
 $('all').onclick=function(){vis().forEach(function(x){SEL[x.design_id]=x});cnt();list()};
 $('go').onclick=async function(){var C=Object.keys(SEL).map(function(k){return SEL[k]});this.disabled=true;msg('PDF बन रहा है…');msg(await run(C,'livecard-qr-cards-'+C.length));this.disabled=false};
 chips();list();
