@@ -1028,7 +1028,7 @@
 
   /* LiveCard stamp badge on profile photos and logos of visiting cards / mini websites. */
   (function () {
-    var SEL = 'img.ph,img.pf-ph,img.bz-ph,img.sr-lg,img.pf-lg,img.bz-lg';
+    var SEL = 'img.ph,img.pf-ph,img.bz-ph';
     function stamp(img) {
       if (img.__lcs || /\/dyname\/logo/.test(img.src) || !img.closest || !img.closest('.sr-vc,.sr-site')) return;
       img.__lcs = 1;
