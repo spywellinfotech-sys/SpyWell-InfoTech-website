@@ -111,6 +111,7 @@ body{padding:0 0 24px 220px}
 .card>button,.card>.err+button{max-width:640px}
 }#c-lay{display:none!important}#c-plans,#pf-plan,#c-insall{display:none!important}.lc-pair{display:flex;flex-wrap:wrap;gap:0 10px;align-items:flex-start}.lc-pair>.card{flex:1 1 0;min-width:0;padding:6px!important}.lc-pair>.card.lc-wide{flex:1 1 100%}.lc-pair>.card:not(.lc-wide) *{font-size:15px!important}.lc-pair>.card:not(.lc-wide)>*{padding-top:12px!important;padding-bottom:12px!important;min-height:0!important}#ic-body>.card{margin-left:0;margin-right:0}
 #pf-invd:has(#pf-invsett:empty){display:none}#pf-invd summary::-webkit-details-marker{display:none}
+#tabbar .t-add i{width:56px;height:56px;margin-top:-30px;border-radius:50%;background:linear-gradient(135deg,#ff6a3d,#d4141c);color:#fff;font-size:34px;font-weight:300;box-shadow:0 6px 16px rgba(212,20,28,.45);border:4px solid #fff}#tabbar .t-add{color:#d4141c}
 </style><script>(function(){try{var j=new URLSearchParams(location.search).get("join");if(j&&/^[a-f0-9]{16,40}$/.test(j)){localStorage.setItem("lc_join",j);history.replaceState(null,"",location.pathname);fetch("https://rxhanrtoaplwphmwpgqg.supabase.co/rest/v1/rpc/corp_invite_info",{method:"POST",headers:{apikey:"sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d","Content-Type":"application/json"},body:JSON.stringify({p_token:j})}).then(function(r){return r.json()}).then(function(d){if(d&&d.state==="ok"){document.addEventListener("DOMContentLoaded",function(){var b=document.createElement("div");b.textContent="🏢 "+d.company+" आपको अपनी टीम में जोड़ना चाहता है"+(d.name?" ("+d.name+")":"")+"। Login करें, आप अपने-आप जुड़ जाएँगे।";b.style.cssText="background:#1d3557;color:#fff;padding:10px 14px;text-align:center;font-size:14px;font-weight:600";document.body.insertBefore(b,document.body.firstChild)})}}).catch(function(){})}}catch(e){}})()</script><script>(function(){try{var q=new URLSearchParams(location.search).get("saveinv");if(q){localStorage.setItem("lc_pending_inv",q);history.replaceState(null,"",location.pathname)}}catch(e){}})()</script><script src="/studio/i18n-data.js?v=20261128a"></script><script src="/studio/i18n-extra.js?v=20261128a"></script><script src="/studio/i18n.js?v=20261128a"></script><script>(function(){try{if(!window.Capacitor&&!window.ViNative&&!/; wv\)/.test(navigator.userAgent)&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)&&!sessionStorage.getItem('lc_stay')){location.replace('/studio/appauth/'+location.search+location.hash);return}
   if(!window.Capacitor&&!window.ViNative&&!/; wv\)/.test(navigator.userAgent)&&/Android/i.test(navigator.userAgent)&&/access_token=/.test(location.hash)){var H0=location.search+location.hash,HH=location.hash;
   document.addEventListener('DOMContentLoaded',function(){var go=function(){var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#7a0a10;color:#fff;padding:12px;text-align:center;font:600 14px system-ui';
@@ -234,7 +235,7 @@ body{padding:0 0 24px 220px}
 <div class="card" id="c-welcome" hidden style="background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff"><b style="font-size:18px">🎉 स्वागत है! अपना डिजिटल कार्ड बनाइए</b>
 <div style="margin-top:8px;font-size:15px">1️⃣ अपनी जानकारी भरें<br>2️⃣ कार्ड प्रकाशित करें<br>3️⃣ WhatsApp पर शेयर करें और QR बाँटें</div>
 <button type="button" id="wl-go" style="background:#f59a1a;color:#7a0a10;font-size:17px">➕ अपना पहला कार्ड बनाएँ</button></div>
-<div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" data-tab="saved"><i>📇</i>मेरा नेटवर्क</button><button type="button" data-tab="ref" id="qa-ref" hidden><i>🎁</i>रेफ़र करें, कमाएँ</button></div>
+<div class="qa" id="c-qa" style="display:none"><button type="button" class="pri" data-tab="new"><i>➕</i>नया कार्ड बनाएँ</button><button type="button" data-tab="disc"><i>🔍</i>बिज़नेस खोजें</button><button type="button" id="tb-add" class="t-add" aria-label="नया बनाएँ"><i>＋</i><span>नया</span></button><button type="button" data-tab="saved"><i>📇</i>मेरा नेटवर्क</button><button type="button" data-tab="ref" id="qa-ref" hidden><i>🎁</i>रेफ़र करें, कमाएँ</button></div>
 <div class="card" id="c-note" hidden></div>
 <div class="card" id="c-enq" hidden style="padding:10px 14px"></div>
 <div class="card" id="c-greet"></div>
@@ -964,6 +965,22 @@ function openIns(x){var o=document.createElement('div');o.style.cssText='positio
   var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:8px';var ht=mk('b','','📊 इनसाइट · '+(x.title||''));ht.style.cssText='flex:1;font-size:17px';hd.appendChild(ht);var cl=mk('button','alt','✕');cl.type='button';cl.style.cssText='width:auto;margin:0;min-height:0;padding:6px 12px';cl.onclick=function(){o.remove()};hd.appendChild(cl);bx.appendChild(hd);
   var det=mk('div','','लोड हो रहा है…');bx.appendChild(det);o.onclick=function(e){if(e.target===o)o.remove()};document.body.appendChild(o);
   Promise.all([sb.rpc('studio_my_stats',{p_design:x.id}),sb.rpc('studio_my_stats_detail',{p_design:x.id})]).then(function(r){det.textContent='';try{drawIns(det,(r[0]&&r[0].data)||{},(r[1]&&r[1].data)||{})}catch(e){det.textContent='इनसाइट नहीं खुल पाए'}})}
+function addSheet(){var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:220;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center';
+  var bx=document.createElement('div');bx.style.cssText='background:#fff;width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:16px 14px calc(18px + env(safe-area-inset-bottom));box-sizing:border-box';o.appendChild(bx);
+  var h=mk('b','','➕ नया बनाएँ');h.style.cssText='display:block;font-size:18px;margin-bottom:12px';bx.appendChild(h);
+  var g=mk('div','');g.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px';bx.appendChild(g);
+  function close(){o.remove()}
+  [['👤','नया कॉन्टैक्ट','#0f9d58',function(){setTab('saved');setTimeout(function(){try{var d=$('ct-det');if(d&&!d.open)$('ct-addb').click();else if(d)d.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}},250)}],
+   ['🪪','नया विज़िटिंग कार्ड','#d4141c',function(){NEWCO=true;pick('visiting')}],
+   ['💌','नया इनविटेशन कार्ड','#c2185b',function(){pick('invitation')}],
+   ['🚗','नया कार QR','#1a56db',function(){location.href='/studio/carqr/'}],
+   ['🎉','शुभकामना / ऑफ़र','#ea580c',function(){try{openGr()}catch(e){}}],
+   ['📷','कार्ड स्कैन करें','#7e22ce',function(){setTab('saved');setTimeout(function(){try{$('ct-scan').click()}catch(e){}},250)}]].forEach(function(x){
+    var b=mk('button','');b.type='button';b.style.cssText='margin:0;min-height:0;display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;border:1.5px solid #f0d6d6;background:#fff;color:#1c1414;font-weight:800;font-size:14.5px;text-align:left';
+    var ic=mk('span','',x[0]);ic.style.cssText='width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;background:'+x[2];b.appendChild(ic);b.appendChild(mk('span','',x[1]));
+    b.onclick=function(){close();x[3]()};g.appendChild(b)});
+  var c=mk('button','alt','बंद करें');c.type='button';c.style.marginTop='12px';c.onclick=close;bx.appendChild(c);o.onclick=function(e){if(e.target===o)close()};document.body.appendChild(o)}
+try{document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('tb-add');if(b)b.onclick=addSheet});var tb0=document.getElementById('tb-add');if(tb0)tb0.onclick=addSheet}catch(e){}
 function openVw(slug,pt,title,tab){
   closeVw(true);var o=document.createElement('div');o.id='vw';o.style.cssText='position:fixed;inset:0;z-index:200;background:#fff;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden';
   var hd=document.createElement('div');hd.style.cssText='background:#7a0a10;color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px';
@@ -1548,7 +1565,7 @@ function setTab(t,nopush){
   try{if(nopush||CURT===null)history.replaceState({tab:t},'','#'+t);else if(CURT!==t)history.pushState({tab:t},'','#'+t)}catch(e){}CURT=t;window.scrollTo(0,0);if(t==='disc')setTimeout(function(){discFill();if(!$('dres').childNodes.length)discGo(false)},30)}
 window.addEventListener('message',function(e){try{if(e.origin!==location.origin||!e.data||e.data.t!=='adm-h')return;var f=document.getElementById('adm-fr');if(f&&e.data.h>200)f.style.height=Math.ceil(e.data.h)+'px'}catch(x){}});
 window.addEventListener('popstate',function(){if(document.getElementById('vw'))return;var h=(location.hash||'#home').slice(1);if(TABMAP)setTab(h,true)});
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tabbar button');if(b)setTab(b.getAttribute('data-tab'))});
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tabbar button');if(b&&b.getAttribute('data-tab'))setTab(b.getAttribute('data-tab'))});
 document.querySelectorAll('#c-qa button').forEach(function(b){b.onclick=function(){var t=b.getAttribute('data-tab');if(t==='ref'){openRef();return}if(t==='new'){setTab('me');var e=$('c-new');setTimeout(function(){e.scrollIntoView({behavior:'smooth'})},80);return}setTab(t)}});
 async function dash(user){
   ME=user;show('dash');OCCSEL='';$('c-pick').hidden=true;$('c-new').hidden=false;
