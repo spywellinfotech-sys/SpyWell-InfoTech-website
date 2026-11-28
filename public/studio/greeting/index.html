@@ -164,7 +164,7 @@ if(/[?&]view=1/.test(location.search))document.body.classList.add('vw');
   var dd=(d.data||[])[0];
   var f=(dd&&dd.content_json&&dd.content_json.fields)||{};
   $('g-name').value=f.name||cj.name||pd.full_name||'';$('g-biz').value=f.business||cj.business||'';$('g-mob').value=String(f.mobile||cj.mobile||pd.phone||'').replace(/\D/g,'').slice(-10);
-  S.link=f.miniweb||(dd?'livecard.in/studio/view/?t=v&s='+dd.slug:'livecard.in');
+  S.link=f.miniweb||(dd?'livecard.in/v/'+dd.slug:'livecard.in');
   var im0=(dd&&dd.content_json&&dd.content_json.images)||{},pu=(im0.photo&&im0.photo.url)||(im0.logo&&im0.logo.url)||'';
   if(/^(https?:\/\/|data:image\/)/.test(pu)){S.pu=/^data:/.test(pu)?'':pu;var pi=new Image();if(!/^data:/.test(pu))pi.crossOrigin='anonymous';pi.onload=function(){S.photo=pi;$('g-phx').hidden=false;$('g-ph').textContent='🖼 फ़ोटो बदलें';draw()};pi.src=pu}
   $('main').hidden=false;$('g-msg').value=OC[0].m[0];build();draw()
