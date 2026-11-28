@@ -614,6 +614,13 @@
     pink: ['गुलाबी', 'linear-gradient(135deg,#831843,#db2777 60%,#f9a8d4)'],
     silver: ['सिल्वर', 'linear-gradient(135deg,#1f2937,#6b7280 55%,#d1d5db)']
   };
+  function palTheme(pal) {
+    if (!pal) return ''; var c = String(pal.bg || pal.ac || '').replace('#', ''); if (!/^[0-9a-f]{6}$/i.test(c)) return '';
+    var r = parseInt(c.slice(0, 2), 16) / 255, g = parseInt(c.slice(2, 4), 16) / 255, b = parseInt(c.slice(4, 6), 16) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, dd = mx - mn;
+    if (dd < 0.08) return l < 0.5 ? 'black' : 'silver';
+    var h = mx === r ? ((g - b) / dd) % 6 : mx === g ? (b - r) / dd + 2 : (r - g) / dd + 4; h = (h * 60 + 360) % 360;
+    return h < 15 || h >= 345 ? 'red' : h < 50 ? 'orange' : h < 70 ? 'black' : h < 170 ? 'green' : h < 250 ? 'blue' : h < 290 ? 'purple' : 'pink';
+  }
   /* Owner's YouTube video on the card: thumbnail first, the player loads only on tap. */
   function ytId(u) { u = String(u || '').trim(); var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{11})/); return m ? m[1] : ''; }
   function ytBox(f, title) {
@@ -643,7 +650,7 @@
       '.fl-bt{display:block;width:100%;text-align:center;margin-top:10px;padding:12px;border-radius:14px;font-weight:800;font-size:15px;text-decoration:none;border:0;cursor:pointer;font-family:inherit;box-sizing:border-box}';
       document.head.appendChild(cs); }
     var w = el('div', 'fl-wrap'), sc = el('div', 'fl-sc'), inn = el('div', 'fl-in'), fr = el('div', 'fl-f'), bk = el('div', 'fl-b');
-    var fth = FLIPTH[(d.style && d.style.flip) || 'red'] || FLIPTH.red; fr.style.background = fth[1]; if (d.style && d.style.flip === 'black') fr.style.border = '1.5px solid #c9a646';
+    var fth = FLIPTH[(d.style && d.style.flip) || palTheme(opts && opts.__pal) || 'red'] || FLIPTH.red; fr.style.background = fth[1]; if (d.style && d.style.flip === 'black') fr.style.border = '1.5px solid #c9a646';
     if (d.images.logo) { var lg = picture('fl-lg', d.images.logo, 'logo'); lg.style.width = 'auto'; fr.appendChild(lg); } else fr.appendChild(el('span', 'fl-chip'));
     fr.appendChild(el('span', 'fl-nfc', '📶'));
     if (d.images.photo) { var ph = picture('pf-ph', d.images.photo, 'circle'); fr.appendChild(ph); }
@@ -776,7 +783,7 @@
   }
   function render(mount, type, tplConfig, content, opts) {
     ensureAssets();
-    opts = opts || {}; var t = tplConfig && typeof tplConfig === 'object' ? tplConfig : {}; var pal = t.palette || {};
+    opts = opts || {}; var t = tplConfig && typeof tplConfig === 'object' ? tplConfig : {}; var pal = t.palette || {}; opts.__pal = pal;
     type = type === 'visiting' ? 'visiting' : 'invitation';
     var src = content;
     if (opts.demo && isEmpty(type, content)) { src = JSON.parse(JSON.stringify(SAMPLE[type])); if (type === 'invitation' && occ(t).sample) { var os = occ(t).sample; src.fields = Object.assign({}, src.fields, { groom: '', groom_parents: '' }, os); src.events = []; } src.style = (content && content.style) || {}; src.images = (content && content.images) || {}; }
