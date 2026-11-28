@@ -649,7 +649,11 @@
     [['in', f.linkedin, '#0a66c2'], ['ig', f.instagram, 'linear-gradient(45deg,#f9a03a,#e1306c,#7a3fd1)'], ['yt', f.youtube, '#e00'], ['fb', f.facebook, '#1877f2']].forEach(function (x) { var u = V.url(x[1]); if (!u) return; var a = link('', x[0], u); a.style.background = x[2]; a.onclick = function (e) { e.stopPropagation(); }; so.appendChild(a); });
     if (so.children.length) bk.appendChild(so);
     if (!bk.children.length) bk.appendChild(el('p', '', P('और जानकारी जल्द', 'More details soon')));
-    inn.appendChild(fr); inn.appendChild(bk); sc.appendChild(inn); sc.onclick = function () { sc.classList.toggle('on'); hint.textContent = sc.classList.contains('on') ? '👆 ' + P('फिर टैप करें, सामने आएगा', 'Tap again to flip back') : '👆 ' + P('कार्ड टैप करें, पलटेगा', 'Tap the card to flip'); };
+    inn.appendChild(fr); inn.appendChild(bk); sc.appendChild(inn); var auto = true, vis = true, flipT = null;
+    function setHint() { hint.textContent = sc.classList.contains('on') ? '👆 ' + P('फिर टैप करें, सामने आएगा', 'Tap again to flip back') : '👆 ' + P('कार्ड टैप करें, पलटेगा', 'Tap the card to flip'); }
+    function loop() { flipT = setTimeout(function () { if (!auto || !sc.isConnected) return; if (vis && !document.hidden) { sc.classList.toggle('on'); setHint(); } loop(); }, sc.classList.contains('on') ? 4500 : 3500); }
+    loop(); try { new IntersectionObserver(function (es) { vis = es[0].isIntersecting; }).observe(sc); } catch (x) {}
+    sc.onclick = function () { auto = false; clearTimeout(flipT); sc.classList.toggle('on'); hint.textContent = sc.classList.contains('on') ? '👆 ' + P('फिर टैप करें, सामने आएगा', 'Tap again to flip back') : '👆 ' + P('कार्ड टैप करें, पलटेगा', 'Tap the card to flip'); };
     w.appendChild(sc); var hint = el('div', 'fl-hint', '👆 ' + P('कार्ड टैप करें, पलटेगा', 'Tap the card to flip')); w.appendChild(hint);
     var tel = V.tel(f.mobile), wa = V.tel(f.whatsapp), row = el('div', 'fl-row');
     if (tel) row.appendChild(actA(link('', '📞 ' + P('कॉल', 'Call'), 'tel:+91' + tel), 'call'));
