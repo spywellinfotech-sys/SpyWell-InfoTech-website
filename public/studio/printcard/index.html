@@ -7,88 +7,65 @@
 .bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff}
 .bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.7);border-radius:99px;padding:7px 14px;font-weight:700}
 .bar b{font:800 19px "Baloo 2",sans-serif;flex:1}
-main{max-width:640px;margin:0 auto;padding:12px 14px 40px}
-input[type=search]{width:100%;font:16px Hind,sans-serif;padding:11px 12px;border-radius:12px;border:1.5px solid #ecd3cf;margin:6px 0 8px}
+main{max-width:640px;margin:0 auto;padding:12px 12px 40px}
+input[type=search]{width:100%;font:16px Hind,sans-serif;padding:10px 12px;border-radius:12px;border:1.5px solid #ecd3cf;margin:4px 0 8px}
 .chips{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px}.chip{flex:none;border:1.5px solid #ecd3cf;background:#fff;color:#1c1414;border-radius:99px;padding:6px 12px;font-weight:700;font-size:14px;min-height:36px}.chip.on{background:#d4141c;color:#fff;border-color:#d4141c}
-.it{background:#fff;border:1px solid #f0dcd8;border-radius:12px;margin-bottom:6px;overflow:hidden}
-.hd{display:flex;align-items:center;gap:10px;padding:9px 10px}
-.hd .t{flex:1;min-width:0;cursor:pointer}.hd b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}.hd .m{font-size:12px;color:#6d6060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tg{font-size:11.5px;font-weight:700;border-radius:99px;padding:2px 8px;white-space:nowrap;background:#e6f6f3;color:#0b6b5e}.tg.n{background:#e8f0fb;color:#1e4f9a}
-.ar{color:#999;font-size:14px;cursor:pointer;padding:0 4px}
-.pn{border-top:1px solid #f3e3e0;padding:10px}
-.pv{display:flex;gap:8px;justify-content:center;margin-bottom:10px}.pv img{width:46%;max-width:200px;border-radius:8px;box-shadow:0 3px 10px rgba(0,0,0,.18)}
-.acts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-button{font:700 14px Hind,sans-serif;border-radius:10px;border:0;padding:9px 10px;cursor:pointer;background:#d4141c;color:#fff;min-height:42px}
-button.alt{background:#fff;color:#d4141c;border:1.5px solid #d4141c}button.nfc{background:#0b3d5c}button.ok{background:#0f9d8a}button:disabled{opacity:.6}
-.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.mut{color:#6d6060;font-size:14px}
-.msg{font-size:14px;margin-top:8px;min-height:0}
-input[type=checkbox]{width:22px;height:22px;margin:0;flex:none}
+.day{background:#fff;border:1px solid #f0dcd8;border-radius:14px;margin-bottom:10px;overflow:hidden}
+.dh{padding:10px 12px;background:#fff1ee;border-bottom:1px solid #f3e3e0}.dh b{font-size:16px}.dh .c{font-size:13px;color:#6d6060}
+.dh button{margin-top:8px;width:100%}
+.r{display:flex;align-items:center;gap:6px;padding:8px 10px;border-top:1px solid #f6ecea}.r:first-of-type{border-top:0}
+.r .t{flex:1;min-width:0}.r b{display:block;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.r .m{font-size:12px;color:#6d6060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tk{flex:none;border:1.5px solid #ddd;background:#fff;color:#888;border-radius:10px;padding:4px 6px;font:700 12px Hind,sans-serif;min-width:52px;text-align:center;line-height:1.15;cursor:pointer}
+.tk.on{background:#0f9d8a;border-color:#0f9d8a;color:#fff}.tk.d.on{background:#2f6fde;border-color:#2f6fde}
+.ib{flex:none;border:0;background:#f3eeee;border-radius:10px;width:34px;height:34px;font-size:15px;cursor:pointer;padding:0}
+button.main{font:700 15px Hind,sans-serif;border-radius:10px;border:0;padding:10px 12px;cursor:pointer;background:#d4141c;color:#fff;min-height:44px}button:disabled{opacity:.6}
+.mut{color:#6d6060;font-size:14px}.msg{font-size:14px;padding:0 12px 10px}
 </style></head><body>
 <div class="bar"><a href="/studio/admin/">← Admin</a><b>🖨️ Print Card</b></div>
 <main id="m"><p class="mut">लोड हो रहा है…</p></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/qr.js"></script><script src="/studio/printcard.js?v=8"></script>
+<script src="/studio/qr.js"></script><script src="/studio/printcard.js?v=9"></script>
 <script>
 (async function(){
 var $=function(i){return document.getElementById(i)},m=$('m');
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 var sb=window.supabase.createClient('https://rxhanrtoaplwphmwpgqg.supabase.co','sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d',{auth:{storageKey:'spywell-studio-auth'}});
 var a=await sb.rpc('studio_is_admin');if(!a||a.data!==true){m.innerHTML='<p>यह पेज सिर्फ़ एडमिन के लिए है। <a href="/studio/">लॉगिन करें</a></p>';return}
-var rs=await Promise.all([sb.rpc('studio_admin_link_report'),sb.from('studio_card_prints').select('design_id,printed_at,nfc_at')]);
-var L=((rs[0]&&rs[0].data)||[]).filter(function(x){return x.product_type==='visiting'&&x.status==='published'&&x.slug});
-L.sort(function(p,q){return String(q.published_at||'').localeCompare(String(p.published_at||''))});
-var PR={};((rs[1]&&rs[1].data)||[]).forEach(function(r){PR[r.design_id]=r});
-var SEL={},OPEN=null,FLT='todo';
-m.innerHTML='<p class="mut">नाम दबाएँ: प्रीव्यू, PDF (आगे-पीछे, 54 × 86 mm), NFC, URL और "प्रिंट हो गया" का निशान।</p><div id="prn" style="margin-bottom:10px"></div><input type="search" id="q" placeholder="🔍 नाम, ईमेल या लिंक खोजें" aria-label="खोजें"><div class="chips" id="ch"></div><div class="top"><button id="all" class="alt">☑ दिख रहे सब चुनें</button><button id="go" disabled>📄 चुने हुए का PDF (0)</button><button id="gm" class="ok" disabled>✅ OK — PDF बनाएँ (0)</button></div><p class="mut" id="msg"></p><div id="l"></div>';
-function msg(t){$('msg').textContent=t}
-function cnt(){var n=Object.keys(SEL).length;$('go').textContent='📄 चुने हुए का PDF ('+n+')';$('go').disabled=!n;$('gm').disabled=!n;$('gm').textContent='✅ OK — PDF बनाएँ ('+n+')'}
-function vis(){var q=$('q').value.trim().toLowerCase();return L.filter(function(x){var pr=PR[x.design_id]&&PR[x.design_id].printed_at;if(FLT==='todo'&&pr)return false;if(FLT==='done'&&!pr)return false;return !q||((x.title||'')+' '+(x.email||'')+' '+x.slug).toLowerCase().indexOf(q)>=0})}
-function chips(){var d=L.filter(function(x){return PR[x.design_id]&&PR[x.design_id].printed_at}).length;
-  $('ch').innerHTML=[['todo','⏳ बाकी ('+(L.length-d)+')'],['done','✅ प्रिंट हुए ('+d+')'],['all','सभी ('+L.length+')']].map(function(c){return '<button class="chip'+(FLT===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</button>'}).join('');
-  [].forEach.call($('ch').querySelectorAll('[data-f]'),function(b){b.onclick=function(){FLT=b.getAttribute('data-f');OPEN=null;chips();list()}})}
-function fmt(t){try{return new Date(t).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})}catch(e){return ''}}
-function list(){var F=vis();
-  $('l').innerHTML=F.slice(0,400).map(function(x,i){var pr=PR[x.design_id]||{};return '<div class="it" id="it'+i+'"><div class="hd"><input type="checkbox" data-c="'+i+'"'+(SEL[x.design_id]?' checked':'')+' aria-label="चुनें"><div class="t" data-o="'+i+'"><b>'+esc(x.title||'—')+'</b><div class="m">'+esc(x.slug)+' · '+esc(x.email||'')+'</div></div>'+(pr.printed_at?'<span class="tg">🖨️ '+fmt(pr.printed_at)+'</span>':'')+(pr.nfc_at?'<span class="tg n">📲</span>':'')+'<span class="ar" data-o="'+i+'">'+(OPEN===x.design_id?'▴':'▾')+'</span></div>'+(OPEN===x.design_id?'<div class="pn" id="pn"></div>':'')+'</div>'}).join('')||'<p class="mut">यहाँ कोई कार्ड नहीं</p>';
-  [].forEach.call($('l').querySelectorAll('[data-c]'),function(c){c.onchange=function(){var x=F[+c.getAttribute('data-c')];if(c.checked)SEL[x.design_id]=x;else delete SEL[x.design_id];cnt()}});
-  [].forEach.call($('l').querySelectorAll('[data-o]'),function(t){t.onclick=function(){var i=+t.getAttribute('data-o'),x=F[i];OPEN=OPEN===x.design_id?null:x.design_id;list();if(OPEN){panel(x);var el=$('it'+i);if(el)el.scrollIntoView({block:'nearest'})}}})}
-async function mark(x,k,v){var row={design_id:x.design_id,updated_at:new Date().toISOString()};var cur=PR[x.design_id]||{};row.printed_at=k==='printed_at'?v:(cur.printed_at||null);row.nfc_at=k==='nfc_at'?v:(cur.nfc_at||null);
-  var r=await sb.from('studio_card_prints').upsert(row,{onConflict:'design_id'});if(r.error)return false;PR[x.design_id]=row;return true}
-async function panel(x){var p=$('pn');if(!p)return;var pr=PR[x.design_id]||{};var u='https://livecard.in/v/'+x.slug;
-  p.innerHTML='<div class="pv" id="pvi"><span class="mut">प्रीव्यू बन रहा है…</span></div><div class="acts"><button id="b-pdf">📄 PDF</button><button class="nfc" id="b-nfc">📲 NFC लिखें</button><button class="nfc" id="b-mail" style="grid-column:1/-1;background:#1a73e8">🖨️ प्रिंटर को भेजें / PDF शेयर</button><button class="alt" id="b-url">🔗 URL कॉपी</button><button class="'+(pr.printed_at?'alt':'ok')+'" id="b-pr">'+(pr.printed_at?'↩ प्रिंट हटाएँ':'✅ प्रिंट हो गया')+'</button></div><div class="msg" id="pm"></div>';
-  var pm=function(t){var e=$('pm');if(e)e.textContent=t};
-  try{var cv=await LCPrint.draw(x),bk=await LCPrint.back();var pv=$('pvi');if(pv)pv.innerHTML='<img alt="आगे" src="'+cv.toDataURL('image/png')+'">'+(bk?'<img alt="पीछे" src="'+bk+'">':'')}catch(e){}
-  $('b-pdf').onclick=async function(){var b=this;b.disabled=true;pm('PDF बन रहा है…');pm(await run([x],'livecard-'+x.slug));b.disabled=false};
-  $('b-url').onclick=async function(){var b=this;try{await navigator.clipboard.writeText(u);b.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('URL',u)}setTimeout(function(){b.textContent='🔗 URL कॉपी'},2000)};
-  $('b-pr').onclick=async function(){var b=this;b.disabled=true;var on=!(PR[x.design_id]&&PR[x.design_id].printed_at);var ok=await mark(x,'printed_at',on?new Date().toISOString():null);b.disabled=false;if(!ok){pm('❌ सेव नहीं हुआ');return}chips();list();if(OPEN)panel(x)};
-  $('b-nfc').onclick=function(){nfc(x,pm)};
-  $('b-mail').onclick=function(){LCPrint.send(sb,[x],$('pm'),PRN)}}
-var NM={ok:'✅ NFC में लिख गया! किसी फ़ोन से छुआकर जाँचें।',readonly:'❌ यह NFC टैग लॉक है।',small:'❌ टैग में जगह कम है।',unsupported:'❌ यह टैग सपोर्ट नहीं करता।',error:'❌ लिखा नहीं जा सका, फिर से छुआएँ।'};
+var rs=await Promise.all([sb.rpc('studio_admin_link_report'),sb.rpc('studio_admin_customers',{p_search:''}),sb.from('studio_card_prints').select('design_id,printed_at,delivered_at,nfc_at')]);
+var CU={};((rs[1]&&rs[1].data)||[]).forEach(function(c){if(c.email)CU[String(c.email).toLowerCase()]=c});
+var L=((rs[0]&&rs[0].data)||[]).filter(function(x){return x.product_type==='visiting'&&x.status==='published'&&x.slug}).map(function(x){var c=CU[String(x.email||'').toLowerCase()]||{};x.reg=c.created_at||x.published_at;x.phone=c.phone||'';x.cname=c.full_name||'';return x});
+var PR={};((rs[2]&&rs[2].data)||[]).forEach(function(r){PR[r.design_id]=r});
+function dkey(t){try{return new Date(t).toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'})}catch(e){return ''}}
+function dlab(k){var today=dkey(new Date()),y=dkey(new Date(Date.now()-864e5));var l=new Date(k+'T12:00:00').toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'});return l+(k===today?' (आज)':k===y?' (कल)':'')}
+function sd(t){try{return new Date(t).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})}catch(e){return ''}}
+var FLT='pp';
+m.innerHTML='<p class="mut">ग्राहक जिस दिन जुड़े, उस दिन के सब कार्ड एक PDF में (आगे-पीछे, 54 × 86 mm)। ✓ लगाएँ: 🖨️ प्रिंट हुआ, 📦 डिलीवर हुआ।</p><input type="search" id="q" placeholder="🔍 नाम, मोबाइल या ईमेल खोजें" aria-label="खोजें"><div class="chips" id="ch"></div><div id="l"></div>';
+function st(x,k){return !!(PR[x.design_id]&&PR[x.design_id][k])}
+function chips(){var np=L.filter(function(x){return !st(x,'printed_at')}).length,nd=L.filter(function(x){return st(x,'printed_at')&&!st(x,'delivered_at')}).length;
+  $('ch').innerHTML=[['pp','🖨️ प्रिंट बाकी ('+np+')'],['dd','📦 डिलीवरी बाकी ('+nd+')'],['all','सभी ('+L.length+')']].map(function(c){return '<button class="chip'+(FLT===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</button>'}).join('');
+  [].forEach.call($('ch').querySelectorAll('[data-f]'),function(b){b.onclick=function(){FLT=b.getAttribute('data-f');chips();list()}})}
+function list(){var q=$('q').value.trim().toLowerCase();
+  var F=L.filter(function(x){if(FLT==='pp'&&st(x,'printed_at'))return false;if(FLT==='dd'&&(!st(x,'printed_at')||st(x,'delivered_at')))return false;return !q||((x.title||'')+' '+(x.cname||'')+' '+(x.email||'')+' '+(x.phone||'')+' '+x.slug).toLowerCase().indexOf(q)>=0});
+  var G={},K=[];F.forEach(function(x){var k=dkey(x.reg);if(!G[k]){G[k]=[];K.push(k)}G[k].push(x)});K.sort().reverse();
+  $('l').innerHTML=K.length?K.map(function(k,gi){var A=G[k],p=A.filter(function(x){return st(x,'printed_at')}).length,d=A.filter(function(x){return st(x,'delivered_at')}).length,pend=A.filter(function(x){return !st(x,'printed_at')}).length;
+    return '<div class="day"><div class="dh"><b>📅 '+esc(dlab(k))+'</b><div class="c">'+A.length+' ग्राहक · 🖨️ '+p+'/'+A.length+' · 📦 '+d+'/'+A.length+'</div><button class="main" data-g="'+gi+'">📄 इस दिन का PDF ('+(pend||A.length)+' कार्ड)</button></div><div class="msg" id="gm'+gi+'"></div>'+
+      A.map(function(x,i){var r=PR[x.design_id]||{};return '<div class="r"><div class="t"><b>'+esc(x.title||x.cname||'—')+'</b><div class="m">'+esc([x.phone,x.email].filter(Boolean).join(' · ')||x.slug)+'</div></div>'+
+        '<button class="tk'+(r.printed_at?' on':'')+'" data-k="printed_at" data-id="'+esc(x.design_id)+'">🖨️<br>'+(r.printed_at?sd(r.printed_at):'प्रिंट')+'</button>'+
+        '<button class="tk d'+(r.delivered_at?' on':'')+'" data-k="delivered_at" data-id="'+esc(x.design_id)+'">📦<br>'+(r.delivered_at?sd(r.delivered_at):'डिलीवर')+'</button>'+
+        '<button class="ib" data-n="'+esc(x.design_id)+'" aria-label="NFC">📲</button><button class="ib" data-u="'+esc(x.slug)+'" aria-label="लिंक कॉपी">🔗</button></div>'}).join('')+'<div class="msg" id="nm'+gi+'"></div></div>'}).join(''):'<p class="mut">यहाँ कोई कार्ड नहीं</p>';
+  [].forEach.call($('l').querySelectorAll('[data-g]'),function(b){b.onclick=async function(){var A=G[K[+b.getAttribute('data-g')]],P=A.filter(function(x){return !st(x,'printed_at')});var C=P.length?P:A;b.disabled=true;await LCPrint.save(C,$('gm'+b.getAttribute('data-g')),'livecard-'+K[+b.getAttribute('data-g')]+'-'+C.length);b.disabled=false}});
+  [].forEach.call($('l').querySelectorAll('.tk'),function(b){b.onclick=async function(){var id=b.getAttribute('data-id'),k=b.getAttribute('data-k'),cur=PR[id]||{design_id:id};var v=cur[k]?null:new Date().toISOString();
+    var row={design_id:id,printed_at:cur.printed_at||null,delivered_at:cur.delivered_at||null,nfc_at:cur.nfc_at||null,updated_at:new Date().toISOString()};row[k]=v;if(k==='delivered_at'&&v&&!row.printed_at)row.printed_at=v;
+    b.disabled=true;var r=await sb.from('studio_card_prints').upsert(row,{onConflict:'design_id'});b.disabled=false;if(r.error){alert('सेव नहीं हुआ');return}PR[id]=row;chips();list()}});
+  [].forEach.call($('l').querySelectorAll('[data-u]'),function(b){b.onclick=async function(){var u='https://livecard.in/v/'+b.getAttribute('data-u');try{await navigator.clipboard.writeText(u);b.textContent='✓'}catch(e){window.prompt('URL',u)}setTimeout(function(){b.textContent='🔗'},1500)}});
+  [].forEach.call($('l').querySelectorAll('[data-n]'),function(b){b.onclick=function(){var x=L.filter(function(z){return z.design_id===b.getAttribute('data-n')})[0];var box=b.closest('.day').querySelector('[id^=nm]');nfc(x,function(t){box.textContent=(x.title||'')+': '+t})}})}
+var NM={ok:'✅ NFC में लिख गया!',readonly:'❌ यह NFC टैग लॉक है।',small:'❌ टैग में जगह कम है।',unsupported:'❌ यह टैग सपोर्ट नहीं करता।',error:'❌ लिखा नहीं जा सका, फिर से छुआएँ।'};
 async function nfc(x,pm){var u='https://livecard.in/v/'+x.slug+'?src=nfc';
-  var done=async function(r){pm(NM[r]||NM.error);if(r==='ok'){await mark(x,'nfc_at',new Date().toISOString());var b=$('b-nfc');if(b)b.textContent='📲 NFC लिखें'}};
-  if(window.ViNative&&ViNative.writeNfc){var st='';try{st=ViNative.nfcState()}catch(e){}
-    if(st==='none'){pm('इस फ़ोन में NFC नहीं है।');return}if(st==='off'){pm('फ़ोन की Settings में NFC चालू करें, फिर दोबारा दबाएँ।');return}
-    window.__vcNfc=function(r){done(r)};var ok=false;try{ok=ViNative.writeNfc(u)}catch(e){}if(!ok){pm('NFC शुरू नहीं हो पाया।');return}
-    pm('📲 अब NFC कार्ड को फ़ोन के पीछे छुआएँ…');var b=$('b-nfc');if(b)b.textContent='⏳ कार्ड छुआएँ…';return}
+  var done=async function(r){pm(NM[r]||NM.error);if(r==='ok'){var cur=PR[x.design_id]||{};var row={design_id:x.design_id,printed_at:cur.printed_at||null,delivered_at:cur.delivered_at||null,nfc_at:new Date().toISOString(),updated_at:new Date().toISOString()};await sb.from('studio_card_prints').upsert(row,{onConflict:'design_id'});PR[x.design_id]=row}};
+  if(window.ViNative&&ViNative.writeNfc){var s0='';try{s0=ViNative.nfcState()}catch(e){}if(s0==='none'){pm('इस फ़ोन में NFC नहीं है।');return}if(s0==='off'){pm('फ़ोन की Settings में NFC चालू करें।');return}
+    window.__vcNfc=function(r){done(r)};var ok=false;try{ok=ViNative.writeNfc(u)}catch(e){}if(!ok){pm('NFC शुरू नहीं हो पाया।');return}pm('📲 अब NFC कार्ड को फ़ोन के पीछे छुआएँ…');return}
   if('NDEFReader' in window){pm('📲 अब NFC कार्ड को फ़ोन के पीछे छुआएँ…');try{var rd=new NDEFReader();await rd.write({records:[{recordType:'url',data:u}]});done('ok')}catch(e){done('error')}return}
-  pm('NFC लिखने के लिए LiveCard ऐप 1.0.111+ या Android Chrome चाहिए।')}
-function pmail(){var e=($('pe').value||'').trim();try{localStorage.setItem('lc_printer_mail',e)}catch(x){}return e}
-async function mail(cards,name,label){var to=pmail();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)){$('pe').focus();return '❗ ऊपर प्रिंटर का ईमेल लिखें'}
-  var subj='LiveCard print: '+(cards.length>1?cards.length+' cards':label),body='Namaste,\nKripya ye LiveCard card(s) print karein — dono taraf (duplex), size 54 x 86 mm (debit card), rounded corners.\nCards: '+cards.map(function(c){return (c.title||'')+' ('+c.slug+')'}).join(', ')+'\n\nSpyWell InfoTech · LiveCard.in';
-  if(window.ViNative&&ViNative.emailFile){var r=await LCPrint.pdf(cards,name);if(r!=='saved'||!LCPrint.last.uri)return '❌ PDF नहीं बन पाया';try{ViNative.emailFile(LCPrint.last.uri,to,subj,body)}catch(e){return '❌ मेल ऐप नहीं खुला'}return '📧 Gmail खुल गया, उसमें Send दबाएँ'}
-  if(window.ViNative)return '❗ मेल भेजने के लिए नया LiveCard ऐप (1.0.112) इंस्टॉल करें';
-  var r2=await LCPrint.pdf(cards,name,{noSave:true});var b=LCPrint.last.blob;if(!b)return '❌ PDF नहीं बन पाया';var f=new File([b],LCPrint.last.name,{type:'application/pdf'});
-  try{await navigator.clipboard.writeText(to)}catch(e){}
-  if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:subj,text:body});return '📧 मेल ऐप चुनें, "To" में ईमेल पेस्ट करें (कॉपी हो चुका है)'}catch(e){if(e&&e.name==='AbortError')return ''}}
-  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=LCPrint.last.name;document.body.appendChild(a);a.click();a.remove();location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);return '📧 PDF डाउनलोड हुआ, मेल में उसे अटैच करें'}
-async function run(cards,name){try{var r=await LCPrint.pdf(cards,name);return r==='saved'?'✅ PDF सेव हुआ (Download/LiveCard)':r==='png'?'✅ फ़ोटो गैलरी में सेव हुई (PDF के लिए नया ऐप)':'❌ सेव नहीं हो पाया'}catch(e){return '❌ PDF नहीं बन पाया'}}
-$('q').oninput=function(){OPEN=null;list()};
-$('gm').onclick=function(){var C=Object.keys(SEL).map(function(k){return SEL[k]});if(!PRN){prnBar(true);window.scrollTo(0,0);return}LCPrint.send(sb,C,$('msg'),PRN)};
-var PRN=null;function pick(p){PRN=p;try{localStorage.setItem('lc_prn',p.id)}catch(e){}prnBar(false)}
-async function prnBar(edit){var b=$('prn');if(edit||!PRN){LCPrint.manage(sb,b,pick,PRN&&PRN.id);return}
-  b.innerHTML='<div style="display:flex;align-items:center;gap:8px;background:#fff7e0;border:1.5px solid #f0c24b;border-radius:12px;padding:9px 12px"><div style="flex:1;min-width:0"><b>🖨️ प्रिंटर: '+esc(PRN.name)+'</b><div class="mut" style="font-size:12px">'+esc([PRN.mobile,PRN.email].filter(Boolean).join(' · '))+'</div></div><button class="alt" id="pch">बदलें</button></div><p class="mut" style="margin:6px 2px 0">अब ग्राहक चुनें ☑ और नीचे "✅ OK" दबाएँ।</p>';$('pch').onclick=function(){prnBar(true)}}
-(async function(){var L=await LCPrint.printers(sb);var id='';try{id=localStorage.getItem('lc_prn')||''}catch(e){}PRN=L.filter(function(p){return p.id===id})[0]||(L.length===1?L[0]:null);prnBar(false)})();
-$('all').onclick=function(){vis().forEach(function(x){SEL[x.design_id]=x});cnt();list()};
-$('go').onclick=async function(){var C=Object.keys(SEL).map(function(k){return SEL[k]});this.disabled=true;msg('PDF बन रहा है…');msg(await run(C,'livecard-qr-cards-'+C.length));this.disabled=false};
-chips();list();
+  pm('NFC के लिए LiveCard ऐप 1.0.111+ या Android Chrome चाहिए।')}
+$('q').oninput=list;chips();list();
 })();
 </script></body></html>
