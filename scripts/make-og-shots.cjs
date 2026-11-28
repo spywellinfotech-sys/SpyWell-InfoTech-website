@@ -39,6 +39,7 @@ const server = http.createServer((req, res) => {
             .replace(/(<meta name="twitter:image" content=")[^"]*(">)/, '$1' + u2 + '$2').replace(/(<meta name="twitter:card" content=")[^"]*(">)/, '$1summary$2'); fs.writeFileSync(pf2, h2); }
         ok++; await page.close(); continue;
       }
+      try { const th = await page.screenshot({ clip: { x: 0, y: 0, width: 420, height: k === 'v' ? 600 : 672 } }); await sharp(th).resize({ width: 300 }).jpeg({ quality: 70, mozjpeg: true }).toFile(path.join(DIST, 'og', 't-' + k + '-' + slug + '.jpg')); } catch (e) { }
       let buf;
       if (k === 'v') { const el = await page.$('#sheet .sr-vc, #sheet .sr'); if (!el) throw new Error('no card'); buf = await el.screenshot(); const mt = await sharp(buf).metadata(); const ch = Math.min(mt.height - 8, 700); buf = await sharp(buf).extract({ left: 6, top: 4, width: mt.width - 12, height: ch }).toBuffer(); }
       else buf = await page.screenshot({ clip: { x: 0, y: 0, width: 408, height: 500 } });
