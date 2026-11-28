@@ -3,7 +3,7 @@
 <title>प्रोडक्ट और सेवाएँ · LiveCard</title><link rel="icon" href="/studio/vicard-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Hind:wght@400;600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#fff7f4;color:#1c1414;font:16px/1.5 Hind,system-ui,sans-serif;padding-bottom:110px}
+*{box-sizing:border-box}body{margin:0;background:#fff7f4;color:#1c1414;font:16px/1.5 Hind,system-ui,sans-serif;padding-bottom:130px}
 .bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(135deg,#7a0a10,#d4141c);color:#fff}
 .bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.7);border-radius:99px;padding:7px 14px;font-weight:700}
 .bar b{font:800 19px "Baloo 2",sans-serif;flex:1}
@@ -43,6 +43,7 @@ var P=[
  {k:'inv',ic:'💌',c:'#c2185b',n:'इनविटेशन कार्ड',pr:(S.pub_price_invitation||999),u:'एक बार',d:'शादी/function का डिजिटल निमंत्रण, function तक लिंक चालू।',t:'i'}];
 var CART=[];try{CART=JSON.parse(localStorage.getItem('lc_cart')||'[]')||[]}catch(e){}
 CART=CART.filter(function(c){return DS.some(function(d){return d.id===c.design_id})});
+var ADDQ=(new URLSearchParams(location.search).get('add')||'').split(',').filter(Boolean),AUTO=false;ADDQ.forEach(function(z){var a=z.split(':');if(a.length===2&&['card','site','domain','nfc','inv'].indexOf(a[0])>=0&&DS.some(function(d){return d.id===a[1]})){AUTO=true;if(!CART.some(function(c){return c.kind===a[0]&&c.design_id===a[1]}))CART.push({kind:a[0],design_id:a[1]})}});try{localStorage.setItem('lc_cart',JSON.stringify(CART))}catch(e){}
 function saveC(){try{localStorage.setItem('lc_cart',JSON.stringify(CART))}catch(e){}bar()}
 function inC(k,id){return CART.some(function(c){return c.kind===k&&c.design_id===id})}
 function draw(){
@@ -79,6 +80,6 @@ $('cbo').onclick=async function(){var o=document.createElement('div');o.classNam
       CART=[];saveC();bx.innerHTML='<p class="ok" style="font-size:20px">✅ भुगतान हो गया!</p><p>आपके प्लान और सेवाएँ चालू हो गईं। NFC कार्ड हो तो हमारी टीम छापकर आप तक भेजेगी।</p><a href="/studio/" style="display:block;text-align:center;padding:13px;border-radius:14px;background:#d4141c;color:#fff;font-weight:800;text-decoration:none">← Studio पर जाएँ</a>';draw()}
     catch(e){pb.disabled=false;$('sm').innerHTML='<span class="err">'+(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है।':'भुगतान पूरा नहीं हुआ। पैसे कटे हों तो पेज दोबारा खोलें, अपने-आप जुड़ जाएगा।')+'</span>'}}};
 try{fn({action:'cart_sync'})}catch(e){}
-draw();
+draw();if(AUTO&&CART.length)setTimeout(function(){$('cbo').onclick()},300);
 })();
 </script></body></html>
