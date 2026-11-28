@@ -621,6 +621,7 @@ async function payPlan(plan,amount){
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
     return true
   }catch(e){toast(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है। LiveCard टीम से संपर्क करें।':'भुगतान पूरा नहीं हो पाया। पैसे कट गए हों तो कुछ देर बाद पेज खोलें, प्लान अपने आप चालू हो जाएगा।','bad');return false}}
+function upgRefresh(){var o=document.getElementById('upgpg');if(o)o.remove();upgPage()}
 function upgPage(){
   $('main').hidden=true;['undo','redo','save'].forEach(function(i){var e=$(i);if(e)e.hidden=true});
   try{$('ttl').textContent='⬆️ प्लान / अपग्रेड'}catch(e){}
@@ -628,7 +629,7 @@ function upgPage(){
   var w=document.querySelector('.wrap'),box=h('div',{id:'upgpg',style:'max-width:560px;margin:0 auto;padding:6px 0 30px'});
   box.appendChild(h('div',{class:'k',style:'margin:4px 0 10px',text:'अपना प्लान चुनें या रिन्यू करें। कार्ड एडिट करने के लिए ऊपर ← से वापस जाएँ।'}));
   w.appendChild(box);
-  if(D.product_type==='visiting'){planBox(box);if(C&&C.style&&C.style.site===true)domainBox(box);nfcBox(box)}
+  if(D.product_type==='visiting'){planBox(box);domainBox(box);nfcBox(box)}
   else box.appendChild(h('div',{class:'k',text:'इस कार्ड के लिए प्लान की ज़रूरत नहीं है।'}));
   var eb=h('a',{href:'/studio/editor/?id='+encodeURIComponent(ID),style:'display:block;text-align:center;margin-top:14px;color:#d4141c;font-weight:700',text:'✏️ कार्ड एडिट करें'});box.appendChild(eb)}
 function nfcBox(p){
@@ -653,16 +654,33 @@ function planBox(p){
     var live=s.plan&&new Date(s.paid_until)>new Date();
     if(C.style.site===true&&(!s.plan||s.plan==='card'))box.appendChild(h('div',{class:'k',style:'margin-top:6px;font-weight:700;color:#8b1a2b',text:'🌐 आपकी मिनी वेबसाइट अभी बंद है। मिनी वेबसाइट प्लान लेते ही लाइव हो जाएगी।'}));
     sb.from('studio_manual_pays').select('amount').eq('design_id',D.id).eq('status','pending').maybeSingle().then(function(q){if(q&&q.data)box.insertBefore(h('div',{class:'k',style:'font-weight:700;color:#8a5a00',text:'⏳ ₹'+q.data.amount+' का भुगतान जाँच में है। मंज़ूरी के बाद प्लान चालू होगा।'}),box.children[1]||null)});
-    function go(plan,label,after,amount){var b=h('button',{class:'btn alt',text:label});b.style.marginTop='8px';
-      b.onclick=async function(){b.disabled=true;var ok=await payPlan(plan,amount);if(ok){if(after)await after();toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b)}
-    if(s.plan)go(s.plan,'🔁 1 साल के लिए नवीनीकरण ₹'+s.prices[s.plan],null,s.prices[s.plan]);
-    if(!s.plan||s.plan==='card'){var amt=(s.plan==='card'&&live)?s.prices.site-s.prices.card:s.prices.site;
-      go('site','🌐 मिनी वेबसाइट पर अपग्रेड ₹'+amt+((s.plan==='card'&&live)?' (सिर्फ़ फ़र्क़)':''),async function(){C.style.site=true;changed();await save()},amt)}
+    var RK={card:1,site:2,domain:3},cur=live?(RK[s.plan]||0):0,PR=s.prices||{};
+    var PL=[['card','📇','विज़िटिंग कार्ड','डिजिटल कार्ड, QR, कॉल/WhatsApp बटन, कॉन्टैक्ट सेव, इनसाइट',PR.card],
+      ['site','🌐','मिनी वेबसाइट','विज़िटिंग कार्ड + पूरी वेबसाइट: सेवाएँ, गैलरी, पूछताछ फ़ॉर्म, एड्रेस कार्ड, सेव्ड लोकेशन',PR.site],
+      ['domain','🔗','फ़ुल वेबसाइट + अपना डोमेन','मिनी वेबसाइट + आपका अपना डोमेन (जैसे www.aapkanaam.com)',PR.domain]];
+    var grid=h('div',{style:'display:grid;gap:10px;margin-top:12px'});box.appendChild(grid);
+    PL.forEach(function(x){var k=x[0],rk=RK[k],on=live&&s.plan===k,inc=live&&cur>rk;
+      var c=h('div',{style:'border:2px solid '+(on?'#0a7a2f':'#ecd3cf')+';border-radius:14px;padding:12px;background:'+(on?'#effaf2':'#fff')});
+      var top=h('div',{style:'display:flex;align-items:center;gap:8px'});top.appendChild(h('span',{text:x[1],style:'font-size:24px'}));
+      var nm=h('div',{style:'flex:1'});nm.appendChild(h('b',{text:x[2],style:'font-size:16px'}));nm.appendChild(h('div',{class:'k',text:'₹'+(x[4]||0)+' / साल'}));top.appendChild(nm);
+      if(on)top.appendChild(h('span',{text:'✅ चालू',style:'background:#0a7a2f;color:#fff;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:800'}));
+      else if(inc)top.appendChild(h('span',{text:'शामिल है',style:'background:#eee;color:#555;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700'}));
+      c.appendChild(top);c.appendChild(h('div',{class:'k',style:'margin-top:6px',text:x[3]}));
+      if(on)c.appendChild(h('div',{class:'k',style:'margin-top:4px;font-weight:700',text:'🗓️ '+fmtD(s.paid_until)+' तक'}));
+      var amt=0,lab='',after=null;
+      if(on){amt=x[4];lab='🔁 1 साल और बढ़ाएँ · ₹'+amt}
+      else if(!inc){if(k==='domain'){amt=s.domain_amount||x[4];lab=(cur?'⬆️ अपग्रेड · ₹':'✅ यह प्लान लें · ₹')+amt+(s.domain_kind==='upgrade'?' (सिर्फ़ फ़र्क़)':'')}
+        else if(k==='site'){amt=(cur===1)?Math.max(0,(PR.site||0)-(PR.card||0)):x[4];lab=(cur?'⬆️ अपग्रेड · ₹':'✅ यह प्लान लें · ₹')+amt+(cur===1?' (सिर्फ़ फ़र्क़)':'');after=async function(){C.style.site=true;changed();await save()}}
+        else{amt=x[4];lab='✅ यह प्लान लें · ₹'+amt}}
+      if(lab&&amt>0){var b=h('button',{class:'btn'+(on?' alt':''),text:lab});b.style.marginTop='10px';
+        b.onclick=async function(){b.disabled=true;var ok=await payPlan(k,amt);if(ok){if(after)await after();toast('✅ प्लान चालू हो गया','ok');panel();try{upgRefresh()}catch(e){}}b.disabled=false};c.appendChild(b)}
+      grid.appendChild(c)});
+    box.appendChild(h('div',{class:'k',style:'margin-top:10px',text:'ऊपर का प्लान लेने पर पहले से दिया पैसा घट जाता है (सिर्फ़ फ़र्क़ देना होगा)। भुगतान UPI / कार्ड / नेट बैंकिंग से।'}));
   })}
 function domainBox(p){
   var box=h('div',{class:'item'});p.appendChild(box);
   sb.rpc('studio_sub_info',{p_id:D.id}).then(function(r){var s=r&&r.data;
-    if(s&&s.enabled&&!s.is_admin&&s.plan!=='domain'){box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
+    if(s&&s.enabled&&!s.is_admin&&s.plan!=='domain'){if(document.getElementById('upgpg')){box.remove();return}box.appendChild(h('b',{text:'🌍 अपना डोमेन (अपग्रेड)'}));
       box.appendChild(h('div',{class:'k',text:'अपने डोमेन (जैसे www.aapkanaam.com) पर वेबसाइट चलाने के लिए "फ़ुल वेबसाइट + अपना डोमेन" प्लान लें। मिनी वेबसाइट से अपग्रेड पर सिर्फ़ फ़र्क़ देना होगा।'}));
       var b=h('button',{class:'btn alt',text:'⬆️ फ़ुल वेबसाइट प्लान ₹'+s.domain_amount+(s.domain_kind==='upgrade'?' (सिर्फ़ फ़र्क़)':'')});b.style.marginTop='8px';
       b.onclick=async function(){b.disabled=true;if(await payPlan('domain',s.domain_amount)){toast('✅ प्लान चालू हो गया','ok');panel()}b.disabled=false};box.appendChild(b);return}

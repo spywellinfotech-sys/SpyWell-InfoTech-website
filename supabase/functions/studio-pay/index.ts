@@ -48,6 +48,7 @@ async function fulfillPub(orderId: string, paymentId: string): Promise<boolean> 
   if (o.plan === "nfc") {
     const now = new Date().toISOString();
     err = (await sb.from("studio_card_prints").upsert({ design_id: o.design_id, nfc_paid_at: now, nfc_at: now, updated_at: now }, { onConflict: "design_id" })).error;
+    if (!err) { try { await sb.rpc("nfc_issue_paid", { p_design: o.design_id, p_amount: Math.round((o.amount_paise || 0) / 100) + (o.wallet_used || 0), p_ref: orderId }); } catch { /* NFC record must never break a paid order */ } }
   } else if (o.plan === "premium") {
     err = (await sb.from("studio_prem_paid").upsert({ design_id: o.design_id, template_id: o.template_id || "", amount: Math.round((o.amount_paise || 0) / 100) + (o.wallet_used || 0), source: "paid" }, { onConflict: "design_id,template_id", ignoreDuplicates: true })).error;
   } else if (o.plan) {
