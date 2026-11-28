@@ -623,15 +623,13 @@
     if (f.about) tile('🏢', P('हमारे बारे में', 'About Us'), 'a', function (pn) { pn.appendChild(el('p', 'pf-about', f.about)); });
     if (d.services.length) tile('⚙️', P('प्रोडक्ट और सेवाएँ', 'Products & Services'), 's', function (pn) { var w = el('div', 'sr-svs'); d.services.forEach(function (x) { w.appendChild(el('span', 'sr-chip', svName(x))); }); pn.appendChild(w); });
     if (mini) { var tm = link('pf-tile', '', mini); tm.appendChild(el('i', '', '🌐')); tm.appendChild(el('span', '', P('मिनी वेबसाइट', 'Mini Website'))); tiles.appendChild(actA(tm, 'miniweb')); }
-    var compact = !!mini && !opts.full;
-    if (compact) { var mb = actA(link('pf-mini', '🌐 ' + P('पूरी जानकारी · मिनी वेबसाइट देखें', 'Full details · Mini Website'), mini), 'miniweb'); mb.style.cssText = 'display:block;text-align:center;margin:10px 0 0;padding:13px 10px;border-radius:14px;background:#fff;color:#7a0a10;font-weight:800;text-decoration:none;font-size:16px'; bd.appendChild(mb); }
-    else if (tiles.children.length) { bd.appendChild(tiles); bd.appendChild(panel); var t0 = tb.s || tb.a; if (t0) t0.onclick(); }
+    if (tiles.children.length) { bd.appendChild(tiles); bd.appendChild(panel); var t0 = tb.s || tb.a; if (t0) t0.onclick(); }
     var ib = el('div', 'pf-info'), ad2 = [f.address, f.city, f.state].filter(Boolean).join(', '), wb2 = web || mini;
     [['📍', ad2, ''], ['✉️', em, em && 'mailto:' + em], ['🌐', wb2 && wb2.replace(/^https?:\/\//, '').replace(/\/$/, ''), wb2]].forEach(function (q) { if (!q[1]) return; var rw = el('div', 'pf-ir'); rw.appendChild(el('i', '', q[0])); rw.appendChild(el('span', '', q[1])); ib.appendChild(rw); });
-    if (!compact && ib.children.length) bd.appendChild(ib);
+    if (ib.children.length) bd.appendChild(ib);
     var soc = el('div', 'pf-soc');
     [['in', f.linkedin, '#0a66c2'], ['ig', f.instagram, 'linear-gradient(45deg,#f9a03a,#e1306c,#7a3fd1)'], ['yt', f.youtube, '#e00'], ['fb', f.facebook, '#1877f2']].forEach(function (x) { var u = V.url(x[1]); if (!u) return; var a = link('pf-sc', x[0], u); a.style.background = x[2]; if (SOCSVG[x[0]]) { a.innerHTML = SOCSVG[x[0]]; a.setAttribute('aria-label', ({ ig: 'Instagram', yt: 'YouTube', fb: 'Facebook' })[x[0]] || ''); a.style.display = 'inline-flex'; a.style.alignItems = 'center'; a.style.justifyContent = 'center'; } soc.appendChild(a); });
-    if (!compact && soc.children.length) { bd.appendChild(el('div', 'pf-fu', P('फ़ॉलो करें', 'Follow Us'))); bd.appendChild(soc); }
+    if (soc.children.length) { bd.appendChild(el('div', 'pf-fu', P('फ़ॉलो करें', 'Follow Us'))); bd.appendChild(soc); }
     var q2 = el('div', 'pf-2');
     var mpu = (f.address || V.url(f.maplink)) ? (V.url(f.maplink) || maps([f.business, f.address, f.city].filter(Boolean).join(', '))) : '';
     if (mpu) q2.appendChild(actA(link('pf-chat', '📍 ' + P('लोकेशन', 'Location'), mpu), 'location'));
