@@ -27,7 +27,7 @@ var _bk=null;async function back(){if(_bk)return _bk;var b=await img('/studio/li
   x.translate(W/2,H/2);x.rotate(-Math.PI/2);x.drawImage(b,-H/2,-W/2,H,W);_bk=cv.toDataURL('image/jpeg',0.95);return _bk}
 function loadPdf(){return new Promise(function(res,rej){if(window.jspdf)return res(window.jspdf);var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=function(){res(window.jspdf)};s.onerror=rej;document.head.appendChild(s)})}
 async function pdf(cards,name,opt){var J=await loadPdf();var doc=new J.jsPDF({unit:'mm',format:[53.98,85.6],orientation:'portrait',compress:true});
-  var bk=await back();
+  var bk=null;
   for(var i=0;i<cards.length;i++){if(i)doc.addPage([53.98,85.6],'portrait');var cv=await draw(cards[i]);doc.addImage(cv.toDataURL('image/jpeg',0.95),'JPEG',0,0,53.98,85.6);
     if(bk){doc.addPage([53.98,85.6],'portrait');doc.addImage(bk,'JPEG',0,0,53.98,85.6)}}
   var fn=(name||'livecard-qr-card').replace(/[^a-zA-Z0-9-_]+/g,'-').slice(0,60)+'.pdf';

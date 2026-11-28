@@ -24,7 +24,7 @@ button.main{font:700 15px Hind,sans-serif;border-radius:10px;border:0;padding:10
 <div class="bar"><a href="/studio/admin/">← Admin</a><b>🖨️ Print Card</b></div>
 <main id="m"><p class="mut">लोड हो रहा है…</p></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/studio/qr.js"></script><script src="/studio/printcard.js?v=10"></script>
+<script src="/studio/qr.js"></script><script src="/studio/printcard.js?v=12"></script>
 <script>
 (async function(){
 var $=function(i){return document.getElementById(i)},m=$('m');
@@ -39,7 +39,7 @@ function dkey(t){try{return new Date(t).toLocaleDateString('en-CA',{timeZone:'As
 function dlab(k){var today=dkey(new Date()),y=dkey(new Date(Date.now()-864e5));var l=new Date(k+'T12:00:00').toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'});return l+(k===today?' (आज)':k===y?' (कल)':'')}
 function sd(t){try{return new Date(t).toLocaleDateString('hi-IN',{day:'numeric',month:'short'})}catch(e){return ''}}
 var FLT='pp',SEL={};
-m.innerHTML='<p class="mut">ग्राहक जिस दिन जुड़े उस दिन के डिब्बे में; जो ☑ चुनें वही एक PDF में (आगे-पीछे, 54 × 86 mm)। ✓ लगाएँ: 🖨️ प्रिंट, 📦 डिलीवर, 📲 NFC। ✍️ से NFC में लिंक लिखें। 📲 वाले कार्ड पर छपाई में NFC का निशान आएगा।</p><input type="search" id="q" placeholder="🔍 नाम, मोबाइल या ईमेल खोजें" aria-label="खोजें"><div class="chips" id="ch"></div><div id="l"></div>';
+m.innerHTML='<p class="mut">ग्राहक जिस दिन जुड़े उस दिन के डिब्बे में; जो ☑ चुनें वही एक PDF में (सिर्फ़ आगे का हिस्सा, 54 × 86 mm)। ✓ लगाएँ: 🖨️ प्रिंट, 📦 डिलीवर, 📲 NFC। ✍️ से NFC में लिंक लिखें। 📲 वाले कार्ड पर छपाई में NFC का निशान आएगा।</p><input type="search" id="q" placeholder="🔍 नाम, मोबाइल या ईमेल खोजें" aria-label="खोजें"><div class="chips" id="ch"></div><div id="l"></div>';
 function st(x,k){return !!(PR[x.design_id]&&PR[x.design_id][k])}
 function chips(){var np=L.filter(function(x){return !st(x,'printed_at')}).length,nd=L.filter(function(x){return st(x,'printed_at')&&!st(x,'delivered_at')}).length;
   $('ch').innerHTML=[['pp','🖨️ प्रिंट बाकी ('+np+')'],['dd','📦 डिलीवरी बाकी ('+nd+')'],['all','सभी ('+L.length+')']].map(function(c){return '<button class="chip'+(FLT===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</button>'}).join('');
