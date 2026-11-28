@@ -612,6 +612,7 @@ async function manualPay(plan,amount){
     document.body.appendChild(ov)})}
 async function payPlan(plan,amount){
   try{
+    try{var so=await sb.from('studio_settings').select('v').eq('k','shop_open').maybeSingle();if(so&&so.data&&so.data.v==='1'&&plan!=='premium'){var kk=plan||(D.product_type==='invitation'?'inv':'card');location.href='/studio/shop/?add='+kk+':'+D.id;return false}}catch(e){}
     var mp=await manualPay(plan,amount);if(mp!==null){if(mp)panel();return false}
     var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await lr;
     await new Promise(function(res,rej){
