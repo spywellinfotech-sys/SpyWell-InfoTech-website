@@ -23,13 +23,13 @@ async function draw(c){var cv=document.createElement('canvas'),SC=2;cv.width=W*S
     x.fillStyle='#0b2a4a';x.font='900 24px system-ui,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('NFC',cx,cy+50);
     x.font='600 13px system-ui,Arial,sans-serif';x.fillStyle='#555';x.fillText('Tap',cx,cy+72)}
   return cv}
-var _bk=null;async function back(){if(_bk)return _bk;var b=await img('/studio/livecard-card-back-2x.jpg?v=1');if(!b)return null;var cv=document.createElement('canvas');cv.width=b.width;cv.height=b.height;cv.getContext('2d').drawImage(b,0,0);_bk=cv.toDataURL('image/jpeg',0.95);return _bk}
+var _bk=null;async function back(){if(_bk)return _bk;var b=await img('/studio/livecard-card-back-v-2x.jpg?v=1');if(!b)return null;var cv=document.createElement('canvas');cv.width=b.width;cv.height=b.height;cv.getContext('2d').drawImage(b,0,0);_bk=cv.toDataURL('image/jpeg',0.95);return _bk}
 function loadPdf(){return new Promise(function(res,rej){if(window.jspdf)return res(window.jspdf);var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=function(){res(window.jspdf)};s.onerror=rej;document.head.appendChild(s)})}
 async function pdf(cards,name,opt){var J=await loadPdf();var doc=new J.jsPDF({unit:'mm',format:[53.98,85.6],orientation:'portrait',compress:true});
   var bk=await back();
   for(var i=0;i<cards.length;i++){if(i)doc.addPage([53.98,85.6],'portrait');var cv=await draw(cards[i]);doc.addImage(cv.toDataURL('image/jpeg',0.97),'JPEG',0,0,53.98,85.6,undefined,'NONE');
   }
-  if(bk){doc.addPage([85.6,53.98],'landscape');doc.addImage(bk,'JPEG',0,0,85.6,53.98,undefined,'NONE')}
+  if(bk){doc.addPage([53.98,85.6],'portrait');doc.addImage(bk,'JPEG',0,0,53.98,85.6,undefined,'NONE')}
   var fn=(name||'livecard-qr-card').replace(/[^a-zA-Z0-9-_]+/g,'-').slice(0,60)+'.pdf';
   LCPrint.last={name:fn,blob:null,uri:''};
   if(opt&&opt.noSave){LCPrint.last.blob=doc.output('blob');return 'blob'}
