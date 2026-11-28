@@ -6,9 +6,9 @@ function img(src){if(IMG[src])return IMG[src];IMG[src]=new Promise(function(res)
 function fit(ctx,txt,max,size,weight){var s=size;do{ctx.font=weight+' '+s+'px "Baloo 2",system-ui,sans-serif';if(ctx.measureText(txt).width<=max)break;s-=2}while(s>14);return s}
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
 function nameOf(c){var t=String(c.title||'').trim();return (!t||/^(visiting\s*card|विज़िटिंग\s*कार्ड|विजिटिंग\s*कार्ड)$/i.test(t))?'LiveCard':t}
-async function draw(c){var cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d');
+async function draw(c){var cv=document.createElement('canvas'),SC=2;cv.width=W*SC;cv.height=H*SC;var x=cv.getContext('2d');x.scale(SC,SC);
   var url=c.url||('https://livecard.in/v/'+c.slug),lnk=c.link||('https://livecard.in/v/'+c.slug);
-  var bg=await img('/studio/livecard-card-front.jpg?v=3');
+  var bg=await img('/studio/livecard-card-front-2x.jpg?v=1');
   if(bg)x.drawImage(bg,0,0,W,H);else{x.fillStyle='#fff';x.fillRect(0,0,W,H)}
   x.textAlign='center';x.textBaseline='middle';
   var nm=nameOf(c);fit(x,nm,440,50,'800');x.fillStyle='#7a0a10';x.fillText(nm,W/2,224);
@@ -28,7 +28,7 @@ var _bk=null;async function back(){if(_bk)return _bk;var b=await img('/studio/li
 function loadPdf(){return new Promise(function(res,rej){if(window.jspdf)return res(window.jspdf);var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=function(){res(window.jspdf)};s.onerror=rej;document.head.appendChild(s)})}
 async function pdf(cards,name,opt){var J=await loadPdf();var doc=new J.jsPDF({unit:'mm',format:[53.98,85.6],orientation:'portrait',compress:true});
   var bk=null;
-  for(var i=0;i<cards.length;i++){if(i)doc.addPage([53.98,85.6],'portrait');var cv=await draw(cards[i]);doc.addImage(cv.toDataURL('image/jpeg',0.95),'JPEG',0,0,53.98,85.6);
+  for(var i=0;i<cards.length;i++){if(i)doc.addPage([53.98,85.6],'portrait');var cv=await draw(cards[i]);doc.addImage(cv.toDataURL('image/jpeg',0.97),'JPEG',0,0,53.98,85.6,undefined,'NONE');
     if(bk){doc.addPage([53.98,85.6],'portrait');doc.addImage(bk,'JPEG',0,0,53.98,85.6)}}
   var fn=(name||'livecard-qr-card').replace(/[^a-zA-Z0-9-_]+/g,'-').slice(0,60)+'.pdf';
   LCPrint.last={name:fn,blob:null,uri:''};
