@@ -1404,7 +1404,7 @@ false&&(async function(){var g=await sb.from('studio_designs').select('gt:conten
       try{nf.textContent='📲 टैग फ़ोन से छुआएँ…';var rd=new NDEFReader();await rd.write({records:[{recordType:'url',data:u+'?src=nfc'}]});nf.textContent='✅ NFC में लिख गया'}catch(e){nf.textContent=(e&&e.name==='NotAllowedError')?'NFC की अनुमति/चालू करें':'लिखा नहीं जा सका'}
       setTimeout(function(){nf.textContent='📲 NFC'},4000)};
     r2.appendChild(nf);r2.style.flexWrap='wrap';r2.appendChild(qh);box.appendChild(r2)}
-  (function(){var pub=x.status==='published'&&!!x.slug,nm=(x.title||'मेरी वेबसाइट');
+  false&&(function(){var pub=x.status==='published'&&!!x.slug,nm=(x.title||'मेरी वेबसाइट');
     var hero=mk('div','');hero.style.cssText='margin-top:14px;background:linear-gradient(135deg,#0b3d5c,#1a8fd1);border-radius:18px;padding:14px;color:#fff;box-shadow:0 6px 18px rgba(26,143,209,.3)';
     var hT=hero.appendChild(mk('b','','🌐 मेरी मिनी वेबसाइट'));hT.style.cssText='display:block;font-size:17px';
     (async function(){try{var g=await sb.from('studio_designs').select('kd:content_json->style->>kind').eq('id',x.id).maybeSingle();if(g.data&&(g.data.kd==='portfolio'||g.data.kd==='student'))hT.textContent='💼 मेरा Portfolio Page'}catch(e){}})();
