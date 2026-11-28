@@ -209,7 +209,7 @@ body{padding:0 0 24px 220px}
 <button type="button" class="alt" id="pk-back">वापस</button>
 </div>
 <form class="card" id="v-prof">
-<div id="pf-plan"></div><div id="pf-sett"></div>
+<div id="pf-plan"></div><div id="pf-sett"></div><div id="pf-invsett"></div>
 <div id="pf-th" style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="var q=document.getElementById('pf-body');q.hidden=!q.hidden;document.getElementById('pf-ar').textContent=q.hidden?'▾':'▴'"><b style="flex:1">👤 मेरी प्रोफ़ाइल</b><span id="pf-ar" style="font-size:16px">▾</span></div>
 <div id="pf-body" hidden>
 <div class="k" style="margin:4px 0 8px">यहाँ बदलने पर आपका विज़िटिंग कार्ड भी बदल जाएगा, और कार्ड एडिट करने पर यह प्रोफ़ाइल भी।</div>
@@ -1022,7 +1022,7 @@ function statRow(title,u){var w=mk('div','');w.style.cssText='margin-top:12px;bo
   return w}
 async function dirInit(){try{var r=await sb.rpc('studio_dir_open');if(r&&r.data===true){$('tb-dir').hidden=false;if(location.hash==='#dir'&&typeof setTab==='function')setTab('dir',true)}}catch(e){}}
 async function invHome(){
-  var box=$('c-inv');if(!box)return;var iv0=LIST.filter(function(x){return x.product_type==='invitation'&&x.status==='published'});
+  var box=$('c-inv');if(!box)return;try{$('pf-invsett').textContent=''}catch(e){}var iv0=LIST.filter(function(x){return x.product_type==='invitation'&&x.status==='published'});
   var AR={};try{var ai=await sb.rpc('studio_inv_archive_info');(ai.data||[]).forEach(function(z){AR[z.design_id]=z})}catch(e){}
   var iv=iv0.filter(function(x){return !(AR[x.id]&&AR[x.id].archived)}),arch=iv0.filter(function(x){return AR[x.id]&&AR[x.id].archived});
   INVAR=AR;var ivAll=iv,isel=iv.filter(function(z){return z.id===INVSEL})[0]||iv[0];
@@ -1052,7 +1052,7 @@ async function invHome(){
     sh1.onclick=async function(){shTick(x.id);try{if(navigator.share){await navigator.share({title:x.title||'इनविटेशन',text:shTx});return}}catch(e){if(e&&e.name==='AbortError')return}window.open('https://wa.me/?text='+encodeURIComponent(shTx),'_blank','noopener')};
     var sh2=mk('button','','🔗 लिंक');sh2.type='button';sh2.style.cssText='margin:0;flex:1;padding:13px 6px;border:1px solid rgba(255,255,255,.7);border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:15px';
     sh2.onclick=async function(){shTick(x.id);try{await navigator.clipboard.writeText(shUrl);sh2.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('कार्ड का लिंक',shUrl)}setTimeout(function(){sh2.textContent='🔗 लिंक'},2000)};
-    shr.appendChild(sh1);shr.appendChild(sh2);hero.appendChild(shr);
+    sh2.style.display='none';sh1.textContent='📤 Share';shr.appendChild(sh1);shr.appendChild(sh2);
     var nrMore=null;var nr=mk('div','');nr.style.cssText='margin-top:10px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';
     nr.appendChild(mk('b','','📞 नंबर डालकर सीधे भेजें'));var nh=mk('div','','जिनका नंबर WhatsApp में सेव नहीं है, उन्हें भी भेज सकते हैं');nh.style.cssText='font-size:12px;opacity:.9;margin:2px 0 6px';nr.appendChild(nh);
     var nrow=mk('div','');nrow.style.cssText='display:flex;flex-direction:column;gap:8px';var ni=document.createElement('input');ni.type='tel';ni.setAttribute('inputmode','numeric');ni.maxLength=10;ni.placeholder='मोबाइल नंबर';ni.style.cssText='display:block!important;width:100%!important;box-sizing:border-box!important;height:54px!important;margin:0!important;padding:0 14px!important;border:0!important;border-radius:12px!important;font:700 20px system-ui,sans-serif!important;letter-spacing:1px;color:#222!important;background:#fff!important';
@@ -1067,10 +1067,10 @@ async function invHome(){
     var ed=mk('a','','✏️ Edit');ed.href='/studio/editor/?v=20261128&id='+x.id;ed.style.cssText='flex:1;text-align:center;background:#fff;color:#0b3d2e;border-radius:12px;padding:12px 6px;text-decoration:none;font-weight:800';
     var dl2=mk('button','','🗑 Delete');dl2.type='button';dl2.style.cssText='margin:0;flex:1;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:12px;padding:12px 6px;font-weight:800';
     dl2.onclick=function(){if(!confirm('यह इनविटेशन कार्ड हमेशा के लिए मिट जाएगा। पक्का मिटाएँ?'))return;del(x.id,dl2)};
-    ar.appendChild(ed);ar.appendChild(dl2);hero.appendChild(ar);
-    if(nrMore)more.appendChild(nrMore);var gw=mk('div','');hero.appendChild(gw);
+    ar.appendChild(ed);hero.appendChild(ar);shr.style.marginTop='8px';hero.appendChild(shr);sh1.onclick=function(){shSheet(x,shUrl,shTx,{mh:mh,more:more},'inv')};dl2.textContent='🗑 हटाएँ';dl2.style.cssText='margin:8px 0 0;width:auto;min-height:0;padding:4px 8px;background:none;border:0;color:#fff;opacity:.75;font-size:13px;text-decoration:underline';hero.appendChild(dl2);
+    if(nrMore)more.appendChild(nrMore);var gw=mk('div','');var iset=mk('div','');iset.style.cssText='margin:8px 0;background:linear-gradient(135deg,#0b3d2e,#145a43);color:#fff;border-radius:12px;padding:10px 12px';iset.appendChild(mk('b','','💌 '+(x.title||'इनविटेशन')+' · सेटिंग'));iset.appendChild(gw);try{$('pf-invsett').appendChild(iset)}catch(e){}
     mh.textContent='📲 Send to Unsaved WhatsApp no.  ▼';mh.style.cssText='margin-top:10px;padding:0 14px;height:46px;box-sizing:border-box;display:flex;align-items:center;border-radius:12px;background:#ffc21a;color:#5a0509;font-weight:800;cursor:pointer;font-size:15px';
-    hero.appendChild(mh);hero.appendChild(more);
+
     var sl=mk('div','');sl.style.cssText='margin-top:8px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px';var slh=mk('div','','');slh.style.cssText='font-weight:800;cursor:pointer;font-size:14px';var slb=mk('div','');slb.hidden=true;sl.appendChild(slh);
   var bk=mk('button','','');bk.type='button';bk.hidden=true;bk.style.cssText='margin:8px 0 0;width:100%;min-height:0;padding:12px;border:0;border-radius:10px;background:#25d366;color:#fff;font-weight:800;font-size:15px';sl.appendChild(bk);
   var fq=document.createElement('input');fq.type='search';fq.placeholder='नाम या नंबर खोजें';fq.style.cssText='display:block;width:100%;box-sizing:border-box;margin:8px 0 0;height:38px;padding:0 12px;border:0;border-radius:10px;font-size:14px;color:#222;background:#fff';slb.appendChild(fq);var lst=mk('div','');slb.appendChild(lst);sl.appendChild(slb);more.appendChild(sl);
@@ -1130,7 +1130,7 @@ async function invHome(){
         var cj=r.data.content_json||{};cj.fields=(cj.fields&&typeof cj.fields==='object')?cj.fields:{};if(v)cj.fields.upi=v;else delete cj.fields.upi;var nm=un.value.trim();if(nm)cj.fields.upi_name=nm;else delete cj.fields.upi_name;
         var u=await sb.from('studio_designs').update({content_json:cj}).eq('id',x.id).select('id');sv.disabled=false;sm.textContent=(u.error||!u.data||!u.data.length)?'सेव नहीं हुआ':'✓ सेव हो गया';};
       ed.appendChild(ui);ed.appendChild(un);ed.appendChild(sv);ed.appendChild(sm);gr.appendChild(ed);
-      more.appendChild(gr)})();
+      gw.appendChild(gr)})();
     var ins=mk('div','');ins.style.cssText='margin-top:8px;background:#fff;color:#222;border:1px solid #f0d6d4;border-radius:12px;padding:10px';ins.hidden=true;
     var ih=mk('div','');ih.style.cssText='display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:10px;padding:10px 12px;border:1px solid #f0d6d4;border-radius:12px;background:#fff7f6;font-weight:700;color:#9d0b12;font-size:15px';
     var ihl=mk('span','','💌 '+(x.title||'इनविटेशन'));ihl.style.cssText='flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';var iha=mk('span','','▼');iha.style.cssText='flex:none';var ihc=mk('span','','');ihc.style.cssText='flex:none;font-size:13px;color:#555';ih.appendChild(ihl);ih.appendChild(ihc);ih.appendChild(iha);
@@ -1282,8 +1282,8 @@ function shareTools(x,url,shTx){
   return {shr:shr,mh:mh,more:more,gw:gw}}
 function shSheet(x,url,shTx,parts,kind){var o=document.getElementById('shsheet');if(o)o.remove();
   var ov=mk('div','');ov.id='shsheet';ov.style.cssText='position:fixed;inset:0;z-index:9000;background:rgba(20,5,5,.55);display:flex;align-items:flex-end;justify-content:center';
-  var sh=mk('div','');sh.style.cssText='width:100%;max-width:560px;max-height:88vh;overflow:auto;box-sizing:border-box;border-radius:22px 22px 0 0;padding:16px 14px calc(18px + env(safe-area-inset-bottom));color:#fff;background:linear-gradient(160deg,'+(kind==='web'?'#0b3d5c,#1a8fd1':'#b8121a,#7a0a10')+')';
-  var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:8px';var tt=mk('b','',kind==='web'?'📤 वेबसाइट शेयर करें':'📤 कार्ड शेयर करें');tt.style.cssText='flex:1;font-size:18px';hd.appendChild(tt);
+  var sh=mk('div','');sh.style.cssText='width:100%;max-width:560px;max-height:88vh;overflow:auto;box-sizing:border-box;border-radius:22px 22px 0 0;padding:16px 14px calc(18px + env(safe-area-inset-bottom));color:#fff;background:linear-gradient(160deg,'+(kind==='web'?'#0b3d5c,#1a8fd1':kind==='inv'?'#0b3d2e,#145a43':'#b8121a,#7a0a10')+')';
+  var hd=mk('div','');hd.style.cssText='display:flex;align-items:center;gap:8px';var tt=mk('b','',kind==='web'?'📤 वेबसाइट शेयर करें':kind==='inv'?'📤 इनविटेशन शेयर करें':'📤 कार्ड शेयर करें');tt.style.cssText='flex:1;font-size:18px';hd.appendChild(tt);
   var xb=mk('button','','✕');xb.type='button';xb.style.cssText='margin:0;width:40px;height:40px;min-height:0;padding:0;border-radius:50%;border:0;background:rgba(255,255,255,.2);color:#fff;font-size:18px';xb.onclick=function(){ov.remove()};hd.appendChild(xb);sh.appendChild(hd);
   var ul=mk('div',url.replace(/^https?:\/\//,''));ul.style.cssText='font-size:13px;opacity:.9;margin:4px 0 10px;word-break:break-all';sh.appendChild(ul);
   var g=mk('div','');g.style.cssText='display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px';
@@ -1292,7 +1292,7 @@ function shSheet(x,url,shTx,parts,kind){var o=document.getElementById('shsheet')
   bt('💬 WhatsApp','#fff','#0b6b32',function(){shTick(x.id);window.open('https://wa.me/?text='+encodeURIComponent(shTx),'_blank','noopener')});
   var NVb=window.ViNative;if(NVb&&NVb.openWa)bt('🛍 WA Business','#fff','#0b6b32',function(){shTick(x.id);if(!NVb.openWa('',shTx,true)&&NVb.shareText)NVb.shareText(shTx)});
   var cp=bt('🔗 लिंक कॉपी','rgba(255,255,255,.18)','#fff',async function(){shTick(x.id);try{await navigator.clipboard.writeText(url);cp.textContent='✓ कॉपी हुआ'}catch(e){window.prompt('लिंक',url)}setTimeout(function(){cp.textContent='🔗 लिंक कॉपी'},2000)});
-  if(kind!=='web')bt('▦ QR कोड','rgba(255,255,255,.18)','#fff',function(){ov.remove();qrFull(x)});
+  if(kind==='card')bt('▦ QR कोड','rgba(255,255,255,.18)','#fff',function(){ov.remove();qrFull(x)});
   var nfw=mk('div','');nfw.style.display='contents';var nf=bt('📲 NFC','rgba(255,255,255,.18)','#fff',async function(){if(!('NDEFReader' in window)){nf.textContent='इस फ़ोन में NFC नहीं';setTimeout(function(){nf.textContent='📲 NFC'},3000);return}
     try{nf.textContent='📲 टैग छुआएँ…';var rd=new NDEFReader();await rd.write({records:[{recordType:'url',data:url+'?src=nfc'}]});nf.textContent='✅ लिख गया'}catch(e){nf.textContent='❌ नहीं हुआ'}setTimeout(function(){nf.textContent='📲 NFC'},4000)});
   nf.hidden=true;try{sb.rpc('studio_is_admin').then(function(r){if(r&&r.data===true)nf.hidden=false})}catch(e){}
