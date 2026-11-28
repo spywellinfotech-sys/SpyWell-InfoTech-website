@@ -57,7 +57,7 @@ input[type=checkbox]:not([data-ck]){-webkit-appearance:none!important;appearance
 .row2>*,.row3>*{min-width:0}#panel label{font-size:11.5px;margin-top:7px}#panel select,#panel input,#panel textarea{min-height:34px!important;padding:5px 8px!important;font-size:13px!important;border-radius:8px!important}#panel input[type=color]{height:34px!important;padding:1px!important}#panel .row2,#panel .row3{gap:6px}#panel .btn{min-height:0;padding:8px 10px;font-size:13px}#panel .k{font-size:11.5px}#panel .seg button{padding:6px 4px;font-size:13px;min-height:0}#panel input[type=range]{min-height:0!important;height:22px}#panel textarea{min-height:60px!important}#panel input[type=file]{padding:4px 6px!important;font-size:12px!important;min-height:0!important}#panel input[type=file]::file-selector-button{font-size:12px;padding:5px 8px}#panel .item{padding:10px!important;margin-top:8px}#panel .step{padding:9px 11px;font-size:13px}#panel .step b{font-size:14px}#panel .thumb{max-width:110px;max-height:110px}#panel .btn.sm,#panel .btn.alt{font-size:13px}#panel h3,#panel .item b{font-size:14px}#panel .k{margin-top:4px}
 #panel .ph .phr{display:flex;gap:10px;align-items:center}#panel .ph .thumb{width:64px;height:64px;object-fit:cover;flex:none;border-radius:10px;margin:0}#panel .ph .phs{flex:1;min-width:0}#panel .ph .phb{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}#panel .ph .phb .btn{margin:0;padding:6px 10px;width:auto;min-height:0}#panel .ph .phd{margin-top:6px}#panel .ph .phd summary{font-size:12.5px;color:var(--mut);cursor:pointer;padding:4px 0}
 #panel .rg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}#panel .rg2 label{margin-top:0}#panel .rg2 input[type=range]{margin:2px 0 0;height:20px}#panel .ph .phd{margin-top:2px}#panel .ph .phd summary{padding:2px 0}
-</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script><script src="/studio/wizard.js?v=20261119a"></script></head><body>
+</style><script src="/studio/i18n-data.js"></script><script src="/studio/i18n-extra.js"></script><script src="/studio/i18n.js"></script><script src="/studio/appback.js"></script><script src="/studio/wizard.js?v=20261119a"></script><link rel="preconnect" href="https://checkout.razorpay.com"><link rel="preconnect" href="https://api.razorpay.com"></head><body>
 <div class="top"><a href="/studio/" id="back">←</a><b id="ttl">एडिटर</b>
 <button id="undo" disabled title="Undo">↶</button><button id="redo" disabled title="Redo">↷</button><button id="save">सेव</button></div>
 <div class="wrap">
@@ -374,6 +374,7 @@ async function filesToImages(files,pick){
       var b=await shrink(f,false);if(!b)throw new Error('imgopen');out.push({media_type:'image/jpeg',data:await toB64(b)})
     }else throw new Error('type')}
   return out}
+setTimeout(function(){try{loadRzp().catch(function(){});fetch(B+'/functions/v1/studio-pay',{method:'OPTIONS'}).catch(function(){})}catch(e){}},1200);
 async function fnCall(name,body){
   var ss=await sb.auth.getSession();if(!ss.data.session)throw new Error('unauthorized');
   var r=await fetch(B+'/functions/v1/'+name,{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+ss.data.session.access_token},body:JSON.stringify(body)});
@@ -391,7 +392,7 @@ function loadRzp(){return new Promise(function(res,rej){if(window.Razorpay)retur
 async function buy(msg){
   msg.className='k';msg.textContent='भुगतान तैयार हो रहा है…';
   try{
-    var o=await fnCall('studio-pay',{action:'create'});await loadRzp();
+    var lr=loadRzp();var o=await fnCall('studio-pay',{action:'create'});await lr;
     await new Promise(function(res,rej){
       var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'AI से कार्ड पढ़ना ('+o.credits+' बार)',
         handler:async function(r){try{var v=await fnCall('studio-pay',{action:'verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});CR.bal=v.balance;res()}catch(e){rej(e)}},
@@ -613,7 +614,7 @@ async function manualPay(plan,amount){
 async function payPlan(plan,amount){
   try{
     var mp=await manualPay(plan,amount);if(mp!==null){if(mp)panel();return false}
-    var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await loadRzp();
+    var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await lr;
     await new Promise(function(res,rej){
       var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:PLN[plan]+' (1 साल)',
         handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
@@ -791,7 +792,7 @@ function pPub(p){
     er.className='k';er.textContent='प्रीमियम थीम का भुगतान तैयार हो रहा है…';
     var mp=await manualPay('premium',due);if(mp!==null){er.className='k';er.textContent=mp?'भुगतान जाँच में है। मंज़ूरी के बाद आप प्रकाशित कर पाएँगे।':'भुगतान रद्द हुआ।';return false}
     try{
-      var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:'premium'});await loadRzp();
+      var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:'premium'});await lr;
       await new Promise(function(res,rej){
         var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'प्रीमियम थीम',
           handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
@@ -803,7 +804,7 @@ function pPub(p){
     er.className='k';er.textContent='भुगतान तैयार हो रहा है…';
     var mp=await manualPay((PI&&PI.sub&&PI.sub.next_plan)||null,PI&&PI.price);if(mp!==null){er.className='k';er.textContent=mp?'भुगतान जाँच में है। मंज़ूरी के बाद आप प्रकाशित कर पाएँगे।':'भुगतान रद्द हुआ।';return false}
     try{
-      var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:(PI&&PI.sub&&PI.sub.next_plan)||undefined});await loadRzp();
+      var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:(PI&&PI.sub&&PI.sub.next_plan)||undefined});await lr;
       await new Promise(function(res,rej){
         var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'कार्ड प्रकाशित करना',
           handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
