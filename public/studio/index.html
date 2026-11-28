@@ -1352,8 +1352,10 @@ async function myHome(){try{hqrInit()}catch(e){}try{pfPlan()}catch(e){}try{pfSet
     var tx=mk('div','');tx.style.cssText='flex:1;min-width:0';
     var t1=mk('b','',nm);t1.style.cssText='display:block;font-size:18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';tx.appendChild(t1);
     var t2=mk('div','',pub?'आपका कार्ड लाइव है ✅':'कार्ड अभी प्रकाशित नहीं है');t2.style.cssText='font-size:13px;opacity:.92;margin-top:3px';tx.appendChild(t2);if(pub){var t3=mk('div','','👆 कार्ड दबाकर बड़ा देखें');t3.style.cssText='font-size:12px;opacity:.9;margin-top:6px;background:rgba(255,255,255,.18);border-radius:8px;padding:4px 8px;display:inline-block';tx.appendChild(t3)}
-    if(pub&&x.product_type!=='invitation'){var pv=mk('div','');pv.style.cssText='flex:none;width:150px;height:214px;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.35);position:relative;border:2px solid #fff';
-      var pf=lcThumb('v',x.slug,360,512,.4167,x.updated_at);
+    if(pub&&x.product_type!=='invitation'){var pv=mk('div','');pv.style.cssText='flex:none;width:112px;height:112px;border-radius:50%;overflow:hidden;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.35);position:relative;border:3px solid #fff;display:flex;align-items:center;justify-content:center';
+      var pf=mk('div','',(nm.trim()[0]||'V').toUpperCase());pf.style.cssText='font-size:48px;font-weight:800;color:#d4141c';
+      (function(pv,pf){sb.from('studio_designs').select('im:content_json->images').eq('id',x.id).maybeSingle().then(function(g){var IMx=(g&&g.data&&g.data.im)||{},ph=(IMx.photo&&IMx.photo.url)?IMx.photo:(IMx.logo&&IMx.logo.url?IMx.logo:null);if(!ph)return;
+        var im=document.createElement('img');im.alt='';im.src=ph.url;im.style.cssText='width:100%;height:100%;object-fit:'+(ph===IMx.photo?'cover':'contain')+';object-position:50% '+(ph.pos!=null?ph.pos:50)+'%';im.onload=function(){try{pv.replaceChild(im,pf)}catch(e){}}})})(pv,pf);
       var ov=mk('div','');ov.style.cssText='position:absolute;inset:0;cursor:pointer';ov.onclick=function(){openVw(x.slug,'visiting',x.title)};pv.appendChild(pf);pv.appendChild(ov);cd=pv}
     var hd0=mk('b','','🪪 मेरा कार्ड');hd0.style.cssText='display:block;font-size:17px;padding-right:112px';hero.appendChild(hd0);row.style.marginTop='10px';
     if(pub){var u0=mk('div','','livecard.in/v/'+x.slug);u0.style.cssText='font-size:12px;opacity:.9;margin-top:6px;word-break:break-all';tx.appendChild(u0);try{t3.remove()}catch(e){}try{t1.remove()}catch(e){}}
