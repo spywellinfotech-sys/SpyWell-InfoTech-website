@@ -36,7 +36,7 @@ function page(kind, slug, d) {
   img = img || FALLBACK;
   if (!inv && THUMB[slug]) img = THUMB[slug];
   const t = kind === 'inv' || kind === 'i' ? 'i' : kind === 'web' ? 'w' : 'v';
-  const url = kind === 's' ? ORIGIN + '/' + slug : ORIGIN + '/' + (kind === 'i' ? 'inv' : kind) + '/' + slug;
+  const url = kind === 's' ? ORIGIN + '/v/' + slug : ORIGIN + '/' + (kind === 'i' ? 'inv' : kind) + '/' + slug;
   const to = '/studio/view/?t=' + t + '&s=' + slug + '&b=' + Date.now().toString(36);
   const big = inv && img !== FALLBACK;
   return '<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
