@@ -17,10 +17,11 @@ button.add{width:100%;margin-top:8px;padding:11px;border:0;border-radius:12px;ba
 .cartbar .t{flex:1}.cartbar button{padding:12px 18px;border:0;border-radius:14px;background:#d4141c;color:#fff;cursor:pointer}
 .sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center}.sheet>div{background:#fff;width:100%;max-width:620px;max-height:90vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px}
 .ci{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #f3e6e3}.ci .x{border:0;background:#f6eeee;border-radius:10px;width:34px;height:34px;cursor:pointer}
+.tb{flex:none;border:1.5px solid #ecd3cf;background:#fff;color:#1c1414;border-radius:99px;padding:8px 14px;font-weight:800;font-size:14px;cursor:pointer}.tb.on{background:#d4141c;border-color:#d4141c;color:#fff}.od{background:#fff;border:1.5px solid #f0d6d6;border-radius:14px;padding:12px;margin-bottom:10px}
 .err{color:#b00020;font-weight:700}.ok{color:#0a7a2f;font-weight:800}
 </style></head><body>
 <div class="bar"><a href="/studio/">←</a><b>🛍️ प्रोडक्ट और सेवाएँ</b></div>
-<main id="m"><p class="k">लोड हो रहा है…</p></main>
+<div id="tabs" style="max-width:620px;margin:10px auto 0;padding:0 12px;display:flex;gap:6px;overflow-x:auto"></div><main id="m"><p class="k">लोड हो रहा है…</p></main>
 <div class="cartbar" id="cb" hidden><div class="t"><b id="cbn">🛒 0 चीज़ें</b><div class="k" id="cbt"></div></div><button type="button" id="cbo">कार्ट देखें →</button></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -48,9 +49,22 @@ var P=[
 var CART=[];try{CART=JSON.parse(localStorage.getItem('lc_cart')||'[]')||[]}catch(e){}
 CART=CART.filter(function(c){return DS.some(function(d){return d.id===c.design_id})});
 var ADDQ=(new URLSearchParams(location.search).get('add')||'').split(',').filter(Boolean),AUTO=false;ADDQ.forEach(function(z){var a=z.split(':');if(a.length===2&&['card','site','domain','nfc','inv'].indexOf(a[0])>=0&&DS.some(function(d){return d.id===a[1]})){AUTO=true;if(!CART.some(function(c){return c.kind===a[0]&&c.design_id===a[1]}))CART.push({kind:a[0],design_id:a[1]})}});try{localStorage.setItem('lc_cart',JSON.stringify(CART))}catch(e){}
-function saveC(){try{localStorage.setItem('lc_cart',JSON.stringify(CART))}catch(e){}bar()}
+function saveC(){try{localStorage.setItem('lc_cart',JSON.stringify(CART))}catch(e){}bar();try{tabs()}catch(e){}}
 function inC(k,id){return CART.some(function(c){return c.kind===k&&c.design_id===id})}
-function draw(){
+var VIEW=(new URLSearchParams(location.search).get('tab')||'shop');
+function tabs(){var T=[['shop','🛍️ प्रोडक्ट'],['cart','🛒 मेरा कार्ट ('+CART.length+')'],['orders','📦 मेरे ऑर्डर']];$('tabs').innerHTML=T.map(function(t){return '<button type="button" class="tb'+(VIEW===t[0]?' on':'')+'" data-v="'+t[0]+'">'+t[1]+'</button>'}).join('');
+  [].forEach.call($('tabs').querySelectorAll('[data-v]'),function(b){b.onclick=function(){var v=b.dataset.v;if(v==='cart'){if(!CART.length){alert('कार्ट खाली है। पहले कुछ कार्ट में डालें।');return}$('cbo').onclick();return}VIEW=v;tabs();if(v==='orders')orders();else draw()}})}
+var ON={placed:'🆕 ऑर्डर मिला',paid:'💰 भुगतान हुआ',design_ok:'🎨 डिज़ाइन तैयार',mfg:'🏭 बन रहा है',encode:'📲 NFC लिखा जा रहा है',qr_ok:'🔳 QR जाँचा',qc:'✅ जाँच पूरी',packed:'📦 पैक हुआ',dispatched:'🚚 भेज दिया',delivered:'🏠 पहुँच गया',activated:'⚡ चालू',cancelled:'❌ रद्द',refunded:'↩️ पैसे वापस'};
+async function orders(){m.innerHTML='<p class="k">लोड हो रहा है…</p>';var dn=function(t){try{return new Date(t).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}};
+  var r=await Promise.all([sb.from('studio_cart_orders').select('items,amount_paise,wallet_used,paid_at,created_at').eq('user_id',uid).eq('status','paid').order('paid_at',{ascending:false}).limit(50),sb.from('studio_pub_orders').select('design_id,plan,amount_paise,wallet_used,paid_at').eq('user_id',uid).eq('status','paid').order('paid_at',{ascending:false}).limit(50),sb.from('nfc_orders').select('status,courier,tracking_no,created_at,amount_inr').eq('user_id',uid).order('created_at',{ascending:false}).limit(20)]);
+  var L=[];((r[0].data)||[]).forEach(function(o){L.push({t:o.paid_at,amt:Math.round(o.amount_paise/100)+(o.wallet_used||0),it:(o.items||[]).map(function(i){var d=DS.filter(function(x){return x.id===i.design_id})[0]||{};return (KN[i.kind]||i.kind)+(d.title?' · '+d.title:'')})})});
+  ((r[1].data)||[]).forEach(function(o){var d=DS.filter(function(x){return x.id===o.design_id})[0]||{};L.push({t:o.paid_at,amt:Math.round(o.amount_paise/100)+(o.wallet_used||0),it:[(KN[o.plan]||(o.plan==='premium'?'प्रीमियम थीम':'इनविटेशन कार्ड'))+(d.title?' · '+d.title:'')]})});
+  L.sort(function(a,b){return new Date(b.t)-new Date(a.t)});
+  var h='';var NF=(r[2].data)||[];if(NF.length){h+='<b style="display:block;margin:4px 0 8px">📲 NFC कार्ड की स्थिति</b>';NF.forEach(function(n){h+='<div class="od"><b>'+(ON[n.status]||n.status)+'</b><div class="k">ऑर्डर: '+dn(n.created_at)+(n.courier?' · 🚚 '+esc(n.courier):'')+(n.tracking_no?' · ट्रैकिंग: '+esc(n.tracking_no):'')+'</div></div>'})}
+  h+='<b style="display:block;margin:10px 0 8px">🧾 मेरे भुगतान</b>';
+  h+=L.length?L.map(function(o){return '<div class="od"><div style="display:flex"><b style="flex:1">✅ '+dn(o.t)+'</b><b>₹'+o.amt+'</b></div><div class="k">'+o.it.map(esc).join('<br>')+'</div></div>'}).join(''):'<p class="k">अभी तक कोई ऑर्डर नहीं।</p>';
+  m.innerHTML=h}
+function draw(){tabs();
   var h='<p class="k" style="margin:2px 0 12px">जो चाहिए उसे कार्ट में डालें, फिर एक साथ भुगतान करें।</p>';
   P.forEach(function(p,i){var L=p.t==='v'?VIS:INV;
     h+='<div class="p"><div class="top"><div class="ic" style="background:'+p.c+'">'+p.ic+'</div><div style="flex:1"><b class="n">'+esc(p.n)+'</b><span class="pr">₹'+p.pr+'</span> <span class="k">'+p.u+'</span></div></div><div class="k" style="margin-top:8px">'+esc(p.d)+'</div>';
@@ -84,6 +98,6 @@ $('cbo').onclick=async function(){var o=document.createElement('div');o.classNam
       CART=[];saveC();bx.innerHTML='<p class="ok" style="font-size:20px">✅ भुगतान हो गया!</p><p>आपके प्लान और सेवाएँ चालू हो गईं। NFC कार्ड हो तो हमारी टीम छापकर आप तक भेजेगी।</p><a href="/studio/" style="display:block;text-align:center;padding:13px;border-radius:14px;background:#d4141c;color:#fff;font-weight:800;text-decoration:none">← Studio पर जाएँ</a>';draw()}
     catch(e){pb.disabled=false;$('sm').innerHTML='<span class="err">'+(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है।':'भुगतान पूरा नहीं हुआ। पैसे कटे हों तो पेज दोबारा खोलें, अपने-आप जुड़ जाएगा।')+'</span>'}}};
 try{fn({action:'cart_sync'})}catch(e){}
-draw();if(AUTO&&CART.length)setTimeout(function(){$('cbo').onclick()},300);
+if(VIEW==='orders'){tabs();orders()}else draw();if((AUTO||VIEW==='cart')&&CART.length)setTimeout(function(){$('cbo').onclick()},300);
 })();
 </script></body></html>
