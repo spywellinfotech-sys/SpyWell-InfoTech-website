@@ -18,11 +18,33 @@ button.add{width:100%;margin-top:8px;padding:11px;border:0;border-radius:12px;ba
 .sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center}.sheet>div{background:#fff;width:100%;max-width:620px;max-height:90vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px}
 .ci{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #f3e6e3}.ci .x{border:0;background:#f6eeee;border-radius:10px;width:34px;height:34px;cursor:pointer}
 .tb{flex:none;border:1.5px solid #ecd3cf;background:#fff;color:#1c1414;border-radius:99px;padding:8px 14px;font-weight:800;font-size:14px;cursor:pointer}.tb.on{background:#d4141c;border-color:#d4141c;color:#fff}.od{background:#fff;border:1.5px solid #f0d6d6;border-radius:14px;padding:12px;margin-bottom:10px}
+.hero{position:relative;background:radial-gradient(120% 90% at 80% 0%,#ff3b3b 0%,#d4141c 45%,#8f0a10 100%);color:#fff;padding:12px 16px 50px;border-radius:0 0 50% 50%/0 0 34px 34px;overflow:hidden}
+.hb{display:flex;align-items:center;gap:10px;position:relative;z-index:2}.hb a,.hb button{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.85);background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;cursor:pointer;position:relative;flex:none;padding:0}
+.lg{display:flex;align-items:center;gap:8px;flex:1}.lg i{width:36px;height:36px;background:#fff;color:#d4141c;border-radius:10px;font:900 24px/36px "Baloo 2",sans-serif;font-style:normal;text-align:center}.lg b{font:800 22px/1 "Baloo 2",sans-serif;display:block}.lg small{font-size:11px;opacity:.9}
+.bdg{position:absolute;top:-6px;right:-6px;background:#fff;color:#d4141c;border-radius:99px;min-width:19px;height:19px;font:800 12px/19px Hind;text-align:center;padding:0 4px}
+.ht{position:relative;z-index:2;margin-top:16px;max-width:70%}.ht h1{margin:0;font:800 27px/1.15 "Baloo 2",sans-serif}.ht p{margin:6px 0 0;font-size:14px;opacity:.95}
+.nfc3d{position:absolute;right:-26px;top:96px;width:128px;height:82px;opacity:.95;border-radius:14px;background:linear-gradient(140deg,#2a2a2a,#050505);transform:rotate(-14deg);box-shadow:0 14px 26px rgba(0,0,0,.45);color:#fff;padding:12px;z-index:1}
+.nfc3d i{display:inline-block;width:26px;height:26px;background:#d4141c;border-radius:7px;font:900 18px/26px "Baloo 2";font-style:normal;text-align:center}.nfc3d b{display:block;font:800 16px/1 "Baloo 2";margin-top:6px}.nfc3d small{font-size:9px;opacity:.8}.nfc3d em{position:absolute;right:12px;bottom:8px;font-style:normal;font-size:18px}
+.chips{max-width:620px;margin:-22px auto 0;padding:0 12px 4px;display:flex;gap:8px;overflow-x:auto;position:relative;z-index:3;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.tb{box-shadow:0 3px 10px rgba(120,0,0,.12);white-space:nowrap}
+.pc{display:flex;flex-wrap:wrap;gap:12px;background:#fff;border:1.5px solid #f3dcdc;border-radius:18px;padding:12px;margin-bottom:12px;box-shadow:0 4px 14px rgba(160,20,20,.06)}
+.th{width:96px;height:96px;border-radius:14px;flex:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:44px}
+.th .tg{position:absolute;top:6px;left:6px;background:#d4141c;color:#fff;font:800 10px/1 Hind;padding:4px 7px;border-radius:99px}
+.pm{flex:1;min-width:0}.pm b.n{font:800 18px/1.2 "Baloo 2",sans-serif;display:block}.pm .sb{color:#6d6060;font-size:13px;line-height:1.3;margin-top:2px}
+.ft{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-top:6px;font-size:12.5px;color:#333}.ft span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pp{flex-basis:100%;display:flex;align-items:center;gap:10px;border-top:1px dashed #f0d6d6;padding-top:10px}
+.pp .pr2{font:800 22px/1 "Baloo 2",sans-serif;color:#d4141c}.pp .pr2 small{font:600 13px Hind;color:#555}.pp .pl{display:inline-block;background:#fdeceb;color:#b3121a;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:99px;margin-top:4px}
+.pp .ac{margin-left:auto;display:flex;flex-direction:column;gap:6px;align-items:stretch;min-width:150px}.pp select{margin:0;padding:6px;font-size:13px}
+button.add{margin-top:0;border-radius:99px;padding:10px 14px;box-shadow:0 4px 12px rgba(212,20,28,.3)}
+.cartbar{border-radius:18px 18px 0 0}.cartbar .cic{width:48px;height:48px;border-radius:50%;background:#fdeceb;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;flex:none}.cartbar .cic .bdg{background:#d4141c;color:#fff;top:-4px;right:-4px}
+.cartbar button{border-radius:99px;font-size:15px;box-shadow:0 4px 12px rgba(212,20,28,.3)}
 .err{color:#b00020;font-weight:700}.ok{color:#0a7a2f;font-weight:800}
 </style></head><body>
-<div class="bar"><a href="/studio/">←</a><b>🛍️ प्रोडक्ट और सेवाएँ</b></div>
-<div id="tabs" style="max-width:620px;margin:10px auto 0;padding:0 12px;display:flex;gap:6px;overflow-x:auto"></div><main id="m"><p class="k">लोड हो रहा है…</p></main>
-<div class="cartbar" id="cb" hidden><div class="t"><b id="cbn">🛒 0 चीज़ें</b><div class="k" id="cbt"></div></div><button type="button" id="cbo">कार्ट देखें →</button></div>
+<div class="hero"><div class="hb"><a href="/studio/" aria-label="वापस">←</a><div class="lg"><i>L</i><div><b>LiveCard</b><small>Your Digital Identity Platform</small></div></div><button type="button" id="hcart" aria-label="कार्ट">🛒<span class="bdg" id="hcn" hidden>0</span></button><button type="button" id="hord" aria-label="मेरे ऑर्डर">📦</button></div>
+<div class="nfc3d"><i>L</i><b>LiveCard</b><small>NFC Card</small><em>)))</em></div>
+<div class="ht"><h1>प्रोडक्ट और सेवाएँ</h1><p>अपनी डिजिटल पहचान के लिए सही प्लान चुनें</p></div></div>
+<div id="tabs" class="chips"></div><main id="m"><p class="k">लोड हो रहा है…</p></main>
+<div class="cartbar" id="cb" hidden><div class="cic">🛒<span class="bdg" id="cbc">0</span></div><div class="t"><b id="cbn">🛒 0 चीज़ें</b><div class="k" id="cbt"></div></div><button type="button" id="cbo">कार्ट देखें और भुगतान →</button></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (async function(){
@@ -40,20 +62,22 @@ async function fn(body){var s2=await sb.auth.getSession();var r=await fetch(B+'/
 var rs=await Promise.all([sb.from('studio_designs').select('id,title,product_type,slug,status').eq('user_id',uid).in('product_type',['visiting','invitation']).order('created_at',{ascending:false}),sb.from('studio_settings').select('k,v').in('k',['sub_price_card','sub_price_site','sub_price_domain','nfc_price_inr','pub_price_invitation'])]);
 var DS=(rs[0].data||[]),S={};(rs[1].data||[]).forEach(function(r){S[r.k]=+r.v||0});
 var VIS=DS.filter(function(d){return d.product_type==='visiting'}),INV=DS.filter(function(d){return d.product_type==='invitation'});
-var P=[
+var P0=[
  {k:'card',ic:'🪪',c:'#d4141c',n:'विज़िटिंग कार्ड प्लान',pr:(S.sub_price_card||600),u:'/ साल',d:'डिजिटल कार्ड का लिंक, QR, कॉल/WhatsApp बटन, कॉन्टैक्ट सेव, इनसाइट।',t:'v'},
  {k:'site',ic:'🌐',c:'#1a56db',n:'मिनी वेबसाइट प्लान',pr:(S.sub_price_site||1200),u:'/ साल',d:'विज़िटिंग कार्ड + पूरी वेबसाइट: सेवाएँ, गैलरी, वीडियो, पूछताछ फ़ॉर्म, एड्रेस कार्ड।',t:'v'},
  {k:'domain',ic:'🔗',c:'#7e22ce',n:'फ़ुल वेबसाइट + अपना डोमेन',pr:(S.sub_price_domain||6000),u:'/ साल',d:'मिनी वेबसाइट आपके अपने डोमेन (जैसे www.aapkanaam.com) पर।',t:'v'},
  {k:'nfc',ic:'📲',c:'#0a7a5a',n:'NFC कार्ड (छपा हुआ)',pr:(S.nfc_price_inr||699),u:'एक बार',d:'असली प्लास्टिक कार्ड, फ़ोन से छूते ही आपका LiveCard खुले। कार्ड प्लान चालू न हो तो वह भी साथ जुड़ जाएगा।',t:'v'},
  {k:'inv',ic:'💌',c:'#c2185b',n:'इनविटेशन कार्ड',pr:(S.pub_price_invitation||999),u:'एक बार',d:'शादी/function का डिजिटल निमंत्रण, function तक लिंक चालू।',t:'i'}];
+var EX={card:{g:'linear-gradient(135deg,#ffd9d9,#ffb3b3)',f:['📞 कॉल','💬 WhatsApp','🔳 QR कोड','💾 कॉन्टैक्ट सेव','📊 व्यूज़ & एनालिटिक्स'],sb:'आपका प्रोफ़ेशनल डिजिटल बिज़नेस कार्ड',pl:'वार्षिक प्लान',c:'card',n:'डिजिटल विज़िटिंग कार्ड'},nfc:{g:'linear-gradient(135deg,#ffe0cc,#ff9f80)',tg:'NFC',f:['📶 NFC टैप','🪪 डिजिटल प्रोफ़ाइल','🚫 बिना ऐप','📱 सभी मोबाइल में'],sb:'एक टैप में आपका LiveCard खुल जाएगा',pl:'एक बार (One-Time)',c:'nfc'},inv:{g:'linear-gradient(135deg,#ffe4ec,#ffc2d4)',f:['✨ सुंदर टेम्पलेट','📍 लोकेशन/मैप','🔳 QR शेयर','⏳ फ़ंक्शन तक वैध'],sb:'शादी, पार्टी, फ़ंक्शन के लिए डिजिटल निमंत्रण',pl:'एक बार (One-Time)',c:'inv'},site:{g:'linear-gradient(135deg,#e6e0ff,#c9bfff)',f:['🪪 कार्ड + वेबसाइट','🖼️ गैलरी/वीडियो','🛠️ सेवाएँ/प्रोडक्ट','📝 पूछताछ फ़ॉर्म'],sb:'अपना पूरा प्रोफ़ेशनल पेज, एक लिंक में',pl:'वार्षिक प्लान',c:'web'},domain:{g:'linear-gradient(135deg,#dbe8ff,#a9c6ff)',f:['🔗 कस्टम डोमेन (.in/.com)','🌐 प्रोफ़ेशनल वेबसाइट','📄 पूरी वेबसाइट','🏢 बिज़नेस/स्कूल/संस्था'],sb:'पूरी वेबसाइट आपके अपने डोमेन के साथ',pl:'वार्षिक प्लान',c:'web'}};
+var P=['card','nfc','inv','site','domain'].map(function(k){var p=P0.filter(function(x){return x.k===k})[0],e=EX[k];p.e=e;if(e.n)p.n=e.n;return p});var CAT='all';
 var CART=[];try{CART=JSON.parse(localStorage.getItem('lc_cart')||'[]')||[]}catch(e){}
 CART=CART.filter(function(c){return DS.some(function(d){return d.id===c.design_id})});
 var ADDQ=(new URLSearchParams(location.search).get('add')||'').split(',').filter(Boolean),AUTO=false;ADDQ.forEach(function(z){var a=z.split(':');if(a.length===2&&['card','site','domain','nfc','inv'].indexOf(a[0])>=0&&DS.some(function(d){return d.id===a[1]})){AUTO=true;if(!CART.some(function(c){return c.kind===a[0]&&c.design_id===a[1]}))CART.push({kind:a[0],design_id:a[1]})}});try{localStorage.setItem('lc_cart',JSON.stringify(CART))}catch(e){}
 function saveC(){try{localStorage.setItem('lc_cart',JSON.stringify(CART))}catch(e){}bar();try{tabs()}catch(e){}}
 function inC(k,id){return CART.some(function(c){return c.kind===k&&c.design_id===id})}
 var VIEW=(new URLSearchParams(location.search).get('tab')||'shop');
-function tabs(){var T=[['shop','🛍️ प्रोडक्ट'],['cart','🛒 मेरा कार्ट ('+CART.length+')'],['orders','📦 मेरे ऑर्डर']];$('tabs').innerHTML=T.map(function(t){return '<button type="button" class="tb'+(VIEW===t[0]?' on':'')+'" data-v="'+t[0]+'">'+t[1]+'</button>'}).join('');
-  [].forEach.call($('tabs').querySelectorAll('[data-v]'),function(b){b.onclick=function(){var v=b.dataset.v;if(v==='cart'){if(!CART.length){alert('कार्ट खाली है। पहले कुछ कार्ट में डालें।');return}$('cbo').onclick();return}VIEW=v;tabs();if(v==='orders')orders();else draw()}})}
+function tabs(){var T=[['all','▦ सभी प्रोडक्ट'],['card','🪪 डिजिटल कार्ड'],['nfc','📶 NFC कार्ड'],['web','🌐 वेबसाइट'],['inv','💌 निमंत्रण'],['orders','📦 मेरे ऑर्डर']];$('tabs').innerHTML=T.map(function(t){var on=t[0]==='orders'?VIEW==='orders':(VIEW!=='orders'&&CAT===t[0]);return '<button type="button" class="tb'+(on?' on':'')+'" data-v="'+t[0]+'">'+t[1]+'</button>'}).join('');
+  [].forEach.call($('tabs').querySelectorAll('[data-v]'),function(b){b.onclick=function(){var v=b.dataset.v;if(v==='orders'){VIEW='orders';tabs();orders();return}VIEW='shop';CAT=v;draw()}})}
 var ON={placed:'🆕 ऑर्डर मिला',paid:'💰 भुगतान हुआ',design_ok:'🎨 डिज़ाइन तैयार',mfg:'🏭 बन रहा है',encode:'📲 NFC लिखा जा रहा है',qr_ok:'🔳 QR जाँचा',qc:'✅ जाँच पूरी',packed:'📦 पैक हुआ',dispatched:'🚚 भेज दिया',delivered:'🏠 पहुँच गया',activated:'⚡ चालू',cancelled:'❌ रद्द',refunded:'↩️ पैसे वापस'};
 async function orders(){m.innerHTML='<p class="k">लोड हो रहा है…</p>';var dn=function(t){try{return new Date(t).toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}};
   var r=await Promise.all([sb.from('studio_cart_orders').select('items,amount_paise,wallet_used,paid_at,created_at').eq('user_id',uid).eq('status','paid').order('paid_at',{ascending:false}).limit(50),sb.from('studio_pub_orders').select('design_id,plan,amount_paise,wallet_used,paid_at').eq('user_id',uid).eq('status','paid').order('paid_at',{ascending:false}).limit(50),sb.from('nfc_orders').select('status,courier,tracking_no,created_at,amount_inr').eq('user_id',uid).order('created_at',{ascending:false}).limit(20)]);
@@ -65,21 +89,23 @@ async function orders(){m.innerHTML='<p class="k">लोड हो रहा ह
   h+=L.length?L.map(function(o){return '<div class="od"><div style="display:flex"><b style="flex:1">✅ '+dn(o.t)+'</b><b>₹'+o.amt+'</b></div><div class="k">'+o.it.map(esc).join('<br>')+'</div></div>'}).join(''):'<p class="k">अभी तक कोई ऑर्डर नहीं।</p>';
   m.innerHTML=h}
 function draw(){tabs();
-  var h='<p class="k" style="margin:2px 0 12px">जो चाहिए उसे कार्ट में डालें, फिर एक साथ भुगतान करें।</p>';
-  P.forEach(function(p,i){var L=p.t==='v'?VIS:INV;
-    h+='<div class="p"><div class="top"><div class="ic" style="background:'+p.c+'">'+p.ic+'</div><div style="flex:1"><b class="n">'+esc(p.n)+'</b><span class="pr">₹'+p.pr+'</span> <span class="k">'+p.u+'</span></div></div><div class="k" style="margin-top:8px">'+esc(p.d)+'</div>';
-    if(!L.length)h+='<div class="k" style="margin-top:10px">पहले '+(p.t==='v'?'विज़िटिंग कार्ड':'इनविटेशन कार्ड')+' बनाएँ, फिर यहाँ से खरीदें।</div>';
+  var h='';
+  P.forEach(function(p,i){if(CAT!=='all'&&p.e.c!==CAT)return;var L=p.t==='v'?VIS:INV,e=p.e;
+    h+='<div class="pc"><div class="th" style="background:'+e.g+'">'+(e.tg?'<span class="tg">'+e.tg+'</span>':'')+p.ic+'</div><div class="pm"><b class="n">'+esc(p.n)+'</b><div class="sb">'+esc(e.sb)+'</div><div class="ft">'+e.f.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div></div>';
+    h+='<div class="pp"><div><div class="pr2">₹'+p.pr+(p.u==='/ साल'?' <small>/ साल</small>':'')+'</div><span class="pl">'+e.pl+'</span></div><div class="ac">';
+    if(!L.length)h+='<a href="/studio/" class="k" style="font-size:12.5px;text-align:right">पहले '+(p.t==='v'?'विज़िटिंग कार्ड':'इनविटेशन कार्ड')+' बनाएँ →</a>';
     else{h+=(L.length>1?'<select data-s="'+i+'">'+L.map(function(d){return '<option value="'+d.id+'">'+esc(d.title||d.slug||'कार्ड')+'</option>'}).join('')+'</select>':'<input type="hidden" data-s="'+i+'" value="'+L[0].id+'">');
       h+='<button type="button" class="add" data-a="'+i+'"></button>'}
-    h+='</div>'});
+    h+='</div></div></div>'});
   m.innerHTML=h;
   [].forEach.call(m.querySelectorAll('[data-a]'),function(b){var i=+b.dataset.a,p=P[i],sel=m.querySelector('[data-s="'+i+'"]');
-    function paint(){var on=inC(p.k,sel.value);b.textContent=on?'✓ कार्ट में है · हटाएँ':'🛒 कार्ट में डालें';b.className='add'+(on?' in':'')}
+    function paint(){var on=inC(p.k,sel.value);b.textContent=on?'✓ कार्ट में है':'🛒 कार्ट में डालें';b.className='add'+(on?' in':'')}
     paint();if(sel.tagName==='SELECT')sel.onchange=paint;
     b.onclick=function(){var id=sel.value;if(inC(p.k,id))CART=CART.filter(function(c){return !(c.kind===p.k&&c.design_id===id)});else CART.push({kind:p.k,design_id:id});saveC();paint()}});
   bar()}
-function bar(){var cb=$('cb');cb.hidden=!CART.length;$('cbn').textContent='🛒 '+CART.length+' चीज़ें';var t=0;CART.forEach(function(c){var p=P.filter(function(x){return x.k===c.kind})[0];if(p)t+=p.pr});$('cbt').textContent='लगभग ₹'+t+' · असली रकम अगले पेज पर'}
+function bar(){var cb=$('cb');cb.hidden=!CART.length;$('cbn').textContent=CART.length+' चीज़ें चुनी गईं';$('cbc').textContent=CART.length;var hc=$('hcn');hc.hidden=!CART.length;hc.textContent=CART.length;var t=0;CART.forEach(function(c){var p=P.filter(function(x){return x.k===c.kind})[0];if(p)t+=p.pr});$('cbt').textContent='कुल राशि: ₹'+t}
 var KN={card:'विज़िटिंग कार्ड प्लान',site:'मिनी वेबसाइट प्लान',domain:'फ़ुल वेबसाइट + डोमेन',nfc:'NFC कार्ड',inv:'इनविटेशन कार्ड'};
+$('hcart').onclick=function(){if(!CART.length){alert('कार्ट खाली है। पहले कुछ कार्ट में डालें।');return}$('cbo').onclick()};$('hord').onclick=function(){VIEW='orders';tabs();orders()};
 $('cbo').onclick=async function(){var o=document.createElement('div');o.className='sheet';var bx=document.createElement('div');o.appendChild(bx);document.body.appendChild(o);o.onclick=function(e){if(e.target===o)o.remove()};
   bx.innerHTML='<b style="font-size:18px">🛒 आपका कार्ट</b><p class="k">हिसाब लगाया जा रहा है…</p>';
   var q;try{q=await fn({action:'cart_quote',items:CART})}catch(e){bx.innerHTML='<p class="err">कार्ट नहीं खुल पाया। दोबारा कोशिश करें।</p>';return}
@@ -98,6 +124,6 @@ $('cbo').onclick=async function(){var o=document.createElement('div');o.classNam
       CART=[];saveC();bx.innerHTML='<p class="ok" style="font-size:20px">✅ भुगतान हो गया!</p><p>आपके प्लान और सेवाएँ चालू हो गईं। NFC कार्ड हो तो हमारी टीम छापकर आप तक भेजेगी।</p><a href="/studio/" style="display:block;text-align:center;padding:13px;border-radius:14px;background:#d4141c;color:#fff;font-weight:800;text-decoration:none">← Studio पर जाएँ</a>';draw()}
     catch(e){pb.disabled=false;$('sm').innerHTML='<span class="err">'+(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है।':'भुगतान पूरा नहीं हुआ। पैसे कटे हों तो पेज दोबारा खोलें, अपने-आप जुड़ जाएगा।')+'</span>'}}};
 try{fn({action:'cart_sync'})}catch(e){}
-if(VIEW==='orders'){tabs();orders()}else draw();if((AUTO||VIEW==='cart')&&CART.length)setTimeout(function(){$('cbo').onclick()},300);
+bar();if(VIEW==='orders'){tabs();orders()}else draw();if((AUTO||VIEW==='cart')&&CART.length)setTimeout(function(){$('cbo').onclick()},300);
 })();
 </script></body></html>
