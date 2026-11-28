@@ -23,8 +23,7 @@ async function draw(c){var cv=document.createElement('canvas'),SC=2;cv.width=W*S
     x.fillStyle='#0b2a4a';x.font='900 24px system-ui,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('NFC',cx,cy+50);
     x.font='600 13px system-ui,Arial,sans-serif';x.fillStyle='#555';x.fillText('Tap',cx,cy+72)}
   return cv}
-var _bk=null;async function back(){if(_bk)return _bk;var b=await img('/studio/livecard-card-back-2x.jpg?v=1');if(!b)return null;var cv=document.createElement('canvas');cv.width=W*2;cv.height=H*2;var x=cv.getContext('2d');x.scale(2,2);
-  x.translate(W/2,H/2);x.rotate(-Math.PI/2);x.drawImage(b,-H/2,-W/2,H,W);_bk=cv.toDataURL('image/jpeg',0.95);return _bk}
+var _bk=null;async function back(){if(_bk)return _bk;var b=await img('/studio/livecard-card-back-v-2x.jpg?v=2');if(!b)return null;var cv=document.createElement('canvas');cv.width=b.width;cv.height=b.height;var x=cv.getContext('2d');x.drawImage(b,0,0);_bk=cv.toDataURL('image/jpeg',0.95);return _bk}
 function loadPdf(){return new Promise(function(res,rej){if(window.jspdf)return res(window.jspdf);var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=function(){res(window.jspdf)};s.onerror=rej;document.head.appendChild(s)})}
 async function pdf(cards,name,opt){var J=await loadPdf();var doc=new J.jsPDF({unit:'mm',format:[53.98,85.6],orientation:'portrait',compress:true});
   var bk=await back();
