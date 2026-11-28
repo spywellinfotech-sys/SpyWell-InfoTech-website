@@ -29,6 +29,10 @@ var $=function(i){return document.getElementById(i)},m=$('m');
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 var B='https://rxhanrtoaplwphmwpgqg.supabase.co',K='sb_publishable_C76zU42qscFbBnfOcn5Zew_1VcRcL4d';
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
+try{sb.auth.getSession().then(function(r0){var u=r0&&r0.data&&r0.data.session&&r0.data.session.user;if(!u)return;var md=u.user_metadata||{};window.RZPF={name:md.full_name||md.name||'',email:u.email||''};
+  Promise.all([sb.from('studio_profiles').select('full_name,phone').eq('id',u.id).maybeSingle(),sb.from('studio_designs').select('mob:content_json->fields->>mobile').eq('user_id',u.id).eq('product_type','visiting').limit(5)]).then(function(r){var p=(r[0]&&r[0].data)||{},ph=String(p.phone||md.phone||'').replace(/\D/g,'').slice(-10);if(!/^[6-9]\d{9}$/.test(ph)){((r[1]&&r[1].data)||[]).some(function(x){var m=String(x.mob||'').replace(/\D/g,'').slice(-10);if(/^[6-9]\d{9}$/.test(m)){ph=m;return true}})}
+    if(p.full_name)window.RZPF.name=p.full_name;if(/^[6-9]\d{9}$/.test(ph))window.RZPF.contact='+91'+ph}).catch(function(){})})}catch(e){}
+
 var ss=await sb.auth.getSession();if(!ss.data.session){m.innerHTML='<div class="p">पहले लॉगिन करें। <a href="/studio/">लॉगिन →</a></div>';return}
 var uid=ss.data.session.user.id;
 async function fn(body){var s2=await sb.auth.getSession();var r=await fetch(B+'/functions/v1/studio-pay',{method:'POST',headers:{'content-type':'application/json',apikey:K,authorization:'Bearer '+s2.data.session.access_token},body:JSON.stringify(body)});var j=await r.json().catch(function(){return{}});if(!r.ok){var e=new Error(j.code||'err');e.code=j.code;throw e}return j}
@@ -75,7 +79,7 @@ $('cbo').onclick=async function(){var o=document.createElement('div');o.classNam
   var pb=$('spay');if(pb)pb.onclick=async function(){pb.disabled=true;$('sm').textContent='भुगतान खुल रहा है…';
     try{var lr=new Promise(function(res,rej){if(window.Razorpay)return res();var sc=document.createElement('script');sc.src='https://checkout.razorpay.com/v1/checkout.js';sc.onload=res;sc.onerror=rej;document.head.appendChild(sc)});
       var od=await fn({action:'cart_create',items:CART});await lr;
-      await new Promise(function(res,rej){var rz=new window.Razorpay({key:od.key_id,amount:od.amount,currency:'INR',order_id:od.order_id,name:'LiveCard',description:'LiveCard प्रोडक्ट और सेवाएँ',
+      await new Promise(function(res,rej){var rz=new window.Razorpay({prefill:(window.RZPF||{}),readonly:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),hidden:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),key:od.key_id,amount:od.amount,currency:'INR',order_id:od.order_id,name:'LiveCard',description:'LiveCard प्रोडक्ट और सेवाएँ',
         handler:async function(r){try{await fn({action:'cart_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},modal:{ondismiss:function(){rej(new Error('dismiss'))}}});rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
       CART=[];saveC();bx.innerHTML='<p class="ok" style="font-size:20px">✅ भुगतान हो गया!</p><p>आपके प्लान और सेवाएँ चालू हो गईं। NFC कार्ड हो तो हमारी टीम छापकर आप तक भेजेगी।</p><a href="/studio/" style="display:block;text-align:center;padding:13px;border-radius:14px;background:#d4141c;color:#fff;font-weight:800;text-decoration:none">← Studio पर जाएँ</a>';draw()}
     catch(e){pb.disabled=false;$('sm').innerHTML='<span class="err">'+(e.message==='dismiss'?'भुगतान रद्द हुआ।':e.message==='payfail'?'भुगतान नहीं हुआ। दोबारा कोशिश करें।':e.code==='not_configured'?'भुगतान अभी चालू नहीं है।':'भुगतान पूरा नहीं हुआ। पैसे कटे हों तो पेज दोबारा खोलें, अपने-आप जुड़ जाएगा।')+'</span>'}}};

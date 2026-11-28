@@ -82,6 +82,10 @@ var toastT=null;function toast(t,kind){var e=document.getElementById('toast');if
 function state(t,bad){var s=$('state');s.textContent=t;s.className='state'+(bad?' bad':'')}
 if(!window.supabase||!R){state('लोड नहीं हो पाया। इंटरनेट जाँचकर पेज दोबारा खोलें।',true);return}
 var sb=window.supabase.createClient(B,K,{auth:{storageKey:'spywell-studio-auth'}});
+try{sb.auth.getSession().then(function(r0){var u=r0&&r0.data&&r0.data.session&&r0.data.session.user;if(!u)return;var md=u.user_metadata||{};window.RZPF={name:md.full_name||md.name||'',email:u.email||''};
+  Promise.all([sb.from('studio_profiles').select('full_name,phone').eq('id',u.id).maybeSingle(),sb.from('studio_designs').select('mob:content_json->fields->>mobile').eq('user_id',u.id).eq('product_type','visiting').limit(5)]).then(function(r){var p=(r[0]&&r[0].data)||{},ph=String(p.phone||md.phone||'').replace(/\D/g,'').slice(-10);if(!/^[6-9]\d{9}$/.test(ph)){((r[1]&&r[1].data)||[]).some(function(x){var m=String(x.mob||'').replace(/\D/g,'').slice(-10);if(/^[6-9]\d{9}$/.test(m)){ph=m;return true}})}
+    if(p.full_name)window.RZPF.name=p.full_name;if(/^[6-9]\d{9}$/.test(ph))window.RZPF.contact='+91'+ph}).catch(function(){})})}catch(e){}
+
 var ID=new URLSearchParams(location.search).get('id')||'';
 var IND=[],tplInd='',D=null,T=[],C=null,UID='',tab=(/[?&]tab=tpl/.test(location.search)?'tpl':/[?&]tab=ins/.test(location.search)?'info':/[?&]tab=pub/.test(location.search)?'design':'info'),dirty=false,saving=false,timer=null,htimer=null,hist=[],hi=-1,resetArmed=false;
 var LS='studio-draft-'+ID;
@@ -394,7 +398,7 @@ async function buy(msg){
   try{
     var lr=loadRzp();var o=await fnCall('studio-pay',{action:'create'});await lr;
     await new Promise(function(res,rej){
-      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'AI से कार्ड पढ़ना ('+o.credits+' बार)',
+      var rz=new window.Razorpay({prefill:(window.RZPF||{}),readonly:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),hidden:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'AI से कार्ड पढ़ना ('+o.credits+' बार)',
         handler:async function(r){try{var v=await fnCall('studio-pay',{action:'verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});CR.bal=v.balance;res()}catch(e){rej(e)}},
         modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
@@ -617,7 +621,7 @@ async function payPlan(plan,amount){
     var mp=await manualPay(plan,amount);if(mp!==null){if(mp)panel();return false}
     var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:plan});await lr;
     await new Promise(function(res,rej){
-      var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:PLN[plan]+(plan==='nfc'||plan==='premium'?'':' (1 साल)'),
+      var rz=new window.Razorpay({prefill:(window.RZPF||{}),readonly:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),hidden:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:PLN[plan]+(plan==='nfc'||plan==='premium'?'':' (1 साल)'),
         handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
         modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
       rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
@@ -812,7 +816,7 @@ function pPub(p){
     try{
       var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:'premium'});await lr;
       await new Promise(function(res,rej){
-        var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'प्रीमियम थीम',
+        var rz=new window.Razorpay({prefill:(window.RZPF||{}),readonly:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),hidden:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'प्रीमियम थीम',
           handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
           modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
         rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
@@ -824,7 +828,7 @@ function pPub(p){
     try{
       var lr=loadRzp();var o=await fnCall('studio-pay',{action:'pub_create',design_id:D.id,plan:(PI&&PI.sub&&PI.sub.next_plan)||undefined});await lr;
       await new Promise(function(res,rej){
-        var rz=new window.Razorpay({key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'कार्ड प्रकाशित करना',
+        var rz=new window.Razorpay({prefill:(window.RZPF||{}),readonly:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),hidden:(window.RZPF&&window.RZPF.contact?{contact:true,email:!!window.RZPF.email}:{}),key:o.key_id,amount:o.amount,currency:'INR',order_id:o.order_id,name:'LiveCard',description:'कार्ड प्रकाशित करना',
           handler:async function(r){try{await fnCall('studio-pay',{action:'pub_verify',order_id:r.razorpay_order_id,payment_id:r.razorpay_payment_id,signature:r.razorpay_signature});res()}catch(e){rej(e)}},
           modal:{ondismiss:function(){rej(new Error('dismiss'))}}});
         rz.on('payment.failed',function(){rej(new Error('payfail'))});rz.open()});
